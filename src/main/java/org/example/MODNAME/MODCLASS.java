@@ -1,7 +1,7 @@
 package org.example.MODNAME;
 
 import net.fabricmc.api.ModInitializer;
-import net.gegy1000.plasmid.game.GameType;
+import xyz.nucleoid.plasmid.game.GameType;
 import net.minecraft.util.Identifier;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;

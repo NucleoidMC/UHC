@@ -1,21 +1,22 @@
 package org.example.MODNAME.game;
 
-import net.gegy1000.plasmid.game.GameWorld;
-import net.gegy1000.plasmid.game.GameWorldState;
-import net.gegy1000.plasmid.game.StartResult;
-import net.gegy1000.plasmid.game.config.PlayerConfig;
-import net.gegy1000.plasmid.game.event.OfferPlayerListener;
-import net.gegy1000.plasmid.game.event.PlayerAddListener;
-import net.gegy1000.plasmid.game.event.PlayerDeathListener;
-import net.gegy1000.plasmid.game.event.RequestStartListener;
-import net.gegy1000.plasmid.game.player.JoinResult;
-import net.gegy1000.plasmid.game.rule.GameRule;
-import net.gegy1000.plasmid.game.rule.RuleResult;
+import net.minecraft.server.MinecraftServer;
+import xyz.nucleoid.plasmid.game.GameWorld;
+import xyz.nucleoid.plasmid.game.StartResult;
+import xyz.nucleoid.plasmid.game.config.PlayerConfig;
+import xyz.nucleoid.plasmid.game.event.OfferPlayerListener;
+import xyz.nucleoid.plasmid.game.event.PlayerAddListener;
+import xyz.nucleoid.plasmid.game.event.PlayerDeathListener;
+import xyz.nucleoid.plasmid.game.event.RequestStartListener;
+import xyz.nucleoid.plasmid.game.player.JoinResult;
+import xyz.nucleoid.plasmid.game.rule.GameRule;
+import xyz.nucleoid.plasmid.game.rule.RuleResult;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.world.GameMode;
 import org.example.MODNAME.game.map.MODCLASSMap;
 import org.example.MODNAME.game.map.MODCLASSMapGenerator;
+import xyz.nucleoid.plasmid.game.world.bubble.BubbleWorldConfig;
 
 import java.util.concurrent.CompletableFuture;
 
@@ -32,12 +33,15 @@ public class MODCLASSWaiting {
         this.spawnLogic = new MODCLASSSpawnLogic(gameWorld, map);
     }
 
-    public static CompletableFuture<Void> open(GameWorldState worldState, MODCLASSConfig config) {
+    public static CompletableFuture<Void> open(MinecraftServer server, MODCLASSConfig config) {
         MODCLASSMapGenerator generator = new MODCLASSMapGenerator(config.mapConfig);
 
         return generator.create().thenAccept(map -> {
-            GameWorld gameWorld = worldState.openWorld(map.asGenerator());
+            BubbleWorldConfig worldConfig = new BubbleWorldConfig()
+                    .setGenerator(map.asGenerator())
+                    .setDefaultGameMode(GameMode.SPECTATOR);
 
+            GameWorld gameWorld = GameWorld.open(server, worldConfig);
             MODCLASSWaiting waiting = new MODCLASSWaiting(gameWorld, map, config);
 
             gameWorld.newGame(builder -> {
@@ -50,7 +54,6 @@ public class MODCLASSWaiting {
 
                 builder.on(RequestStartListener.EVENT, waiting::requestStart);
                 builder.on(OfferPlayerListener.EVENT, waiting::offerPlayer);
-
 
                 builder.on(PlayerAddListener.EVENT, waiting::addPlayer);
                 builder.on(PlayerDeathListener.EVENT, waiting::onPlayerDeath);

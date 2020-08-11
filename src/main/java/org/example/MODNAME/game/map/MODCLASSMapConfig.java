@@ -2,7 +2,7 @@ package org.example.MODNAME.game.map;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import net.gegy1000.plasmid.game.map.template.MapTemplate;
+import xyz.nucleoid.plasmid.game.map.template.MapTemplate;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.util.math.BlockPos;

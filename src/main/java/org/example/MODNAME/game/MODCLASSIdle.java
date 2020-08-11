@@ -2,7 +2,7 @@ package org.example.MODNAME.game;
 
 import it.unimi.dsi.fastutil.objects.Object2ObjectMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
-import net.gegy1000.plasmid.game.GameWorld;
+import xyz.nucleoid.plasmid.game.GameWorld;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.LiteralText;

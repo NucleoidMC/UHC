@@ -1,7 +1,7 @@
 package org.example.MODNAME.game.map;
 
-import net.gegy1000.plasmid.game.map.template.MapTemplate;
-import net.gegy1000.plasmid.game.map.template.TemplateChunkGenerator;
+import xyz.nucleoid.plasmid.game.map.template.MapTemplate;
+import xyz.nucleoid.plasmid.game.map.template.TemplateChunkGenerator;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.gen.chunk.ChunkGenerator;
 
