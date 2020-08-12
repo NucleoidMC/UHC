@@ -71,7 +71,7 @@ java_root = path.join("src", "main", "java")
 package_root = path.join(java_root, *package.split("."))
 res = path.join("src", "main", "resources")
 lowest_dir = path.join(package_root, "game", "map")
-lowest_dir2 = path.join(res, "data", "plasmid", "games", mod_id)
+lowest_dir2 = path.join(res, "data", mod_id, "games")
 
 os.makedirs(lowest_dir)
 os.makedirs(lowest_dir2)
@@ -92,7 +92,7 @@ def walk(target_path, level=0):
 for java_file in walk(Path(java_root)):
     process_file(java_file, transform_java, is_java=True)
 
-std_path = path.join(res, "data", "plasmid", "games", "MODNAME")
+std_path = path.join(res, "data", "MODNAME", "games")
 process_file(
     Path(path.join(std_path, "standard.json")),
     lambda contents: contents.replace("MODNAME", mod_id),
