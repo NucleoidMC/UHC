@@ -18,7 +18,7 @@ public class MODCLASSMapGenerator {
     }
 
     public CompletableFuture<MODCLASSMap> create() {
-        return CompletableFuture.supplyAsync(this::build, Util.getServerWorkerExecutor());
+        return CompletableFuture.supplyAsync(this::build, Util.getMainWorkerExecutor());
     }
 
     private MODCLASSMap build() {

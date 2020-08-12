@@ -69,12 +69,12 @@ public class MODCLASSActive {
         MODCLASSActive active = new MODCLASSActive(gameWorld, map, config, participants);
 
         gameWorld.newGame(builder -> {
-            builder.setRule(GameRule.ALLOW_CRAFTING, RuleResult.DENY);
-            builder.setRule(GameRule.ALLOW_PORTALS, RuleResult.DENY);
-            builder.setRule(GameRule.ALLOW_PVP, RuleResult.DENY);
+            builder.setRule(GameRule.CRAFTING, RuleResult.DENY);
+            builder.setRule(GameRule.PORTALS, RuleResult.DENY);
+            builder.setRule(GameRule.PVP, RuleResult.DENY);
             builder.setRule(GameRule.BLOCK_DROPS, RuleResult.DENY);
-            builder.setRule(GameRule.FALL_DAMAGE, RuleResult.ALLOW);
-            builder.setRule(GameRule.ENABLE_HUNGER, RuleResult.DENY);
+            builder.setRule(GameRule.FALL_DAMAGE, RuleResult.DENY);
+            builder.setRule(GameRule.HUNGER, RuleResult.DENY);
 
             builder.on(GameOpenListener.EVENT, active::onOpen);
             builder.on(GameCloseListener.EVENT, active::onClose);
@@ -147,7 +147,7 @@ public class MODCLASSActive {
                 this.broadcastWin(this.checkWinResult());
                 return;
             case GAME_CLOSED:
-                this.gameWorld.closeWorld();
+                this.gameWorld.close();
                 return;
         }
 

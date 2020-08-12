@@ -45,11 +45,11 @@ public class MODCLASSWaiting {
             MODCLASSWaiting waiting = new MODCLASSWaiting(gameWorld, map, config);
 
             gameWorld.newGame(builder -> {
-                builder.setRule(GameRule.ALLOW_CRAFTING, RuleResult.DENY);
-                builder.setRule(GameRule.ALLOW_PORTALS, RuleResult.DENY);
-                builder.setRule(GameRule.ALLOW_PVP, RuleResult.DENY);
+                builder.setRule(GameRule.CRAFTING, RuleResult.DENY);
+                builder.setRule(GameRule.PORTALS, RuleResult.DENY);
+                builder.setRule(GameRule.PVP, RuleResult.DENY);
                 builder.setRule(GameRule.BLOCK_DROPS, RuleResult.DENY);
-                builder.setRule(GameRule.ENABLE_HUNGER, RuleResult.DENY);
+                builder.setRule(GameRule.HUNGER, RuleResult.DENY);
                 builder.setRule(GameRule.FALL_DAMAGE, RuleResult.DENY);
 
                 builder.on(RequestStartListener.EVENT, waiting::requestStart);
