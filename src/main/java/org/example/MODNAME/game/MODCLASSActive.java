@@ -3,6 +3,7 @@ package org.example.MODNAME.game;
 import io.netty.util.internal.logging.AbstractInternalLogger;
 import it.unimi.dsi.fastutil.objects.Object2ObjectMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
+import net.minecraft.util.ActionResult;
 import xyz.nucleoid.plasmid.game.GameWorld;
 import xyz.nucleoid.plasmid.game.event.*;
 import xyz.nucleoid.plasmid.game.player.JoinResult;
@@ -119,10 +120,10 @@ public class MODCLASSActive {
         return true;
     }
 
-    private boolean onPlayerDeath(ServerPlayerEntity player, DamageSource source) {
+    private ActionResult onPlayerDeath(ServerPlayerEntity player, DamageSource source) {
         // TODO handle death
         this.spawnParticipant(player);
-        return true;
+        return ActionResult.FAIL;
     }
 
     private void spawnParticipant(ServerPlayerEntity player) {

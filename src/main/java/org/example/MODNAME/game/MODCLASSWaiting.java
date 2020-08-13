@@ -1,6 +1,7 @@
 package org.example.MODNAME.game;
 
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.util.ActionResult;
 import xyz.nucleoid.plasmid.game.GameWorld;
 import xyz.nucleoid.plasmid.game.StartResult;
 import xyz.nucleoid.plasmid.game.config.PlayerConfig;
@@ -38,7 +39,7 @@ public class MODCLASSWaiting {
 
         return generator.create().thenAccept(map -> {
             BubbleWorldConfig worldConfig = new BubbleWorldConfig()
-                    .setGenerator(map.asGenerator())
+                    .setGenerator(map.asGenerator(server))
                     .setDefaultGameMode(GameMode.SPECTATOR);
 
             GameWorld gameWorld = GameWorld.open(server, worldConfig);
@@ -84,9 +85,9 @@ public class MODCLASSWaiting {
         this.spawnPlayer(player);
     }
 
-    private boolean onPlayerDeath(ServerPlayerEntity player, DamageSource source) {
+    private ActionResult onPlayerDeath(ServerPlayerEntity player, DamageSource source) {
         this.spawnPlayer(player);
-        return true;
+        return ActionResult.FAIL;
     }
 
     private void spawnPlayer(ServerPlayerEntity player) {
