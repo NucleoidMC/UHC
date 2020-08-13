@@ -2,6 +2,7 @@ package org.example.MODNAME.game;
 
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.ActionResult;
+import xyz.nucleoid.plasmid.game.GameOpenContext;
 import xyz.nucleoid.plasmid.game.GameWorld;
 import xyz.nucleoid.plasmid.game.StartResult;
 import xyz.nucleoid.plasmid.game.config.PlayerConfig;
@@ -34,16 +35,16 @@ public class MODCLASSWaiting {
         this.spawnLogic = new MODCLASSSpawnLogic(gameWorld, map);
     }
 
-    public static CompletableFuture<Void> open(MinecraftServer server, MODCLASSConfig config) {
-        MODCLASSMapGenerator generator = new MODCLASSMapGenerator(config.mapConfig);
+    public static CompletableFuture<Void> open(GameOpenContext<MODCLASSConfig> context) {
+        MODCLASSMapGenerator generator = new MODCLASSMapGenerator(context.getConfig().mapConfig);
 
         return generator.create().thenAccept(map -> {
             BubbleWorldConfig worldConfig = new BubbleWorldConfig()
-                    .setGenerator(map.asGenerator(server))
+                    .setGenerator(map.asGenerator(context.getServer()))
                     .setDefaultGameMode(GameMode.SPECTATOR);
 
-            GameWorld gameWorld = GameWorld.open(server, worldConfig);
-            MODCLASSWaiting waiting = new MODCLASSWaiting(gameWorld, map, config);
+            GameWorld gameWorld = context.openWorld(worldConfig);
+            MODCLASSWaiting waiting = new MODCLASSWaiting(gameWorld, map, context.getConfig());
 
             gameWorld.openGame(builder -> {
                 builder.setRule(GameRule.CRAFTING, RuleResult.DENY);
