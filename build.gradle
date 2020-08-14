@@ -26,7 +26,7 @@ dependencies {
     modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
 
     // Plasmid
-    modImplementation "xyz.nucleoid:plasmid:0.1.0+build.72"
+    modImplementation "xyz.nucleoid:plasmid:0.2.1"
 
     modRuntime ("com.github.jellysquid3:sodium-fabric:b9c2ad3c38b16275cf2f1a81dcfb2fee1563905b")
     modRuntime ("com.github.jellysquid3:phosphor-fabric:0749029a498e8f6574643285bae7aecb2eda76b8")
