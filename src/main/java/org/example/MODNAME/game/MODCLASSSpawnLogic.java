@@ -37,13 +37,13 @@ public class MODCLASSSpawnLogic {
 
         BlockPos pos = this.map.spawn;
         if (pos == null) {
-            MODCLASS.LOGGER.warn("Cannot spawn player! No spawn is defined in the map!");
+            MODCLASS.LOGGER.error("Cannot spawn player! No spawn is defined in the map!");
             return;
         }
 
         float radius = 4.5f;
-        double x = pos.getX() + MathHelper.nextDouble(player.getRandom(), -radius, radius);
-        double z = pos.getZ() + MathHelper.nextDouble(player.getRandom(), -radius, radius);
+        float x = pos.getX() + MathHelper.nextFloat(player.getRandom(), -radius, radius);
+        float z = pos.getZ() + MathHelper.nextFloat(player.getRandom(), -radius, radius);
 
         player.teleport(world, x, pos.getY() + 0.5, z, 0.0F, 0.0F);
     }
