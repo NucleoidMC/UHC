@@ -36,7 +36,7 @@ public class MODCLASSMapGenerator {
         BlockPos max = new BlockPos(5, 64, 5);
 
         for (BlockPos pos : BlockPos.iterate(min, max)) {
-            builder.setBlockState(pos, Blocks.RED_TERRACOTTA.getDefaultState());
+            builder.setBlockState(pos, this.config.spawnBlock);
         }
     }
 }
