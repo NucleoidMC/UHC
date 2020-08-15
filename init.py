@@ -92,7 +92,8 @@ def walk(target_path, level=0):
 for java_file in walk(Path(java_root)):
     process_file(java_file, transform_java, is_java=True)
 
-std_path = path.join(res, "data", "MODNAME", "games")
+template_resources = path.join(res, "data", "MODNAME")
+std_path = path.join(template_resources, "games")
 process_file(
     Path(path.join(std_path, "standard.json")),
     lambda contents: contents.replace("MODNAME", mod_id),
@@ -100,9 +101,12 @@ process_file(
 process_file(Path(path.join(res, "fabric.mod.json")), transform_fabric_mod_json)
 process_file(Path("gradle.properties"), transform_gradle_properties)
 
+org_example = path.join(java_root, "org", "example")
 os.remove("README.md")
 shutil.rmtree(path.join(std_path))
-shutil.rmtree(path.join(java_root, "org", "example", "MODNAME"))
+os.removedirs(template_resources)
+shutil.rmtree(path.join(org_example, "MODNAME"))
+os.removedirs(org_example)
 
 print("Your mod has been set up! It is recommended to delete `.git` and init.py, and then initialise a new git "
       "repository, including your chosen license. You can then import the project into your chosen IDE.")
