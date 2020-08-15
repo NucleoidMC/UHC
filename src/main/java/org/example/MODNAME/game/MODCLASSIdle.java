@@ -19,7 +19,6 @@ public class MODCLASSIdle {
 
     public MODCLASSIdle() {
         this.frozen = new Object2ObjectOpenHashMap<>();
-        this.frozen.defaultReturnValue(new FrozenPlayer());
     }
 
     public void onOpen(long time, MODCLASSConfig config) {
@@ -68,7 +67,7 @@ public class MODCLASSIdle {
                     continue;
                 }
 
-                FrozenPlayer state = this.frozen.get(player);
+                FrozenPlayer state = this.frozen.getOrDefault(player, new FrozenPlayer());
 
                 if (state.lastPos == null) {
                     state.lastPos = player.getPos();
