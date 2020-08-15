@@ -169,13 +169,13 @@ public class MODCLASSActive {
     protected static void broadcastMessage(Text message, GameWorld world) {
         for (ServerPlayerEntity player : world.getPlayers()) {
             player.sendMessage(message, false);
-        };
+        }
     }
 
     protected static void broadcastSound(SoundEvent sound, float pitch, GameWorld world) {
         for (ServerPlayerEntity player : world.getPlayers()) {
             player.playSound(sound, SoundCategory.PLAYERS, 1.0F, pitch);
-        };
+        }
     }
 
     protected static void broadcastSound(SoundEvent sound,  GameWorld world) {
