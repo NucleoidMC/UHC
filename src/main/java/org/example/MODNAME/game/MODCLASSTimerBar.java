@@ -29,6 +29,10 @@ public final class MODCLASSTimerBar implements AutoCloseable {
         this.bar.addPlayer(player);
     }
 
+    public void removePlayer(ServerPlayerEntity player) {
+        this.bar.removePlayer(player);
+    }
+
     private Text getText(long ticksUntilEnd) {
         long secondsUntilEnd = ticksUntilEnd / 20;
 

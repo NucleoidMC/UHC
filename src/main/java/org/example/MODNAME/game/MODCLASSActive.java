@@ -85,6 +85,7 @@ public class MODCLASSActive {
 
             builder.on(OfferPlayerListener.EVENT, player -> JoinResult.ok());
             builder.on(PlayerAddListener.EVENT, active::addPlayer);
+            builder.on(PlayerRemoveListener.EVENT, active::removePlayer);
 
             builder.on(GameTickListener.EVENT, active::tick);
 
@@ -112,6 +113,11 @@ public class MODCLASSActive {
             this.spawnSpectator(player);
         }
         this.timerBar.addPlayer(player);
+    }
+
+    private void removePlayer(ServerPlayerEntity player) {
+        this.participants.remove(PlayerRef.of(player));
+        this.timerBar.removePlayer(player);
     }
 
     private boolean onPlayerDamage(ServerPlayerEntity player, DamageSource source, float amount) {
