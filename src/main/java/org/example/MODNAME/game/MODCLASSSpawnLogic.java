@@ -1,5 +1,6 @@
 package org.example.MODNAME.game;
 
+import net.minecraft.util.math.Vec3d;
 import xyz.nucleoid.plasmid.game.GameWorld;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.effect.StatusEffects;
@@ -22,6 +23,8 @@ public class MODCLASSSpawnLogic {
 
     public void resetPlayer(ServerPlayerEntity player, GameMode gameMode) {
         player.setGameMode(gameMode);
+        player.setVelocity(Vec3d.ZERO);
+        player.fallDistance = 0.0f;
 
         player.addStatusEffect(new StatusEffectInstance(
                 StatusEffects.NIGHT_VISION,

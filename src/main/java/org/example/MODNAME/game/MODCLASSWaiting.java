@@ -87,6 +87,7 @@ public class MODCLASSWaiting {
     }
 
     private ActionResult onPlayerDeath(ServerPlayerEntity player, DamageSource source) {
+        player.setHealth(20.0f);
         this.spawnPlayer(player);
         return ActionResult.FAIL;
     }
