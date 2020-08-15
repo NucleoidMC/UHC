@@ -43,7 +43,7 @@ public class MODCLASSSpawnLogic {
 
         float radius = 4.5f;
         double x = pos.getX() + MathHelper.nextDouble(player.getRandom(), -radius, radius);
-        double z = pos.getZ() + MathHelper.nextFloat(player.getRandom(), -radius, radius);
+        double z = pos.getZ() + MathHelper.nextDouble(player.getRandom(), -radius, radius);
 
         player.teleport(world, x, pos.getY() + 0.5, z, 0.0F, 0.0F);
     }
