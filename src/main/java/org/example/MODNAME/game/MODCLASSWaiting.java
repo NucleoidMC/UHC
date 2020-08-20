@@ -18,7 +18,7 @@ import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.world.GameMode;
 import org.example.MODNAME.game.map.MODCLASSMap;
 import org.example.MODNAME.game.map.MODCLASSMapGenerator;
-import xyz.nucleoid.plasmid.game.world.bubble.BubbleWorldConfig;
+import xyz.nucleoid.plasmid.world.bubble.BubbleWorldConfig;
 
 import java.util.concurrent.CompletableFuture;
 
@@ -35,30 +35,33 @@ public class MODCLASSWaiting {
         this.spawnLogic = new MODCLASSSpawnLogic(gameWorld, map);
     }
 
-    public static CompletableFuture<Void> open(GameOpenContext<MODCLASSConfig> context) {
+    public static CompletableFuture<GameWorld> open(GameOpenContext<MODCLASSConfig> context) {
         MODCLASSMapGenerator generator = new MODCLASSMapGenerator(context.getConfig().mapConfig);
 
-        return generator.create().thenAccept(map -> {
+        return generator.create().thenCompose(map -> {
             BubbleWorldConfig worldConfig = new BubbleWorldConfig()
                     .setGenerator(map.asGenerator(context.getServer()))
                     .setDefaultGameMode(GameMode.SPECTATOR);
 
-            GameWorld gameWorld = context.openWorld(worldConfig);
-            MODCLASSWaiting waiting = new MODCLASSWaiting(gameWorld, map, context.getConfig());
+            return context.openWorld(worldConfig).thenApply(gameWorld -> {
+                MODCLASSWaiting waiting = new MODCLASSWaiting(gameWorld, map, context.getConfig());
 
-            gameWorld.openGame(builder -> {
-                builder.setRule(GameRule.CRAFTING, RuleResult.DENY);
-                builder.setRule(GameRule.PORTALS, RuleResult.DENY);
-                builder.setRule(GameRule.PVP, RuleResult.DENY);
-                builder.setRule(GameRule.BLOCK_DROPS, RuleResult.DENY);
-                builder.setRule(GameRule.HUNGER, RuleResult.DENY);
-                builder.setRule(GameRule.FALL_DAMAGE, RuleResult.DENY);
+                gameWorld.openGame(builder -> {
+                    builder.setRule(GameRule.CRAFTING, RuleResult.DENY);
+                    builder.setRule(GameRule.PORTALS, RuleResult.DENY);
+                    builder.setRule(GameRule.PVP, RuleResult.DENY);
+                    builder.setRule(GameRule.BLOCK_DROPS, RuleResult.DENY);
+                    builder.setRule(GameRule.HUNGER, RuleResult.DENY);
+                    builder.setRule(GameRule.FALL_DAMAGE, RuleResult.DENY);
 
-                builder.on(RequestStartListener.EVENT, waiting::requestStart);
-                builder.on(OfferPlayerListener.EVENT, waiting::offerPlayer);
+                    builder.on(RequestStartListener.EVENT, waiting::requestStart);
+                    builder.on(OfferPlayerListener.EVENT, waiting::offerPlayer);
 
-                builder.on(PlayerAddListener.EVENT, waiting::addPlayer);
-                builder.on(PlayerDeathListener.EVENT, waiting::onPlayerDeath);
+                    builder.on(PlayerAddListener.EVENT, waiting::addPlayer);
+                    builder.on(PlayerDeathListener.EVENT, waiting::onPlayerDeath);
+                });
+
+                return gameWorld;
             });
         });
     }
@@ -74,12 +77,12 @@ public class MODCLASSWaiting {
     private StartResult requestStart() {
         PlayerConfig playerConfig = this.config.playerConfig;
         if (this.gameWorld.getPlayerCount() < playerConfig.getMinPlayers()) {
-            return StartResult.notEnoughPlayers();
+            return StartResult.NOT_ENOUGH_PLAYERS;
         }
 
         MODCLASSActive.open(this.gameWorld, this.map, this.config);
 
-        return StartResult.ok();
+        return StartResult.OK;
     }
 
     private void addPlayer(ServerPlayerEntity player) {
