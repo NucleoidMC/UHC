@@ -3,6 +3,7 @@ package org.example.MODNAME.game;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.ActionResult;
 import xyz.nucleoid.plasmid.game.GameOpenContext;
+import xyz.nucleoid.plasmid.game.GameWaitingLobby;
 import xyz.nucleoid.plasmid.game.GameWorld;
 import xyz.nucleoid.plasmid.game.StartResult;
 import xyz.nucleoid.plasmid.game.config.PlayerConfig;
@@ -46,17 +47,8 @@ public class MODCLASSWaiting {
             return context.openWorld(worldConfig).thenApply(gameWorld -> {
                 MODCLASSWaiting waiting = new MODCLASSWaiting(gameWorld, map, context.getConfig());
 
-                gameWorld.openGame(builder -> {
-                    builder.setRule(GameRule.CRAFTING, RuleResult.DENY);
-                    builder.setRule(GameRule.PORTALS, RuleResult.DENY);
-                    builder.setRule(GameRule.PVP, RuleResult.DENY);
-                    builder.setRule(GameRule.BLOCK_DROPS, RuleResult.DENY);
-                    builder.setRule(GameRule.HUNGER, RuleResult.DENY);
-                    builder.setRule(GameRule.FALL_DAMAGE, RuleResult.DENY);
-
+                GameWaitingLobby.open(gameWorld, context.getConfig().playerConfig, builder -> {
                     builder.on(RequestStartListener.EVENT, waiting::requestStart);
-                    builder.on(OfferPlayerListener.EVENT, waiting::offerPlayer);
-
                     builder.on(PlayerAddListener.EVENT, waiting::addPlayer);
                     builder.on(PlayerDeathListener.EVENT, waiting::onPlayerDeath);
                 });
@@ -66,22 +58,8 @@ public class MODCLASSWaiting {
         });
     }
 
-    private JoinResult offerPlayer(ServerPlayerEntity player) {
-        if (this.gameWorld.getPlayerCount() >= this.config.playerConfig.getMaxPlayers()) {
-            return JoinResult.gameFull();
-        }
-
-        return JoinResult.ok();
-    }
-
     private StartResult requestStart() {
-        PlayerConfig playerConfig = this.config.playerConfig;
-        if (this.gameWorld.getPlayerCount() < playerConfig.getMinPlayers()) {
-            return StartResult.NOT_ENOUGH_PLAYERS;
-        }
-
         MODCLASSActive.open(this.gameWorld, this.map, this.config);
-
         return StartResult.OK;
     }
 
