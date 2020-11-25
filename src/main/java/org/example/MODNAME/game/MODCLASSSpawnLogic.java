@@ -1,7 +1,7 @@
 package org.example.MODNAME.game;
 
 import net.minecraft.util.math.Vec3d;
-import xyz.nucleoid.plasmid.game.GameWorld;
+import xyz.nucleoid.plasmid.game.GameSpace;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.server.network.ServerPlayerEntity;
@@ -13,11 +13,11 @@ import org.example.MODNAME.MODCLASS;
 import org.example.MODNAME.game.map.MODCLASSMap;
 
 public class MODCLASSSpawnLogic {
-    private final GameWorld gameWorld;
+    private final GameSpace gameSpace;
     private final MODCLASSMap map;
 
-    public MODCLASSSpawnLogic(GameWorld gameWorld, MODCLASSMap map) {
-        this.gameWorld = gameWorld;
+    public MODCLASSSpawnLogic(GameSpace gameSpace, MODCLASSMap map) {
+        this.gameSpace = gameSpace;
         this.map = map;
     }
 
@@ -36,7 +36,7 @@ public class MODCLASSSpawnLogic {
     }
 
     public void spawnPlayer(ServerPlayerEntity player) {
-        ServerWorld world = this.gameWorld.getWorld();
+        ServerWorld world = this.gameSpace.getWorld();
 
         BlockPos pos = this.map.spawn;
         if (pos == null) {

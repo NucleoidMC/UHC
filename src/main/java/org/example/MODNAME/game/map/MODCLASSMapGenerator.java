@@ -1,6 +1,6 @@
 package org.example.MODNAME.game.map;
 
-import xyz.nucleoid.plasmid.game.map.template.MapTemplate;
+import xyz.nucleoid.plasmid.map.template.MapTemplate;
 import xyz.nucleoid.plasmid.util.BlockBounds;
 import net.minecraft.block.Blocks;
 import net.minecraft.util.Util;
@@ -17,11 +17,7 @@ public class MODCLASSMapGenerator {
         this.config = config;
     }
 
-    public CompletableFuture<MODCLASSMap> create() {
-        return CompletableFuture.supplyAsync(this::build, Util.getMainWorkerExecutor());
-    }
-
-    private MODCLASSMap build() {
+    public MODCLASSMap build() {
         MapTemplate template = MapTemplate.createEmpty();
         MODCLASSMap map = new MODCLASSMap(template, this.config);
 

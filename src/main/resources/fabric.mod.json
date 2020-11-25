@@ -17,7 +17,7 @@
   "depends": {
     "fabricloader": ">=0.9.1",
     "fabric": "*",
-    "minecraft": "1.16.2",
-    "plasmid": "0.3.x"
+    "minecraft": "1.16.4",
+    "plasmid": "0.4.x"
   }
 }

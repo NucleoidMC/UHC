@@ -26,7 +26,7 @@ dependencies {
     modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
 
     // Plasmid
-    modImplementation "xyz.nucleoid:plasmid:0.3.4"
+    modImplementation "xyz.nucleoid:plasmid:${project.plasmid_version}"
 
     modRuntime("com.github.SuperCoder7979:databreaker:0.2.6") {
         exclude module: "fabric-loader"
