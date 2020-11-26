@@ -6,6 +6,7 @@ import net.minecraft.sound.SoundCategory;
 import xyz.nucleoid.plasmid.game.GameSpace;
 import xyz.nucleoid.plasmid.game.player.PlayerSet;
 import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.network.packet.s2c.play.PlayerPositionLookS2CPacket.Flag;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.LiteralText;
 import net.minecraft.util.Formatting;
@@ -75,7 +76,18 @@ public class MODCLASSStageManager {
                     state.lastPos = player.getPos();
                 }
 
-                player.teleport(state.lastPos.x, state.lastPos.y, state.lastPos.z);
+                double destX = state.lastPos.x;
+                double destY = state.lastPos.y;
+                double destZ = state.lastPos.z;
+
+                // Set X and Y as relative so it will send 0 change when we pass yaw (yaw - yaw = 0) and pitch
+                Set<Flag> flags = new HashSet<>();
+                flags.add(Flag.X_ROT);
+                flags.add(Flag.Y_ROT);
+
+                // Teleport without changing the pitch and yaw
+                player.networkHandler.teleportRequest(destX, destY, destZ, player.yaw, player.pitch, flags);
+                player.updatePosition(destX, destY, destZ);
             }
         }
 
