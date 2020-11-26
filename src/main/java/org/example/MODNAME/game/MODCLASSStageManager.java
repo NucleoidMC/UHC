@@ -1,5 +1,6 @@
 package org.example.MODNAME.game;
 
+import com.google.common.collect.ImmutableSet;
 import it.unimi.dsi.fastutil.objects.Object2ObjectMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import net.minecraft.sound.SoundCategory;
@@ -81,13 +82,10 @@ public class MODCLASSStageManager {
                 double destZ = state.lastPos.z;
 
                 // Set X and Y as relative so it will send 0 change when we pass yaw (yaw - yaw = 0) and pitch
-                Set<Flag> flags = new HashSet<>();
-                flags.add(Flag.X_ROT);
-                flags.add(Flag.Y_ROT);
+                Set<Flag> flags = ImmutableSet.of(Flag.X_ROT, Flag.Y_ROT);
 
                 // Teleport without changing the pitch and yaw
                 player.networkHandler.teleportRequest(destX, destY, destZ, player.yaw, player.pitch, flags);
-                player.updatePosition(destX, destY, destZ);
             }
         }
 
