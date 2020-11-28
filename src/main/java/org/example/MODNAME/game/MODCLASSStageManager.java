@@ -71,7 +71,7 @@ public class MODCLASSStageManager {
                     continue;
                 }
 
-                FrozenPlayer state = this.frozen.getOrDefault(player, new FrozenPlayer());
+                FrozenPlayer state = this.frozen.computeIfAbsent(player, p -> new FrozenPlayer());
 
                 if (state.lastPos == null) {
                     state.lastPos = player.getPos();
