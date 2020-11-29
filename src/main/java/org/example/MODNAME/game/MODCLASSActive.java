@@ -59,7 +59,7 @@ public class MODCLASSActive {
                     .map(PlayerRef::of)
                     .collect(Collectors.toSet());
             GlobalWidgets widgets = new GlobalWidgets(game);
-            MODCLASSActive active = new MODCLASSActive(gameSpace, map, config, participants);
+            MODCLASSActive active = new MODCLASSActive(gameSpace, map, widgets, config, participants);
 
             game.setRule(GameRule.CRAFTING, RuleResult.DENY);
             game.setRule(GameRule.PORTALS, RuleResult.DENY);
@@ -95,7 +95,6 @@ public class MODCLASSActive {
     }
 
     private void onClose() {
-        this.timerBar.close();
         // TODO teardown logic
     }
 
@@ -103,12 +102,10 @@ public class MODCLASSActive {
         if (!this.participants.containsKey(PlayerRef.of(player))) {
             this.spawnSpectator(player);
         }
-        this.timerBar.addPlayer(player);
     }
 
     private void removePlayer(ServerPlayerEntity player) {
         this.participants.remove(PlayerRef.of(player));
-        this.timerBar.removePlayer(player);
     }
 
     private ActionResult onPlayerDamage(ServerPlayerEntity player, DamageSource source, float amount) {

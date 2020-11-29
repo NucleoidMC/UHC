@@ -1,12 +1,12 @@
 package org.example.MODNAME.game;
 
+import net.minecraft.entity.boss.BossBar;
 import xyz.nucleoid.plasmid.widget.BossBarWidget;
 import xyz.nucleoid.plasmid.widget.GlobalWidgets;
-import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.LiteralText;
 import net.minecraft.text.Text;
 
-public final class MODCLASSTimerBar implements AutoCloseable {
+public final class MODCLASSTimerBar {
     private final BossBarWidget widget;
 
     public MODCLASSTimerBar(GlobalWidgets widgets) {

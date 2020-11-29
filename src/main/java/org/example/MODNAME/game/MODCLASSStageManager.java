@@ -14,6 +14,8 @@ import net.minecraft.util.Formatting;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.GameMode;
 
+import java.util.Set;
+
 public class MODCLASSStageManager {
     private long closeTime = -1;
     public long finishTime = -1;
