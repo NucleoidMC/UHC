@@ -9,6 +9,7 @@ import xyz.nucleoid.plasmid.game.player.JoinResult;
 import xyz.nucleoid.plasmid.game.player.PlayerSet;
 import xyz.nucleoid.plasmid.game.rule.GameRule;
 import xyz.nucleoid.plasmid.game.rule.RuleResult;
+import xyz.nucleoid.plasmid.widget.GlobalWidgets;
 import xyz.nucleoid.plasmid.util.PlayerRef;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.server.network.ServerPlayerEntity;
@@ -36,7 +37,7 @@ public class MODCLASSActive {
     private final boolean ignoreWinState;
     private final MODCLASSTimerBar timerBar;
 
-    private MODCLASSActive(GameSpace gameSpace, MODCLASSMap map, MODCLASSConfig config, Set<PlayerRef> participants) {
+    private MODCLASSActive(GameSpace gameSpace, MODCLASSMap map, GlobalWidgets widgets, MODCLASSConfig config, Set<PlayerRef> participants) {
         this.gameSpace = gameSpace;
         this.config = config;
         this.gameMap = map;
@@ -49,7 +50,7 @@ public class MODCLASSActive {
 
         this.stageManager = new MODCLASSStageManager();
         this.ignoreWinState = this.participants.size() <= 1;
-        this.timerBar = new MODCLASSTimerBar();
+        this.timerBar = new MODCLASSTimerBar(widgets);
     }
 
     public static void open(GameSpace gameSpace, MODCLASSMap map, MODCLASSConfig config) {
@@ -57,6 +58,7 @@ public class MODCLASSActive {
             Set<PlayerRef> participants = gameSpace.getPlayers().stream()
                     .map(PlayerRef::of)
                     .collect(Collectors.toSet());
+            GlobalWidgets widgets = new GlobalWidgets(game);
             MODCLASSActive active = new MODCLASSActive(gameSpace, map, config, participants);
 
             game.setRule(GameRule.CRAFTING, RuleResult.DENY);
