@@ -1,4 +1,4 @@
-package org.example.MODNAME.game;
+package com.hugman.uhc.game;
 
 import net.minecraft.util.math.Vec3d;
 import xyz.nucleoid.plasmid.game.GameSpace;
@@ -9,14 +9,14 @@ import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.GameMode;
-import org.example.MODNAME.MODCLASS;
-import org.example.MODNAME.game.map.MODCLASSMap;
+import com.hugman.uhc.UHC;
+import com.hugman.uhc.game.map.UHCMap;
 
-public class MODCLASSSpawnLogic {
+public class UHCSpawnLogic {
     private final GameSpace gameSpace;
-    private final MODCLASSMap map;
+    private final UHCMap map;
 
-    public MODCLASSSpawnLogic(GameSpace gameSpace, MODCLASSMap map) {
+    public UHCSpawnLogic(GameSpace gameSpace, UHCMap map) {
         this.gameSpace = gameSpace;
         this.map = map;
     }
@@ -40,7 +40,7 @@ public class MODCLASSSpawnLogic {
 
         BlockPos pos = this.map.spawn;
         if (pos == null) {
-            MODCLASS.LOGGER.error("Cannot spawn player! No spawn is defined in the map!");
+            UHC.LOGGER.error("Cannot spawn player! No spawn is defined in the map!");
             return;
         }
 

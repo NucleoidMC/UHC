@@ -1,4 +1,4 @@
-package org.example.MODNAME.game.map;
+package com.hugman.uhc.game.map;
 
 import net.minecraft.server.MinecraftServer;
 import xyz.nucleoid.plasmid.map.template.MapTemplate;
@@ -6,12 +6,12 @@ import xyz.nucleoid.plasmid.map.template.TemplateChunkGenerator;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.gen.chunk.ChunkGenerator;
 
-public class MODCLASSMap {
+public class UHCMap {
     private final MapTemplate template;
-    private final MODCLASSMapConfig config;
+    private final UHCMapConfig config;
     public BlockPos spawn;
 
-    public MODCLASSMap(MapTemplate template, MODCLASSMapConfig config) {
+    public UHCMap(MapTemplate template, UHCMapConfig config) {
         this.template = template;
         this.config = config;
     }

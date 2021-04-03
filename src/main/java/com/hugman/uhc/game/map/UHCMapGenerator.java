@@ -1,25 +1,25 @@
-package org.example.MODNAME.game.map;
+package com.hugman.uhc.game.map;
 
 import xyz.nucleoid.plasmid.map.template.MapTemplate;
 import xyz.nucleoid.plasmid.util.BlockBounds;
 import net.minecraft.block.Blocks;
 import net.minecraft.util.Util;
 import net.minecraft.util.math.BlockPos;
-import org.example.MODNAME.game.MODCLASSConfig;
+import com.hugman.uhc.game.UHCConfig;
 
 import java.util.concurrent.CompletableFuture;
 
-public class MODCLASSMapGenerator {
+public class UHCMapGenerator {
 
-    private final MODCLASSMapConfig config;
+    private final UHCMapConfig config;
 
-    public MODCLASSMapGenerator(MODCLASSMapConfig config) {
+    public UHCMapGenerator(UHCMapConfig config) {
         this.config = config;
     }
 
-    public MODCLASSMap build() {
+    public UHCMap build() {
         MapTemplate template = MapTemplate.createEmpty();
-        MODCLASSMap map = new MODCLASSMap(template, this.config);
+        UHCMap map = new UHCMap(template, this.config);
 
         this.buildSpawn(template);
         map.spawn = new BlockPos(0,65,0);

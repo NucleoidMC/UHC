@@ -1,17 +1,17 @@
 {
   "schemaVersion": 1,
-  "id": "MODNAME",
+  "id": "uhc",
   "version": "${version}",
-  "name": "MODNAME_PRETTY",
-  "description": "DESCRIPTION",
+  "name": "UHC",
+  "description": "Open source Fabric implementation of the UHC minigame",
   "authors": [
-    "AUTHOR"
+    "Hugman"
   ],
-  "license": "LICENSE",
+  "license": "MIT",
   "environment": "*",
   "entrypoints": {
     "main": [
-      "PACKAGE.MODCLASS"
+      "com.hugman.uhc.UHC"
     ]
   },
   "depends": {

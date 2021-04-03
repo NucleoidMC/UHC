@@ -1,4 +1,4 @@
-package org.example.MODNAME.game;
+package com.hugman.uhc.game;
 
 import com.google.common.collect.ImmutableSet;
 import it.unimi.dsi.fastutil.objects.Object2ObjectMap;
@@ -16,18 +16,18 @@ import net.minecraft.world.GameMode;
 
 import java.util.Set;
 
-public class MODCLASSStageManager {
+public class UHCStageManager {
     private long closeTime = -1;
     public long finishTime = -1;
     private long startTime = -1;
     private final Object2ObjectMap<ServerPlayerEntity, FrozenPlayer> frozen;
     private boolean setSpectator = false;
 
-    public MODCLASSStageManager() {
+    public UHCStageManager() {
         this.frozen = new Object2ObjectOpenHashMap<>();
     }
 
-    public void onOpen(long time, MODCLASSConfig config) {
+    public void onOpen(long time, UHCConfig config) {
         this.startTime = time - (time % 20) + (4 * 20) + 19;
         this.finishTime = this.startTime + (config.timeLimitSecs * 20);
     }
