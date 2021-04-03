@@ -1,24 +1,22 @@
 package com.hugman.uhc;
 
+import com.hugman.uhc.config.UHCConfig;
+import com.hugman.uhc.game.phase.UHCWaiting;
 import net.fabricmc.api.ModInitializer;
-import xyz.nucleoid.plasmid.game.GameType;
 import net.minecraft.util.Identifier;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import com.hugman.uhc.game.UHCConfig;
-import com.hugman.uhc.game.UHCWaiting;
+import xyz.nucleoid.plasmid.game.GameType;
 
 public class UHC implements ModInitializer {
+	public static final Logger LOGGER = LogManager.getLogger("uhc");
 
-    public static final String ID = "uhc";
-    public static final Logger LOGGER = LogManager.getLogger(ID);
-
-    public static final GameType<UHCConfig> TYPE = GameType.register(
-            new Identifier(ID, "uhc"),
-            UHCWaiting::open,
-            UHCConfig.CODEC
-    );
-
-    @Override
-    public void onInitialize() {}
+	@Override
+	public void onInitialize() {
+		GameType.register(
+			new Identifier("uhc", "standard"),
+			UHCWaiting::open,
+			UHCConfig.CODEC
+		);
+	}
 }
