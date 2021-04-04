@@ -10,11 +10,19 @@ public class UHCConfig {
 			UHCMapConfig.CODEC.fieldOf("map").forGetter(config -> config.mapConfig)
 	).apply(instance, UHCConfig::new));
 
-	public final PlayerConfig playerConfig;
-	public final UHCMapConfig mapConfig;
+	private final PlayerConfig playerConfig;
+	private final UHCMapConfig mapConfig;
 
 	public UHCConfig(PlayerConfig players, UHCMapConfig mapConfig) {
 		this.playerConfig = players;
 		this.mapConfig = mapConfig;
+	}
+
+	public PlayerConfig getPlayerConfig() {
+		return playerConfig;
+	}
+
+	public UHCMapConfig getMapConfig() {
+		return mapConfig;
 	}
 }

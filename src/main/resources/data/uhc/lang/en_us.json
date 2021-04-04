@@ -1,0 +1,12 @@
+{
+	"game.uhc.uhc": "UHC",
+	"game.uhc.standard": "UHC: Standard",
+	"text.uhc.bar.fight": "Fight!!",
+	"text.uhc.bar.starting": "Dropping in %s...",
+	"text.uhc.bar.worldborder_safe": "Worldborder safe! Shrinking in %s...",
+	"text.uhc.bar.worldborder_shrinking": "Worldborder shrinking! Finished in %s...",
+	"text.uhc.last_one_wins": "Last one standing wins!",
+	"text.uhc.player_eliminated": "%s has been eliminated!",
+	"text.uhc.player_win": "%s has won!",
+	"text.uhc.worldborder_started_shrinking": "The worldborder has started shrinking!"
+}
