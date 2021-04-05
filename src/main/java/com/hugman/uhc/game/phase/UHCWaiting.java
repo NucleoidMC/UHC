@@ -31,10 +31,10 @@ public class UHCWaiting {
 	}
 
 	public static GameOpenProcedure open(GameOpenContext<UHCConfig> context) {
-		UHCMap map = new UHCMap();
+		UHCMap map = new UHCMap(context.getConfig().getMapConfig());
 
 		BubbleWorldConfig worldConfig = new BubbleWorldConfig()
-				.setGenerator(map.getChunkGenerator(context.getServer(), context.getConfig().getMapConfig()))
+				.setGenerator(map.getChunkGenerator(context.getServer()))
 				.setSpawner(BubbleWorldSpawner.atSurface(0, 0))
 				.setDefaultGameMode(GameMode.ADVENTURE)
 				.setGameRule(GameRules.NATURAL_REGENERATION, false)

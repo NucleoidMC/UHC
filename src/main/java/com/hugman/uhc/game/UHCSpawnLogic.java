@@ -1,10 +1,10 @@
 package com.hugman.uhc.game;
 
 import com.hugman.uhc.config.UHCConfig;
+import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ChunkTicketType;
-import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
 import net.minecraft.world.GameMode;
@@ -42,34 +42,35 @@ public final class UHCSpawnLogic {
 		this.spawnPlayerAt(player, this.getSurfaceBlock(0, 0));
 	}
 
-	public void putParticipantInCageAt(ServerPlayerEntity player, int x, int z) {
-		BlockPos pos = new BlockPos(x, 200, z);
-		ServerWorld world = this.gameSpace.getWorld();
-		BlockBounds cage = new BlockBounds(pos.down().north(3).east(3), pos.up(4).south(3).west(3));
-		cage.forEach(pos1 -> world.setBlockState(pos1, Blocks.GLASS.getDefaultState()));
-		BlockBounds cageAir = new BlockBounds(pos.north(2).east(2), pos.up(3).south(2).west(2));
-		cageAir.forEach(pos1 -> world.setBlockState(pos1, Blocks.AIR.getDefaultState()));
-		blockBounds.add(cage);
+	public void spawnPlayerAt(ServerPlayerEntity player, BlockPos pos) {
+		ChunkPos chunkPos = new ChunkPos(pos.getX() >> 4, pos.getZ() >> 4);
+		this.gameSpace.getWorld().getChunkManager().addTicket(ChunkTicketType.POST_TELEPORT, chunkPos, 1, player.getEntityId());
+		player.teleport(this.gameSpace.getWorld(), pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, 0.0F, 0.0F);
+	}
+
+	public void summonPlayerInCageAt(ServerPlayerEntity player, int x, int z) {
+		BlockPos pos = getSurfaceBlock(x, z);
+		if(this.gameSpace.getWorld().isSkyVisible(pos)) {
+			pos = new BlockPos(x, 200, z);
+		}
+		this.addCageAt(pos, Blocks.BARRIER.getDefaultState());
 		this.spawnPlayerAt(player, pos);
 	}
 
-	public void clearCages() {
-		ServerWorld world = this.gameSpace.getWorld();
-		this.blockBounds.forEach(bounds -> bounds.forEach(pos -> world.setBlockState(pos, Blocks.AIR.getDefaultState())));
+	public void addCageAt(BlockPos pos, BlockState state) {
+		BlockBounds cage = new BlockBounds(pos.down().north(3).east(3), pos.up(4).south(3).west(3));
+		cage.forEach(pos1 -> this.gameSpace.getWorld().setBlockState(pos1, state));
+		BlockBounds cageAir = new BlockBounds(pos.north(2).east(2), pos.up(3).south(2).west(2));
+		cageAir.forEach(pos1 -> this.gameSpace.getWorld().setBlockState(pos1, Blocks.AIR.getDefaultState()));
+		this.blockBounds.add(cage);
 	}
 
-	public void spawnPlayerAt(ServerPlayerEntity player, BlockPos pos) {
-		ServerWorld world = this.gameSpace.getWorld();
-		ChunkPos chunkPos = new ChunkPos(pos.getX() >> 4, pos.getZ() >> 4);
-		world.getChunkManager().addTicket(ChunkTicketType.POST_TELEPORT, chunkPos, 1, player.getEntityId());
-		player.teleport(world, pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, 0.0F, 0.0F);
+	public void clearCages() {
+		this.blockBounds.forEach(bounds -> bounds.forEach(pos -> this.gameSpace.getWorld().setBlockState(pos, Blocks.AIR.getDefaultState())));
 	}
 
 	public BlockPos getSurfaceBlock(int x, int z) {
-		ServerWorld world = this.gameSpace.getWorld();
-
-		ChunkPos chunkPos = new ChunkPos(x >> 4, z >> 4);
-		WorldChunk chunk = world.getChunk(chunkPos.x, chunkPos.z);
+		WorldChunk chunk = this.gameSpace.getWorld().getWorldChunk(new BlockPos(x, 0, z));
 
 		return new BlockPos(x, chunk.sampleHeightmap(Heightmap.Type.MOTION_BLOCKING_NO_LEAVES, x, z) + 1, z);
 	}

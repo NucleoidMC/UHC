@@ -1,0 +1,12 @@
+{
+	"type": "uhc:uhc",
+	"translation": "game.uhc.nether",
+	"map": {
+		"dimension": "minecraft:the_nether",
+		"settings": "minecraft:nether"
+	},
+	"players": {
+		"min": 1,
+		"max": 100
+	}
+}

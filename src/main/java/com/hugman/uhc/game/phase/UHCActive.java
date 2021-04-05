@@ -114,7 +114,8 @@ public class UHCActive {
 			int z = MathHelper.floor(Math.sin(theta) * this.sizeLogic.getMapMaxSize() / 2 - 100);
 
 			this.spawnLogic.resetPlayer(player, GameMode.ADVENTURE);
-			this.spawnLogic.putParticipantInCageAt(player, x, z);
+
+			this.spawnLogic.summonPlayerInCageAt(player, x, z);
 		}
 	}
 
