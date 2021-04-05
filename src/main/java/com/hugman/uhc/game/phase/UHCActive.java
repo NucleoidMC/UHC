@@ -50,7 +50,7 @@ public class UHCActive {
 	private final UHCSpawnLogic spawnLogic;
 	private final UHCBar bar;
 
-	private final int invulnerabilityTime = 12000;
+	private final int invulnerabilityTime = 200;
 	private final long startingTime = 300L;
 	private long startTime;
 	private long shrinkStartTime;
@@ -142,9 +142,9 @@ public class UHCActive {
 		else if(world.getTime() == startTime) {
 			this.spawnLogic.clearCages();
 			this.participants.forEach(player -> {
+				this.spawnLogic.resetPlayer(player, GameMode.SURVIVAL);
 				player.addStatusEffect(new StatusEffectInstance(StatusEffects.RESISTANCE, this.invulnerabilityTime, 127, true, false));
 				player.addStatusEffect(new StatusEffectInstance(StatusEffects.SATURATION, this.invulnerabilityTime, 127, true, false));
-				this.spawnLogic.resetPlayer(player, GameMode.SURVIVAL);
 			});
 		}
 
