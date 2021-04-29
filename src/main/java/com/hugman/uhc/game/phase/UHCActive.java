@@ -23,7 +23,6 @@ import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.GameMode;
 import xyz.nucleoid.plasmid.game.GameCloseReason;
 import xyz.nucleoid.plasmid.game.GameSpace;
-import xyz.nucleoid.plasmid.game.event.BreakBlockListener;
 import xyz.nucleoid.plasmid.game.event.GameCloseListener;
 import xyz.nucleoid.plasmid.game.event.GameOpenListener;
 import xyz.nucleoid.plasmid.game.event.GameTickListener;
@@ -90,8 +89,9 @@ public class UHCActive {
 
 			game.on(GameTickListener.EVENT, active::tick);
 
-			game.on(BreakBlockListener.EVENT, active::onBreakBlock);
 			game.on(PlayerDeathListener.EVENT, active::onPlayerDeath);
+
+			config.getModifiers().forEach(modifier -> modifier.init(game));
 		});
 	}
 
@@ -223,33 +223,5 @@ public class UHCActive {
 	private void spawnSpectator(ServerPlayerEntity player) {
 		this.spawnLogic.resetPlayer(player, GameMode.SPECTATOR);
 		this.spawnLogic.spawnPlayerAtCenter(player);
-	}
-
-	private ActionResult onBreakBlock(ServerPlayerEntity player, BlockPos pos) {
-		// TODO: custom loots
-
-		ServerWorld world = player.getServerWorld();
-		BlockState state = world.getBlockState(pos);
-
-		return ActionResult.PASS;
-	}
-
-	// TODO: use for faster gamemodes
-	private void findLogs(ServerWorld world, BlockPos pos, Set<BlockPos> logs) {
-		for(int x = -1; x <= 1; x++) {
-			for(int z = -1; z <= 1; z++) {
-				for(int y = -1; y <= 1; y++) {
-					BlockPos local = pos.add(x, y, z);
-					BlockState state = world.getBlockState(local);
-
-					if(!logs.contains(local)) {
-						if(state.isIn(BlockTags.LOGS)) {
-							logs.add(local);
-							findLogs(world, local, logs);
-						}
-					}
-				}
-			}
-		}
 	}
 }
