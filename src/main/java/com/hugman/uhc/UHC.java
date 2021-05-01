@@ -1,8 +1,8 @@
 package com.hugman.uhc;
 
 import com.hugman.uhc.config.UHCConfig;
-import com.hugman.uhc.module.ConfiguredModules;
 import com.hugman.uhc.module.Modules;
+import com.hugman.uhc.module.piece.ModulePieces;
 import com.hugman.uhc.game.phase.UHCWaiting;
 import net.fabricmc.api.ModInitializer;
 import net.minecraft.util.Identifier;
@@ -20,8 +20,8 @@ public class UHC implements ModInitializer {
 
 	@Override
 	public void onInitialize() {
+		ModulePieces.register();
 		Modules.register();
-		ConfiguredModules.register();
 		GameType.register(UHC.id("uhc"), UHCWaiting::open, UHCConfig.CODEC);
 	}
 }

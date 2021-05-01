@@ -1,7 +1,9 @@
 {
 	"game.uhc.uhc": "UHC",
-	"game.uhc.standard": "UHC: Standard",
+	"game.uhc.standard": "UHC",
+	"module.uhc.tree_chopper": "Tree Chopper",
 	"text.uhc.bar.fight": "Fight!!",
+	"text.uhc.modules_enabled": "Modules enabled:",
 	"text.uhc.bar.starting": "Dropping in %s...",
 	"text.uhc.bar.worldborder_safe": "Worldborder safe! Shrinking in %s...",
 	"text.uhc.bar.worldborder_shrinking": "Worldborder shrinking! Finished in %s...",

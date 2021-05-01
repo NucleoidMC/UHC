@@ -1,0 +1,15 @@
+{
+	"translation": "module.uhc.tree_chopper",
+	"icon": {
+		"id": "minecraft:golden_axe"
+	},
+	"pieces": [
+		{
+			"type": "uhc:bucket_break",
+			"predicate": {
+				"predicate_type": "minecraft:tag_match",
+				"tag": "minecraft:logs"
+			}
+		}
+	]
+}

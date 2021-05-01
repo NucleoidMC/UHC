@@ -1,4 +1,4 @@
-package com.hugman.uhc.module;
+package com.hugman.uhc.module.piece;
 
 import com.hugman.uhc.util.BucketFind;
 import com.mojang.serialization.Codec;
@@ -13,22 +13,22 @@ import net.minecraft.util.math.BlockPos;
 import xyz.nucleoid.plasmid.game.GameLogic;
 import xyz.nucleoid.plasmid.game.event.BreakBlockListener;
 
-public class BucketBreakModule implements Module {
-	public static final Codec<BucketBreakModule> CODEC = RecordCodecBuilder.create(instance -> instance.group(
+public class BucketBreakModulePiece implements ModulePiece {
+	public static final Codec<BucketBreakModulePiece> CODEC = RecordCodecBuilder.create(instance -> instance.group(
 			RuleTest.field_25012.fieldOf("predicate").forGetter(module -> module.predicate),
 			Codec.intRange(0, Integer.MAX_VALUE).optionalFieldOf("depth", 64).forGetter(module -> module.depth)
-	).apply(instance, BucketBreakModule::new));
+	).apply(instance, BucketBreakModulePiece::new));
 
 	public final RuleTest predicate;
 	public final int depth;
 
-	public BucketBreakModule(RuleTest predicate, int depth) {
+	public BucketBreakModulePiece(RuleTest predicate, int depth) {
 		this.predicate = predicate;
 		this.depth = depth;
 	}
 
 	@Override
-	public Codec<? extends Module> getCodec() {
+	public Codec<? extends ModulePiece> getCodec() {
 		return CODEC;
 	}
 

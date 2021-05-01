@@ -5,6 +5,8 @@ import com.hugman.uhc.game.UHCBar;
 import com.hugman.uhc.game.UHCSizeLogic;
 import com.hugman.uhc.game.UHCSpawnLogic;
 import com.hugman.uhc.game.map.UHCMap;
+import com.hugman.uhc.module.Module;
+import com.hugman.uhc.module.Modules;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.effect.StatusEffects;
@@ -12,6 +14,9 @@ import net.minecraft.network.packet.s2c.play.WorldBorderS2CPacket;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundEvents;
+import net.minecraft.text.LiteralText;
+import net.minecraft.text.MutableText;
+import net.minecraft.text.Text;
 import net.minecraft.text.TranslatableText;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Formatting;
@@ -33,7 +38,10 @@ import xyz.nucleoid.plasmid.game.rule.GameRule;
 import xyz.nucleoid.plasmid.game.rule.RuleResult;
 import xyz.nucleoid.plasmid.widget.GlobalWidgets;
 
-public class UHCActive {
+import java.util.List;
+import java.util.stream.Collectors;
+
+public class UHCInGame {
 	public final GameSpace gameSpace;
 	private final UHCMap map;
 	private final UHCConfig config;
@@ -52,7 +60,7 @@ public class UHCActive {
 	private long gameCloseTick = Long.MAX_VALUE;
 	private boolean finished = false;
 
-	private UHCActive(GameSpace gameSpace, UHCMap map, UHCConfig config, PlayerSet participants, GlobalWidgets widgets) {
+	private UHCInGame(GameSpace gameSpace, UHCMap map, UHCConfig config, PlayerSet participants, GlobalWidgets widgets) {
 		this.gameSpace = gameSpace;
 		this.config = config;
 		this.map = map;
@@ -66,7 +74,7 @@ public class UHCActive {
 	public static void open(GameSpace gameSpace, UHCMap map, UHCConfig config) {
 		gameSpace.openGame(game -> {
 			GlobalWidgets widgets = new GlobalWidgets(game);
-			UHCActive active = new UHCActive(gameSpace, map, config, gameSpace.getPlayers(), widgets);
+			UHCInGame active = new UHCInGame(gameSpace, map, config, gameSpace.getPlayers(), widgets);
 
 			game.setRule(GameRule.CRAFTING, RuleResult.ALLOW);
 			game.setRule(GameRule.PORTALS, RuleResult.DENY);
@@ -86,7 +94,7 @@ public class UHCActive {
 
 			game.on(PlayerDeathListener.EVENT, active::onPlayerDeath);
 
-			config.getConfiguredModules().forEach(configuredModule -> configuredModule.getModule().init(game));
+			active.config.getModulesPieces().forEach(piece -> piece.init(game));
 		});
 	}
 
@@ -112,6 +120,11 @@ public class UHCActive {
 
 			this.spawnLogic.summonPlayerInCageAt(player, x, z);
 		}
+		if(!config.getModules().isEmpty()) {
+			MutableText text = new TranslatableText("text.uhc.modules_enabled").formatted(Formatting.AQUA);
+			config.getModules().forEach(module -> text.append("\n  - ").append(module.getName().formatted(Formatting.GREEN)));
+			gameSpace.getPlayers().sendMessage(text);
+		}
 	}
 
 	private void close() {
@@ -120,22 +133,15 @@ public class UHCActive {
 		}
 	}
 
-	private void addPlayer(ServerPlayerEntity player) {
-		player.networkHandler.sendPacket(new WorldBorderS2CPacket(this.gameSpace.getWorld().getWorldBorder(), WorldBorderS2CPacket.Type.INITIALIZE));
-		this.spawnSpectator(player);
-	}
-
-	private void removePlayer(ServerPlayerEntity player) {
-		this.eliminatePlayer(player);
-	}
-
 	private void tick() {
 		ServerWorld world = this.gameSpace.getWorld();
 
-		if(world.getTime() < startTime) {
-			this.bar.tickStarting(startTime - world.getTime(), this.startingTime);
+		// Players are in the cages
+		if(world.getTime() < this.startTime) {
+			this.bar.tickStarting(this.startTime - world.getTime(), this.startingTime);
 		}
-		else if(world.getTime() == startTime) {
+		// Players are dropping from the cage
+		else if(world.getTime() == this.startTime) {
 			this.spawnLogic.clearCages();
 			this.participants.forEach(player -> {
 				this.spawnLogic.resetPlayer(player, GameMode.SURVIVAL);
@@ -143,10 +149,10 @@ public class UHCActive {
 				player.addStatusEffect(new StatusEffectInstance(StatusEffects.SATURATION, this.invulnerabilityTime, 127, true, false));
 			});
 		}
-
+		// Players are in the map, world border is at max
 		else if(!this.borderShrinkStarted) {
 			long totalSafeTime = this.sizeLogic.getSafeSeconds() * 20L;
-			this.bar.tickSafe(totalSafeTime - (world.getTime() - startTime), totalSafeTime);
+			this.bar.tickSafe(totalSafeTime - (world.getTime() - this.startTime), totalSafeTime);
 
 			if((world.getTime() - startTime) > totalSafeTime) {
 				this.bar.setActive();
@@ -160,6 +166,7 @@ public class UHCActive {
 				}
 			}
 		}
+		// Players are in the map, world border is shrinking or finished
 		else {
 			long totalShrinkTime = this.sizeLogic.getShrinkingSeconds() * 20L;
 
@@ -181,6 +188,15 @@ public class UHCActive {
 		if(world.getTime() > this.gameCloseTick) {
 			this.gameSpace.close(GameCloseReason.FINISHED);
 		}
+	}
+
+	private void addPlayer(ServerPlayerEntity player) {
+		player.networkHandler.sendPacket(new WorldBorderS2CPacket(this.gameSpace.getWorld().getWorldBorder(), WorldBorderS2CPacket.Type.INITIALIZE));
+		this.spawnSpectator(player);
+	}
+
+	private void removePlayer(ServerPlayerEntity player) {
+		this.eliminatePlayer(player);
 	}
 
 	private ActionResult onPlayerDeath(ServerPlayerEntity player, DamageSource source) {

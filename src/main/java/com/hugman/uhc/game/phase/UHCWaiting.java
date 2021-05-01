@@ -18,6 +18,8 @@ import xyz.nucleoid.plasmid.game.GameWaitingLobby;
 import xyz.nucleoid.plasmid.game.StartResult;
 import xyz.nucleoid.plasmid.game.event.PlayerDeathListener;
 import xyz.nucleoid.plasmid.game.event.RequestStartListener;
+import xyz.nucleoid.plasmid.game.rule.GameRule;
+import xyz.nucleoid.plasmid.game.rule.RuleResult;
 
 public class UHCWaiting {
 	private final GameSpace gameSpace;
@@ -50,7 +52,7 @@ public class UHCWaiting {
 	}
 
 	private StartResult requestStart() {
-		UHCActive.open(this.gameSpace, this.map, this.config);
+		UHCInGame.open(this.gameSpace, this.map, this.config);
 		return StartResult.OK;
 	}
 
