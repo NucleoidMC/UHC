@@ -11,7 +11,9 @@ public class Modules {
 	public static final Codec<Module> CODEC = REGISTRY.dispatchStable(Module::getCodec, Function.identity());
 
 	public static void register() {
+		register("bucket_break", BucketBreakModule.CODEC);
 	}
+
 	private static void register(String identifier, Codec<? extends Module> codec) {
 		REGISTRY.register(UHC.id(identifier), codec);
 	}
