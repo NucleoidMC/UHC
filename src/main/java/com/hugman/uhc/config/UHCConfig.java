@@ -17,18 +17,21 @@ public class UHCConfig {
 	public static final Codec<UHCConfig> CODEC = RecordCodecBuilder.create(instance -> instance.group(
 			PlayerConfig.CODEC.fieldOf("players").forGetter(config -> config.playerConfig),
 			UHCMapConfig.CODEC.fieldOf("map").forGetter(config -> config.mapConfig),
+			UHCTimeConfig.CODEC.fieldOf("time").forGetter(config -> config.timeConfig),
 			Identifier.CODEC.listOf().optionalFieldOf("modules", Collections.emptyList()).forGetter(config -> config.modulesIds)
 	).apply(instance, UHCConfig::new));
 
 	private final PlayerConfig playerConfig;
 	private final UHCMapConfig mapConfig;
+	private final UHCTimeConfig timeConfig;
 	private final List<Identifier> modulesIds;
 	private final List<Module> modules;
 	private final List<ModulePiece> modulesPieces;
 
-	public UHCConfig(PlayerConfig players, UHCMapConfig mapConfig, List<Identifier> modulesIds) {
+	public UHCConfig(PlayerConfig players, UHCMapConfig mapConfig, UHCTimeConfig timeConfig, List<Identifier> modulesIds) {
 		this.playerConfig = players;
 		this.mapConfig = mapConfig;
+		this.timeConfig = timeConfig;
 		this.modulesIds = modulesIds;
 		this.modules = modulesIds.stream().map(Modules::get).collect(Collectors.toList());
 		this.modulesPieces = new ArrayList<>();
@@ -41,6 +44,10 @@ public class UHCConfig {
 
 	public UHCMapConfig getMapConfig() {
 		return mapConfig;
+	}
+
+	public UHCTimeConfig getTimeConfig() {
+		return timeConfig;
 	}
 
 	public List<Module> getModules() {

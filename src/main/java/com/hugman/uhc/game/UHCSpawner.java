@@ -16,12 +16,12 @@ import xyz.nucleoid.plasmid.util.BlockBounds;
 import java.util.ArrayList;
 import java.util.List;
 
-public final class UHCSpawnLogic {
+public final class UHCSpawner {
 	private final GameSpace gameSpace;
 	private final UHCConfig config;
 	private final List<BlockBounds> blockBounds = new ArrayList<>();
 
-	public UHCSpawnLogic(GameSpace gameSpace, UHCConfig config) {
+	public UHCSpawner(GameSpace gameSpace, UHCConfig config) {
 		this.gameSpace = gameSpace;
 		this.config = config;
 	}

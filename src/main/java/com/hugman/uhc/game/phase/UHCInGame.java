@@ -2,11 +2,9 @@ package com.hugman.uhc.game.phase;
 
 import com.hugman.uhc.config.UHCConfig;
 import com.hugman.uhc.game.UHCBar;
-import com.hugman.uhc.game.UHCSizeLogic;
-import com.hugman.uhc.game.UHCSpawnLogic;
+import com.hugman.uhc.game.UHCSpawner;
+import com.hugman.uhc.game.UHCLogic;
 import com.hugman.uhc.game.map.UHCMap;
-import com.hugman.uhc.module.Module;
-import com.hugman.uhc.module.Modules;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.effect.StatusEffects;
@@ -14,9 +12,7 @@ import net.minecraft.network.packet.s2c.play.WorldBorderS2CPacket;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundEvents;
-import net.minecraft.text.LiteralText;
 import net.minecraft.text.MutableText;
-import net.minecraft.text.Text;
 import net.minecraft.text.TranslatableText;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Formatting;
@@ -38,9 +34,6 @@ import xyz.nucleoid.plasmid.game.rule.GameRule;
 import xyz.nucleoid.plasmid.game.rule.RuleResult;
 import xyz.nucleoid.plasmid.widget.GlobalWidgets;
 
-import java.util.List;
-import java.util.stream.Collectors;
-
 public class UHCInGame {
 	public final GameSpace gameSpace;
 	private final UHCMap map;
@@ -48,13 +41,11 @@ public class UHCInGame {
 
 	private final PlayerSet participants;
 
-	private final UHCSizeLogic sizeLogic;
-	private final UHCSpawnLogic spawnLogic;
+	private final UHCLogic logic;
+	private final UHCSpawner spawnLogic;
 	private final UHCBar bar;
 
-	private final int invulnerabilityTime = 200;
-	private final long startingTime = 300L;
-	private long startTime;
+	private long cageDropTime;
 	private long shrinkStartTime;
 	private boolean borderShrinkStarted = false;
 	private long gameCloseTick = Long.MAX_VALUE;
@@ -62,12 +53,13 @@ public class UHCInGame {
 
 	private UHCInGame(GameSpace gameSpace, UHCMap map, UHCConfig config, PlayerSet participants, GlobalWidgets widgets) {
 		this.gameSpace = gameSpace;
-		this.config = config;
 		this.map = map;
+		this.config = config;
+
 		this.participants = participants;
 
-		this.sizeLogic = new UHCSizeLogic(participants.size());
-		this.spawnLogic = new UHCSpawnLogic(gameSpace, config);
+		this.logic = new UHCLogic(config, participants.size());
+		this.spawnLogic = new UHCSpawner(gameSpace, config);
 		this.bar = UHCBar.create(widgets);
 	}
 
@@ -102,9 +94,9 @@ public class UHCInGame {
 		ServerWorld world = this.gameSpace.getWorld();
 
 		world.getWorldBorder().setCenter(0, 0);
-		world.getWorldBorder().setSize(this.sizeLogic.getMapMaxSize());
+		world.getWorldBorder().setSize(this.logic.getMapMaxSize());
 		world.getWorldBorder().setDamagePerBlock(0.5);
-		this.startTime = world.getTime() + this.startingTime;
+		this.cageDropTime = world.getTime() + this.logic.getInCagesTime();
 
 		int index = 0;
 
@@ -113,8 +105,8 @@ public class UHCInGame {
 
 			double theta = ((double) index++ / this.participants.size()) * 2 * Math.PI;
 
-			int x = MathHelper.floor(Math.cos(theta) * this.sizeLogic.getMapMaxSize() / 2 - 100);
-			int z = MathHelper.floor(Math.sin(theta) * this.sizeLogic.getMapMaxSize() / 2 - 100);
+			int x = MathHelper.floor(Math.cos(theta) * this.logic.getMapMaxSize() / 2 - 100);
+			int z = MathHelper.floor(Math.sin(theta) * this.logic.getMapMaxSize() / 2 - 100);
 
 			this.spawnLogic.resetPlayer(player, GameMode.ADVENTURE);
 
@@ -135,32 +127,33 @@ public class UHCInGame {
 
 	private void tick() {
 		ServerWorld world = this.gameSpace.getWorld();
+		int playerAmount = participants.size();
 
 		// Players are in the cages
-		if(world.getTime() < this.startTime) {
-			this.bar.tickStarting(this.startTime - world.getTime(), this.startingTime);
+		if(world.getTime() < this.cageDropTime) {
+			this.bar.tickStarting(this.cageDropTime - world.getTime(), this.logic.getInCagesTime());
 		}
 		// Players are dropping from the cage
-		else if(world.getTime() == this.startTime) {
+		else if(world.getTime() == this.cageDropTime) {
 			this.spawnLogic.clearCages();
 			this.participants.forEach(player -> {
 				this.spawnLogic.resetPlayer(player, GameMode.SURVIVAL);
-				player.addStatusEffect(new StatusEffectInstance(StatusEffects.RESISTANCE, this.invulnerabilityTime, 127, true, false));
-				player.addStatusEffect(new StatusEffectInstance(StatusEffects.SATURATION, this.invulnerabilityTime, 127, true, false));
+				player.addStatusEffect(new StatusEffectInstance(StatusEffects.RESISTANCE, (int) this.logic.getInvulnerabilityTime(), 127, true, false));
+				player.addStatusEffect(new StatusEffectInstance(StatusEffects.SATURATION, (int) this.logic.getInvulnerabilityTime(), 127, true, false));
 			});
 		}
 		// Players are in the map, world border is at max
 		else if(!this.borderShrinkStarted) {
-			long totalSafeTime = this.sizeLogic.getSafeSeconds() * 20L;
-			this.bar.tickSafe(totalSafeTime - (world.getTime() - this.startTime), totalSafeTime);
+			long totalSafeTime = this.logic.getSetupTime();
+			this.bar.tickSafe(totalSafeTime - (world.getTime() - this.cageDropTime), totalSafeTime);
 
-			if((world.getTime() - startTime) > totalSafeTime) {
+			if((world.getTime() - this.cageDropTime) > totalSafeTime) {
 				this.bar.setActive();
 				this.borderShrinkStarted = true;
 				this.shrinkStartTime = world.getTime();
 				gameSpace.getPlayers().sendMessage(new TranslatableText("text.uhc.worldborder_started_shrinking").formatted(Formatting.RED));
 
-				world.getWorldBorder().interpolateSize(this.sizeLogic.getMapMaxSize(), this.sizeLogic.getMapMinSize(), this.sizeLogic.getShrinkingSeconds() * 1000L);
+				world.getWorldBorder().interpolateSize(this.logic.getMapMaxSize(), this.logic.getMapMinSize(), this.logic.getShrinkingTime() * 50L);
 				for(ServerPlayerEntity player : gameSpace.getPlayers()) {
 					player.networkHandler.sendPacket(new WorldBorderS2CPacket(world.getWorldBorder(), WorldBorderS2CPacket.Type.LERP_SIZE));
 				}
@@ -168,9 +161,7 @@ public class UHCInGame {
 		}
 		// Players are in the map, world border is shrinking or finished
 		else {
-			long totalShrinkTime = this.sizeLogic.getShrinkingSeconds() * 20L;
-
-			if((world.getTime() - this.shrinkStartTime) > totalShrinkTime || world.getWorldBorder().getSize() == this.sizeLogic.getMapMinSize()) {
+			if((world.getTime() - this.shrinkStartTime) > this.logic.getShrinkingTime() || world.getWorldBorder().getSize() == this.logic.getMapMinSize()) {
 				if(!this.finished) {
 					gameSpace.getPlayers().sendMessage(new TranslatableText("text.uhc.last_one_wins").formatted(Formatting.BLUE));
 					world.getWorldBorder().setDamagePerBlock(2.5);
@@ -181,7 +172,7 @@ public class UHCInGame {
 				}
 			}
 			else {
-				this.bar.tickShrinking(totalShrinkTime - (world.getTime() - this.shrinkStartTime), totalShrinkTime);
+				this.bar.tickShrinking(this.logic.getShrinkingTime() - (world.getTime() - this.shrinkStartTime), this.logic.getShrinkingTime());
 			}
 		}
 
