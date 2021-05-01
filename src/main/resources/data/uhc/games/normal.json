@@ -1,5 +1,5 @@
 {
-	"type": "uhc:standard",
+	"type": "uhc:uhc",
 	"translation": "game.uhc.standard",
 	"map": {
 		"settings": "minecraft:overworld"

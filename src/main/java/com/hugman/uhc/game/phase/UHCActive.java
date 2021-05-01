@@ -5,7 +5,6 @@ import com.hugman.uhc.game.UHCBar;
 import com.hugman.uhc.game.UHCSizeLogic;
 import com.hugman.uhc.game.UHCSpawnLogic;
 import com.hugman.uhc.game.map.UHCMap;
-import net.minecraft.block.BlockState;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.effect.StatusEffects;
@@ -13,12 +12,10 @@ import net.minecraft.network.packet.s2c.play.WorldBorderS2CPacket;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundEvents;
-import net.minecraft.tag.BlockTags;
 import net.minecraft.text.TranslatableText;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.ItemScatterer;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.GameMode;
 import xyz.nucleoid.plasmid.game.GameCloseReason;
@@ -35,8 +32,6 @@ import xyz.nucleoid.plasmid.game.player.PlayerSet;
 import xyz.nucleoid.plasmid.game.rule.GameRule;
 import xyz.nucleoid.plasmid.game.rule.RuleResult;
 import xyz.nucleoid.plasmid.widget.GlobalWidgets;
-
-import java.util.Set;
 
 public class UHCActive {
 	public final GameSpace gameSpace;
@@ -91,7 +86,7 @@ public class UHCActive {
 
 			game.on(PlayerDeathListener.EVENT, active::onPlayerDeath);
 
-			config.getModifiers().forEach(modifier -> modifier.init(game));
+			config.getConfiguredModules().forEach(configuredModule -> configuredModule.getModule().init(game));
 		});
 	}
 

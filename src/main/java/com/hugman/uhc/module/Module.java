@@ -1,4 +1,4 @@
-package com.hugman.uhc.game.module;
+package com.hugman.uhc.module;
 
 import com.mojang.serialization.Codec;
 import xyz.nucleoid.plasmid.game.GameLogic;
