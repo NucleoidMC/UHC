@@ -19,6 +19,7 @@
 		}
 	},
 	"modules": [
-		"uhc:tree_chopper"
+		"uhc:tree_chopper",
+		"uhc:fast_ores"
 	]
 }

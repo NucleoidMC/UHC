@@ -3,6 +3,7 @@
 	"game.uhc.standard": "UHC",
 	"game.uhc.uhc": "UHC",
 	"module.uhc.tree_chopper": "Tree Chopper",
+	"module.uhc.fast_ores": "Fast Ores",
 	"text.uhc.bar.cages": "Dropping in %s...",
 	"text.uhc.bar.deathmatch": "Deathmatch",
 	"text.uhc.bar.invulnerable": "You will be vulnerable to damages in %s...",

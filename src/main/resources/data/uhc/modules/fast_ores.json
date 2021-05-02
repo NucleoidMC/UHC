@@ -1,0 +1,69 @@
+{
+	"translation": "module.uhc.fast_ores",
+	"icon": {
+		"id": "minecraft:iron_ingot"
+	},
+	"pieces": [
+		{
+			"type": "uhc:loot_replace",
+			"loot_table": "uhc:blocks/torches/four",
+			"experience": 4,
+			"predicate": {
+				"predicate_type": "minecraft:block_match",
+				"block": "minecraft:coal_ore"
+			}
+		},
+		{
+			"type": "uhc:loot_replace",
+			"loot_table": "uhc:blocks/iron/two",
+			"experience": 1,
+			"predicate": {
+				"predicate_type": "minecraft:block_match",
+				"block": "minecraft:iron_ore"
+			}
+		},
+		{
+			"type": "uhc:loot_replace",
+			"loot_table": "uhc:blocks/gold/two",
+			"experience": 2,
+			"predicate": {
+				"predicate_type": "minecraft:block_match",
+				"block": "minecraft:gold_ore"
+			}
+		},
+		{
+			"type": "uhc:loot_replace",
+			"loot_table": "uhc:blocks/lapis/six",
+			"experience": 6,
+			"predicate": {
+				"predicate_type": "minecraft:block_match",
+				"block": "minecraft:lapis_ore"
+			}
+		},
+		{
+			"type": "uhc:loot_replace",
+			"experience": 8,
+			"predicate": {
+				"predicate_type": "minecraft:block_match",
+				"block": "minecraft:redstone_ore"
+			}
+		},
+		{
+			"type": "uhc:loot_replace",
+			"experience": 12,
+			"predicate": {
+				"predicate_type": "minecraft:block_match",
+				"block": "minecraft:emerald_ore"
+			}
+		},
+		{
+			"type": "uhc:loot_replace",
+			"loot_table": "uhc:blocks/diamond/two",
+			"experience": 5,
+			"predicate": {
+				"predicate_type": "minecraft:block_match",
+				"block": "minecraft:diamond_ore"
+			}
+		}
+	]
+}
