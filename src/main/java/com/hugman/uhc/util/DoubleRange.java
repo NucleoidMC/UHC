@@ -7,24 +7,24 @@ import java.util.Random;
 
 public class DoubleRange {
 	public static final Codec<DoubleRange> CODEC = RecordCodecBuilder.create(instance -> instance.group(
-			Codec.doubleRange(0.0D, Double.MAX_VALUE).fieldOf("max").forGetter(config -> config.max),
-			Codec.doubleRange(0.0D, Double.MAX_VALUE).fieldOf("min").forGetter(config -> config.min)
+			Codec.doubleRange(0.0D, Double.MAX_VALUE).fieldOf("min").forGetter(config -> config.min),
+			Codec.doubleRange(0.0D, Double.MAX_VALUE).fieldOf("max").forGetter(config -> config.max)
 	).apply(instance, DoubleRange::new));
 
-	private final double max;
 	private final double min;
+	private final double max;
 
-	public DoubleRange(double max, double min) {
-		this.max = min;
+	public DoubleRange(double min, double max) {
 		this.min = min;
-	}
-
-	public double max() {
-		return max;
+		this.max = max;
 	}
 
 	public double min() {
 		return min;
+	}
+
+	public double max() {
+		return max;
 	}
 
 	public double random(Random random) {

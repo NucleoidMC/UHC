@@ -1,14 +1,19 @@
 {
-	"game.uhc.uhc": "UHC",
 	"game.uhc.standard": "UHC",
+	"game.uhc.uhc": "UHC",
 	"module.uhc.tree_chopper": "Tree Chopper",
-	"text.uhc.bar.fight": "Fight!!",
+	"text.uhc.bar.cages": "Dropping in %s...",
+	"text.uhc.bar.deathmatch": "Deathmatch",
+	"text.uhc.bar.invulnerable": "You will be vulnerable to damages in %s...",
+	"text.uhc.bar.peaceful": "PvP will be enabled in %s...",
+	"text.uhc.bar.shrinking": "The world is shrinking! Finished in %s...",
+	"text.uhc.bar.wild": "The world will start shrinking in %s...",
+	"text.uhc.cages_end": "Players have been dropped on the map. Good luck!",
+	"text.uhc.invulnerability_end": "You are no longer immune to damages!",
 	"text.uhc.modules_enabled": "Modules enabled:",
-	"text.uhc.bar.starting": "Dropping in %s...",
-	"text.uhc.bar.worldborder_safe": "Worldborder safe! Shrinking in %s...",
-	"text.uhc.bar.worldborder_shrinking": "Worldborder shrinking! Finished in %s...",
-	"text.uhc.last_one_wins": "Last one standing wins!",
+	"text.uhc.peaceful_end": "PvP has been enabled!",
 	"text.uhc.player_eliminated": "%s has been eliminated!",
 	"text.uhc.player_win": "%s has won!",
-	"text.uhc.worldborder_started_shrinking": "The worldborder has started shrinking!"
+	"text.uhc.shrinking_end": "Last one standing wins!",
+	"text.uhc.wild_end": "The world has started shrinking! Go to the center of the map!"
 }

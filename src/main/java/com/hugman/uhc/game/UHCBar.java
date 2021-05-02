@@ -1,5 +1,6 @@
 package com.hugman.uhc.game;
 
+import com.hugman.uhc.util.TimeFormatter;
 import net.minecraft.entity.boss.BossBar;
 import net.minecraft.text.TranslatableText;
 import xyz.nucleoid.plasmid.widget.BossBarWidget;
@@ -16,42 +17,49 @@ public final class UHCBar {
 		return new UHCBar(widgets.addBossBar(new TranslatableText("game.uhc.uhc"), BossBar.Color.BLUE, BossBar.Style.PROGRESS));
 	}
 
-	private static String formatTime(long ticksUntil) {
-		long secondsUntil = ticksUntil / 20;
+	public void tickCages(long ticks, long totalTicks) {
+		String time = TimeFormatter.formatTicks(ticks);
 
-		long minutes = secondsUntil / 60;
-		long seconds = secondsUntil % 60;
-		return String.format("%02d:%02d", minutes, seconds);
-	}
-
-	public void tickStarting(long ticks, long totalTicks) {
-		String time = formatTime(ticks);
-
-		this.widget.setTitle(new TranslatableText("text.uhc.bar.starting", time));
+		this.widget.setStyle(BossBar.Color.PURPLE, BossBar.Style.PROGRESS);
+		this.widget.setTitle(new TranslatableText("text.uhc.bar.cages", time));
 		this.widget.setProgress((float) ticks / totalTicks);
 	}
 
-	public void tickSafe(long ticks, long totalTicks) {
-		String time = formatTime(ticks);
+	public void tickInvulnerable(long ticks, long totalTicks) {
+		String time = TimeFormatter.formatTicks(ticks);
 
-		this.widget.setTitle(new TranslatableText("text.uhc.bar.worldborder_safe", time));
+		this.widget.setStyle(BossBar.Color.BLUE, BossBar.Style.PROGRESS);
+		this.widget.setTitle(new TranslatableText("text.uhc.bar.invulnerable", time));
+		this.widget.setProgress((float) ticks / totalTicks);
+	}
+
+	public void tickPeaceful(long ticks, long totalTicks) {
+		String time = TimeFormatter.formatTicks(ticks);
+
+		this.widget.setStyle(BossBar.Color.BLUE, BossBar.Style.PROGRESS);
+		this.widget.setTitle(new TranslatableText("text.uhc.bar.peaceful", time));
+		this.widget.setProgress((float) ticks / totalTicks);
+	}
+
+	public void tickWild(long ticks, long totalTicks) {
+		String time = TimeFormatter.formatTicks(ticks);
+
+		this.widget.setStyle(BossBar.Color.BLUE, BossBar.Style.PROGRESS);
+		this.widget.setTitle(new TranslatableText("text.uhc.bar.wild", time));
 		this.widget.setProgress((float) ticks / totalTicks);
 	}
 
 	public void tickShrinking(long ticks, long totalTicks) {
-		String time = formatTime(ticks);
+		String time = TimeFormatter.formatTicks(ticks);
 
-		this.widget.setTitle(new TranslatableText("text.uhc.bar.worldborder_shrinking", time));
+		this.widget.setStyle(BossBar.Color.RED, BossBar.Style.PROGRESS);
+		this.widget.setTitle(new TranslatableText("text.uhc.bar.shrinking", time));
 		this.widget.setProgress((float) ticks / totalTicks);
 	}
 
-	public void setFinished() {
+	public void setDeathmatch() {
 		this.widget.setStyle(BossBar.Color.GREEN, BossBar.Style.PROGRESS);
-		this.widget.setTitle(new TranslatableText("text.uhc.bar.fight"));
+		this.widget.setTitle(new TranslatableText("text.uhc.bar.deathmatch"));
 		this.widget.setProgress(1.0f);
-	}
-
-	public void setActive() {
-		this.widget.setStyle(BossBar.Color.RED, BossBar.Style.PROGRESS);
 	}
 }

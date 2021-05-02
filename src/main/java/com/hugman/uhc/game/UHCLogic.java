@@ -8,15 +8,15 @@ public class UHCLogic {
 
 	public UHCLogic(UHCConfig config, int playerAmount) {
 		this.config = config;
-		this.playerDose = ((float) playerAmount / ((float) config.getPlayerConfig().getMaxPlayers() - (float) config.getPlayerConfig().getMinPlayers())) + (float) config.getPlayerConfig().getMinPlayers();
+		this.playerDose = (playerAmount - (float) config.getPlayerConfig().getMinPlayers()) / ((float) config.getPlayerConfig().getMaxPlayers() - (float) config.getPlayerConfig().getMinPlayers());
 	}
 
-	public double getMapMaxSize() {
-		return config.getMapConfig().getMaxSize().crossProduct(playerDose);
+	public double getStartMapSize() {
+		return config.getMapConfig().getStartSize().crossProduct(playerDose);
 	}
 
-	public double getMapMinSize() {
-		return config.getMapConfig().getMinSize().crossProduct(playerDose);
+	public double getEndMapSize() {
+		return config.getMapConfig().getEndSize().crossProduct(playerDose);
 	}
 
 	public long getInCagesTime() {
@@ -27,11 +27,15 @@ public class UHCLogic {
 		return (long) (config.getTimeConfig().getInvulnerabilityTime().crossProduct(playerDose) * 20L);
 	}
 
-	public long getSetupTime() {
-		return (long) (config.getTimeConfig().getSetupTime().crossProduct(playerDose) * 20L);
+	public long getPeacefulTime() {
+		return (long) (config.getTimeConfig().getPeacefulTime().crossProduct(playerDose) * 20L);
+	}
+
+	public long getWildTime() {
+		return (long) (config.getTimeConfig().getWildTime().crossProduct(playerDose) * 20L);
 	}
 
 	public long getShrinkingTime() {
-		return (long) (config.getTimeConfig().getShrinkingTime().crossProduct(playerDose) * 20L);
+		return (long) ((getStartMapSize() - getEndMapSize()) / config.getMapConfig().getWorldborderSpeed() * 10L);
 	}
 }

@@ -5,6 +5,7 @@ import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ChunkTicketType;
+import net.minecraft.util.DyeColor;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
 import net.minecraft.world.GameMode;
@@ -12,9 +13,11 @@ import net.minecraft.world.Heightmap;
 import net.minecraft.world.chunk.WorldChunk;
 import xyz.nucleoid.plasmid.game.GameSpace;
 import xyz.nucleoid.plasmid.util.BlockBounds;
+import xyz.nucleoid.plasmid.util.ColoredBlocks;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 public final class UHCSpawner {
 	private final GameSpace gameSpace;
@@ -49,19 +52,22 @@ public final class UHCSpawner {
 	}
 
 	public void summonPlayerInCageAt(ServerPlayerEntity player, int x, int z) {
+		Random random = player.getRandom();
 		BlockPos pos = getSurfaceBlock(x, z);
 		if(this.gameSpace.getWorld().isSkyVisible(pos)) {
 			pos = new BlockPos(x, 200, z);
 		}
-		this.addCageAt(pos, Blocks.BARRIER.getDefaultState());
+		this.addCageAt(pos, ColoredBlocks.glass(DyeColor.byId(random.nextInt(15))).getDefaultState(), Blocks.BARRIER.getDefaultState(), 2, 4);
 		this.spawnPlayerAt(player, pos);
 	}
 
-	public void addCageAt(BlockPos pos, BlockState state) {
-		BlockBounds cage = new BlockBounds(pos.down().north(3).east(3), pos.up(4).south(3).west(3));
-		cage.forEach(pos1 -> this.gameSpace.getWorld().setBlockState(pos1, state));
-		BlockBounds cageAir = new BlockBounds(pos.north(2).east(2), pos.up(3).south(2).west(2));
-		cageAir.forEach(pos1 -> this.gameSpace.getWorld().setBlockState(pos1, Blocks.AIR.getDefaultState()));
+	public void addCageAt(BlockPos origin, BlockState floor, BlockState sides, int width, int height) {
+		BlockBounds cage = new BlockBounds(origin.down().north(width).east(width), origin.up(height).south(width).west(width));
+		cage.forEach(pos -> this.gameSpace.getWorld().setBlockState(pos, sides));
+		BlockBounds cageFloor = new BlockBounds(origin.down().north(width).east(width), origin.down().south(width).west(width));
+		cageFloor.forEach(pos -> this.gameSpace.getWorld().setBlockState(pos, floor));
+		BlockBounds cageAir = new BlockBounds(origin.north(width - 1).east(width - 1), origin.up(height - 1).south(width - 1).west(width - 1));
+		cageAir.forEach(pos -> this.gameSpace.getWorld().setBlockState(pos, Blocks.AIR.getDefaultState()));
 		this.blockBounds.add(cage);
 	}
 

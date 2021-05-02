@@ -10,20 +10,26 @@ public class UHCMapConfig {
 	public static final Codec<UHCMapConfig> CODEC = RecordCodecBuilder.create(instance -> instance.group(
 			Identifier.CODEC.optionalFieldOf("dimension", DimensionType.OVERWORLD_ID).forGetter(UHCMapConfig::getDimension),
 			Identifier.CODEC.fieldOf("settings").forGetter(UHCMapConfig::getChunkSettings),
-			DoubleRange.CODEC.fieldOf("max_size").forGetter(UHCMapConfig::getMaxSize),
-			DoubleRange.CODEC.fieldOf("min_size").forGetter(UHCMapConfig::getMinSize)
+			DoubleRange.CODEC.optionalFieldOf("start_size", new DoubleRange(200, 3000)).forGetter(UHCMapConfig::getStartSize),
+			DoubleRange.CODEC.optionalFieldOf("end_size", new DoubleRange(5, 40)).forGetter(UHCMapConfig::getEndSize),
+			Codec.DOUBLE.optionalFieldOf("worldborder_speed", 1.0D).forGetter(UHCMapConfig::getWorldborderSpeed),
+			Codec.INT.optionalFieldOf("spawn_offset", 10).forGetter(UHCMapConfig::getSpawnOffset)
 	).apply(instance, UHCMapConfig::new));
 
 	private final Identifier dimension;
 	private final Identifier chunkSettings;
-	private final DoubleRange maxSize;
-	private final DoubleRange minSize;
+	private final DoubleRange startSize;
+	private final DoubleRange endSize;
+	private final double worldborderSpeed;
+	private final int spawnOffset;
 
-	public UHCMapConfig(Identifier dimension, Identifier chunkSettings, DoubleRange maxSize, DoubleRange minSize) {
+	public UHCMapConfig(Identifier dimension, Identifier chunkSettings, DoubleRange startSize, DoubleRange minSize, double worldborderSpeed, int spawnOffset) {
 		this.dimension = dimension;
 		this.chunkSettings = chunkSettings;
-		this.maxSize = maxSize;
-		this.minSize = minSize;
+		this.startSize = startSize;
+		this.endSize = minSize;
+		this.worldborderSpeed = worldborderSpeed;
+		this.spawnOffset = spawnOffset;
 	}
 
 	public Identifier getChunkSettings() {
@@ -34,11 +40,19 @@ public class UHCMapConfig {
 		return dimension;
 	}
 
-	public DoubleRange getMaxSize() {
-		return maxSize;
+	public DoubleRange getStartSize() {
+		return startSize;
 	}
 
-	public DoubleRange getMinSize() {
-		return minSize;
+	public DoubleRange getEndSize() {
+		return endSize;
+	}
+
+	public double getWorldborderSpeed() {
+		return worldborderSpeed;
+	}
+
+	public int getSpawnOffset() {
+		return spawnOffset;
 	}
 }

@@ -8,13 +8,11 @@ import com.hugman.uhc.game.map.UHCMap;
 import com.hugman.uhc.module.ModulePieceManager;
 import com.hugman.uhc.module.piece.BucketBreakModulePiece;
 import com.hugman.uhc.module.piece.LootReplaceModulePiece;
-import com.hugman.uhc.util.BucketFind;
+import com.hugman.uhc.util.BucketScanner;
 import it.unimi.dsi.fastutil.longs.LongSet;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.damage.DamageSource;
-import net.minecraft.entity.effect.StatusEffectInstance;
-import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.item.ItemStack;
 import net.minecraft.loot.LootTable;
 import net.minecraft.loot.LootTables;
@@ -34,16 +32,10 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.GameMode;
+import org.jetbrains.annotations.Nullable;
 import xyz.nucleoid.plasmid.game.GameCloseReason;
 import xyz.nucleoid.plasmid.game.GameSpace;
-import xyz.nucleoid.plasmid.game.event.BreakBlockListener;
-import xyz.nucleoid.plasmid.game.event.GameCloseListener;
-import xyz.nucleoid.plasmid.game.event.GameOpenListener;
-import xyz.nucleoid.plasmid.game.event.GameTickListener;
-import xyz.nucleoid.plasmid.game.event.OfferPlayerListener;
-import xyz.nucleoid.plasmid.game.event.PlayerAddListener;
-import xyz.nucleoid.plasmid.game.event.PlayerDeathListener;
-import xyz.nucleoid.plasmid.game.event.PlayerRemoveListener;
+import xyz.nucleoid.plasmid.game.event.*;
 import xyz.nucleoid.plasmid.game.player.JoinResult;
 import xyz.nucleoid.plasmid.game.player.PlayerSet;
 import xyz.nucleoid.plasmid.game.rule.GameRule;
@@ -65,11 +57,14 @@ public class UHCInGame {
 	private final UHCSpawner spawnLogic;
 	private final UHCBar bar;
 
-	private long cageDropTime;
-	private long shrinkStartTime;
-	private boolean borderShrinkStarted = false;
+	private long cagesEndTick;
+	private long invulnerabilityEndTick;
+	private long peacefulEndTick;
+	private long wildEndTick;
+	private long shrinkingEndTick;
+
 	private long gameCloseTick = Long.MAX_VALUE;
-	private boolean finished = false;
+	private boolean invulnerable;
 
 	private UHCInGame(GameSpace gameSpace, UHCMap map, UHCConfig config, PlayerSet participants, GlobalWidgets widgets) {
 		this.gameSpace = gameSpace;
@@ -105,8 +100,10 @@ public class UHCInGame {
 
 			game.on(GameTickListener.EVENT, active::tick);
 
+			game.on(PlayerDamageListener.EVENT, active::onPlayerDamage);
 			game.on(PlayerDeathListener.EVENT, active::onPlayerDeath);
 			game.on(BreakBlockListener.EVENT, active::breakBlock);
+			game.on(ExplosionListener.EVENT, active::explode);
 		});
 	}
 
@@ -114,9 +111,15 @@ public class UHCInGame {
 		ServerWorld world = this.gameSpace.getWorld();
 
 		world.getWorldBorder().setCenter(0, 0);
-		world.getWorldBorder().setSize(this.logic.getMapMaxSize());
+		world.getWorldBorder().setSize(this.logic.getStartMapSize());
 		world.getWorldBorder().setDamagePerBlock(0.5);
-		this.cageDropTime = world.getTime() + this.logic.getInCagesTime();
+		this.cagesEndTick = world.getTime() + this.logic.getInCagesTime();
+		this.invulnerabilityEndTick = this.cagesEndTick + this.logic.getInvulnerabilityTime();
+		this.peacefulEndTick = this.invulnerabilityEndTick + this.logic.getPeacefulTime();
+		this.wildEndTick = this.peacefulEndTick + this.logic.getWildTime();
+		this.shrinkingEndTick = this.wildEndTick + this.logic.getShrinkingTime();
+
+		this.invulnerable = true;
 
 		int index = 0;
 
@@ -125,17 +128,12 @@ public class UHCInGame {
 
 			double theta = ((double) index++ / this.participants.size()) * 2 * Math.PI;
 
-			int x = MathHelper.floor(Math.cos(theta) * this.logic.getMapMaxSize() / 2 - 100);
-			int z = MathHelper.floor(Math.sin(theta) * this.logic.getMapMaxSize() / 2 - 100);
+			int x = MathHelper.floor(Math.cos(theta) * (this.logic.getStartMapSize() / 2 - this.config.getMapConfig().getSpawnOffset()));
+			int z = MathHelper.floor(Math.sin(theta) * (this.logic.getStartMapSize() / 2 - this.config.getMapConfig().getSpawnOffset()));
 
 			this.spawnLogic.resetPlayer(player, GameMode.ADVENTURE);
 
 			this.spawnLogic.summonPlayerInCageAt(player, x, z);
-		}
-		if(!config.getModules().isEmpty()) {
-			MutableText text = new TranslatableText("text.uhc.modules_enabled").formatted(Formatting.AQUA);
-			config.getModules().forEach(module -> text.append("\n  - ").append(module.getName().formatted(Formatting.GREEN)));
-			gameSpace.getPlayers().sendMessage(text);
 		}
 	}
 
@@ -147,55 +145,63 @@ public class UHCInGame {
 
 	private void tick() {
 		ServerWorld world = this.gameSpace.getWorld();
-		int playerAmount = participants.size();
 
-		// Players are in the cages
-		if(world.getTime() < this.cageDropTime) {
-			this.bar.tickStarting(this.cageDropTime - world.getTime(), this.logic.getInCagesTime());
+		// Cage chapter
+		if(world.getTime() < this.cagesEndTick) {
+			this.bar.tickCages(this.cagesEndTick - world.getTime(), this.logic.getInCagesTime());
+			if(world.getTime() == this.cagesEndTick - (logic.getInCagesTime() * 0.8)) {
+				this.sendModuleListToChat();
+			}
 		}
-		// Players are dropping from the cage
-		else if(world.getTime() == this.cageDropTime) {
+		// Cage chapter ends
+		else if(world.getTime() == this.cagesEndTick) {
+			this.gameSpace.getPlayers().sendMessage(new TranslatableText("text.uhc.cages_end").formatted(Formatting.AQUA));
 			this.spawnLogic.clearCages();
-			this.participants.forEach(player -> {
-				this.spawnLogic.resetPlayer(player, GameMode.SURVIVAL);
-				player.addStatusEffect(new StatusEffectInstance(StatusEffects.RESISTANCE, (int) this.logic.getInvulnerabilityTime(), 127, true, false));
-				player.addStatusEffect(new StatusEffectInstance(StatusEffects.SATURATION, (int) this.logic.getInvulnerabilityTime(), 127, true, false));
-			});
+			this.participants.forEach(player -> this.spawnLogic.resetPlayer(player, GameMode.SURVIVAL));
 		}
-		// Players are in the map, world border is at max
-		else if(!this.borderShrinkStarted) {
-			long totalSafeTime = this.logic.getSetupTime();
-			this.bar.tickSafe(totalSafeTime - (world.getTime() - this.cageDropTime), totalSafeTime);
+		// Invulnerable chapter
+		else if(world.getTime() < this.invulnerabilityEndTick) {
+			this.bar.tickInvulnerable(this.invulnerabilityEndTick - world.getTime(), this.logic.getInvulnerabilityTime());
+		}
+		// Invulnerable chapter ends
+		else if(world.getTime() == this.invulnerabilityEndTick) {
+			this.gameSpace.getPlayers().sendMessage(new TranslatableText("text.uhc.invulnerability_end").formatted(Formatting.RED));
+			this.invulnerable = false;
+		}
+		// Peaceful chapter
+		else if(world.getTime() < this.peacefulEndTick) {
+			this.bar.tickPeaceful(this.peacefulEndTick - world.getTime(), this.logic.getPeacefulTime());
+		}
+		// Peaceful chapter ends
+		else if(world.getTime() == this.peacefulEndTick) {
+			this.gameSpace.getPlayers().sendMessage(new TranslatableText("text.uhc.peaceful_end").formatted(Formatting.RED));
+			this.invulnerable = false;
+		}
+		// Wild chapter
+		else if(world.getTime() < this.wildEndTick) {
+			this.bar.tickWild(this.wildEndTick - world.getTime(), this.logic.getWildTime());
+		}
+		// Wild chapter ends
+		else if(world.getTime() == this.wildEndTick) {
+			this.gameSpace.getPlayers().sendMessage(new TranslatableText("text.uhc.wild_end").formatted(Formatting.RED));
 
-			if((world.getTime() - this.cageDropTime) > totalSafeTime) {
-				this.bar.setActive();
-				this.borderShrinkStarted = true;
-				this.shrinkStartTime = world.getTime();
-				gameSpace.getPlayers().sendMessage(new TranslatableText("text.uhc.worldborder_started_shrinking").formatted(Formatting.RED));
-
-				world.getWorldBorder().interpolateSize(this.logic.getMapMaxSize(), this.logic.getMapMinSize(), this.logic.getShrinkingTime() * 50L);
-				for(ServerPlayerEntity player : gameSpace.getPlayers()) {
-					player.networkHandler.sendPacket(new WorldBorderS2CPacket(world.getWorldBorder(), WorldBorderS2CPacket.Type.LERP_SIZE));
-				}
+			world.getWorldBorder().interpolateSize(this.logic.getStartMapSize(), this.logic.getEndMapSize(), this.logic.getShrinkingTime() * 50L);
+			for(ServerPlayerEntity player : this.gameSpace.getPlayers()) {
+				player.networkHandler.sendPacket(new WorldBorderS2CPacket(world.getWorldBorder(), WorldBorderS2CPacket.Type.LERP_SIZE));
 			}
 		}
-		// Players are in the map, world border is shrinking or finished
-		else {
-			if((world.getTime() - this.shrinkStartTime) > this.logic.getShrinkingTime() || world.getWorldBorder().getSize() == this.logic.getMapMinSize()) {
-				if(!this.finished) {
-					gameSpace.getPlayers().sendMessage(new TranslatableText("text.uhc.last_one_wins").formatted(Formatting.BLUE));
-					world.getWorldBorder().setDamagePerBlock(2.5);
-					world.getWorldBorder().setBuffer(0.125);
-					this.bar.setFinished();
-
-					this.finished = true;
-				}
-			}
-			else {
-				this.bar.tickShrinking(this.logic.getShrinkingTime() - (world.getTime() - this.shrinkStartTime), this.logic.getShrinkingTime());
-			}
+		// Shrinking chapter
+		else if(world.getTime() < this.shrinkingEndTick) {
+			this.bar.tickShrinking(this.logic.getShrinkingTime() - (world.getTime() - this.wildEndTick), this.logic.getShrinkingTime());
 		}
-
+		// Shrinking chapter ends
+		else if(world.getTime() == this.shrinkingEndTick) {
+			this.gameSpace.getPlayers().sendMessage(new TranslatableText("text.uhc.shrinking_end").formatted(Formatting.AQUA));
+			world.getWorldBorder().setDamagePerBlock(2.5);
+			world.getWorldBorder().setBuffer(0.125);
+			this.bar.setDeathmatch();
+		}
+		// Game ends
 		if(world.getTime() > this.gameCloseTick) {
 			this.gameSpace.close(GameCloseReason.FINISHED);
 		}
@@ -247,20 +253,38 @@ public class UHCInGame {
 		this.spawnLogic.spawnPlayerAtCenter(player);
 	}
 
-	public ActionResult breakBlock(ServerPlayerEntity player, BlockPos origin) {
-		ServerWorld world = player.getServerWorld();
+	private void sendModuleListToChat() {
+		if(!this.modulePieceManager.getModules().isEmpty()) {
+			MutableText text = new TranslatableText("text.uhc.modules_enabled").formatted(Formatting.AQUA);
+			this.modulePieceManager.getModules().forEach(module -> text.append("\n  - ").append(module.getName().formatted(Formatting.GREEN)));
+			this.gameSpace.getPlayers().sendMessage(text);
+		}
+	}
+
+	private ActionResult onPlayerDamage(ServerPlayerEntity entity, DamageSource damageSource, float v) {
+		if(this.invulnerable) {
+			return ActionResult.FAIL;
+		}
+		else {
+			return ActionResult.SUCCESS;
+		}
+	}
+
+	public ActionResult breakBlock(@Nullable ServerPlayerEntity player, BlockPos origin) {
+		ServerWorld world = this.gameSpace.getWorld();
 		BlockState state = world.getBlockState(origin);
 
-		if(!this.config.getModules().isEmpty()) {
+		if(!this.modulePieceManager.getModules().isEmpty()) {
 			for(BucketBreakModulePiece piece : this.modulePieceManager.bucketBreakModulePieces) {
 				if(piece.getPredicate().test(state, world.getRandom())) {
-					LongSet positions = BucketFind.findTwentySix(world, origin, piece.getDepth(), piece.getPredicate(), world.getRandom());
-
+					LongSet positions = BucketScanner.findTwentySix(origin, piece.getDepth(), pos -> world.getWorldBorder().contains(pos) && piece.getPredicate().test(world.getBlockState(pos), world.getRandom()));
 					for(long l : positions) {
 						if(l != origin.asLong()) {
 							BlockPos pos = BlockPos.fromLong(l);
-							if(!breakIndividualBlock(world, player, state, pos)) {
-								player.getServerWorld().breakBlock(pos, true, player);
+							if(world.getWorldBorder().contains(pos)) {
+								if(!breakIndividualBlock(world, player, state, pos)) {
+									world.breakBlock(pos, true, player);
+								}
 							}
 						}
 					}
@@ -272,10 +296,14 @@ public class UHCInGame {
 		return ActionResult.SUCCESS;
 	}
 
-	public boolean breakIndividualBlock(ServerWorld world, ServerPlayerEntity player, BlockState state, BlockPos pos) {
+	private void explode(List<BlockPos> positions) {
+		positions.forEach(pos -> breakBlock(null, pos));
+	}
+
+	public boolean breakIndividualBlock(ServerWorld world, @Nullable ServerPlayerEntity player, BlockState state, BlockPos pos) {
 		for(LootReplaceModulePiece piece : this.modulePieceManager.lootReplaceModulePieces) {
 			if(piece.getPredicate().test(state, world.getRandom())) {
-				LootContext.Builder builder = (new LootContext.Builder(world)).random(world.random).parameter(LootContextParameters.ORIGIN, Vec3d.ofCenter(pos)).parameter(LootContextParameters.TOOL, player.getMainHandStack()).optionalParameter(LootContextParameters.THIS_ENTITY, player).optionalParameter(LootContextParameters.BLOCK_ENTITY, world.getBlockEntity(pos));
+				LootContext.Builder builder = (new LootContext.Builder(world)).random(world.random).parameter(LootContextParameters.ORIGIN, Vec3d.ofCenter(pos)).parameter(LootContextParameters.TOOL, player == null ? ItemStack.EMPTY : player.getMainHandStack()).optionalParameter(LootContextParameters.THIS_ENTITY, player).optionalParameter(LootContextParameters.BLOCK_ENTITY, world.getBlockEntity(pos));
 				List<ItemStack> stacks;
 				if(piece.getLootTable() == LootTables.EMPTY) {
 					stacks = Collections.emptyList();
@@ -286,7 +314,7 @@ public class UHCInGame {
 					stacks = lootTable.generateLoot(lootContext);
 				}
 				stacks.forEach((stack) -> Block.dropStack(world, pos, stack));
-				player.getServerWorld().breakBlock(pos, false, player);
+				this.gameSpace.getWorld().breakBlock(pos, false, player);
 				return true;
 			}
 		}
