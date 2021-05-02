@@ -2,12 +2,25 @@ package com.hugman.uhc.game.phase;
 
 import com.hugman.uhc.config.UHCConfig;
 import com.hugman.uhc.game.UHCBar;
-import com.hugman.uhc.game.UHCSpawner;
 import com.hugman.uhc.game.UHCLogic;
+import com.hugman.uhc.game.UHCSpawner;
 import com.hugman.uhc.game.map.UHCMap;
+import com.hugman.uhc.module.ModulePieceManager;
+import com.hugman.uhc.module.piece.BucketBreakModulePiece;
+import com.hugman.uhc.module.piece.LootReplaceModulePiece;
+import com.hugman.uhc.util.BucketFind;
+import it.unimi.dsi.fastutil.longs.LongSet;
+import net.minecraft.block.Block;
+import net.minecraft.block.BlockState;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.effect.StatusEffects;
+import net.minecraft.item.ItemStack;
+import net.minecraft.loot.LootTable;
+import net.minecraft.loot.LootTables;
+import net.minecraft.loot.context.LootContext;
+import net.minecraft.loot.context.LootContextParameters;
+import net.minecraft.loot.context.LootContextTypes;
 import net.minecraft.network.packet.s2c.play.WorldBorderS2CPacket;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
@@ -17,10 +30,13 @@ import net.minecraft.text.TranslatableText;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.ItemScatterer;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.GameMode;
 import xyz.nucleoid.plasmid.game.GameCloseReason;
 import xyz.nucleoid.plasmid.game.GameSpace;
+import xyz.nucleoid.plasmid.game.event.BreakBlockListener;
 import xyz.nucleoid.plasmid.game.event.GameCloseListener;
 import xyz.nucleoid.plasmid.game.event.GameOpenListener;
 import xyz.nucleoid.plasmid.game.event.GameTickListener;
@@ -34,10 +50,14 @@ import xyz.nucleoid.plasmid.game.rule.GameRule;
 import xyz.nucleoid.plasmid.game.rule.RuleResult;
 import xyz.nucleoid.plasmid.widget.GlobalWidgets;
 
+import java.util.Collections;
+import java.util.List;
+
 public class UHCInGame {
 	public final GameSpace gameSpace;
 	private final UHCMap map;
 	private final UHCConfig config;
+	private final ModulePieceManager modulePieceManager;
 
 	private final PlayerSet participants;
 
@@ -55,6 +75,7 @@ public class UHCInGame {
 		this.gameSpace = gameSpace;
 		this.map = map;
 		this.config = config;
+		this.modulePieceManager = new ModulePieceManager(config);
 
 		this.participants = participants;
 
@@ -85,8 +106,7 @@ public class UHCInGame {
 			game.on(GameTickListener.EVENT, active::tick);
 
 			game.on(PlayerDeathListener.EVENT, active::onPlayerDeath);
-
-			active.config.getModulesPieces().forEach(piece -> piece.init(game));
+			game.on(BreakBlockListener.EVENT, active::breakBlock);
 		});
 	}
 
@@ -225,5 +245,51 @@ public class UHCInGame {
 	private void spawnSpectator(ServerPlayerEntity player) {
 		this.spawnLogic.resetPlayer(player, GameMode.SPECTATOR);
 		this.spawnLogic.spawnPlayerAtCenter(player);
+	}
+
+	public ActionResult breakBlock(ServerPlayerEntity player, BlockPos origin) {
+		ServerWorld world = player.getServerWorld();
+		BlockState state = world.getBlockState(origin);
+
+		if(!this.config.getModules().isEmpty()) {
+			for(BucketBreakModulePiece piece : this.modulePieceManager.bucketBreakModulePieces) {
+				if(piece.getPredicate().test(state, world.getRandom())) {
+					LongSet positions = BucketFind.findTwentySix(world, origin, piece.getDepth(), piece.getPredicate(), world.getRandom());
+
+					for(long l : positions) {
+						if(l != origin.asLong()) {
+							BlockPos pos = BlockPos.fromLong(l);
+							if(!breakIndividualBlock(world, player, state, pos)) {
+								player.getServerWorld().breakBlock(pos, true, player);
+							}
+						}
+					}
+					if(breakIndividualBlock(world, player, state, origin)) return ActionResult.PASS;
+				}
+			}
+			if(breakIndividualBlock(world, player, state, origin)) return ActionResult.PASS;
+		}
+		return ActionResult.SUCCESS;
+	}
+
+	public boolean breakIndividualBlock(ServerWorld world, ServerPlayerEntity player, BlockState state, BlockPos pos) {
+		for(LootReplaceModulePiece piece : this.modulePieceManager.lootReplaceModulePieces) {
+			if(piece.getPredicate().test(state, world.getRandom())) {
+				LootContext.Builder builder = (new LootContext.Builder(world)).random(world.random).parameter(LootContextParameters.ORIGIN, Vec3d.ofCenter(pos)).parameter(LootContextParameters.TOOL, player.getMainHandStack()).optionalParameter(LootContextParameters.THIS_ENTITY, player).optionalParameter(LootContextParameters.BLOCK_ENTITY, world.getBlockEntity(pos));
+				List<ItemStack> stacks;
+				if(piece.getLootTable() == LootTables.EMPTY) {
+					stacks = Collections.emptyList();
+				}
+				else {
+					LootContext lootContext = builder.parameter(LootContextParameters.BLOCK_STATE, state).build(LootContextTypes.BLOCK);
+					LootTable lootTable = lootContext.getWorld().getServer().getLootManager().getTable(piece.getLootTable());
+					stacks = lootTable.generateLoot(lootContext);
+				}
+				stacks.forEach((stack) -> Block.dropStack(world, pos, stack));
+				player.getServerWorld().breakBlock(pos, false, player);
+				return true;
+			}
+		}
+		return false;
 	}
 }

@@ -22,7 +22,7 @@ import java.io.Reader;
 import java.util.Collection;
 import java.util.Set;
 
-public class Modules {
+public final class Modules {
 	private static final TinyRegistry<Module> REGISTRY = TinyRegistry.newStable();
 
 	public static void register() {
@@ -40,10 +40,10 @@ public class Modules {
 
 				Collection<Identifier> resources = manager.findResources("modules", path -> path.endsWith(".json"));
 
-				for (Identifier path : resources) {
+				for(Identifier path : resources) {
 					try {
 						Resource resource = manager.getResource(path);
-						try (Reader reader = new BufferedReader(new InputStreamReader(resource.getInputStream()))) {
+						try(Reader reader = new BufferedReader(new InputStreamReader(resource.getInputStream()))) {
 							JsonElement json = new JsonParser().parse(reader);
 
 							Identifier identifier = identifierFromPath(path);
@@ -58,7 +58,8 @@ public class Modules {
 								Plasmid.LOGGER.error("Failed to decode module at {}: {}", path, error.toString());
 							});
 						}
-					} catch (IOException e) {
+					}
+					catch(IOException e) {
 						Plasmid.LOGGER.error("Failed to read module at {}", path, e);
 					}
 				}
