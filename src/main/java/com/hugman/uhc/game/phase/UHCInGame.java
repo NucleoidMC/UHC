@@ -12,6 +12,7 @@ import com.hugman.uhc.util.BucketScanner;
 import it.unimi.dsi.fastutil.longs.LongSet;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
+import net.minecraft.entity.ExperienceOrbEntity;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.item.ItemStack;
 import net.minecraft.loot.LootTable;
@@ -103,7 +104,7 @@ public class UHCInGame {
 			game.on(PlayerDamageListener.EVENT, active::onPlayerDamage);
 			game.on(PlayerDeathListener.EVENT, active::onPlayerDeath);
 			game.on(BreakBlockListener.EVENT, active::breakBlock);
-			game.on(ExplosionListener.EVENT, active::explode);
+			game.on(ExplosionListener.EVENT, active::onExplosion);
 		});
 	}
 
@@ -282,25 +283,28 @@ public class UHCInGame {
 						if(l != origin.asLong()) {
 							BlockPos pos = BlockPos.fromLong(l);
 							if(world.getWorldBorder().contains(pos)) {
-								if(!breakIndividualBlock(world, player, state, pos)) {
+								if(!breakIndividualBlock(player, pos)) {
 									world.breakBlock(pos, true, player);
 								}
 							}
 						}
 					}
-					if(breakIndividualBlock(world, player, state, origin)) return ActionResult.PASS;
+					if(breakIndividualBlock(player, origin)) return ActionResult.PASS;
 				}
 			}
-			if(breakIndividualBlock(world, player, state, origin)) return ActionResult.PASS;
+			if(breakIndividualBlock(player, origin)) return ActionResult.PASS;
 		}
 		return ActionResult.SUCCESS;
 	}
 
-	private void explode(List<BlockPos> positions) {
+	private void onExplosion(List<BlockPos> positions) {
 		positions.forEach(pos -> breakBlock(null, pos));
 	}
 
-	public boolean breakIndividualBlock(ServerWorld world, @Nullable ServerPlayerEntity player, BlockState state, BlockPos pos) {
+	public boolean breakIndividualBlock(@Nullable ServerPlayerEntity player, BlockPos pos) {
+		ServerWorld world = this.gameSpace.getWorld();
+		BlockState state = world.getBlockState(pos);
+
 		for(LootReplaceModulePiece piece : this.modulePieceManager.lootReplaceModulePieces) {
 			if(piece.getPredicate().test(state, world.getRandom())) {
 				LootContext.Builder builder = (new LootContext.Builder(world)).random(world.random).parameter(LootContextParameters.ORIGIN, Vec3d.ofCenter(pos)).parameter(LootContextParameters.TOOL, player == null ? ItemStack.EMPTY : player.getMainHandStack()).optionalParameter(LootContextParameters.THIS_ENTITY, player).optionalParameter(LootContextParameters.BLOCK_ENTITY, world.getBlockEntity(pos));
@@ -313,8 +317,14 @@ public class UHCInGame {
 					LootTable lootTable = lootContext.getWorld().getServer().getLootManager().getTable(piece.getLootTable());
 					stacks = lootTable.generateLoot(lootContext);
 				}
+				int xp = piece.getExperience();
+				while(xp > 0) {
+					int i = ExperienceOrbEntity.roundToOrbSize(xp);
+					xp -= i;
+					world.spawnEntity(new ExperienceOrbEntity(world, (double)pos.getX() + 0.5D, (double)pos.getY() + 0.5D, (double)pos.getZ() + 0.5D, i));
+				}
 				stacks.forEach((stack) -> Block.dropStack(world, pos, stack));
-				this.gameSpace.getWorld().breakBlock(pos, false, player);
+				world.breakBlock(pos, false, player);
 				return true;
 			}
 		}
