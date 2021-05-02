@@ -1,0 +1,24 @@
+{
+	"type": "uhc:uhc",
+	"translation": "game.uhc.run",
+	"players": {
+		"min": 1,
+		"max": 100
+	},
+	"map": {
+		"settings": "minecraft:overworld"
+	},
+	"chapters": {
+		"peaceful": {
+			"min": 600,
+			"max": 1000
+		},
+		"wild": {
+			"min": 300,
+			"max": 750
+		}
+	},
+	"modules": [
+		"uhc:tree_chopper"
+	]
+}
