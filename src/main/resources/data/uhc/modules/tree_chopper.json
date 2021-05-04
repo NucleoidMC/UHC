@@ -6,7 +6,7 @@
 	"pieces": [
 		{
 			"type": "uhc:bucket_break",
-			"predicate": {
+			"target": {
 				"predicate_type": "minecraft:tag_match",
 				"tag": "minecraft:logs"
 			}

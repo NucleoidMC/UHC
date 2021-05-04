@@ -5,65 +5,65 @@
 	},
 	"pieces": [
 		{
-			"type": "uhc:loot_replace",
-			"loot_table": "uhc:blocks/torches/four",
-			"experience": 4,
-			"predicate": {
+			"type": "uhc:block_loot",
+			"target": {
 				"predicate_type": "minecraft:block_match",
 				"block": "minecraft:coal_ore"
-			}
+			},
+			"loot_table": "uhc:blocks/torches/four",
+			"experience": 4
 		},
 		{
-			"type": "uhc:loot_replace",
-			"loot_table": "uhc:blocks/iron/two",
-			"experience": 1,
-			"predicate": {
+			"type": "uhc:block_loot",
+			"target": {
 				"predicate_type": "minecraft:block_match",
 				"block": "minecraft:iron_ore"
-			}
+			},
+			"loot_table": "uhc:blocks/iron/two",
+			"experience": 1
 		},
 		{
-			"type": "uhc:loot_replace",
-			"loot_table": "uhc:blocks/gold/two",
-			"experience": 2,
-			"predicate": {
+			"type": "uhc:block_loot",
+			"target": {
 				"predicate_type": "minecraft:block_match",
 				"block": "minecraft:gold_ore"
-			}
+			},
+			"loot_table": "uhc:blocks/gold/two",
+			"experience": 2
 		},
 		{
-			"type": "uhc:loot_replace",
-			"loot_table": "uhc:blocks/lapis/six",
-			"experience": 6,
-			"predicate": {
+			"type": "uhc:block_loot",
+			"target": {
 				"predicate_type": "minecraft:block_match",
 				"block": "minecraft:lapis_ore"
-			}
+			},
+			"loot_table": "uhc:blocks/lapis/six",
+			"experience": 6
 		},
 		{
-			"type": "uhc:loot_replace",
-			"experience": 8,
-			"predicate": {
+			"type": "uhc:block_loot",
+			"target": {
 				"predicate_type": "minecraft:block_match",
 				"block": "minecraft:redstone_ore"
-			}
+			},
+			"experience": 8
 		},
 		{
-			"type": "uhc:loot_replace",
-			"experience": 12,
-			"predicate": {
+			"type": "uhc:block_loot",
+			"target": {
 				"predicate_type": "minecraft:block_match",
 				"block": "minecraft:emerald_ore"
-			}
+			},
+			"experience": 12
 		},
 		{
-			"type": "uhc:loot_replace",
-			"loot_table": "uhc:blocks/diamond/two",
-			"experience": 5,
-			"predicate": {
+			"type": "uhc:block_loot",
+			"target": {
 				"predicate_type": "minecraft:block_match",
 				"block": "minecraft:diamond_ore"
-			}
+			},
+			"loot_table": "uhc:blocks/diamond/two",
+			"experience": 5
 		}
 	]
 }

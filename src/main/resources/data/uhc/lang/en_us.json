@@ -2,6 +2,7 @@
 	"game.uhc.run": "UHCRun",
 	"game.uhc.standard": "UHC",
 	"game.uhc.uhc": "UHC",
+	"module.uhc.cooked_animals": "Cooked Animals",
 	"module.uhc.tree_chopper": "Tree Chopper",
 	"module.uhc.fast_ores": "Fast Ores",
 	"text.uhc.bar.cages": "Dropping in %s...",

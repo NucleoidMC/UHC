@@ -20,6 +20,7 @@
 	},
 	"modules": [
 		"uhc:tree_chopper",
-		"uhc:fast_ores"
+		"uhc:fast_ores",
+		"uhc:cooked_animals"
 	]
 }

@@ -1,0 +1,58 @@
+{
+	"translation": "module.uhc.cooked_animals",
+	"icon": {
+		"id": "minecraft:cooked_beef"
+	},
+	"pieces": [
+		{
+			"type": "uhc:entity_loot",
+			"target": "minecraft:chicken",
+			"loot_table": "uhc:entities/cooked/chicken"
+		},
+		{
+			"type": "uhc:entity_loot",
+			"target": "minecraft:cod",
+			"loot_table": "uhc:entities/cooked/cod"
+		},
+		{
+			"type": "uhc:entity_loot",
+			"target": "minecraft:cow",
+			"loot_table": "uhc:entities/cooked/cow"
+		},
+		{
+			"type": "uhc:entity_loot",
+			"target": "minecraft:hoglin",
+			"loot_table": "uhc:entities/cooked/hoglin"
+		},
+		{
+			"type": "uhc:entity_loot",
+			"target": "minecraft:mooshroom",
+			"loot_table": "uhc:entities/cooked/mooshroom"
+		},
+		{
+			"type": "uhc:entity_loot",
+			"target": "minecraft:pig",
+			"loot_table": "uhc:entities/cooked/pig"
+		},
+		{
+			"type": "uhc:entity_loot",
+			"target": "minecraft:polar_bear",
+			"loot_table": "uhc:entities/cooked/polar_bear"
+		},
+		{
+			"type": "uhc:entity_loot",
+			"target": "minecraft:rabbit",
+			"loot_table": "uhc:entities/cooked/rabbit"
+		},
+		{
+			"type": "uhc:entity_loot",
+			"target": "minecraft:salmon",
+			"loot_table": "uhc:entities/cooked/salmon"
+		},
+		{
+			"type": "uhc:entity_loot",
+			"target": "minecraft:sheep",
+			"loot_table": "uhc:entities/cooked/sheep"
+		}
+	]
+}

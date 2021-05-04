@@ -1,8 +1,9 @@
 package com.hugman.uhc.module;
 
 import com.hugman.uhc.config.UHCConfig;
+import com.hugman.uhc.module.piece.BlockLootModulePiece;
 import com.hugman.uhc.module.piece.BucketBreakModulePiece;
-import com.hugman.uhc.module.piece.LootReplaceModulePiece;
+import com.hugman.uhc.module.piece.EntityLootModulePiece;
 import com.hugman.uhc.module.piece.ModulePiece;
 import com.hugman.uhc.module.piece.ModulePieces;
 import net.minecraft.util.Identifier;
@@ -12,7 +13,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class ModulePieceManager {
-	public final List<LootReplaceModulePiece> lootReplaceModulePieces;
+	public final List<BlockLootModulePiece> blockLootModulePieces;
+	public final List<EntityLootModulePiece> entityLootModulePieces;
 	public final List<BucketBreakModulePiece> bucketBreakModulePieces;
 	private final List<Module> modules;
 	private final List<ModulePiece> modulesPieces;
@@ -22,7 +24,8 @@ public class ModulePieceManager {
 		this.modulesPieces = new ArrayList<>();
 		this.modules.forEach(module -> modulesPieces.addAll(module.getPieces()));
 
-		this.lootReplaceModulePieces = getAllModulesPieces(ModulePieces.LOOT_REPLACE);
+		this.blockLootModulePieces = getAllModulesPieces(ModulePieces.BLOCK_LOOT);
+		this.entityLootModulePieces = getAllModulesPieces(ModulePieces.ENTITY_LOOT);
 		this.bucketBreakModulePieces = getAllModulesPieces(ModulePieces.BUCKET_BREAK);
 	}
 

@@ -6,20 +6,12 @@ import com.hugman.uhc.game.UHCLogic;
 import com.hugman.uhc.game.UHCSpawner;
 import com.hugman.uhc.game.map.UHCMap;
 import com.hugman.uhc.module.ModulePieceManager;
+import com.hugman.uhc.module.piece.BlockLootModulePiece;
 import com.hugman.uhc.module.piece.BucketBreakModulePiece;
-import com.hugman.uhc.module.piece.LootReplaceModulePiece;
-import com.hugman.uhc.util.BucketScanner;
-import it.unimi.dsi.fastutil.longs.LongSet;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.entity.ExperienceOrbEntity;
+import com.hugman.uhc.module.piece.EntityLootModulePiece;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.item.ItemStack;
-import net.minecraft.loot.LootTable;
-import net.minecraft.loot.LootTables;
-import net.minecraft.loot.context.LootContext;
-import net.minecraft.loot.context.LootContextParameters;
-import net.minecraft.loot.context.LootContextTypes;
 import net.minecraft.network.packet.s2c.play.WorldBorderS2CPacket;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
@@ -29,9 +21,9 @@ import net.minecraft.text.TranslatableText;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.ItemScatterer;
+import net.minecraft.util.TypedActionResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.GameMode;
 import org.jetbrains.annotations.Nullable;
 import xyz.nucleoid.plasmid.game.GameCloseReason;
@@ -43,7 +35,6 @@ import xyz.nucleoid.plasmid.game.rule.GameRule;
 import xyz.nucleoid.plasmid.game.rule.RuleResult;
 import xyz.nucleoid.plasmid.widget.GlobalWidgets;
 
-import java.util.Collections;
 import java.util.List;
 
 public class UHCInGame {
@@ -103,7 +94,9 @@ public class UHCInGame {
 
 			game.on(PlayerDamageListener.EVENT, active::onPlayerDamage);
 			game.on(PlayerDeathListener.EVENT, active::onPlayerDeath);
-			game.on(BreakBlockListener.EVENT, active::breakBlock);
+
+			game.on(EntityDropLootListener.EVENT, active::onMobLoot);
+			game.on(BreakBlockListener.EVENT, active::onBlockBroken);
 			game.on(ExplosionListener.EVENT, active::onExplosion);
 		});
 	}
@@ -271,26 +264,19 @@ public class UHCInGame {
 		}
 	}
 
-	public ActionResult breakBlock(@Nullable ServerPlayerEntity player, BlockPos origin) {
-		ServerWorld world = this.gameSpace.getWorld();
-		BlockState state = world.getBlockState(origin);
+	public boolean breakIndividualBlock(@Nullable ServerPlayerEntity player, BlockPos pos) {
+		if(!this.modulePieceManager.getModules().isEmpty()) {
+			for(BlockLootModulePiece piece : this.modulePieceManager.blockLootModulePieces) {
+				if(piece.breakBlock(this, player, pos)) return true;
+			}
+		}
+		return false;
+	}
 
+	public ActionResult onBlockBroken(@Nullable ServerPlayerEntity player, BlockPos origin) {
 		if(!this.modulePieceManager.getModules().isEmpty()) {
 			for(BucketBreakModulePiece piece : this.modulePieceManager.bucketBreakModulePieces) {
-				if(piece.getPredicate().test(state, world.getRandom())) {
-					LongSet positions = BucketScanner.findTwentySix(origin, piece.getDepth(), pos -> world.getWorldBorder().contains(pos) && piece.getPredicate().test(world.getBlockState(pos), world.getRandom()));
-					for(long l : positions) {
-						if(l != origin.asLong()) {
-							BlockPos pos = BlockPos.fromLong(l);
-							if(world.getWorldBorder().contains(pos)) {
-								if(!breakIndividualBlock(player, pos)) {
-									world.breakBlock(pos, true, player);
-								}
-							}
-						}
-					}
-					if(breakIndividualBlock(player, origin)) return ActionResult.PASS;
-				}
+				if(piece.breakBlock(this, player, origin)) return ActionResult.PASS;
 			}
 			if(breakIndividualBlock(player, origin)) return ActionResult.PASS;
 		}
@@ -298,36 +284,16 @@ public class UHCInGame {
 	}
 
 	private void onExplosion(List<BlockPos> positions) {
-		positions.forEach(pos -> breakBlock(null, pos));
+		positions.forEach(pos -> onBlockBroken(null, pos));
 	}
 
-	public boolean breakIndividualBlock(@Nullable ServerPlayerEntity player, BlockPos pos) {
-		ServerWorld world = this.gameSpace.getWorld();
-		BlockState state = world.getBlockState(pos);
-
-		for(LootReplaceModulePiece piece : this.modulePieceManager.lootReplaceModulePieces) {
-			if(piece.getPredicate().test(state, world.getRandom())) {
-				LootContext.Builder builder = (new LootContext.Builder(world)).random(world.random).parameter(LootContextParameters.ORIGIN, Vec3d.ofCenter(pos)).parameter(LootContextParameters.TOOL, player == null ? ItemStack.EMPTY : player.getMainHandStack()).optionalParameter(LootContextParameters.THIS_ENTITY, player).optionalParameter(LootContextParameters.BLOCK_ENTITY, world.getBlockEntity(pos));
-				List<ItemStack> stacks;
-				if(piece.getLootTable() == LootTables.EMPTY) {
-					stacks = Collections.emptyList();
-				}
-				else {
-					LootContext lootContext = builder.parameter(LootContextParameters.BLOCK_STATE, state).build(LootContextTypes.BLOCK);
-					LootTable lootTable = lootContext.getWorld().getServer().getLootManager().getTable(piece.getLootTable());
-					stacks = lootTable.generateLoot(lootContext);
-				}
-				int xp = piece.getExperience();
-				while(xp > 0) {
-					int i = ExperienceOrbEntity.roundToOrbSize(xp);
-					xp -= i;
-					world.spawnEntity(new ExperienceOrbEntity(world, (double)pos.getX() + 0.5D, (double)pos.getY() + 0.5D, (double)pos.getZ() + 0.5D, i));
-				}
-				stacks.forEach((stack) -> Block.dropStack(world, pos, stack));
-				world.breakBlock(pos, false, player);
-				return true;
+	private TypedActionResult<List<ItemStack>> onMobLoot(LivingEntity livingEntity, List<ItemStack> itemStacks) {
+		if(!this.modulePieceManager.getModules().isEmpty()) {
+			for(EntityLootModulePiece piece : this.modulePieceManager.entityLootModulePieces) {
+				List<ItemStack> stacks = piece.modifyLoots(this, livingEntity, itemStacks);
+				if(!stacks.equals(itemStacks)) return TypedActionResult.pass(stacks);
 			}
 		}
-		return false;
+		return TypedActionResult.success(itemStacks);
 	}
 }
