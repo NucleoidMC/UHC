@@ -1,10 +1,12 @@
 package com.hugman.uhc.game;
 
-import com.hugman.uhc.config.UHCConfig;
+import com.hugman.uhc.module.piece.ModulePieceManager;
+import com.hugman.uhc.module.piece.PlayerAttributesModulePiece;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ChunkTicketType;
+import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.DyeColor;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
@@ -21,24 +23,31 @@ import java.util.Random;
 
 public final class UHCSpawner {
 	private final GameSpace gameSpace;
-	private final UHCConfig config;
+	private final ModulePieceManager modulePieceManager;
 	private final List<BlockBounds> blockBounds = new ArrayList<>();
 
-	public UHCSpawner(GameSpace gameSpace, UHCConfig config) {
+	public UHCSpawner(GameSpace gameSpace, ModulePieceManager modulePieceManager) {
 		this.gameSpace = gameSpace;
-		this.config = config;
+		this.modulePieceManager = modulePieceManager;
 	}
 
 	public void resetPlayer(ServerPlayerEntity player, GameMode gameMode) {
+		if(!this.modulePieceManager.getModules().isEmpty()) {
+			for(PlayerAttributesModulePiece piece : this.modulePieceManager.playerAttributesModulePieces) {
+				piece.setAttributes(player);
+			}
+		}
+
 		player.inventory.clear();
 		player.getEnderChestInventory().clear();
 		player.clearStatusEffects();
-		player.setHealth(20.0F);
 		player.getHungerManager().setFoodLevel(20);
 		player.fallDistance = 0.0F;
 		player.setGameMode(gameMode);
 		player.setExperienceLevel(0);
 		player.setExperiencePoints(0);
+
+		player.setHealth(player.getMaxHealth());
 	}
 
 	public void spawnPlayerAtCenter(ServerPlayerEntity player) {
@@ -53,22 +62,26 @@ public final class UHCSpawner {
 
 	public void summonPlayerInCageAt(ServerPlayerEntity player, int x, int z) {
 		Random random = player.getRandom();
-		BlockPos pos = getSurfaceBlock(x, z);
+		BlockPos pos = new BlockPos(x, 200, z);
 		if(this.gameSpace.getWorld().isSkyVisible(pos)) {
 			pos = new BlockPos(x, 200, z);
 		}
-		this.addCageAt(pos, ColoredBlocks.glass(DyeColor.byId(random.nextInt(15))).getDefaultState(), Blocks.BARRIER.getDefaultState(), 2, 4);
+		this.addCageAt(pos, ColoredBlocks.glass(DyeColor.byId(random.nextInt(15))).getDefaultState(), Blocks.BARRIER.getDefaultState(), 3, 4);
 		this.spawnPlayerAt(player, pos);
 	}
 
 	public void addCageAt(BlockPos origin, BlockState floor, BlockState sides, int width, int height) {
-		BlockBounds cage = new BlockBounds(origin.down().north(width).east(width), origin.up(height).south(width).west(width));
-		cage.forEach(pos -> this.gameSpace.getWorld().setBlockState(pos, sides));
-		BlockBounds cageFloor = new BlockBounds(origin.down().north(width).east(width), origin.down().south(width).west(width));
-		cageFloor.forEach(pos -> this.gameSpace.getWorld().setBlockState(pos, floor));
+		ServerWorld world = this.gameSpace.getWorld();
+
+		BlockBounds fullCage = new BlockBounds(origin.down().north(width).east(width), origin.up(height).south(width).west(width));
+		BlockBounds cageFloor = new BlockBounds(origin.down().north(width - 1).east(width - 1), origin.down().south(width - 1).west(width - 1));
 		BlockBounds cageAir = new BlockBounds(origin.north(width - 1).east(width - 1), origin.up(height - 1).south(width - 1).west(width - 1));
-		cageAir.forEach(pos -> this.gameSpace.getWorld().setBlockState(pos, Blocks.AIR.getDefaultState()));
-		this.blockBounds.add(cage);
+
+		fullCage.forEach(pos -> world.setBlockState(pos, sides));
+		cageFloor.forEach(pos -> world.setBlockState(pos, floor));
+		cageAir.forEach(pos -> world.setBlockState(pos, Blocks.AIR.getDefaultState()));
+
+		this.blockBounds.add(fullCage);
 	}
 
 	public void clearCages() {

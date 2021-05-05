@@ -23,6 +23,8 @@ import java.util.Collection;
 import java.util.Set;
 
 public final class Modules {
+	private Modules() {}
+
 	private static final TinyRegistry<Module> REGISTRY = TinyRegistry.newStable();
 
 	public static void register() {

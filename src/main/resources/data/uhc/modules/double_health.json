@@ -1,0 +1,13 @@
+{
+	"translation": "module.uhc.double_health",
+	"icon": {
+		"id": "minecraft:fermented_spider_eye"
+	},
+	"pieces": [
+		{
+			"type": "uhc:player_attributes",
+			"name": "minecraft:generic.max_health",
+			"value": 40
+		}
+	]
+}

@@ -10,8 +10,8 @@
 	},
 	"chapters": {
 		"peaceful": {
-			"min": 600,
-			"max": 1000
+			"min": 1200,
+			"max": 1400
 		},
 		"wild": {
 			"min": 300,
@@ -20,7 +20,8 @@
 	},
 	"modules": [
 		"uhc:tree_chopper",
-		"uhc:fast_ores",
-		"uhc:cooked_animals"
+		"uhc:blasted_ores",
+		"uhc:cooked_food",
+		"uhc:pretty_fast"
 	]
 }

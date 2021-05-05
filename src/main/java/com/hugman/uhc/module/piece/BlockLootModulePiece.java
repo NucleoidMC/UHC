@@ -1,6 +1,6 @@
 package com.hugman.uhc.module.piece;
 
-import com.hugman.uhc.game.phase.UHCInGame;
+import com.hugman.uhc.game.phase.UHCActive;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.block.Block;
@@ -45,7 +45,7 @@ public class BlockLootModulePiece implements ModulePiece {
 		return CODEC;
 	}
 
-	public boolean breakBlock(UHCInGame active, @Nullable ServerPlayerEntity player, BlockPos pos) {
+	public boolean breakBlock(UHCActive active, @Nullable ServerPlayerEntity player, BlockPos pos) {
 		ServerWorld world = active.gameSpace.getWorld();
 		BlockState state = world.getBlockState(pos);
 

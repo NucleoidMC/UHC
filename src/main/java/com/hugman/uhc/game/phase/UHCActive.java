@@ -5,10 +5,11 @@ import com.hugman.uhc.game.UHCBar;
 import com.hugman.uhc.game.UHCLogic;
 import com.hugman.uhc.game.UHCSpawner;
 import com.hugman.uhc.game.map.UHCMap;
-import com.hugman.uhc.module.ModulePieceManager;
+import com.hugman.uhc.module.piece.ModulePieceManager;
 import com.hugman.uhc.module.piece.BlockLootModulePiece;
 import com.hugman.uhc.module.piece.BucketBreakModulePiece;
 import com.hugman.uhc.module.piece.EntityLootModulePiece;
+import net.minecraft.block.Blocks;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.item.ItemStack;
@@ -19,6 +20,7 @@ import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.TranslatableText;
 import net.minecraft.util.ActionResult;
+import net.minecraft.util.DyeColor;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.ItemScatterer;
 import net.minecraft.util.TypedActionResult;
@@ -33,11 +35,12 @@ import xyz.nucleoid.plasmid.game.player.JoinResult;
 import xyz.nucleoid.plasmid.game.player.PlayerSet;
 import xyz.nucleoid.plasmid.game.rule.GameRule;
 import xyz.nucleoid.plasmid.game.rule.RuleResult;
+import xyz.nucleoid.plasmid.util.ColoredBlocks;
 import xyz.nucleoid.plasmid.widget.GlobalWidgets;
 
 import java.util.List;
 
-public class UHCInGame {
+public class UHCActive {
 	public final GameSpace gameSpace;
 	private final UHCMap map;
 	private final UHCConfig config;
@@ -58,7 +61,7 @@ public class UHCInGame {
 	private long gameCloseTick = Long.MAX_VALUE;
 	private boolean invulnerable;
 
-	private UHCInGame(GameSpace gameSpace, UHCMap map, UHCConfig config, PlayerSet participants, GlobalWidgets widgets) {
+	private UHCActive(GameSpace gameSpace, UHCMap map, UHCConfig config, PlayerSet participants, GlobalWidgets widgets) {
 		this.gameSpace = gameSpace;
 		this.map = map;
 		this.config = config;
@@ -67,14 +70,14 @@ public class UHCInGame {
 		this.participants = participants;
 
 		this.logic = new UHCLogic(config, participants.size());
-		this.spawnLogic = new UHCSpawner(gameSpace, config);
+		this.spawnLogic = new UHCSpawner(gameSpace, modulePieceManager);
 		this.bar = UHCBar.create(widgets);
 	}
 
 	public static void open(GameSpace gameSpace, UHCMap map, UHCConfig config) {
 		gameSpace.openGame(game -> {
 			GlobalWidgets widgets = new GlobalWidgets(game);
-			UHCInGame active = new UHCInGame(gameSpace, map, config, gameSpace.getPlayers(), widgets);
+			UHCActive active = new UHCActive(gameSpace, map, config, gameSpace.getPlayers(), widgets);
 
 			game.setRule(GameRule.CRAFTING, RuleResult.ALLOW);
 			game.setRule(GameRule.PORTALS, RuleResult.DENY);
@@ -107,6 +110,7 @@ public class UHCInGame {
 		world.getWorldBorder().setCenter(0, 0);
 		world.getWorldBorder().setSize(this.logic.getStartMapSize());
 		world.getWorldBorder().setDamagePerBlock(0.5);
+
 		this.cagesEndTick = world.getTime() + this.logic.getInCagesTime();
 		this.invulnerabilityEndTick = this.cagesEndTick + this.logic.getInvulnerabilityTime();
 		this.peacefulEndTick = this.invulnerabilityEndTick + this.logic.getPeacefulTime();
@@ -116,7 +120,6 @@ public class UHCInGame {
 		this.invulnerable = true;
 
 		int index = 0;
-
 		for(ServerPlayerEntity player : this.participants) {
 			player.networkHandler.sendPacket(new WorldBorderS2CPacket(world.getWorldBorder(), WorldBorderS2CPacket.Type.INITIALIZE));
 

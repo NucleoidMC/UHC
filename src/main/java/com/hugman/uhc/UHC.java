@@ -20,7 +20,6 @@ public class UHC implements ModInitializer {
 
 	@Override
 	public void onInitialize() {
-		ModulePieces.register();
 		Modules.register();
 		GameType.register(UHC.id("uhc"), UHCWaiting::open, UHCConfig.CODEC);
 	}

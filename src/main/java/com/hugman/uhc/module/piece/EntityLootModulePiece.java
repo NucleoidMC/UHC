@@ -1,6 +1,6 @@
 package com.hugman.uhc.module.piece;
 
-import com.hugman.uhc.game.phase.UHCInGame;
+import com.hugman.uhc.game.phase.UHCActive;
 import com.mojang.datafixers.util.Either;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
@@ -41,7 +41,7 @@ public class EntityLootModulePiece implements ModulePiece {
 		return CODEC;
 	}
 
-	public List<ItemStack> modifyLoots(UHCInGame active, LivingEntity livingEntity, List<ItemStack> itemStacks) {
+	public List<ItemStack> modifyLoots(UHCActive active, LivingEntity livingEntity, List<ItemStack> itemStacks) {
 		ServerWorld world = active.gameSpace.getWorld();
 
 		boolean valid = false;
