@@ -1,6 +1,6 @@
 package com.hugman.uhc.game;
 
-import com.hugman.uhc.util.TimeFormatter;
+import com.hugman.uhc.util.Time;
 import net.minecraft.entity.boss.BossBar;
 import net.minecraft.text.TranslatableText;
 import xyz.nucleoid.plasmid.widget.BossBarWidget;
@@ -18,7 +18,7 @@ public final class UHCBar {
 	}
 
 	public void tickCages(long ticks, long totalTicks) {
-		String time = TimeFormatter.formatTicks(ticks);
+		Time time = new Time(ticks);
 
 		this.widget.setStyle(BossBar.Color.PURPLE, BossBar.Style.PROGRESS);
 		this.widget.setTitle(new TranslatableText("text.uhc.bar.cages", time));
@@ -26,7 +26,7 @@ public final class UHCBar {
 	}
 
 	public void tickInvulnerable(long ticks, long totalTicks) {
-		String time = TimeFormatter.formatTicks(ticks);
+		Time time = new Time(ticks);
 
 		this.widget.setStyle(BossBar.Color.BLUE, BossBar.Style.PROGRESS);
 		this.widget.setTitle(new TranslatableText("text.uhc.bar.invulnerable", time));
@@ -34,7 +34,7 @@ public final class UHCBar {
 	}
 
 	public void tickPeaceful(long ticks, long totalTicks) {
-		String time = TimeFormatter.formatTicks(ticks);
+		Time time = new Time(ticks);
 
 		this.widget.setStyle(BossBar.Color.BLUE, BossBar.Style.PROGRESS);
 		this.widget.setTitle(new TranslatableText("text.uhc.bar.peaceful", time));
@@ -42,7 +42,7 @@ public final class UHCBar {
 	}
 
 	public void tickWild(long ticks, long totalTicks) {
-		String time = TimeFormatter.formatTicks(ticks);
+		Time time = new Time(ticks);
 
 		this.widget.setStyle(BossBar.Color.BLUE, BossBar.Style.PROGRESS);
 		this.widget.setTitle(new TranslatableText("text.uhc.bar.wild", time));
@@ -50,7 +50,7 @@ public final class UHCBar {
 	}
 
 	public void tickShrinking(long ticks, long totalTicks) {
-		String time = TimeFormatter.formatTicks(ticks);
+		Time time = new Time(ticks);
 
 		this.widget.setStyle(BossBar.Color.RED, BossBar.Style.PROGRESS);
 		this.widget.setTitle(new TranslatableText("text.uhc.bar.shrinking", time));
