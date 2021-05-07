@@ -8,6 +8,11 @@
 			"type": "uhc:player_attributes",
 			"name": "minecraft:generic.movement_speed",
 			"value": 0.16
+		},
+		{
+			"type": "uhc:permanent_effects",
+			"name": "minecraft:haste",
+			"amplifier": 2
 		}
 	]
 }
