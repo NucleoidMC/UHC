@@ -3,7 +3,6 @@ package com.hugman.uhc;
 import com.hugman.uhc.config.UHCConfig;
 import com.hugman.uhc.game.phase.UHCWaiting;
 import com.hugman.uhc.module.Modules;
-import com.hugman.uhc.module.piece.ModulePieces;
 import net.fabricmc.api.ModInitializer;
 import net.minecraft.util.Identifier;
 import org.apache.logging.log4j.LogManager;

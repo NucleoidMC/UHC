@@ -15,7 +15,7 @@ import org.jetbrains.annotations.Nullable;
 public class BucketBreakModulePiece implements ModulePiece {
 	public static final Codec<BucketBreakModulePiece> CODEC = RecordCodecBuilder.create(instance -> instance.group(
 			RuleTest.field_25012.fieldOf("target").forGetter(module -> module.predicate),
-			Codec.intRange(0, Integer.MAX_VALUE).optionalFieldOf("amount", 64).forGetter(module -> module.amount)
+			Codec.intRange(0, Integer.MAX_VALUE).optionalFieldOf("amount", 128).forGetter(module -> module.amount)
 	).apply(instance, BucketBreakModulePiece::new));
 
 	private final RuleTest predicate;

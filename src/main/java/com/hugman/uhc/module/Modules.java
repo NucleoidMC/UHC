@@ -23,9 +23,10 @@ import java.util.Collection;
 import java.util.Set;
 
 public final class Modules {
-	private Modules() {}
-
 	private static final TinyRegistry<Module> REGISTRY = TinyRegistry.newStable();
+
+	private Modules() {
+	}
 
 	public static void register() {
 		ResourceManagerHelper serverData = ResourceManagerHelper.get(ResourceType.SERVER_DATA);
@@ -52,13 +53,8 @@ public final class Modules {
 
 							DataResult<Module> result = Module.CODEC.decode(JsonOps.INSTANCE, json).map(Pair::getFirst);
 
-							result.result().ifPresent(game -> {
-								REGISTRY.register(identifier, game);
-							});
-
-							result.error().ifPresent(error -> {
-								Plasmid.LOGGER.error("Failed to decode module at {}: {}", path, error.toString());
-							});
+							result.result().ifPresent(module -> REGISTRY.register(identifier, module));
+							result.error().ifPresent(error -> Plasmid.LOGGER.error("Failed to decode module at {}: {}", path, error.toString()));
 						}
 					}
 					catch(IOException e) {

@@ -20,8 +20,10 @@
 	},
 	"modules": [
 		"uhc:tree_chopper",
-		"uhc:blasted_ores",
-		"uhc:cooked_food",
-		"uhc:pretty_fast"
+		"uhc:pretty_fast",
+		"uhc:loots/blasted_ores",
+		"uhc:loots/better_food",
+		"uhc:loots/creeper_tnt",
+		"uhc:loots/chicken_arrows"
 	]
 }

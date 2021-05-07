@@ -5,10 +5,10 @@ import com.hugman.uhc.game.UHCBar;
 import com.hugman.uhc.game.UHCLogic;
 import com.hugman.uhc.game.UHCSpawner;
 import com.hugman.uhc.game.map.UHCMap;
-import com.hugman.uhc.module.piece.ModulePieceManager;
 import com.hugman.uhc.module.piece.BlockLootModulePiece;
 import com.hugman.uhc.module.piece.BucketBreakModulePiece;
 import com.hugman.uhc.module.piece.EntityLootModulePiece;
+import com.hugman.uhc.module.piece.ModulePieceManager;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.item.ItemStack;
@@ -16,8 +16,11 @@ import net.minecraft.network.packet.s2c.play.WorldBorderS2CPacket;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundEvents;
+import net.minecraft.text.HoverEvent;
 import net.minecraft.text.LiteralText;
 import net.minecraft.text.MutableText;
+import net.minecraft.text.Style;
+import net.minecraft.text.Texts;
 import net.minecraft.text.TranslatableText;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Formatting;
@@ -36,6 +39,7 @@ import xyz.nucleoid.plasmid.game.rule.GameRule;
 import xyz.nucleoid.plasmid.game.rule.RuleResult;
 import xyz.nucleoid.plasmid.widget.GlobalWidgets;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class UHCActive {
@@ -157,7 +161,7 @@ public class UHCActive {
 			this.spawnLogic.clearCages();
 			this.participants.forEach(player -> {
 				this.spawnLogic.resetPlayer(player, GameMode.SURVIVAL);
-				this.spawnLogic.refreshPlayer(player, (int) this.shrinkingEndTick);
+				this.spawnLogic.applyEffects(player, (int) this.shrinkingEndTick);
 			});
 		}
 		// Invulnerable chapter
@@ -191,7 +195,7 @@ public class UHCActive {
 		}
 		// Shrinking chapter
 		else if(world.getTime() < this.shrinkingEndTick) {
-			this.bar.tickShrinking(this.logic.getShrinkingTime() - (world.getTime() - this.wildEndTick), this.logic.getShrinkingTime());
+			this.bar.tickShrinking(this.shrinkingEndTick - world.getTime(), this.logic.getShrinkingTime());
 		}
 		// Shrinking chapter ends
 		else if(world.getTime() == this.shrinkingEndTick) {
@@ -199,7 +203,7 @@ public class UHCActive {
 			world.getWorldBorder().setDamagePerBlock(2.5);
 			world.getWorldBorder().setBuffer(0.125);
 			this.bar.setDeathmatch();
-			this.participants.forEach(player -> this.spawnLogic.refreshPlayer(player, (int) this.deathmatchEndTick));
+			this.participants.forEach(player -> this.spawnLogic.applyEffects(player, (int) this.deathmatchEndTick));
 		}
 		// Game ends
 		if(world.getTime() > this.gameCloseTick) {
@@ -255,9 +259,14 @@ public class UHCActive {
 
 	private void sendModuleListToChat() {
 		if(!this.modulePieceManager.getModules().isEmpty()) {
-			MutableText text = new TranslatableText("text.uhc.modules_enabled").formatted(Formatting.AQUA);
-			this.modulePieceManager.getModules().forEach(module -> text.append("\n  - ").append(module.getName().formatted(Formatting.GREEN)));
+			MutableText text = new LiteralText("\n").append(new TranslatableText("text.uhc.modules_enabled").formatted(Formatting.GOLD));
+			this.modulePieceManager.getModules().forEach(module -> {
+				Style style = Style.EMPTY.withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new TranslatableText(module.getTranslation() + ".description")));
+				text.append(new LiteralText("\n  - ").formatted(Formatting.WHITE)).append(Texts.bracketed(new TranslatableText(module.getTranslation()).formatted(Formatting.GREEN)).setStyle(style));
+			});
+			text.append("\n");
 			this.gameSpace.getPlayers().sendMessage(text);
+			this.gameSpace.getPlayers().sendSound(SoundEvents.ENTITY_ITEM_PICKUP);
 		}
 	}
 
@@ -295,9 +304,16 @@ public class UHCActive {
 
 	private TypedActionResult<List<ItemStack>> onMobLoot(LivingEntity livingEntity, List<ItemStack> itemStacks) {
 		if(!this.modulePieceManager.getModules().isEmpty()) {
+			boolean hasCustomDrop = false;
+			List<ItemStack> stacks = new ArrayList<>();
 			for(EntityLootModulePiece piece : this.modulePieceManager.entityLootModulePieces) {
-				List<ItemStack> stacks = piece.modifyLoots(this, livingEntity, itemStacks);
-				if(!stacks.equals(itemStacks)) return TypedActionResult.pass(stacks);
+				if(piece.test(livingEntity)) {
+					hasCustomDrop = true;
+					stacks.addAll(piece.getLoots(this.gameSpace.getWorld(), livingEntity));
+				}
+			}
+			if(hasCustomDrop) {
+				return TypedActionResult.pass(stacks);
 			}
 		}
 		return TypedActionResult.success(itemStacks);

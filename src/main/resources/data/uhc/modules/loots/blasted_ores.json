@@ -1,5 +1,5 @@
 {
-	"translation": "module.uhc.blasted_ores",
+	"translation": "module.uhc.loots.blasted_ores",
 	"icon": {
 		"id": "minecraft:iron_ingot"
 	},
@@ -10,7 +10,7 @@
 				"predicate_type": "minecraft:block_match",
 				"block": "minecraft:coal_ore"
 			},
-			"loot_table": "uhc:blocks/torches/four",
+			"loot_table": "uhc:blocks/torches/some",
 			"experience": 4
 		},
 		{
@@ -19,7 +19,7 @@
 				"predicate_type": "minecraft:block_match",
 				"block": "minecraft:iron_ore"
 			},
-			"loot_table": "uhc:blocks/iron/two",
+			"loot_table": "uhc:blocks/iron/some",
 			"experience": 1
 		},
 		{
@@ -28,7 +28,7 @@
 				"predicate_type": "minecraft:block_match",
 				"block": "minecraft:gold_ore"
 			},
-			"loot_table": "uhc:blocks/gold/two",
+			"loot_table": "uhc:blocks/gold/some",
 			"experience": 2
 		},
 		{
@@ -37,7 +37,7 @@
 				"predicate_type": "minecraft:block_match",
 				"block": "minecraft:lapis_ore"
 			},
-			"loot_table": "uhc:blocks/lapis/six",
+			"loot_table": "uhc:blocks/lapis/some",
 			"experience": 6
 		},
 		{
@@ -62,7 +62,7 @@
 				"predicate_type": "minecraft:block_match",
 				"block": "minecraft:diamond_ore"
 			},
-			"loot_table": "uhc:blocks/diamond/two",
+			"loot_table": "uhc:blocks/diamond/some",
 			"experience": 5
 		}
 	]

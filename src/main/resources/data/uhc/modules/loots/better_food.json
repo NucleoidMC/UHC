@@ -1,0 +1,93 @@
+{
+	"translation": "module.uhc.loots.better_food",
+	"icon": {
+		"id": "minecraft:cooked_beef"
+	},
+	"pieces": [
+		{
+			"type": "uhc:entity_loot",
+			"target": "minecraft:chicken",
+			"loot_table": "uhc:entities/cooked_food/chicken"
+		},
+		{
+			"type": "uhc:entity_loot",
+			"target": "minecraft:cow",
+			"loot_table": "uhc:entities/cooked_food/beef"
+		},
+		{
+			"type": "uhc:entity_loot",
+			"target": "minecraft:hoglin",
+			"loot_table": "uhc:entities/cooked_food/beef"
+		},
+		{
+			"type": "uhc:entity_loot",
+			"target": "minecraft:mooshroom",
+			"loot_table": "uhc:entities/cooked_food/beef"
+		},
+		{
+			"type": "uhc:entity_loot",
+			"target": "minecraft:polar_bear",
+			"loot_table": "uhc:entities/cooked_food/beef"
+		},
+		{
+			"type": "uhc:entity_loot",
+			"target": "minecraft:panda",
+			"loot_table": "uhc:entities/cooked_food/beef"
+		},
+		{
+			"type": "uhc:entity_loot",
+			"target": "minecraft:pig",
+			"loot_table": "uhc:entities/cooked_food/porkchop"
+		},
+		{
+			"type": "uhc:entity_loot",
+			"target": "minecraft:rabbit",
+			"loot_table": "uhc:entities/cooked_food/rabbit"
+		},
+		{
+			"type": "uhc:entity_loot",
+			"target": "minecraft:sheep",
+			"loot_table": "uhc:entities/cooked_food/mutton"
+		},
+		{
+			"type": "uhc:entity_loot",
+			"target": "minecraft:cod",
+			"loot_table": "uhc:entities/cooked_food/fish"
+		},
+		{
+			"type": "uhc:entity_loot",
+			"target": "minecraft:salmon",
+			"loot_table": "uhc:entities/cooked_food/fish"
+		},
+		{
+			"type": "uhc:entity_loot",
+			"target": "minecraft:salmon",
+			"loot_table": "uhc:entities/cooked_food/fish"
+		},
+		{
+			"type": "uhc:entity_loot",
+			"target": "minecraft:tropical_fish",
+			"loot_table": "uhc:entities/cooked_food/fish"
+		},
+		{
+			"type": "uhc:entity_loot",
+			"target": "minecraft:squid",
+			"loot_table": "uhc:entities/cooked_food/fish"
+		},
+		{
+			"type": "uhc:entity_loot",
+			"target": "minecraft:dolphin",
+			"loot_table": "uhc:entities/cooked_food/fish"
+		},
+		{
+			"type": "uhc:entity_loot",
+			"target": "minecraft:zombie",
+			"loot_table": "uhc:entities/cooked_food/beef"
+		},
+		{
+			"type": "uhc:entity_loot",
+			"target": "minecraft:guardian",
+			"loot_table": "uhc:entities/cooked_food/fish"
+		}
+	]
+}

@@ -8,8 +8,6 @@ import xyz.nucleoid.plasmid.registry.TinyRegistry;
 import java.util.function.Function;
 
 public final class ModulePieces {
-	private ModulePieces() {}
-
 	private static final TinyRegistry<Codec<? extends ModulePiece>> REGISTRY = TinyRegistry.newStable();
 	public static final Codec<ModulePiece> CODEC = REGISTRY.dispatchStable(ModulePiece::getCodec, Function.identity());
 
@@ -18,6 +16,8 @@ public final class ModulePieces {
 	public static final Identifier BUCKET_BREAK = register("bucket_break", BucketBreakModulePiece.CODEC);
 	public static final Identifier PLAYER_ATTRIBUTES = register("player_attributes", PlayerAttributesModulePiece.CODEC);
 	public static final Identifier PERMANENT_EFFECTS = register("permanent_effects", PermanentEffectsModulePiece.CODEC);
+	private ModulePieces() {
+	}
 
 	public static Identifier getId(ModulePiece piece) {
 		return REGISTRY.getIdentifier(piece.getCodec());

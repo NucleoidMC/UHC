@@ -1,6 +1,5 @@
 package com.hugman.uhc.module.piece;
 
-import com.hugman.uhc.game.phase.UHCActive;
 import com.mojang.datafixers.util.Either;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
@@ -31,6 +30,7 @@ public class EntityLootModulePiece implements ModulePiece {
 	private final Either<Identifier, Tag<EntityType<?>>> target;
 	private final Identifier lootTable;
 
+	// TODO: add a replace argument to make some modules good of their own (for example uhc:loots/chicken_arrows)
 	public EntityLootModulePiece(Either<Identifier, Tag<EntityType<?>>> target, Identifier lootTable) {
 		this.target = target;
 		this.lootTable = lootTable;
@@ -41,9 +41,7 @@ public class EntityLootModulePiece implements ModulePiece {
 		return CODEC;
 	}
 
-	public List<ItemStack> modifyLoots(UHCActive active, LivingEntity livingEntity, List<ItemStack> itemStacks) {
-		ServerWorld world = active.gameSpace.getWorld();
-
+	public boolean test(LivingEntity livingEntity) {
 		boolean valid = false;
 		if(target.right().isPresent()) {
 			Tag<EntityType<?>> entityTypeTag = target.right().get();
@@ -57,18 +55,19 @@ public class EntityLootModulePiece implements ModulePiece {
 				valid = true;
 			}
 		}
-		if(valid) {
-			LootContext.Builder builder = new LootContext.Builder(world).random(livingEntity.getRandom()).parameter(LootContextParameters.THIS_ENTITY, livingEntity).parameter(LootContextParameters.ORIGIN, livingEntity.getPos()).parameter(LootContextParameters.DAMAGE_SOURCE, DamageSource.GENERIC);
-			if(this.lootTable == LootTables.EMPTY) {
-				return Collections.emptyList();
-			}
-			else {
-				LootContext lootContext = builder.build(LootContextTypes.ENTITY);
-				LootTable lootTable = lootContext.getWorld().getServer().getLootManager().getTable(this.lootTable);
-				return lootTable.generateLoot(lootContext);
-			}
+		return valid;
+	}
+
+	public List<ItemStack> getLoots(ServerWorld world, LivingEntity livingEntity) {
+		LootContext.Builder builder = new LootContext.Builder(world).random(livingEntity.getRandom()).parameter(LootContextParameters.THIS_ENTITY, livingEntity).parameter(LootContextParameters.ORIGIN, livingEntity.getPos()).parameter(LootContextParameters.DAMAGE_SOURCE, DamageSource.GENERIC);
+		if(this.lootTable == LootTables.EMPTY) {
+			return Collections.emptyList();
 		}
-		return itemStacks;
+		else {
+			LootContext lootContext = builder.build(LootContextTypes.ENTITY);
+			LootTable lootTable = lootContext.getWorld().getServer().getLootManager().getTable(this.lootTable);
+			return lootTable.generateLoot(lootContext);
+		}
 	}
 
 }

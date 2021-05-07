@@ -34,7 +34,7 @@ public class PlayerAttributesModulePiece implements ModulePiece {
 		EntityAttributeInstance instance = player.getAttributes().getCustomInstance(attribute);
 		if(instance != null) {
 			instance.setBaseValue(value);
-			//player.networkHandler.sendPacket(new EntityAttributesS2CPacket(player.getEntityId(), player.getAttributes().getTracked()));
+			player.networkHandler.sendPacket(new EntityAttributesS2CPacket(player.getEntityId(), player.getAttributes().getTracked()));
 		}
 	}
 }

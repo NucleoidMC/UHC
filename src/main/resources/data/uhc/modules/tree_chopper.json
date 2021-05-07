@@ -10,6 +10,14 @@
 				"predicate_type": "minecraft:tag_match",
 				"tag": "minecraft:logs"
 			}
+		},
+		{
+			"type": "uhc:block_loot",
+			"target": {
+				"predicate_type": "minecraft:tag_match",
+				"tag": "minecraft:logs"
+			},
+			"loot_table": "uhc:blocks/oak_planks/logs"
 		}
 	]
 }

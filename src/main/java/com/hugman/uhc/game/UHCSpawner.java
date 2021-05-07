@@ -33,6 +33,11 @@ public final class UHCSpawner {
 	}
 
 	public void resetPlayer(ServerPlayerEntity player, GameMode gameMode) {
+		if(!this.modulePieceManager.getModules().isEmpty()) {
+			for(PlayerAttributesModulePiece piece : this.modulePieceManager.playerAttributesModulePieces) {
+				piece.setAttribute(player);
+			}
+		}
 		player.inventory.clear();
 		player.getEnderChestInventory().clear();
 		player.clearStatusEffects();
@@ -45,11 +50,8 @@ public final class UHCSpawner {
 		player.setHealth(player.getMaxHealth());
 	}
 
-	public void refreshPlayer(ServerPlayerEntity player, int effectDuration) {
+	public void applyEffects(ServerPlayerEntity player, int effectDuration) {
 		if(!this.modulePieceManager.getModules().isEmpty()) {
-			for(PlayerAttributesModulePiece piece : this.modulePieceManager.playerAttributesModulePieces) {
-				piece.setAttribute(player);
-			}
 			for(PermanentEffectsModulePiece piece : this.modulePieceManager.permanentEffectsModulePieces) {
 				piece.setEffect(player, effectDuration);
 			}

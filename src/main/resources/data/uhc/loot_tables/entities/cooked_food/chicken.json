@@ -6,12 +6,13 @@
 			"entries": [
 				{
 					"type": "minecraft:item",
+					"name": "minecraft:cooked_chicken",
 					"functions": [
 						{
-							"function": "minecraft:furnace_smelt"
+							"function": "minecraft:set_count",
+							"count": 4
 						}
-					],
-					"name": "minecraft:cod"
+					]
 				}
 			]
 		}
