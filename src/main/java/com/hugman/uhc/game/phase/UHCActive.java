@@ -9,7 +9,6 @@ import com.hugman.uhc.module.piece.ModulePieceManager;
 import com.hugman.uhc.module.piece.BlockLootModulePiece;
 import com.hugman.uhc.module.piece.BucketBreakModulePiece;
 import com.hugman.uhc.module.piece.EntityLootModulePiece;
-import net.minecraft.block.Blocks;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.item.ItemStack;
@@ -17,10 +16,10 @@ import net.minecraft.network.packet.s2c.play.WorldBorderS2CPacket;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundEvents;
+import net.minecraft.text.LiteralText;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.TranslatableText;
 import net.minecraft.util.ActionResult;
-import net.minecraft.util.DyeColor;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.ItemScatterer;
 import net.minecraft.util.TypedActionResult;
@@ -35,7 +34,6 @@ import xyz.nucleoid.plasmid.game.player.JoinResult;
 import xyz.nucleoid.plasmid.game.player.PlayerSet;
 import xyz.nucleoid.plasmid.game.rule.GameRule;
 import xyz.nucleoid.plasmid.game.rule.RuleResult;
-import xyz.nucleoid.plasmid.util.ColoredBlocks;
 import xyz.nucleoid.plasmid.widget.GlobalWidgets;
 
 import java.util.List;
@@ -57,8 +55,9 @@ public class UHCActive {
 	private long peacefulEndTick;
 	private long wildEndTick;
 	private long shrinkingEndTick;
+	private long deathmatchEndTick;
+	private long gameCloseTick;
 
-	private long gameCloseTick = Long.MAX_VALUE;
 	private boolean invulnerable;
 
 	private UHCActive(GameSpace gameSpace, UHCMap map, UHCConfig config, PlayerSet participants, GlobalWidgets widgets) {
@@ -116,6 +115,8 @@ public class UHCActive {
 		this.peacefulEndTick = this.invulnerabilityEndTick + this.logic.getPeacefulTime();
 		this.wildEndTick = this.peacefulEndTick + this.logic.getWildTime();
 		this.shrinkingEndTick = this.wildEndTick + this.logic.getShrinkingTime();
+		this.deathmatchEndTick = this.shrinkingEndTick + this.logic.getDeathmatchTime();
+		this.gameCloseTick = this.deathmatchEndTick + 200;
 
 		this.invulnerable = true;
 
@@ -154,7 +155,10 @@ public class UHCActive {
 		else if(world.getTime() == this.cagesEndTick) {
 			this.gameSpace.getPlayers().sendMessage(new TranslatableText("text.uhc.cages_end").formatted(Formatting.AQUA));
 			this.spawnLogic.clearCages();
-			this.participants.forEach(player -> this.spawnLogic.resetPlayer(player, GameMode.SURVIVAL));
+			this.participants.forEach(player -> {
+				this.spawnLogic.resetPlayer(player, GameMode.SURVIVAL);
+				this.spawnLogic.refreshPlayer(player, (int) this.shrinkingEndTick);
+			});
 		}
 		// Invulnerable chapter
 		else if(world.getTime() < this.invulnerabilityEndTick) {
@@ -183,9 +187,7 @@ public class UHCActive {
 			this.gameSpace.getPlayers().sendMessage(new TranslatableText("text.uhc.wild_end").formatted(Formatting.RED));
 
 			world.getWorldBorder().interpolateSize(this.logic.getStartMapSize(), this.logic.getEndMapSize(), this.logic.getShrinkingTime() * 50L);
-			for(ServerPlayerEntity player : this.gameSpace.getPlayers()) {
-				player.networkHandler.sendPacket(new WorldBorderS2CPacket(world.getWorldBorder(), WorldBorderS2CPacket.Type.LERP_SIZE));
-			}
+			this.gameSpace.getPlayers().forEach(player -> player.networkHandler.sendPacket(new WorldBorderS2CPacket(world.getWorldBorder(), WorldBorderS2CPacket.Type.LERP_SIZE)));
 		}
 		// Shrinking chapter
 		else if(world.getTime() < this.shrinkingEndTick) {
@@ -197,6 +199,7 @@ public class UHCActive {
 			world.getWorldBorder().setDamagePerBlock(2.5);
 			world.getWorldBorder().setBuffer(0.125);
 			this.bar.setDeathmatch();
+			this.participants.forEach(player -> this.spawnLogic.refreshPlayer(player, (int) this.deathmatchEndTick));
 		}
 		// Game ends
 		if(world.getTime() > this.gameCloseTick) {
@@ -206,7 +209,7 @@ public class UHCActive {
 
 	private void addPlayer(ServerPlayerEntity player) {
 		player.networkHandler.sendPacket(new WorldBorderS2CPacket(this.gameSpace.getWorld().getWorldBorder(), WorldBorderS2CPacket.Type.INITIALIZE));
-		this.spawnSpectator(player);
+		this.setSpectator(player, true);
 	}
 
 	private void removePlayer(ServerPlayerEntity player) {
@@ -215,17 +218,17 @@ public class UHCActive {
 
 	private ActionResult onPlayerDeath(ServerPlayerEntity player, DamageSource source) {
 		this.eliminatePlayer(player);
-		return ActionResult.SUCCESS;
+		return ActionResult.FAIL;
 	}
 
 	private void eliminatePlayer(ServerPlayerEntity player) {
 		PlayerSet players = this.gameSpace.getPlayers();
-		players.sendMessage(new TranslatableText("text.uhc.player_eliminated", player.getDisplayName()).formatted(Formatting.RED));
-		players.sendSound(SoundEvents.ENTITY_EXPERIENCE_ORB_PICKUP);
+		players.sendMessage(new LiteralText("\n").append(new TranslatableText("text.uhc.player_eliminated", player.getDisplayName()).formatted(Formatting.BOLD, Formatting.DARK_RED)).append(new LiteralText("\n")));
+		players.sendSound(SoundEvents.ENTITY_WITHER_SPAWN);
 
 		ItemScatterer.spawn(this.gameSpace.getWorld(), player.getBlockPos(), player.inventory);
 
-		this.spawnSpectator(player);
+		this.setSpectator(player, false);
 
 		int survival = 0;
 		for(ServerPlayerEntity participant : this.participants) {
@@ -238,16 +241,16 @@ public class UHCActive {
 			for(ServerPlayerEntity participant : this.participants) {
 				if(participant.interactionManager.getGameMode().isSurvivalLike()) {
 					players.sendMessage(new TranslatableText("text.uhc.player_win", participant.getEntityName()).formatted(Formatting.GOLD));
-					this.gameCloseTick = this.gameSpace.getWorld().getTime() + (20 * 10);
+					this.gameCloseTick = this.gameSpace.getWorld().getTime() + 200;
 					break;
 				}
 			}
 		}
 	}
 
-	private void spawnSpectator(ServerPlayerEntity player) {
+	private void setSpectator(ServerPlayerEntity player, boolean moveToCenter) {
 		this.spawnLogic.resetPlayer(player, GameMode.SPECTATOR);
-		this.spawnLogic.spawnPlayerAtCenter(player);
+		if(moveToCenter) this.spawnLogic.spawnPlayerAtCenter(player);
 	}
 
 	private void sendModuleListToChat() {
