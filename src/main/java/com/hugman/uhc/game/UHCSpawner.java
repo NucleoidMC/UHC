@@ -1,8 +1,8 @@
 package com.hugman.uhc.game;
 
 import com.hugman.uhc.module.piece.ModulePieceManager;
-import com.hugman.uhc.module.piece.PermanentEffectsModulePiece;
-import com.hugman.uhc.module.piece.PlayerAttributesModulePiece;
+import com.hugman.uhc.module.piece.PermanentEffectModulePiece;
+import com.hugman.uhc.module.piece.PlayerAttributeModulePiece;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.server.network.ServerPlayerEntity;
@@ -32,27 +32,29 @@ public final class UHCSpawner {
 		this.modulePieceManager = modulePieceManager;
 	}
 
-	public void resetPlayer(ServerPlayerEntity player, GameMode gameMode) {
+	public void resetPlayer(ServerPlayerEntity player, GameMode gameMode, boolean clear) {
 		if(!this.modulePieceManager.getModules().isEmpty()) {
-			for(PlayerAttributesModulePiece piece : this.modulePieceManager.playerAttributesModulePieces) {
+			for(PlayerAttributeModulePiece piece : this.modulePieceManager.playerAttributeModulePieces) {
 				piece.setAttribute(player);
 			}
 		}
-		player.inventory.clear();
-		player.getEnderChestInventory().clear();
-		player.clearStatusEffects();
-		player.getHungerManager().setFoodLevel(20);
+		if(clear) {
+			player.inventory.clear();
+			player.getEnderChestInventory().clear();
+			player.clearStatusEffects();
+			player.getHungerManager().setFoodLevel(20);
+			player.setExperienceLevel(0);
+			player.setExperiencePoints(0);
+			player.setHealth(player.getMaxHealth());
+		}
+		player.extinguish();
 		player.fallDistance = 0.0F;
 		player.setGameMode(gameMode);
-		player.setExperienceLevel(0);
-		player.setExperiencePoints(0);
-
-		player.setHealth(player.getMaxHealth());
 	}
 
 	public void applyEffects(ServerPlayerEntity player, int effectDuration) {
 		if(!this.modulePieceManager.getModules().isEmpty()) {
-			for(PermanentEffectsModulePiece piece : this.modulePieceManager.permanentEffectsModulePieces) {
+			for(PermanentEffectModulePiece piece : this.modulePieceManager.permanentEffectModulePieces) {
 				piece.setEffect(player, effectDuration);
 			}
 		}

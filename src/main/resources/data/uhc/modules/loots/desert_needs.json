@@ -1,7 +1,7 @@
 {
 	"translation": "module.uhc.loots.desert_needs",
 	"icon": {
-		"id": "minecraft:tnt"
+		"id": "minecraft:cactus"
 	},
 	"pieces": [
 		{
@@ -11,6 +11,14 @@
 				"block": "minecraft:cactus"
 			},
 			"loot_table": "uhc:blocks/oak_planks/cactus"
+		},
+		{
+			"type": "uhc:block_loot",
+			"target": {
+				"predicate_type": "minecraft:block_match",
+				"block": "minecraft:dead_bush"
+			},
+			"loot_table": "uhc:blocks/bread"
 		}
 	]
 }

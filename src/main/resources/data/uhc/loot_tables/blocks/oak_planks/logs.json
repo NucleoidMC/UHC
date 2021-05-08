@@ -10,7 +10,11 @@
 					"functions": [
 						{
 							"function": "minecraft:set_count",
-							"count": 4
+							"count": {
+								"min": 3.0,
+								"max": 4.0,
+								"type": "minecraft:uniform"
+							}
 						}
 					]
 				}

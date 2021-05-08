@@ -1,0 +1,13 @@
+{
+	"translation": "module.uhc.loots.animal_leather",
+	"icon": {
+		"id": "minecraft:tnt"
+	},
+	"pieces": [
+		{
+			"type": "uhc:entity_loot",
+			"tag": "uhc:leather",
+			"loot_table": "uhc:entities/leather"
+		}
+	]
+}

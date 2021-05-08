@@ -28,8 +28,8 @@ public final class TimeUtil {
 		return (int) asHours(t) % 24;
 	}
 
-	public static boolean blink(long seconds, int maxSecs, int each) {
-		return seconds <= maxSecs && seconds % each == 0;
+	public static boolean blink(long l, int max, int each) {
+		return l <= max && l % each == 0;
 	}
 
 	public static String format(long t) {

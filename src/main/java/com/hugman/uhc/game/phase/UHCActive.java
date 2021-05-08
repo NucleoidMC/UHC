@@ -58,11 +58,14 @@ public class UHCActive {
 	private long invulnerabilityEndTick;
 	private long peacefulEndTick;
 	private long wildEndTick;
+	private long preShrinkingCagesEndTick;
+	private long preShrinkingInvulnerabilityEndTick;
 	private long shrinkingEndTick;
 	private long deathmatchEndTick;
 	private long gameCloseTick;
 
 	private boolean invulnerable;
+	private boolean pvp;
 
 	private UHCActive(GameSpace gameSpace, UHCMap map, UHCConfig config, PlayerSet participants, GlobalWidgets widgets) {
 		this.gameSpace = gameSpace;
@@ -74,7 +77,7 @@ public class UHCActive {
 
 		this.logic = new UHCLogic(config, participants.size());
 		this.spawnLogic = new UHCSpawner(gameSpace, modulePieceManager);
-		this.bar = UHCBar.create(widgets);
+		this.bar = UHCBar.create(widgets, gameSpace);
 	}
 
 	public static void open(GameSpace gameSpace, UHCMap map, UHCConfig config) {
@@ -118,24 +121,31 @@ public class UHCActive {
 		this.invulnerabilityEndTick = this.cagesEndTick + this.logic.getInvulnerabilityTime();
 		this.peacefulEndTick = this.invulnerabilityEndTick + this.logic.getPeacefulTime();
 		this.wildEndTick = this.peacefulEndTick + this.logic.getWildTime();
-		this.shrinkingEndTick = this.wildEndTick + this.logic.getShrinkingTime();
+		this.preShrinkingCagesEndTick = this.wildEndTick + this.logic.getInCagesTime();
+		this.preShrinkingInvulnerabilityEndTick = this.preShrinkingCagesEndTick + this.logic.getInvulnerabilityTime();
+		this.shrinkingEndTick = this.preShrinkingInvulnerabilityEndTick + this.logic.getShrinkingTime();
 		this.deathmatchEndTick = this.shrinkingEndTick + this.logic.getDeathmatchTime();
 		this.gameCloseTick = this.deathmatchEndTick + 200;
 
-		this.invulnerable = true;
+		this.participants.forEach(player -> this.spawnLogic.resetPlayer(player, GameMode.ADVENTURE, true));
+		this.putPlayersInCages();
+	}
 
+	private void putPlayersInCages() {
+		this.invulnerable = true;
+		ServerWorld world = this.gameSpace.getWorld();
 		int index = 0;
 		for(ServerPlayerEntity player : this.participants) {
-			player.networkHandler.sendPacket(new WorldBorderS2CPacket(world.getWorldBorder(), WorldBorderS2CPacket.Type.INITIALIZE));
+			if(player.interactionManager.getGameMode().isSurvivalLike()) {
+				player.networkHandler.sendPacket(new WorldBorderS2CPacket(world.getWorldBorder(), WorldBorderS2CPacket.Type.INITIALIZE));
 
-			double theta = ((double) index++ / this.participants.size()) * 2 * Math.PI;
+				double theta = ((double) index++ / this.participants.size()) * 2 * Math.PI;
 
-			int x = MathHelper.floor(Math.cos(theta) * (this.logic.getStartMapSize() / 2 - this.config.getMapConfig().getSpawnOffset()));
-			int z = MathHelper.floor(Math.sin(theta) * (this.logic.getStartMapSize() / 2 - this.config.getMapConfig().getSpawnOffset()));
+				int x = MathHelper.floor(Math.cos(theta) * (this.logic.getStartMapSize() / 2 - this.config.getMapConfig().getSpawnOffset()));
+				int z = MathHelper.floor(Math.sin(theta) * (this.logic.getStartMapSize() / 2 - this.config.getMapConfig().getSpawnOffset()));
 
-			this.spawnLogic.resetPlayer(player, GameMode.ADVENTURE);
-
-			this.spawnLogic.summonPlayerInCageAt(player, x, z);
+				this.spawnLogic.summonPlayerInCageAt(player, x, z);
+			}
 		}
 	}
 
@@ -150,60 +160,92 @@ public class UHCActive {
 
 		// Cage chapter
 		if(world.getTime() < this.cagesEndTick) {
-			this.bar.tickCages(this.cagesEndTick - world.getTime(), this.logic.getInCagesTime());
+			this.bar.tickUntilDrop(this.cagesEndTick - world.getTime(), this.logic.getInCagesTime());
 			if(world.getTime() == this.cagesEndTick - (logic.getInCagesTime() * 0.8)) {
 				this.sendModuleListToChat();
 			}
 		}
 		// Cage chapter ends
 		else if(world.getTime() == this.cagesEndTick) {
-			this.gameSpace.getPlayers().sendMessage(new TranslatableText("text.uhc.cages_end").formatted(Formatting.AQUA));
+			this.gameSpace.getPlayers().sendMessage(new TranslatableText("text.uhc.dropped_players").formatted(Formatting.AQUA));
 			this.spawnLogic.clearCages();
 			this.participants.forEach(player -> {
-				this.spawnLogic.resetPlayer(player, GameMode.SURVIVAL);
-				this.spawnLogic.applyEffects(player, (int) this.shrinkingEndTick);
+				this.spawnLogic.resetPlayer(player, GameMode.SURVIVAL, true);
+				this.spawnLogic.applyEffects(player, (int) this.wildEndTick);
 			});
 		}
 		// Invulnerable chapter
 		else if(world.getTime() < this.invulnerabilityEndTick) {
-			this.bar.tickInvulnerable(this.invulnerabilityEndTick - world.getTime(), this.logic.getInvulnerabilityTime());
+			this.bar.tickUntilVulnerable(this.invulnerabilityEndTick - world.getTime(), this.logic.getInvulnerabilityTime());
 		}
 		// Invulnerable chapter ends
 		else if(world.getTime() == this.invulnerabilityEndTick) {
-			this.gameSpace.getPlayers().sendMessage(new TranslatableText("text.uhc.invulnerability_end").formatted(Formatting.RED));
 			this.invulnerable = false;
+			this.gameSpace.getPlayers().sendMessage(new TranslatableText("text.uhc.invulnerability_end").formatted(Formatting.RED));
 		}
 		// Peaceful chapter
 		else if(world.getTime() < this.peacefulEndTick) {
-			this.bar.tickPeaceful(this.peacefulEndTick - world.getTime(), this.logic.getPeacefulTime());
+			this.bar.tickUntilPvp(this.peacefulEndTick - world.getTime(), this.logic.getPeacefulTime());
 		}
 		// Peaceful chapter ends
+		//TODO: actually disable pvp before this...
 		else if(world.getTime() == this.peacefulEndTick) {
-			this.gameSpace.getPlayers().sendMessage(new TranslatableText("text.uhc.peaceful_end").formatted(Formatting.RED));
-			this.invulnerable = false;
+			this.gameSpace.getPlayers().sendMessage(new TranslatableText("text.uhc.pvp_enabled").formatted(Formatting.RED));
 		}
 		// Wild chapter
 		else if(world.getTime() < this.wildEndTick) {
-			this.bar.tickWild(this.wildEndTick - world.getTime(), this.logic.getWildTime());
+			this.bar.tickUntilTp(this.wildEndTick - world.getTime(), this.logic.getWildTime());
 		}
 		// Wild chapter ends
 		else if(world.getTime() == this.wildEndTick) {
-			this.gameSpace.getPlayers().sendMessage(new TranslatableText("text.uhc.wild_end").formatted(Formatting.RED));
+			this.participants.forEach(player -> {
+				if(player.interactionManager.getGameMode().isSurvivalLike()) {
+					this.spawnLogic.resetPlayer(player, GameMode.ADVENTURE, false);
+				}
+			});
+			this.putPlayersInCages();
+		}
 
+		// Pre-shrinking cages chapter
+		else if(world.getTime() < this.preShrinkingCagesEndTick) {
+			this.bar.tickUntilDrop(this.preShrinkingCagesEndTick - world.getTime(), this.logic.getInCagesTime());
+		}
+		// Pre-shrinking cages chapter ends
+		else if(world.getTime() == this.preShrinkingCagesEndTick) {
+			this.spawnLogic.clearCages();
+			this.participants.forEach(player -> {
+				if(player.interactionManager.getGameMode().isSurvivalLike()) {
+					this.spawnLogic.resetPlayer(player, GameMode.SURVIVAL, false);
+					this.spawnLogic.applyEffects(player, (int) this.deathmatchEndTick);
+				}
+			});
+			this.gameSpace.getPlayers().sendMessage(new TranslatableText("text.uhc.dropped_players").formatted(Formatting.AQUA));
+			this.gameSpace.getPlayers().sendMessage(new TranslatableText("text.uhc.invulnerable_until_shrink_start").formatted(Formatting.AQUA));
+		}
+		// Pre-shrinking invulnerable chapter
+		else if(world.getTime() < this.preShrinkingInvulnerabilityEndTick) {
+			this.bar.tickUntilShrinkStart(this.preShrinkingInvulnerabilityEndTick - world.getTime(), this.logic.getInvulnerabilityTime());
+		}
+		// Pre-shrinking invulnerable chapter ends
+		else if(world.getTime() == this.preShrinkingInvulnerabilityEndTick) {
 			world.getWorldBorder().interpolateSize(this.logic.getStartMapSize(), this.logic.getEndMapSize(), this.logic.getShrinkingTime() * 50L);
 			this.gameSpace.getPlayers().forEach(player -> player.networkHandler.sendPacket(new WorldBorderS2CPacket(world.getWorldBorder(), WorldBorderS2CPacket.Type.LERP_SIZE)));
+			this.gameSpace.getPlayers().sendMessage(new TranslatableText("text.uhc.shrinking_started").formatted(Formatting.RED));
+
+			this.invulnerable = false;
+			this.gameSpace.getPlayers().sendMessage(new TranslatableText("text.uhc.invulnerability_end").formatted(Formatting.RED));
 		}
+
 		// Shrinking chapter
 		else if(world.getTime() < this.shrinkingEndTick) {
-			this.bar.tickShrinking(this.shrinkingEndTick - world.getTime(), this.logic.getShrinkingTime());
+			this.bar.tickUntilShrinkFinish(this.shrinkingEndTick - world.getTime(), this.logic.getShrinkingTime());
 		}
 		// Shrinking chapter ends
 		else if(world.getTime() == this.shrinkingEndTick) {
-			this.gameSpace.getPlayers().sendMessage(new TranslatableText("text.uhc.shrinking_end").formatted(Formatting.AQUA));
 			world.getWorldBorder().setDamagePerBlock(2.5);
 			world.getWorldBorder().setBuffer(0.125);
 			this.bar.setDeathmatch();
-			this.participants.forEach(player -> this.spawnLogic.applyEffects(player, (int) this.deathmatchEndTick));
+			this.gameSpace.getPlayers().sendMessage(new TranslatableText("text.uhc.last_one_wins").formatted(Formatting.AQUA));
 		}
 		// Game ends
 		if(world.getTime() > this.gameCloseTick) {
@@ -217,19 +259,24 @@ public class UHCActive {
 	}
 
 	private void removePlayer(ServerPlayerEntity player) {
+		PlayerSet players = this.gameSpace.getPlayers();
+		players.sendMessage(new LiteralText("\n").append(new TranslatableText("text.uhc.player_eliminated", player.getDisplayName()).formatted(Formatting.BOLD, Formatting.DARK_RED)).append(new LiteralText("\n")));
+		players.sendSound(SoundEvents.ENTITY_WITHER_SPAWN);
+
 		this.eliminatePlayer(player);
 	}
 
 	private ActionResult onPlayerDeath(ServerPlayerEntity player, DamageSource source) {
+		PlayerSet players = this.gameSpace.getPlayers();
+		players.sendMessage(new LiteralText("\n").append(source.getDeathMessage(player).copy().formatted(Formatting.BOLD, Formatting.DARK_RED)).append(new LiteralText("\n")));
+		players.sendSound(SoundEvents.ENTITY_WITHER_SPAWN);
+
 		this.eliminatePlayer(player);
 		return ActionResult.FAIL;
 	}
 
 	private void eliminatePlayer(ServerPlayerEntity player) {
 		PlayerSet players = this.gameSpace.getPlayers();
-		players.sendMessage(new LiteralText("\n").append(new TranslatableText("text.uhc.player_eliminated", player.getDisplayName()).formatted(Formatting.BOLD, Formatting.DARK_RED)).append(new LiteralText("\n")));
-		players.sendSound(SoundEvents.ENTITY_WITHER_SPAWN);
-
 		ItemScatterer.spawn(this.gameSpace.getWorld(), player.getBlockPos(), player.inventory);
 
 		this.setSpectator(player, false);
@@ -250,10 +297,15 @@ public class UHCActive {
 				}
 			}
 		}
+		else if(survival == 0) {
+			players.sendMessage(new TranslatableText("text.uhc.none_win").formatted(Formatting.GOLD));
+			this.gameCloseTick = this.gameSpace.getWorld().getTime() + 200;
+
+		}
 	}
 
 	private void setSpectator(ServerPlayerEntity player, boolean moveToCenter) {
-		this.spawnLogic.resetPlayer(player, GameMode.SPECTATOR);
+		this.spawnLogic.resetPlayer(player, GameMode.SPECTATOR, true);
 		if(moveToCenter) this.spawnLogic.spawnPlayerAtCenter(player);
 	}
 
@@ -261,7 +313,7 @@ public class UHCActive {
 		if(!this.modulePieceManager.getModules().isEmpty()) {
 			MutableText text = new LiteralText("\n").append(new TranslatableText("text.uhc.modules_enabled").formatted(Formatting.GOLD));
 			this.modulePieceManager.getModules().forEach(module -> {
-				Style style = Style.EMPTY.withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new TranslatableText(module.getTranslation() + ".description")));
+				Style style = Style.EMPTY.withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new TranslatableText(module.getDescription())));
 				text.append(new LiteralText("\n  - ").formatted(Formatting.WHITE)).append(Texts.bracketed(new TranslatableText(module.getTranslation()).formatted(Formatting.GREEN)).setStyle(style));
 			});
 			text.append("\n");
@@ -304,16 +356,19 @@ public class UHCActive {
 
 	private TypedActionResult<List<ItemStack>> onMobLoot(LivingEntity livingEntity, List<ItemStack> itemStacks) {
 		if(!this.modulePieceManager.getModules().isEmpty()) {
-			boolean hasCustomDrop = false;
+			boolean replaceDrops = false;
 			List<ItemStack> stacks = new ArrayList<>();
 			for(EntityLootModulePiece piece : this.modulePieceManager.entityLootModulePieces) {
 				if(piece.test(livingEntity)) {
-					hasCustomDrop = true;
+					replaceDrops = true;
 					stacks.addAll(piece.getLoots(this.gameSpace.getWorld(), livingEntity));
 				}
 			}
-			if(hasCustomDrop) {
+			if(replaceDrops) {
 				return TypedActionResult.pass(stacks);
+			}
+			else {
+				itemStacks.addAll(stacks);
 			}
 		}
 		return TypedActionResult.success(itemStacks);

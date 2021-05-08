@@ -13,8 +13,8 @@ public class ModulePieceManager {
 	public final List<BlockLootModulePiece> blockLootModulePieces;
 	public final List<EntityLootModulePiece> entityLootModulePieces;
 	public final List<BucketBreakModulePiece> bucketBreakModulePieces;
-	public final List<PlayerAttributesModulePiece> playerAttributesModulePieces;
-	public final List<PermanentEffectsModulePiece> permanentEffectsModulePieces;
+	public final List<PlayerAttributeModulePiece> playerAttributeModulePieces;
+	public final List<PermanentEffectModulePiece> permanentEffectModulePieces;
 	private final List<Module> modules;
 	private final List<ModulePiece> modulesPieces;
 
@@ -26,8 +26,8 @@ public class ModulePieceManager {
 		this.blockLootModulePieces = getAllModulesPieces(ModulePieces.BLOCK_LOOT);
 		this.entityLootModulePieces = getAllModulesPieces(ModulePieces.ENTITY_LOOT);
 		this.bucketBreakModulePieces = getAllModulesPieces(ModulePieces.BUCKET_BREAK);
-		this.playerAttributesModulePieces = getAllModulesPieces(ModulePieces.PLAYER_ATTRIBUTES);
-		this.permanentEffectsModulePieces = getAllModulesPieces(ModulePieces.PERMANENT_EFFECTS);
+		this.playerAttributeModulePieces = getAllModulesPieces(ModulePieces.PLAYER_ATTRIBUTES);
+		this.permanentEffectModulePieces = getAllModulesPieces(ModulePieces.PERMANENT_EFFECTS);
 	}
 
 	public List<Module> getModules() {

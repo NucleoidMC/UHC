@@ -1,6 +1,5 @@
 package com.hugman.uhc.module.piece;
 
-import com.mojang.datafixers.util.Either;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.entity.EntityType;
@@ -20,19 +19,23 @@ import net.minecraft.util.registry.Registry;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 public class EntityLootModulePiece implements ModulePiece {
 	public static final Codec<EntityLootModulePiece> CODEC = RecordCodecBuilder.create(instance -> instance.group(
-			Codec.either(Identifier.CODEC, Tag.codec(() -> ServerTagManagerHolder.getTagManager().getEntityTypes())).fieldOf("target").forGetter(module -> module.target),
+			Tag.codec(() -> ServerTagManagerHolder.getTagManager().getEntityTypes()).optionalFieldOf("tag").forGetter(module -> module.tag),
+			Registry.ENTITY_TYPE.optionalFieldOf("entity").forGetter(module -> module.entity),
 			Identifier.CODEC.optionalFieldOf("loot_table", LootTables.EMPTY).forGetter(module -> module.lootTable)
 	).apply(instance, EntityLootModulePiece::new));
 
-	private final Either<Identifier, Tag<EntityType<?>>> target;
+	private final Optional<Tag<EntityType<?>>> tag;
+	private final Optional<EntityType<?>> entity;
 	private final Identifier lootTable;
 
 	// TODO: add a replace argument to make some modules good of their own (for example uhc:loots/chicken_arrows)
-	public EntityLootModulePiece(Either<Identifier, Tag<EntityType<?>>> target, Identifier lootTable) {
-		this.target = target;
+	public EntityLootModulePiece(Optional<Tag<EntityType<?>>> tag, Optional<EntityType<?>> entity, Identifier lootTable) {
+		this.tag = tag;
+		this.entity = entity;
 		this.lootTable = lootTable;
 	}
 
@@ -43,15 +46,15 @@ public class EntityLootModulePiece implements ModulePiece {
 
 	public boolean test(LivingEntity livingEntity) {
 		boolean valid = false;
-		if(target.right().isPresent()) {
-			Tag<EntityType<?>> entityTypeTag = target.right().get();
+		if(tag.isPresent()) {
+			Tag<EntityType<?>> entityTypeTag = tag.get();
 			if(entityTypeTag.contains(livingEntity.getType())) {
 				valid = true;
 			}
 		}
-		if(target.left().isPresent()) {
-			Identifier typeName = target.left().get();
-			if(typeName.equals(Registry.ENTITY_TYPE.getId(livingEntity.getType()))) {
+		else if(entity.isPresent()) {
+			EntityType<?> entityType = entity.get();
+			if(entityType.equals(livingEntity.getType())) {
 				valid = true;
 			}
 		}

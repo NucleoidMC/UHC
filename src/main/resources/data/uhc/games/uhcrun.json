@@ -1,8 +1,9 @@
 {
 	"type": "uhc:uhc",
-	"translation": "game.uhc.run",
+	"translation": "game.uhc.uhcrun",
 	"players": {
 		"min": 1,
+		"threshold": 50,
 		"max": 100
 	},
 	"map": {
@@ -19,10 +20,13 @@
 		}
 	},
 	"modules": [
-		"uhc:tree_chopper",
-		"uhc:pretty_fast",
+		"uhc:timberman",
+		"uhc:dasher",
+		"uhc:loots/desert_needs",
 		"uhc:loots/blasted_ores",
-		"uhc:loots/better_food",
+		"uhc:loots/animal_cooked_food",
+		"uhc:loots/animal_leather",
+		"uhc:loots/mob_cooked_food",
 		"uhc:loots/creeper_tnt",
 		"uhc:loots/chicken_arrows"
 	]

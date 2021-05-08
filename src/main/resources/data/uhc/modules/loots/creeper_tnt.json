@@ -6,7 +6,7 @@
 	"pieces": [
 		{
 			"type": "uhc:entity_loot",
-			"target": "minecraft:creeper",
+			"entity": "minecraft:creeper",
 			"loot_table": "uhc:entities/tnt"
 		}
 	]

@@ -5,8 +5,8 @@
 	},
 	"pieces": [
 		{
-			"type": "uhc:player_attributes",
-			"name": "minecraft:generic.max_health",
+			"type": "uhc:player_attribute",
+			"attribute": "minecraft:generic.max_health",
 			"value": 10
 		}
 	]

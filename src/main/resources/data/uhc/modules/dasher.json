@@ -1,0 +1,17 @@
+{
+	"translation": "module.uhc.dasher",
+	"icon": {
+		"id": "minecraft:iron_boots"
+	},
+	"pieces": [
+		{
+			"type": "uhc:player_attribute",
+			"attribute": "minecraft:generic.movement_speed",
+			"value": 0.14
+		},
+		{
+			"type": "uhc:permanent_effect",
+			"effect": "minecraft:haste"
+		}
+	]
+}

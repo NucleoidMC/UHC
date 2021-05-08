@@ -6,7 +6,7 @@
 	"pieces": [
 		{
 			"type": "uhc:entity_loot",
-			"target": "minecraft:chicken",
+			"entity": "minecraft:chicken",
 			"loot_table": "uhc:entities/arrows"
 		}
 	]

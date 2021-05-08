@@ -1,0 +1,18 @@
+{
+	"translation": "module.uhc.loots.mob_cooked_food",
+	"icon": {
+		"id": "minecraft:cooked_beef"
+	},
+	"pieces": [
+		{
+			"type": "uhc:entity_loot",
+			"tag": "uhc:mob_food/beef",
+			"loot_table": "uhc:entities/cooked_food/beef"
+		},
+		{
+			"type": "uhc:entity_loot",
+			"tag": "uhc:mob_food/fish",
+			"loot_table": "uhc:entities/cooked_food/fish"
+		}
+	]
+}

@@ -14,8 +14,9 @@ public final class ModulePieces {
 	public static final Identifier BLOCK_LOOT = register("block_loot", BlockLootModulePiece.CODEC);
 	public static final Identifier ENTITY_LOOT = register("entity_loot", EntityLootModulePiece.CODEC);
 	public static final Identifier BUCKET_BREAK = register("bucket_break", BucketBreakModulePiece.CODEC);
-	public static final Identifier PLAYER_ATTRIBUTES = register("player_attributes", PlayerAttributesModulePiece.CODEC);
-	public static final Identifier PERMANENT_EFFECTS = register("permanent_effects", PermanentEffectsModulePiece.CODEC);
+	public static final Identifier PLAYER_ATTRIBUTES = register("player_attribute", PlayerAttributeModulePiece.CODEC);
+	public static final Identifier PERMANENT_EFFECTS = register("permanent_effect", PermanentEffectModulePiece.CODEC);
+
 	private ModulePieces() {
 	}
 
