@@ -1,6 +1,6 @@
 {
 	"type": "uhc:uhc",
-	"translation": "game.uhc.uhcrun",
+	"translation": "game.uhc.uhcrun.vanilla.solo",
 	"players": {
 		"min": 1,
 		"threshold": 50,

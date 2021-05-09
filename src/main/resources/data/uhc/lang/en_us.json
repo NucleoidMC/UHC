@@ -1,6 +1,10 @@
 {
 	"game.uhc.uhc": "UHC",
 	"game.uhc.uhcrun": "UHCRun",
+	"game.uhc.uhc.solo": "UHC (Solo)",
+	"game.uhc.uhcrun.solo": "UHCRun (Solo)",
+	"game.uhc.uhc.vanilla.solo": "UHC: Vanilla (Solo)",
+	"game.uhc.uhcrun.vanilla.solo": "UHCRun: Vanilla (Solo)",
 	"module.uhc.double_health": "Double Health",
 	"module.uhc.double_health.description": "Double the health of players",
 	"module.uhc.half_health": "Half Health",
