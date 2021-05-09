@@ -1,7 +1,7 @@
 package com.hugman.uhc.util;
 
-public final class TimeUtil {
-	private TimeUtil() {
+public final class TickUtil {
+	private TickUtil() {
 	}
 
 	public static long asSeconds(long t) {

@@ -38,6 +38,8 @@ public class UHCWaiting {
 				.setSpawner(BubbleWorldSpawner.atSurface(0, 0))
 				.setDefaultGameMode(GameMode.ADVENTURE)
 				.setGameRule(GameRules.NATURAL_REGENERATION, false)
+				.setGameRule(GameRules.DO_MOB_SPAWNING, true)
+				.setGameRule(GameRules.DO_DAYLIGHT_CYCLE, true)
 				.setDimensionType(RegistryKey.of(Registry.DIMENSION_TYPE_KEY, context.getConfig().getMapConfig().getDimension()));
 
 		return context.createOpenProcedure(worldConfig, game -> {

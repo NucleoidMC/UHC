@@ -15,8 +15,8 @@
 		{
 			"type": "uhc:block_loot",
 			"target": {
-				"predicate_type": "minecraft:block_match",
-				"block": "minecraft:sand"
+				"predicate_type": "minecraft:tag_match",
+				"tag": "minecraft:sand"
 			},
 			"loot_table": "uhc:blocks/glass"
 		},

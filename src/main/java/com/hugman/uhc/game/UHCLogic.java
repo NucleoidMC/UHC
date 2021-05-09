@@ -27,19 +27,15 @@ public class UHCLogic {
 		return (long) (config.getTimeConfig().getInvulnerabilityTime().crossProduct(playerDose) * 20L);
 	}
 
-	public long getPeacefulTime() {
-		return (long) (config.getTimeConfig().getPeacefulTime().crossProduct(playerDose) * 20L);
-	}
-
-	public long getWildTime() {
-		return (long) (config.getTimeConfig().getWildTime().crossProduct(playerDose) * 20L);
+	public long getWarmupTime() {
+		return (long) (config.getTimeConfig().getWarmupTime().crossProduct(playerDose) * 20L);
 	}
 
 	public long getDeathmatchTime() {
 		return (long) (config.getTimeConfig().getDeathmatchTime().crossProduct(playerDose) * 20L);
 	}
 
-	public long getShrinkingTime() {
+	public long getReducingTime() {
 		return (long) ((getStartMapSize() - getEndMapSize()) / config.getMapConfig().getWorldborderSpeed() * 10L);
 	}
 }

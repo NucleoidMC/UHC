@@ -10,13 +10,9 @@
 		"settings": "minecraft:overworld"
 	},
 	"chapters": {
-		"peaceful": {
+		"warmup": {
 			"min": 1200,
 			"max": 1400
-		},
-		"wild": {
-			"min": 300,
-			"max": 750
 		}
 	},
 	"modules": [
