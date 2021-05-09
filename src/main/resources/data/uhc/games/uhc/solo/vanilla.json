@@ -1,9 +1,9 @@
 {
 	"type": "uhc:uhc",
-	"translation": "game.uhc.uhc.vanilla.solo",
+	"translation": "game.uhc.uhc.solo.vanilla",
 	"players": {
-		"min": 10,
-		"threshold": 25,
+		"min": 1,
+		"threshold": 50,
 		"max": 100
 	},
 	"map": {
