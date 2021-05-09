@@ -21,9 +21,10 @@
 	},
 	"modules": [
 		"uhc:timberman",
+		"uhc:loots/leaves_leave_no_leaves",
 		"uhc:dasher",
-		"uhc:loots/desert_needs",
 		"uhc:loots/blasted_ores",
+		"uhc:loots/need_for_resources",
 		"uhc:loots/animal_cooked_food",
 		"uhc:loots/animal_leather",
 		"uhc:loots/mob_cooked_food",
