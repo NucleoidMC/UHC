@@ -39,7 +39,7 @@
 	"text.uhc.pvp_enabled": "PvP has been enabled!",
 	"text.uhc.player_eliminated": "%s has been eliminated!",
 	"text.uhc.player_win": "%s has won!",
-	"text.uhc.player_win": "No one has won!",
+	"text.uhc.none_win": "No one has won!",
 	"text.uhc.last_one_wins": "Last one standing wins!",
 	"text.uhc.shrinking_started": "The world has started shrinking! Go to the center of the map!"
 }

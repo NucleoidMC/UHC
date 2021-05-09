@@ -31,6 +31,7 @@ import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.GameMode;
 import org.jetbrains.annotations.Nullable;
 import xyz.nucleoid.plasmid.game.GameCloseReason;
+import xyz.nucleoid.plasmid.game.GameLogic;
 import xyz.nucleoid.plasmid.game.GameSpace;
 import xyz.nucleoid.plasmid.game.event.*;
 import xyz.nucleoid.plasmid.game.player.JoinResult;
@@ -44,6 +45,7 @@ import java.util.List;
 
 public class UHCActive {
 	public final GameSpace gameSpace;
+	private final GameLogic gameLogic;
 	private final UHCMap map;
 	private final UHCConfig config;
 	private final ModulePieceManager modulePieceManager;
@@ -65,29 +67,30 @@ public class UHCActive {
 	private long gameCloseTick;
 
 	private boolean invulnerable;
-	private boolean pvp;
+	private boolean isFinished = false;
 
-	private UHCActive(GameSpace gameSpace, UHCMap map, UHCConfig config, PlayerSet participants, GlobalWidgets widgets) {
-		this.gameSpace = gameSpace;
+	private UHCActive(GameLogic gameLogic, UHCMap map, UHCConfig config, GlobalWidgets widgets) {
+		this.gameLogic = gameLogic;
+		this.gameSpace = this.gameLogic.getSpace();
 		this.map = map;
 		this.config = config;
 		this.modulePieceManager = new ModulePieceManager(config);
 
-		this.participants = participants;
+		this.participants = this.gameSpace.getPlayers();
 
-		this.logic = new UHCLogic(config, participants.size());
-		this.spawnLogic = new UHCSpawner(gameSpace, modulePieceManager);
-		this.bar = UHCBar.create(widgets, gameSpace);
+		this.logic = new UHCLogic(config, this.participants.size());
+		this.spawnLogic = new UHCSpawner(this.gameSpace, this.modulePieceManager);
+		this.bar = UHCBar.create(widgets, this.gameSpace);
 	}
 
 	public static void open(GameSpace gameSpace, UHCMap map, UHCConfig config) {
 		gameSpace.openGame(game -> {
 			GlobalWidgets widgets = new GlobalWidgets(game);
-			UHCActive active = new UHCActive(gameSpace, map, config, gameSpace.getPlayers(), widgets);
+			UHCActive active = new UHCActive(game, map, config, widgets);
 
 			game.setRule(GameRule.CRAFTING, RuleResult.ALLOW);
 			game.setRule(GameRule.PORTALS, RuleResult.DENY);
-			game.setRule(GameRule.PVP, RuleResult.ALLOW);
+			game.setRule(GameRule.PVP, RuleResult.DENY);
 			game.setRule(GameRule.BLOCK_DROPS, RuleResult.ALLOW);
 			game.setRule(GameRule.FALL_DAMAGE, RuleResult.ALLOW);
 			game.setRule(GameRule.HUNGER, RuleResult.ALLOW);
@@ -125,28 +128,11 @@ public class UHCActive {
 		this.preShrinkingInvulnerabilityEndTick = this.preShrinkingCagesEndTick + this.logic.getInvulnerabilityTime();
 		this.shrinkingEndTick = this.preShrinkingInvulnerabilityEndTick + this.logic.getShrinkingTime();
 		this.deathmatchEndTick = this.shrinkingEndTick + this.logic.getDeathmatchTime();
-		this.gameCloseTick = this.deathmatchEndTick + 200;
+		this.gameCloseTick = this.deathmatchEndTick + 600;
 
-		this.participants.forEach(player -> this.spawnLogic.resetPlayer(player, GameMode.ADVENTURE, true));
+		this.participants.forEach(player -> this.spawnLogic.resetPlayer(player, GameMode.SURVIVAL, true));
+
 		this.putPlayersInCages();
-	}
-
-	private void putPlayersInCages() {
-		this.invulnerable = true;
-		ServerWorld world = this.gameSpace.getWorld();
-		int index = 0;
-		for(ServerPlayerEntity player : this.participants) {
-			if(player.interactionManager.getGameMode().isSurvivalLike()) {
-				player.networkHandler.sendPacket(new WorldBorderS2CPacket(world.getWorldBorder(), WorldBorderS2CPacket.Type.INITIALIZE));
-
-				double theta = ((double) index++ / this.participants.size()) * 2 * Math.PI;
-
-				int x = MathHelper.floor(Math.cos(theta) * (this.logic.getStartMapSize() / 2 - this.config.getMapConfig().getSpawnOffset()));
-				int z = MathHelper.floor(Math.sin(theta) * (this.logic.getStartMapSize() / 2 - this.config.getMapConfig().getSpawnOffset()));
-
-				this.spawnLogic.summonPlayerInCageAt(player, x, z);
-			}
-		}
 	}
 
 	private void close() {
@@ -158,6 +144,14 @@ public class UHCActive {
 	private void tick() {
 		ServerWorld world = this.gameSpace.getWorld();
 
+		// Game ends
+		if(isFinished) {
+			if(world.getTime() > this.gameCloseTick) {
+				this.gameSpace.close(GameCloseReason.FINISHED);
+			}
+			return;
+		}
+
 		// Cage chapter
 		if(world.getTime() < this.cagesEndTick) {
 			this.bar.tickUntilDrop(this.cagesEndTick - world.getTime(), this.logic.getInCagesTime());
@@ -167,12 +161,7 @@ public class UHCActive {
 		}
 		// Cage chapter ends
 		else if(world.getTime() == this.cagesEndTick) {
-			this.gameSpace.getPlayers().sendMessage(new TranslatableText("text.uhc.dropped_players").formatted(Formatting.AQUA));
-			this.spawnLogic.clearCages();
-			this.participants.forEach(player -> {
-				this.spawnLogic.resetPlayer(player, GameMode.SURVIVAL, true);
-				this.spawnLogic.applyEffects(player, (int) this.wildEndTick);
-			});
+			this.dropPlayers();
 		}
 		// Invulnerable chapter
 		else if(world.getTime() < this.invulnerabilityEndTick) {
@@ -180,17 +169,16 @@ public class UHCActive {
 		}
 		// Invulnerable chapter ends
 		else if(world.getTime() == this.invulnerabilityEndTick) {
-			this.invulnerable = false;
-			this.gameSpace.getPlayers().sendMessage(new TranslatableText("text.uhc.invulnerability_end").formatted(Formatting.RED));
+			this.setInvulnerable(false);
 		}
 		// Peaceful chapter
 		else if(world.getTime() < this.peacefulEndTick) {
 			this.bar.tickUntilPvp(this.peacefulEndTick - world.getTime(), this.logic.getPeacefulTime());
 		}
 		// Peaceful chapter ends
-		//TODO: actually disable pvp before this...
 		else if(world.getTime() == this.peacefulEndTick) {
 			this.gameSpace.getPlayers().sendMessage(new TranslatableText("text.uhc.pvp_enabled").formatted(Formatting.RED));
+			this.gameLogic.setRule(GameRule.INTERACTION, RuleResult.DENY);
 		}
 		// Wild chapter
 		else if(world.getTime() < this.wildEndTick) {
@@ -198,11 +186,6 @@ public class UHCActive {
 		}
 		// Wild chapter ends
 		else if(world.getTime() == this.wildEndTick) {
-			this.participants.forEach(player -> {
-				if(player.interactionManager.getGameMode().isSurvivalLike()) {
-					this.spawnLogic.resetPlayer(player, GameMode.ADVENTURE, false);
-				}
-			});
 			this.putPlayersInCages();
 		}
 
@@ -212,14 +195,7 @@ public class UHCActive {
 		}
 		// Pre-shrinking cages chapter ends
 		else if(world.getTime() == this.preShrinkingCagesEndTick) {
-			this.spawnLogic.clearCages();
-			this.participants.forEach(player -> {
-				if(player.interactionManager.getGameMode().isSurvivalLike()) {
-					this.spawnLogic.resetPlayer(player, GameMode.SURVIVAL, false);
-					this.spawnLogic.applyEffects(player, (int) this.deathmatchEndTick);
-				}
-			});
-			this.gameSpace.getPlayers().sendMessage(new TranslatableText("text.uhc.dropped_players").formatted(Formatting.AQUA));
+			this.dropPlayers();
 			this.gameSpace.getPlayers().sendMessage(new TranslatableText("text.uhc.invulnerable_until_shrink_start").formatted(Formatting.AQUA));
 		}
 		// Pre-shrinking invulnerable chapter
@@ -231,9 +207,7 @@ public class UHCActive {
 			world.getWorldBorder().interpolateSize(this.logic.getStartMapSize(), this.logic.getEndMapSize(), this.logic.getShrinkingTime() * 50L);
 			this.gameSpace.getPlayers().forEach(player -> player.networkHandler.sendPacket(new WorldBorderS2CPacket(world.getWorldBorder(), WorldBorderS2CPacket.Type.LERP_SIZE)));
 			this.gameSpace.getPlayers().sendMessage(new TranslatableText("text.uhc.shrinking_started").formatted(Formatting.RED));
-
-			this.invulnerable = false;
-			this.gameSpace.getPlayers().sendMessage(new TranslatableText("text.uhc.invulnerability_end").formatted(Formatting.RED));
+			this.setInvulnerable(false);
 		}
 
 		// Shrinking chapter
@@ -246,11 +220,58 @@ public class UHCActive {
 			world.getWorldBorder().setBuffer(0.125);
 			this.bar.setDeathmatch();
 			this.gameSpace.getPlayers().sendMessage(new TranslatableText("text.uhc.last_one_wins").formatted(Formatting.AQUA));
+			this.checkForWinner();
 		}
-		// Game ends
-		if(world.getTime() > this.gameCloseTick) {
-			this.gameSpace.close(GameCloseReason.FINISHED);
+	}
+
+	private void setInvulnerable(boolean b) {
+		RuleResult r = b ? RuleResult.DENY : RuleResult.ALLOW;
+		this.invulnerable = b;
+		this.gameLogic.setRule(GameRule.PVP, r);
+		this.gameLogic.setRule(GameRule.HUNGER, r);
+		this.gameLogic.setRule(GameRule.FALL_DAMAGE, r);
+
+		if(!b) this.gameSpace.getPlayers().sendMessage(new TranslatableText("text.uhc.invulnerability_end").formatted(Formatting.RED));
+	}
+
+	private void putPlayersInCages() {
+		this.setInvulnerable(true);
+		this.gameLogic.setRule(GameRule.BREAK_BLOCKS, RuleResult.DENY);
+		this.gameLogic.setRule(GameRule.PLACE_BLOCKS, RuleResult.DENY);
+		this.gameLogic.setRule(GameRule.INTERACTION, RuleResult.DENY);
+		this.gameLogic.setRule(GameRule.CRAFTING, RuleResult.DENY);
+
+		ServerWorld world = this.gameSpace.getWorld();
+		int index = 0;
+		for(ServerPlayerEntity player : this.participants) {
+			player.networkHandler.sendPacket(new WorldBorderS2CPacket(world.getWorldBorder(), WorldBorderS2CPacket.Type.INITIALIZE));
+			if(player.interactionManager.getGameMode() == GameMode.SURVIVAL) {
+
+				double theta = ((double) index++ / this.participants.size()) * 2 * Math.PI;
+
+				int x = MathHelper.floor(Math.cos(theta) * (this.logic.getStartMapSize() / 2 - this.config.getMapConfig().getSpawnOffset()));
+				int z = MathHelper.floor(Math.sin(theta) * (this.logic.getStartMapSize() / 2 - this.config.getMapConfig().getSpawnOffset()));
+
+				this.spawnLogic.summonPlayerInCageAt(player, x, z);
+			}
 		}
+	}
+
+	private void dropPlayers() {
+		this.spawnLogic.clearCages();
+		this.gameLogic.setRule(GameRule.BREAK_BLOCKS, RuleResult.ALLOW);
+		this.gameLogic.setRule(GameRule.PLACE_BLOCKS, RuleResult.ALLOW);
+		this.gameLogic.setRule(GameRule.INTERACTION, RuleResult.ALLOW);
+		this.gameLogic.setRule(GameRule.CRAFTING, RuleResult.ALLOW);
+
+		this.participants.forEach(player -> {
+			if(player.interactionManager.getGameMode() == GameMode.SURVIVAL) {
+				this.spawnLogic.resetPlayer(player, GameMode.SURVIVAL, false);
+				this.spawnLogic.applyEffects(player, (int) this.deathmatchEndTick);
+			}
+		});
+
+		this.gameSpace.getPlayers().sendMessage(new TranslatableText("text.uhc.dropped_players").formatted(Formatting.AQUA));
 	}
 
 	private void addPlayer(ServerPlayerEntity player) {
@@ -259,11 +280,12 @@ public class UHCActive {
 	}
 
 	private void removePlayer(ServerPlayerEntity player) {
-		PlayerSet players = this.gameSpace.getPlayers();
-		players.sendMessage(new LiteralText("\n").append(new TranslatableText("text.uhc.player_eliminated", player.getDisplayName()).formatted(Formatting.BOLD, Formatting.DARK_RED)).append(new LiteralText("\n")));
-		players.sendSound(SoundEvents.ENTITY_WITHER_SPAWN);
-
-		this.eliminatePlayer(player);
+		if(player.interactionManager.getGameMode() == GameMode.SURVIVAL) {
+			PlayerSet players = this.gameSpace.getPlayers();
+			players.sendMessage(new LiteralText("\n").append(new TranslatableText("text.uhc.player_eliminated", player.getDisplayName()).formatted(Formatting.BOLD, Formatting.DARK_RED)).append(new LiteralText("\n")));
+			players.sendSound(SoundEvents.ENTITY_WITHER_SPAWN);
+			this.eliminatePlayer(player);
+		}
 	}
 
 	private ActionResult onPlayerDeath(ServerPlayerEntity player, DamageSource source) {
@@ -276,31 +298,39 @@ public class UHCActive {
 	}
 
 	private void eliminatePlayer(ServerPlayerEntity player) {
-		PlayerSet players = this.gameSpace.getPlayers();
 		ItemScatterer.spawn(this.gameSpace.getWorld(), player.getBlockPos(), player.inventory);
-
 		this.setSpectator(player, false);
+		this.checkForWinner();
+	}
+
+	private void checkForWinner() {
+		PlayerSet players = this.gameSpace.getPlayers();
 
 		int survival = 0;
 		for(ServerPlayerEntity participant : this.participants) {
-			if(participant.interactionManager.getGameMode().isSurvivalLike()) {
+			if(participant.interactionManager.getGameMode() == GameMode.SURVIVAL) {
 				survival++;
 			}
 		}
 
-		if(survival == 1) {
-			for(ServerPlayerEntity participant : this.participants) {
-				if(participant.interactionManager.getGameMode().isSurvivalLike()) {
-					players.sendMessage(new TranslatableText("text.uhc.player_win", participant.getEntityName()).formatted(Formatting.GOLD));
-					this.gameCloseTick = this.gameSpace.getWorld().getTime() + 200;
-					break;
+		if(survival <= 1) {
+			if(survival == 1) {
+				for(ServerPlayerEntity participant : this.participants) {
+					if(participant.interactionManager.getGameMode() == GameMode.SURVIVAL) {
+						players.sendMessage(new LiteralText("\n").append(new TranslatableText("text.uhc.player_win", participant.getEntityName()).formatted(Formatting.GOLD)).append("\n"));
+						participant.setGameMode(GameMode.ADVENTURE);
+						setInvulnerable(true);
+						break;
+					}
 				}
 			}
-		}
-		else if(survival == 0) {
-			players.sendMessage(new TranslatableText("text.uhc.none_win").formatted(Formatting.GOLD));
+			else {
+				players.sendMessage(new LiteralText("\n").append(new TranslatableText("text.uhc.none_win").formatted(Formatting.GOLD)).append("\n"));
+			}
+			players.sendSound(SoundEvents.UI_TOAST_CHALLENGE_COMPLETE);
 			this.gameCloseTick = this.gameSpace.getWorld().getTime() + 200;
-
+			this.bar.end();
+			this.isFinished = true;
 		}
 	}
 

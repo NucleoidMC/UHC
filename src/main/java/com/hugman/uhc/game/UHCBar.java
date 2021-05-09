@@ -86,13 +86,13 @@ public final class UHCBar {
 		long seconds = TimeUtil.asSeconds(ticks);
 		long totalSeconds = TimeUtil.asSeconds(totalTicks);
 
-		if(TimeUtil.blink(seconds, 30, 1)) {
+		if(TimeUtil.blink(seconds, 10, 1)) {
 			if(ticks % 20 == 0) {
 				float pitch = seconds == 1 ? 1.5F : 1.0F;
 				gameSpace.getPlayers().sendSound(SoundEvents.ENTITY_EXPERIENCE_ORB_PICKUP, SoundCategory.PLAYERS, 1.0F, pitch);
 			}
 		}
-		if(TimeUtil.blink(seconds, 30, 2)) {
+		if(TimeUtil.blink(seconds, 10, 2)) {
 			this.widget.setStyle(BossBar.Color.RED, BossBar.Style.PROGRESS);
 		}
 		else {
@@ -107,13 +107,13 @@ public final class UHCBar {
 		long totalSeconds = TimeUtil.asSeconds(totalTicks);
 
 
-		if(TimeUtil.blink(seconds, 30, 1)) {
+		if(TimeUtil.blink(seconds, 10, 1)) {
 			if(ticks % 20 == 0) {
 				float pitch = seconds == 1 ? 1.5F : 1.0F;
 				gameSpace.getPlayers().sendSound(SoundEvents.ENTITY_EXPERIENCE_ORB_PICKUP, SoundCategory.PLAYERS, 1.0F, pitch);
 			}
 		}
-		if(TimeUtil.blink(seconds, 30, 2)) {
+		if(TimeUtil.blink(seconds, 10, 2)) {
 			this.widget.setStyle(BossBar.Color.RED, BossBar.Style.PROGRESS);
 		}
 		else {
@@ -127,7 +127,7 @@ public final class UHCBar {
 		long seconds = TimeUtil.asSeconds(ticks);
 		long totalSeconds = TimeUtil.asSeconds(totalTicks);
 
-		if(TimeUtil.blink(seconds, 15, 1)) {
+		if(TimeUtil.blink(seconds, 10, 1)) {
 			if(ticks % 20 == 0) {
 				float pitch = seconds == 1 ? 1.5F : 1.0F;
 				gameSpace.getPlayers().sendSound(SoundEvents.ENTITY_EXPERIENCE_ORB_PICKUP, SoundCategory.PLAYERS, 1.0F, pitch);
@@ -142,5 +142,9 @@ public final class UHCBar {
 		this.widget.setStyle(BossBar.Color.GREEN, BossBar.Style.PROGRESS);
 		this.widget.setTitle(new TranslatableText("text.uhc.bar.deathmatch"));
 		this.widget.setProgress(1.0f);
+	}
+
+	public void end() {
+		this.widget.close();
 	}
 }
