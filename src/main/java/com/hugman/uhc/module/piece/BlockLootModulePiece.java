@@ -67,7 +67,7 @@ public class BlockLootModulePiece implements ModulePiece {
 				world.spawnEntity(new ExperienceOrbEntity(world, (double) pos.getX() + 0.5D, (double) pos.getY() + 0.5D, (double) pos.getZ() + 0.5D, i));
 			}
 			stacks.forEach((stack) -> Block.dropStack(world, pos, stack));
-			world.breakBlock(pos, false, player);
+			world.removeBlock(pos, false);
 			return true;
 		}
 		else return false;
