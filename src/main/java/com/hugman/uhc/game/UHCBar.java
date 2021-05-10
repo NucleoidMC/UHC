@@ -5,6 +5,7 @@ import net.minecraft.entity.boss.BossBar;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.TranslatableText;
+import net.minecraft.util.Formatting;
 import xyz.nucleoid.plasmid.game.GameSpace;
 import xyz.nucleoid.plasmid.widget.BossBarWidget;
 import xyz.nucleoid.plasmid.widget.GlobalWidgets;
@@ -12,10 +13,12 @@ import xyz.nucleoid.plasmid.widget.GlobalWidgets;
 public final class UHCBar {
 	private final BossBarWidget widget;
 	private final GameSpace gameSpace;
-	private String translation = "game.uhc.uhc";
+	private String name;
+	private String message;
 	private long totalTicks = 0;
 	private boolean canTick = true;
 
+	// TODO: work on sidebar
 	private UHCBar(BossBarWidget widget, GameSpace gameSpace) {
 		this.widget = widget;
 		this.gameSpace = gameSpace;
@@ -25,14 +28,19 @@ public final class UHCBar {
 		return new UHCBar(widgets.addBossBar(new TranslatableText("game.uhc.uhc"), BossBar.Color.BLUE, BossBar.Style.PROGRESS), gameSpace);
 	}
 
-	public void set(String translation, long totalTicks, BossBar.Color color) {
-		this.translation = translation;
+	public void set(String name, long totalTicks, BossBar.Color color) {
+		this.name = name;
 		this.totalTicks = totalTicks;
 		this.widget.setStyle(color, BossBar.Style.NOTCHED_10);
+		this.message = name;
+	}
+
+	public void setMessage(String message) {
+		this.message = message;
 	}
 
 	public void setFull(String translation) {
-		this.translation = translation;
+		this.name = translation;
 
 		this.widget.setTitle(new TranslatableText(translation));
 		this.widget.setStyle(BossBar.Color.GREEN, BossBar.Style.PROGRESS);
@@ -49,12 +57,21 @@ public final class UHCBar {
 			long seconds = TickUtil.asSeconds(ticks);
 			long totalSeconds = TickUtil.asSeconds(totalTicks);
 
-			if(TickUtil.asSeconds(ticks) <= 10) {
-				float pitch = seconds == 0 ? 1.5F : 1.0F;
-				gameSpace.getPlayers().sendSound(SoundEvents.ENTITY_EXPERIENCE_ORB_PICKUP, SoundCategory.PLAYERS, 1.0F, pitch);
+			if(seconds <= 5 || seconds == 10 || seconds == 15 || seconds == 30 || seconds == 60) {
+				sendMessage(seconds);
 			}
-			this.widget.setTitle(new TranslatableText(translation, TickUtil.format(ticks)));
+			this.widget.setTitle(new TranslatableText(name, TickUtil.format(ticks)));
 			this.widget.setProgress((float) seconds / totalSeconds);
 		}
+	}
+
+	private void sendMessage(long seconds) {
+		float pitch = seconds == 0 ? 1.5F : 1.0F;
+		gameSpace.getPlayers().forEach(entity -> {
+			if(this.message != null && seconds != 0) {
+				entity.sendMessage(new TranslatableText(this.message, TickUtil.formatPretty(seconds * 20).formatted(Formatting.RED)).formatted(Formatting.GOLD), false);
+			}
+			entity.playSound(SoundEvents.ENTITY_EXPERIENCE_ORB_PICKUP, SoundCategory.PLAYERS, 1.0F, pitch);
+		});
 	}
 }

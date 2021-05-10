@@ -1,5 +1,11 @@
 package com.hugman.uhc.util;
 
+
+import net.minecraft.text.LiteralText;
+import net.minecraft.text.MutableText;
+import net.minecraft.text.Text;
+import net.minecraft.text.TranslatableText;
+
 public final class TickUtil {
 	private TickUtil() {
 	}
@@ -32,12 +38,51 @@ public final class TickUtil {
 		return l <= max && l % each == 0;
 	}
 
-	public static String format(long t) {
+	public static Text format(long t) {
 		if(getHours(t) > 0) {
-			return String.format("%02d:%02d:%02d", getHours(t), getMinutes(t), getSeconds(t));
+			return new LiteralText(String.format("%02d:%02d:%02d", getHours(t), getMinutes(t), getSeconds(t)));
 		}
 		else {
-			return String.format("%02d:%02d", getMinutes(t), getSeconds(t));
+			return new LiteralText(String.format("%02d:%02d", getMinutes(t), getSeconds(t)));
 		}
+	}
+
+	public static MutableText formatPretty(long t) {
+		MutableText text = new LiteralText("");
+		long hours = getHours(t);
+		long minutes = getMinutes(t);
+		long seconds = getSeconds(t);
+
+		boolean textBefore = false;
+		if(hours > 0) {
+			if(hours == 1) {
+				text.append(new TranslatableText("text.uhc.time.hour"));
+			}
+			else {
+				text.append(new TranslatableText("text.uhc.time.hours", hours));
+			}
+			textBefore = true;
+		}
+		if(minutes > 0) {
+			if(textBefore) text.append(new LiteralText(" ")).append(new TranslatableText("text.uhc.and")).append(new LiteralText(" "));
+			if(minutes == 1) {
+				text.append(new TranslatableText("text.uhc.time.minute"));
+			}
+			else {
+				text.append(new TranslatableText("text.uhc.time.minutes", minutes));
+			}
+			textBefore = true;
+		}
+		if(seconds > 0) {
+			if(textBefore) text.append(new LiteralText(" ")).append(new TranslatableText("text.uhc.and")).append(new LiteralText(" "));
+			if(seconds == 1) {
+				text.append(new TranslatableText("text.uhc.time.second"));
+			}
+			else {
+				text.append(new TranslatableText("text.uhc.time.seconds", seconds));
+			}
+		}
+
+		return text;
 	}
 }
