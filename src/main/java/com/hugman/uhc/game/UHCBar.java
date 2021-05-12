@@ -15,6 +15,7 @@ public final class UHCBar {
 	private final GameSpace gameSpace;
 	private String name;
 	private String message;
+	private BossBar.Color color;
 	private long totalTicks = 0;
 	private boolean canTick = true;
 
@@ -29,10 +30,10 @@ public final class UHCBar {
 	}
 
 	public void set(String name, long totalTicks, BossBar.Color color) {
-		this.name = name;
+		this.name = name + ".countdown_bar";
+		this.message = name + ".countdown_text";
 		this.totalTicks = totalTicks;
-		this.widget.setStyle(color, BossBar.Style.NOTCHED_10);
-		this.message = name;
+		this.color = color;
 	}
 
 	public void setMessage(String message) {
@@ -57,10 +58,13 @@ public final class UHCBar {
 			long seconds = TickUtil.asSeconds(ticks);
 			long totalSeconds = TickUtil.asSeconds(totalTicks);
 
-			if(seconds <= 5 || seconds == 10 || seconds == 15 || seconds == 30 || seconds == 60) {
+			BossBar.Color newColor = this.color;
+			if(seconds <= 5 || seconds == 10 || seconds == 15 || seconds == 30 || seconds == 60 || seconds == 150 || seconds == 300 || seconds == 600 || seconds == 900 || seconds == 1800) {
 				sendMessage(seconds);
+				newColor = BossBar.Color.RED;
 			}
 			this.widget.setTitle(new TranslatableText(name, TickUtil.format(ticks)));
+			this.widget.setStyle(newColor, BossBar.Style.NOTCHED_10);
 			this.widget.setProgress((float) seconds / totalSeconds);
 		}
 	}

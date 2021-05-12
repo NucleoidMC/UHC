@@ -134,7 +134,7 @@ public class UHCActive {
 		// Start - Cage chapter starts
 		this.participants.forEach(player -> this.spawnLogic.resetPlayer(player, GameMode.SURVIVAL, true));
 		this.putPlayersInCages();
-		this.bar.set("text.uhc.dropping_in", this.logic.getInCagesTime(), BossBar.Color.PURPLE);
+		this.bar.set("text.uhc.dropping", this.logic.getInCagesTime(), BossBar.Color.PURPLE);
 	}
 
 	private void close() {
@@ -166,7 +166,7 @@ public class UHCActive {
 				this.sendMessage("text.uhc.dropped_players");
 				this.sendMessage("text.uhc.world_will_reduce", TickUtil.format(this.finaleCagesTick - world.getTime()));
 
-				this.bar.set("text.uhc.vulnerable_in", this.logic.getInvulnerabilityTime(), BossBar.Color.YELLOW);
+				this.bar.set("text.uhc.vulnerable", this.logic.getInvulnerabilityTime(), BossBar.Color.YELLOW);
 			}
 		}
 
@@ -178,7 +178,7 @@ public class UHCActive {
 				this.setInvulnerable(false);
 				this.sendWarning("text.uhc.no_longer_immune");
 
-				this.bar.set("text.uhc.tp_in", this.logic.getWarmupTime(), BossBar.Color.BLUE);
+				this.bar.set("text.uhc.tp", this.logic.getWarmupTime(), BossBar.Color.BLUE);
 			}
 		}
 
@@ -190,7 +190,7 @@ public class UHCActive {
 				this.putPlayersInCages();
 				this.sendMessage("text.uhc.reducing_when_pvp");
 
-				this.bar.set("text.uhc.dropping_in", this.logic.getInCagesTime(), BossBar.Color.PURPLE);
+				this.bar.set("text.uhc.dropping", this.logic.getInCagesTime(), BossBar.Color.PURPLE);
 			}
 		}
 
@@ -202,7 +202,7 @@ public class UHCActive {
 				this.dropPlayers();
 				this.sendMessage("text.uhc.dropped_players");
 
-				this.bar.set("text.uhc.pvp_in", this.logic.getInvulnerabilityTime(), BossBar.Color.YELLOW);
+				this.bar.set("text.uhc.pvp", this.logic.getInvulnerabilityTime(), BossBar.Color.YELLOW);
 			}
 		}
 
@@ -221,7 +221,7 @@ public class UHCActive {
 				this.gameSpace.getPlayers().forEach(player -> player.networkHandler.sendPacket(new WorldBorderS2CPacket(world.getWorldBorder(), WorldBorderS2CPacket.Type.LERP_SIZE)));
 				this.sendWarning("text.uhc.reducing_start");
 
-				this.bar.set("text.uhc.reducing_finish_in", this.logic.getReducingTime(), BossBar.Color.RED);
+				this.bar.set("text.uhc.reducing_finish", this.logic.getReducingTime(), BossBar.Color.RED);
 			}
 		}
 
@@ -244,7 +244,7 @@ public class UHCActive {
 	}
 
 	public void sendMessage(String s, Object... args) {
-		this.sendMessage(s, Formatting.GOLD, args);
+		this.sendMessage(s, Formatting.YELLOW, args);
 	}
 
 	private void sendWarning(String s, Object... args) {
@@ -307,7 +307,7 @@ public class UHCActive {
 	private void removePlayer(ServerPlayerEntity player) {
 		if(player.interactionManager.getGameMode() == GameMode.SURVIVAL) {
 			PlayerSet players = this.gameSpace.getPlayers();
-			players.sendMessage(new LiteralText("\n").append(new TranslatableText("text.uhc.player_eliminated", player.getDisplayName()).formatted(Formatting.BOLD, Formatting.DARK_RED)).append(new LiteralText("\n")));
+			players.sendMessage(new LiteralText("\n☠ ").append(new TranslatableText("text.uhc.player_eliminated", player.getDisplayName())).append(new LiteralText("\n")).formatted(Formatting.DARK_RED));
 			players.sendSound(SoundEvents.ENTITY_WITHER_SPAWN);
 			this.eliminatePlayer(player);
 		}
@@ -315,7 +315,7 @@ public class UHCActive {
 
 	private ActionResult onPlayerDeath(ServerPlayerEntity player, DamageSource source) {
 		PlayerSet players = this.gameSpace.getPlayers();
-		players.sendMessage(new LiteralText("\n").append(source.getDeathMessage(player).copy().formatted(Formatting.BOLD, Formatting.DARK_RED)).append(new LiteralText("\n")));
+		players.sendMessage(new LiteralText("\n☠ ").append(source.getDeathMessage(player).copy()).append(new LiteralText("!\n")).formatted(Formatting.DARK_RED));
 		players.sendSound(SoundEvents.ENTITY_WITHER_SPAWN);
 
 		this.eliminatePlayer(player);

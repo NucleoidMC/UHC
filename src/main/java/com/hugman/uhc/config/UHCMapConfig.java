@@ -9,7 +9,7 @@ import net.minecraft.world.dimension.DimensionType;
 public class UHCMapConfig {
 	public static final Codec<UHCMapConfig> CODEC = RecordCodecBuilder.create(instance -> instance.group(
 			Identifier.CODEC.optionalFieldOf("dimension", DimensionType.OVERWORLD_ID).forGetter(UHCMapConfig::getDimension),
-			Identifier.CODEC.fieldOf("settings").forGetter(UHCMapConfig::getChunkSettings),
+			Identifier.CODEC.fieldOf("settings").forGetter(UHCMapConfig::getChunkSettingsId),
 			DoubleRange.CODEC.optionalFieldOf("start_size", new DoubleRange(200, 3000)).forGetter(UHCMapConfig::getStartSize),
 			DoubleRange.CODEC.optionalFieldOf("end_size", new DoubleRange(5, 40)).forGetter(UHCMapConfig::getEndSize),
 			Codec.DOUBLE.optionalFieldOf("worldborder_speed", 1.0D).forGetter(UHCMapConfig::getWorldborderSpeed),
@@ -32,7 +32,7 @@ public class UHCMapConfig {
 		this.spawnOffset = spawnOffset;
 	}
 
-	public Identifier getChunkSettings() {
+	public Identifier getChunkSettingsId() {
 		return chunkSettings;
 	}
 
