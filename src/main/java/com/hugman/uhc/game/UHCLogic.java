@@ -35,7 +35,7 @@ public class UHCLogic {
 		return (long) (config.getTimeConfig().getDeathmatchTime().crossProduct(playerDose) * 20L);
 	}
 
-	public long getReducingTime() {
+	public long getShrinkingTime() {
 		return (long) ((getStartMapSize() - getEndMapSize()) / config.getMapConfig().getWorldborderSpeed() * 10L);
 	}
 }

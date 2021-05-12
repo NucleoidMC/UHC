@@ -127,7 +127,7 @@ public class UHCActive {
 		this.finaleCagesTick = this.startWarmupTick + this.logic.getWarmupTime();
 		this.finaleInvulnerabilityTick = this.finaleCagesTick + this.logic.getInCagesTime();
 		this.reducingTick = this.finaleInvulnerabilityTick + this.logic.getInvulnerabilityTime();
-		this.deathMatchTick = this.reducingTick + this.logic.getReducingTime();
+		this.deathMatchTick = this.reducingTick + this.logic.getShrinkingTime();
 		this.gameEndTick = this.deathMatchTick + this.logic.getDeathmatchTime();
 		this.gameCloseTick = this.gameEndTick + 600;
 
@@ -163,10 +163,10 @@ public class UHCActive {
 
 			if(world.getTime() == this.startInvulnerableTick) {
 				this.dropPlayers();
-				this.sendMessage("text.uhc.dropped_players");
-				this.sendMessage("text.uhc.world_will_reduce", TickUtil.format(this.finaleCagesTick - world.getTime()));
+				this.sendInfo("text.uhc.dropped_players");
+				this.sendInfo("text.uhc.world_will_shrink", TickUtil.format(this.finaleCagesTick - world.getTime()));
 
-				this.bar.set("text.uhc.vulnerable", this.logic.getInvulnerabilityTime(), BossBar.Color.YELLOW);
+				this.bar.set("🛡", "text.uhc.vulnerable", this.logic.getInvulnerabilityTime(), BossBar.Color.YELLOW);
 			}
 		}
 
@@ -176,9 +176,9 @@ public class UHCActive {
 
 			if(world.getTime() == this.startWarmupTick) {
 				this.setInvulnerable(false);
-				this.sendWarning("text.uhc.no_longer_immune");
+				this.sendWarning("🛡", "text.uhc.no_longer_immune");
 
-				this.bar.set("text.uhc.tp", this.logic.getWarmupTime(), BossBar.Color.BLUE);
+				this.bar.set("🗡", "text.uhc.tp", this.logic.getWarmupTime(), BossBar.Color.BLUE);
 			}
 		}
 
@@ -188,7 +188,7 @@ public class UHCActive {
 
 			if(world.getTime() == this.finaleCagesTick) {
 				this.putPlayersInCages();
-				this.sendMessage("text.uhc.reducing_when_pvp");
+				this.sendInfo("text.uhc.shrinking_when_pvp");
 
 				this.bar.set("text.uhc.dropping", this.logic.getInCagesTime(), BossBar.Color.PURPLE);
 			}
@@ -200,9 +200,9 @@ public class UHCActive {
 
 			if(world.getTime() == this.finaleInvulnerabilityTick) {
 				this.dropPlayers();
-				this.sendMessage("text.uhc.dropped_players");
+				this.sendInfo("text.uhc.dropped_players");
 
-				this.bar.set("text.uhc.pvp", this.logic.getInvulnerabilityTime(), BossBar.Color.YELLOW);
+				this.bar.set("🗡", "text.uhc.pvp", this.logic.getInvulnerabilityTime(), BossBar.Color.YELLOW);
 			}
 		}
 
@@ -212,16 +212,16 @@ public class UHCActive {
 
 			if(world.getTime() == this.reducingTick) {
 				this.setInvulnerable(false);
-				this.sendWarning("text.uhc.no_longer_immune");
+				this.sendWarning("🛡", "text.uhc.no_longer_immune");
 
 				this.setPvp(true);
-				this.sendWarning("text.uhc.pvp_enabled");
+				this.sendWarning("🗡", "text.uhc.pvp_enabled");
 
-				world.getWorldBorder().interpolateSize(this.logic.getStartMapSize(), this.logic.getEndMapSize(), this.logic.getReducingTime() * 50L);
+				world.getWorldBorder().interpolateSize(this.logic.getStartMapSize(), this.logic.getEndMapSize(), this.logic.getShrinkingTime() * 50L);
 				this.gameSpace.getPlayers().forEach(player -> player.networkHandler.sendPacket(new WorldBorderS2CPacket(world.getWorldBorder(), WorldBorderS2CPacket.Type.LERP_SIZE)));
-				this.sendWarning("text.uhc.reducing_start");
+				this.sendWarning("text.uhc.shrinking_start");
 
-				this.bar.set("text.uhc.reducing_finish", this.logic.getReducingTime(), BossBar.Color.RED);
+				this.bar.set("text.uhc.shrinking_finish", this.logic.getShrinkingTime(), BossBar.Color.RED);
 			}
 		}
 
@@ -230,25 +230,33 @@ public class UHCActive {
 			this.bar.tick(this.deathMatchTick - world.getTime());
 
 			if(world.getTime() == this.deathMatchTick) {
-				this.bar.setFull("text.uhc.deathmatch");
+				this.bar.setFull(new LiteralText("🗡").append(new TranslatableText("text.uhc.deathmatch")).append("🗡"));
 				world.getWorldBorder().setDamagePerBlock(2.5);
 				world.getWorldBorder().setBuffer(0.125);
-				this.sendMessage("text.uhc.last_one_wins");
+				this.sendInfo("🗡", "text.uhc.last_one_wins");
 				this.checkForWinner();
 			}
 		}
 	}
 
-	private void sendMessage(String s, Formatting f, Object... args) {
-		this.gameSpace.getPlayers().sendMessage(new TranslatableText(s, args).formatted(f));
+	private void sendMessage(String symbol, String s, Formatting f, Object... args) {
+		this.gameSpace.getPlayers().sendMessage(new LiteralText(symbol).append(new TranslatableText(s, args)).formatted(f));
 	}
 
-	public void sendMessage(String s, Object... args) {
-		this.sendMessage(s, Formatting.YELLOW, args);
+	public void sendInfo(String symbol, String s, Object... args) {
+		this.sendMessage(symbol + " ", s, Formatting.YELLOW, args);
+	}
+
+	public void sendInfo(String s, Object... args) {
+		this.sendMessage("", s, Formatting.YELLOW, args);
+	}
+
+	private void sendWarning(String symbol, String s, Object... args) {
+		this.sendMessage(symbol + " ", s, Formatting.RED, args);
 	}
 
 	private void sendWarning(String s, Object... args) {
-		this.sendMessage(s, Formatting.RED, args);
+		this.sendMessage("", s, Formatting.RED, args);
 	}
 
 	private void setInvulnerable(boolean b) {
