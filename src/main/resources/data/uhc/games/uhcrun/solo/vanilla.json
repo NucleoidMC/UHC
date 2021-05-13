@@ -7,7 +7,12 @@
 		"max": 100
 	},
 	"map": {
-		"settings": "minecraft:overworld"
+		"settings": "minecraft:overworld",
+		"shrinking_speed": 0.6,
+		"start_size": {
+			"min": 200,
+			"max": 8000
+		}
 	},
 	"chapters": {
 		"warmup": {

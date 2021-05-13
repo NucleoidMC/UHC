@@ -36,6 +36,6 @@ public class UHCLogic {
 	}
 
 	public long getShrinkingTime() {
-		return (long) ((getStartMapSize() - getEndMapSize()) / config.getMapConfig().getWorldborderSpeed() * 10L);
+		return (long) ((getStartMapSize() - getEndMapSize()) / config.getMapConfig().getShrinkingSpeed() * 10L);
 	}
 }

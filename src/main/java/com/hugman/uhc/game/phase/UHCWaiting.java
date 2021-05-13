@@ -2,9 +2,12 @@ package com.hugman.uhc.game.phase;
 
 import com.hugman.uhc.config.UHCConfig;
 import com.hugman.uhc.game.map.UHCMap;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.ActionResult;
+import net.minecraft.util.Hand;
+import net.minecraft.util.hit.EntityHitResult;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.util.registry.RegistryKey;
 import net.minecraft.world.GameMode;
@@ -16,6 +19,8 @@ import xyz.nucleoid.plasmid.game.GameOpenProcedure;
 import xyz.nucleoid.plasmid.game.GameSpace;
 import xyz.nucleoid.plasmid.game.GameWaitingLobby;
 import xyz.nucleoid.plasmid.game.StartResult;
+import xyz.nucleoid.plasmid.game.event.AttackEntityListener;
+import xyz.nucleoid.plasmid.game.event.PlayerDamageListener;
 import xyz.nucleoid.plasmid.game.event.PlayerDeathListener;
 import xyz.nucleoid.plasmid.game.event.RequestStartListener;
 
@@ -48,12 +53,22 @@ public class UHCWaiting {
 
 			game.on(RequestStartListener.EVENT, waiting::requestStart);
 			game.on(PlayerDeathListener.EVENT, waiting::onPlayerDeath);
+			game.on(PlayerDamageListener.EVENT, waiting::onPlayerDamaged);
+			game.on(AttackEntityListener.EVENT, waiting::onEntityDamaged);
 		});
 	}
 
 	private StartResult requestStart() {
 		UHCActive.open(this.gameSpace, this.map, this.config);
 		return StartResult.OK;
+	}
+
+	private ActionResult onEntityDamaged(ServerPlayerEntity entity, Hand hand, Entity entity1, EntityHitResult entityHitResult) {
+		return ActionResult.FAIL;
+	}
+
+	private ActionResult onPlayerDamaged(ServerPlayerEntity entity, DamageSource damageSource, float v) {
+		return ActionResult.FAIL;
 	}
 
 	private ActionResult onPlayerDeath(ServerPlayerEntity player, DamageSource source) {

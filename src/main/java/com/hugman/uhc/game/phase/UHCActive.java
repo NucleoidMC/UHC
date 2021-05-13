@@ -125,6 +125,7 @@ public class UHCActive {
 		world.getWorldBorder().setCenter(0, 0);
 		world.getWorldBorder().setSize(this.logic.getStartMapSize());
 		world.getWorldBorder().setDamagePerBlock(0.5);
+		this.participants.forEach(player -> player.networkHandler.sendPacket(new WorldBorderS2CPacket(world.getWorldBorder(), WorldBorderS2CPacket.Type.INITIALIZE)));
 
 		this.gameStartTick = world.getTime();
 		this.startInvulnerableTick = world.getTime() + this.logic.getInCagesTime();
@@ -137,7 +138,7 @@ public class UHCActive {
 		this.gameCloseTick = this.gameEndTick + 600;
 
 		// Start - Cage chapter
-		this.participants.forEach(player -> this.spawnLogic.resetPlayer(player, GameMode.SURVIVAL, true));
+		this.participants.forEach(player -> this.spawnLogic.resetPlayer(player, GameMode.ADVENTURE, true));
 		this.putPlayersInCages();
 		this.bar.set("text.uhc.dropping", this.logic.getInCagesTime(), this.startInvulnerableTick, BossBar.Color.PURPLE);
 	}
@@ -152,7 +153,7 @@ public class UHCActive {
 		ServerWorld world = this.gameSpace.getWorld();
 
 		this.bar.tick();
-		this.sideBar.update(world.getTime() - this.gameStartTick);
+		this.sideBar.update(world.getTime() - this.gameStartTick, (int) world.getWorldBorder().getSize());
 
 		// Game ends
 		if(isFinished) {
@@ -180,11 +181,12 @@ public class UHCActive {
 			this.setInvulnerable(false);
 			this.sendWarning("🛡", "text.uhc.no_longer_immune");
 
-			this.bar.set("🗡", "text.uhc.tp", this.logic.getWarmupTime(), this.finaleCagesTick, BossBar.Color.BLUE);
+			this.bar.set("text.uhc.tp", this.logic.getWarmupTime(), this.finaleCagesTick, BossBar.Color.BLUE);
 		}
 
 		// Finale - Cages chapter
 		else if(world.getTime() == this.finaleCagesTick) {
+			this.participants.forEach(player -> player.setGameMode(GameMode.ADVENTURE));
 			this.putPlayersInCages();
 			this.sendInfo("text.uhc.shrinking_when_pvp");
 
@@ -264,9 +266,7 @@ public class UHCActive {
 		ServerWorld world = this.gameSpace.getWorld();
 		int index = 0;
 		for(ServerPlayerEntity player : this.participants) {
-			player.networkHandler.sendPacket(new WorldBorderS2CPacket(world.getWorldBorder(), WorldBorderS2CPacket.Type.INITIALIZE));
-			if(player.interactionManager.getGameMode() == GameMode.SURVIVAL) {
-
+			if(player.interactionManager.getGameMode().isSurvivalLike()) {
 				double theta = ((double) index++ / this.participants.size()) * 2 * Math.PI;
 
 				int x = MathHelper.floor(Math.cos(theta) * (this.logic.getStartMapSize() / 2 - this.config.getMapConfig().getSpawnOffset()));
@@ -285,7 +285,7 @@ public class UHCActive {
 		this.gameLogic.setRule(GameRule.CRAFTING, RuleResult.ALLOW);
 
 		this.participants.forEach(player -> {
-			if(player.interactionManager.getGameMode() == GameMode.SURVIVAL) {
+			if(player.interactionManager.getGameMode().isSurvivalLike()) {
 				this.spawnLogic.resetPlayer(player, GameMode.SURVIVAL, false);
 				this.spawnLogic.applyEffects(player, (int) this.gameEndTick);
 			}
@@ -298,7 +298,7 @@ public class UHCActive {
 	}
 
 	private void removePlayer(ServerPlayerEntity player) {
-		if(player.interactionManager.getGameMode() == GameMode.SURVIVAL) {
+		if(player.interactionManager.getGameMode().isSurvivalLike()) {
 			PlayerSet players = this.gameSpace.getPlayers();
 			players.sendMessage(new LiteralText("\n☠ ").append(new TranslatableText("text.uhc.player_eliminated", player.getDisplayName())).append(new LiteralText("\n")).formatted(Formatting.DARK_RED));
 			players.sendSound(SoundEvents.ENTITY_WITHER_SPAWN);
@@ -324,17 +324,17 @@ public class UHCActive {
 	private void checkForWinner() {
 		PlayerSet players = this.gameSpace.getPlayers();
 
-		int survival = 0;
+		int aliveAmount = 0;
 		for(ServerPlayerEntity participant : this.participants) {
-			if(participant.interactionManager.getGameMode() == GameMode.SURVIVAL) {
-				survival++;
+			if(participant.interactionManager.getGameMode().isSurvivalLike()) {
+				aliveAmount++;
 			}
 		}
 
-		if(survival <= 1) {
-			if(survival == 1) {
+		if(aliveAmount <= 1) {
+			if(aliveAmount == 1) {
 				for(ServerPlayerEntity participant : this.participants) {
-					if(participant.interactionManager.getGameMode() == GameMode.SURVIVAL) {
+					if(participant.interactionManager.getGameMode().isSurvivalLike()) {
 						players.sendMessage(new LiteralText("\n").append(new TranslatableText("text.uhc.player_win", participant.getEntityName()).formatted(Formatting.GOLD)).append("\n"));
 						participant.setGameMode(GameMode.ADVENTURE);
 						this.setInvulnerable(true);

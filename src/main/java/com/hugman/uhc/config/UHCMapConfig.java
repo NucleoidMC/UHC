@@ -10,25 +10,25 @@ public class UHCMapConfig {
 	public static final Codec<UHCMapConfig> CODEC = RecordCodecBuilder.create(instance -> instance.group(
 			Identifier.CODEC.optionalFieldOf("dimension", DimensionType.OVERWORLD_ID).forGetter(UHCMapConfig::getDimension),
 			Identifier.CODEC.fieldOf("settings").forGetter(UHCMapConfig::getChunkSettingsId),
-			DoubleRange.CODEC.optionalFieldOf("start_size", new DoubleRange(200, 3000)).forGetter(UHCMapConfig::getStartSize),
+			DoubleRange.CODEC.fieldOf("start_size").forGetter(UHCMapConfig::getStartSize),
 			DoubleRange.CODEC.optionalFieldOf("end_size", new DoubleRange(5, 40)).forGetter(UHCMapConfig::getEndSize),
-			Codec.DOUBLE.optionalFieldOf("worldborder_speed", 1.0D).forGetter(UHCMapConfig::getWorldborderSpeed),
-			Codec.INT.optionalFieldOf("spawn_offset", 10).forGetter(UHCMapConfig::getSpawnOffset)
+			Codec.DOUBLE.optionalFieldOf("shrinking_speed", 1.0D).forGetter(UHCMapConfig::getShrinkingSpeed),
+			Codec.INT.optionalFieldOf("spawn_offset", 40).forGetter(UHCMapConfig::getSpawnOffset)
 	).apply(instance, UHCMapConfig::new));
 
 	private final Identifier dimension;
 	private final Identifier chunkSettings;
 	private final DoubleRange startSize;
 	private final DoubleRange endSize;
-	private final double worldborderSpeed;
+	private final double shrinkingSpeed;
 	private final int spawnOffset;
 
-	public UHCMapConfig(Identifier dimension, Identifier chunkSettings, DoubleRange startSize, DoubleRange minSize, double worldborderSpeed, int spawnOffset) {
+	public UHCMapConfig(Identifier dimension, Identifier chunkSettings, DoubleRange startSize, DoubleRange minSize, double shrinkingSpeed, int spawnOffset) {
 		this.dimension = dimension;
 		this.chunkSettings = chunkSettings;
 		this.startSize = startSize;
 		this.endSize = minSize;
-		this.worldborderSpeed = worldborderSpeed;
+		this.shrinkingSpeed = shrinkingSpeed;
 		this.spawnOffset = spawnOffset;
 	}
 
@@ -48,8 +48,8 @@ public class UHCMapConfig {
 		return endSize;
 	}
 
-	public double getWorldborderSpeed() {
-		return worldborderSpeed;
+	public double getShrinkingSpeed() {
+		return shrinkingSpeed;
 	}
 
 	public int getSpawnOffset() {

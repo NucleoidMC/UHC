@@ -20,13 +20,15 @@ public final class UHCSideBar {
 		return new UHCSideBar(widgets.addSidebar(gameSpace.getGameConfig().getNameText().copy().formatted(Formatting.BOLD, Formatting.GOLD)), gameSpace);
 	}
 
-	public void update(long ticks) {
+	public void update(long ticks, int worldSize) {
 		sidebarWidget.set(content -> {
 			long count = gameSpace.getPlayers().stream().filter(entity -> entity.interactionManager.getGameMode().isSurvivalLike()).count();
 
 			content.writeLine("");
-			content.writeFormattedTranslated(Formatting.GRAY, "text.uhc.players_left", new LiteralText(String.valueOf(count)).formatted(Formatting.WHITE));
+			content.writeFormattedTranslated(Formatting.GRAY, "text.uhc.players", new LiteralText(String.valueOf(count)).formatted(Formatting.WHITE));
 			//TODO: write kills
+			content.writeLine("");
+			content.writeFormattedTranslated(Formatting.GRAY, "text.uhc.world", new LiteralText(worldSize + "x" + worldSize).formatted(Formatting.WHITE));
 			content.writeLine("");
 			content.writeFormattedTranslated(Formatting.GRAY, "text.uhc.time", new LiteralText(TickUtil.format(ticks).asString()).formatted(Formatting.WHITE));
 		});
