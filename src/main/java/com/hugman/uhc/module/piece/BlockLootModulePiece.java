@@ -1,6 +1,5 @@
 package com.hugman.uhc.module.piece;
 
-import com.hugman.uhc.game.phase.UHCActive;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.block.Block;
@@ -19,6 +18,7 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import org.jetbrains.annotations.Nullable;
+import xyz.nucleoid.plasmid.game.GameSpace;
 
 import java.util.Collections;
 import java.util.List;
@@ -45,8 +45,8 @@ public class BlockLootModulePiece implements ModulePiece {
 		return CODEC;
 	}
 
-	public boolean breakBlock(UHCActive active, @Nullable ServerPlayerEntity player, BlockPos pos) {
-		ServerWorld world = active.gameSpace.getWorld();
+	public boolean breakBlock(GameSpace gameSpace, @Nullable ServerPlayerEntity player, BlockPos pos) {
+		ServerWorld world = gameSpace.getWorld();
 		BlockState state = world.getBlockState(pos);
 
 		if(this.predicate.test(state, world.getRandom())) {

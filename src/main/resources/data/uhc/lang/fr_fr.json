@@ -45,6 +45,8 @@
 	"text.uhc.pvp.countdown_bar": "PvP dans %s",
 	"text.uhc.pvp.countdown_text": "Le PvP sera activé dans %s.",
 	"text.uhc.pvp_enabled": "Le PvP a été activé !",
+	"text.uhc.players_left": "Joueurs restants : %s",
+	"text.uhc.time": "Temps : %s",
 	"text.uhc.shrinking_finish.countdown_bar": "Fin du rétrécissement dans %s",
 	"text.uhc.shrinking_finish.countdown_text": "Le monde s'arrêtera de rétrécir dans %s.",
 	"text.uhc.shrinking_start": "Le monde a commencé à rétrécir !",

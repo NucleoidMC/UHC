@@ -3,6 +3,7 @@ package com.hugman.uhc.game.phase;
 import com.hugman.uhc.config.UHCConfig;
 import com.hugman.uhc.game.UHCBar;
 import com.hugman.uhc.game.UHCLogic;
+import com.hugman.uhc.game.UHCSideBar;
 import com.hugman.uhc.game.UHCSpawner;
 import com.hugman.uhc.game.map.UHCMap;
 import com.hugman.uhc.module.piece.BlockLootModulePiece;
@@ -47,17 +48,19 @@ import java.util.List;
 
 public class UHCActive {
 	public final GameSpace gameSpace;
-	public final GameLogic gameLogic;
-	public final UHCMap map;
-	public final UHCConfig config;
-	public final ModulePieceManager modulePieceManager;
+	private final GameLogic gameLogic;
+	private final UHCMap map;
+	private final UHCConfig config;
+	private final ModulePieceManager modulePieceManager;
 
-	public final PlayerSet participants;
+	private final PlayerSet participants;
 
-	public final UHCLogic logic;
-	public final UHCSpawner spawnLogic;
-	public final UHCBar bar;
+	private final UHCLogic logic;
+	private final UHCSpawner spawnLogic;
+	private final UHCBar bar;
+	private final UHCSideBar sideBar;
 
+	private long gameStartTick;
 	private long startInvulnerableTick;
 	private long startWarmupTick;
 	private long finaleCagesTick;
@@ -82,6 +85,7 @@ public class UHCActive {
 		this.logic = new UHCLogic(config, this.participants.size());
 		this.spawnLogic = new UHCSpawner(this.gameSpace, this.modulePieceManager);
 		this.bar = UHCBar.create(widgets, this.gameSpace);
+		this.sideBar = UHCSideBar.create(widgets, this.gameSpace);
 	}
 
 	public static void open(GameSpace gameSpace, UHCMap map, UHCConfig config) {
@@ -122,6 +126,7 @@ public class UHCActive {
 		world.getWorldBorder().setSize(this.logic.getStartMapSize());
 		world.getWorldBorder().setDamagePerBlock(0.5);
 
+		this.gameStartTick = world.getTime();
 		this.startInvulnerableTick = world.getTime() + this.logic.getInCagesTime();
 		this.startWarmupTick = this.startInvulnerableTick + this.logic.getInvulnerabilityTime();
 		this.finaleCagesTick = this.startWarmupTick + this.logic.getWarmupTime();
@@ -131,10 +136,10 @@ public class UHCActive {
 		this.gameEndTick = this.deathMatchTick + this.logic.getDeathmatchTime();
 		this.gameCloseTick = this.gameEndTick + 600;
 
-		// Start - Cage chapter starts
+		// Start - Cage chapter
 		this.participants.forEach(player -> this.spawnLogic.resetPlayer(player, GameMode.SURVIVAL, true));
 		this.putPlayersInCages();
-		this.bar.set("text.uhc.dropping", this.logic.getInCagesTime(), BossBar.Color.PURPLE);
+		this.bar.set("text.uhc.dropping", this.logic.getInCagesTime(), this.startInvulnerableTick, BossBar.Color.PURPLE);
 	}
 
 	private void close() {
@@ -145,97 +150,77 @@ public class UHCActive {
 
 	private void tick() {
 		ServerWorld world = this.gameSpace.getWorld();
+
+		this.bar.tick();
+		this.sideBar.update(world.getTime() - this.gameStartTick);
+
 		// Game ends
 		if(isFinished) {
-			this.bar.tick(this.startInvulnerableTick - world.getTime());
 			if(world.getTime() > this.gameCloseTick) {
 				this.gameSpace.close(GameCloseReason.FINISHED);
 			}
 			return;
 		}
 
-		// Start - Cage chapter
-		if(world.getTime() <= this.startInvulnerableTick) {
-			this.bar.tick(this.startInvulnerableTick - world.getTime());
-			if(world.getTime() == this.startInvulnerableTick - (logic.getInCagesTime() * 0.8)) {
-				this.sendModuleListToChat();
-			}
-
-			if(world.getTime() == this.startInvulnerableTick) {
-				this.dropPlayers();
-				this.sendInfo("text.uhc.dropped_players");
-				this.sendInfo("text.uhc.world_will_shrink", TickUtil.format(this.finaleCagesTick - world.getTime()));
-
-				this.bar.set("🛡", "text.uhc.vulnerable", this.logic.getInvulnerabilityTime(), BossBar.Color.YELLOW);
-			}
+		// Start - Cage chapter (@ 80%)
+		if(world.getTime() == this.startInvulnerableTick - (logic.getInCagesTime() * 0.8)) {
+			this.sendModuleListToChat();
 		}
-
 		// Start - Invulnerable chapter
-		else if(world.getTime() <= this.startWarmupTick) {
-			this.bar.tick(this.startWarmupTick - world.getTime());
+		else if(world.getTime() == this.startInvulnerableTick) {
+			this.dropPlayers();
+			this.sendInfo("text.uhc.dropped_players");
+			this.sendInfo("text.uhc.world_will_shrink", TickUtil.format(this.finaleCagesTick - world.getTime()));
 
-			if(world.getTime() == this.startWarmupTick) {
-				this.setInvulnerable(false);
-				this.sendWarning("🛡", "text.uhc.no_longer_immune");
-
-				this.bar.set("🗡", "text.uhc.tp", this.logic.getWarmupTime(), BossBar.Color.BLUE);
-			}
+			this.bar.set("🛡", "text.uhc.vulnerable", this.logic.getInvulnerabilityTime(), this.startWarmupTick, BossBar.Color.YELLOW);
 		}
 
 		// Start - Warmup chapter
-		else if(world.getTime() <= this.finaleCagesTick) {
-			this.bar.tick(this.finaleCagesTick - world.getTime());
+		else if(world.getTime() == this.startWarmupTick) {
+			this.setInvulnerable(false);
+			this.sendWarning("🛡", "text.uhc.no_longer_immune");
 
-			if(world.getTime() == this.finaleCagesTick) {
-				this.putPlayersInCages();
-				this.sendInfo("text.uhc.shrinking_when_pvp");
-
-				this.bar.set("text.uhc.dropping", this.logic.getInCagesTime(), BossBar.Color.PURPLE);
-			}
+			this.bar.set("🗡", "text.uhc.tp", this.logic.getWarmupTime(), this.finaleCagesTick, BossBar.Color.BLUE);
 		}
 
 		// Finale - Cages chapter
-		else if(world.getTime() <= this.finaleInvulnerabilityTick) {
-			this.bar.tick(this.finaleInvulnerabilityTick - world.getTime());
+		else if(world.getTime() == this.finaleCagesTick) {
+			this.putPlayersInCages();
+			this.sendInfo("text.uhc.shrinking_when_pvp");
 
-			if(world.getTime() == this.finaleInvulnerabilityTick) {
-				this.dropPlayers();
-				this.sendInfo("text.uhc.dropped_players");
-
-				this.bar.set("🗡", "text.uhc.pvp", this.logic.getInvulnerabilityTime(), BossBar.Color.YELLOW);
-			}
+			this.bar.set("text.uhc.dropping", this.logic.getInCagesTime(), this.finaleInvulnerabilityTick, BossBar.Color.PURPLE);
 		}
 
-		// Finale - Invulnerable chapter
-		else if(world.getTime() <= this.reducingTick) {
-			this.bar.tick(this.reducingTick - world.getTime());
+		// Finale - Invulnerability chapter
+		else if(world.getTime() == this.finaleInvulnerabilityTick) {
+			this.dropPlayers();
+			this.sendInfo("text.uhc.dropped_players");
 
-			if(world.getTime() == this.reducingTick) {
-				this.setInvulnerable(false);
-				this.sendWarning("🛡", "text.uhc.no_longer_immune");
-
-				this.setPvp(true);
-				this.sendWarning("🗡", "text.uhc.pvp_enabled");
-
-				world.getWorldBorder().interpolateSize(this.logic.getStartMapSize(), this.logic.getEndMapSize(), this.logic.getShrinkingTime() * 50L);
-				this.gameSpace.getPlayers().forEach(player -> player.networkHandler.sendPacket(new WorldBorderS2CPacket(world.getWorldBorder(), WorldBorderS2CPacket.Type.LERP_SIZE)));
-				this.sendWarning("text.uhc.shrinking_start");
-
-				this.bar.set("text.uhc.shrinking_finish", this.logic.getShrinkingTime(), BossBar.Color.RED);
-			}
+			this.bar.set("🗡", "text.uhc.pvp", this.logic.getInvulnerabilityTime(), this.reducingTick, BossBar.Color.YELLOW);
 		}
 
 		// Finale - Reducing chapter
-		else if(world.getTime() <= this.deathMatchTick) {
-			this.bar.tick(this.deathMatchTick - world.getTime());
+		else if(world.getTime() == this.reducingTick) {
+			this.setInvulnerable(false);
+			this.sendWarning("🛡", "text.uhc.no_longer_immune");
 
-			if(world.getTime() == this.deathMatchTick) {
-				this.bar.setFull(new LiteralText("🗡").append(new TranslatableText("text.uhc.deathmatch")).append("🗡"));
-				world.getWorldBorder().setDamagePerBlock(2.5);
-				world.getWorldBorder().setBuffer(0.125);
-				this.sendInfo("🗡", "text.uhc.last_one_wins");
-				this.checkForWinner();
-			}
+			this.setPvp(true);
+			this.sendWarning("🗡", "text.uhc.pvp_enabled");
+
+			world.getWorldBorder().interpolateSize(this.logic.getStartMapSize(), this.logic.getEndMapSize(), this.logic.getShrinkingTime() * 50L);
+			this.gameSpace.getPlayers().forEach(player -> player.networkHandler.sendPacket(new WorldBorderS2CPacket(world.getWorldBorder(), WorldBorderS2CPacket.Type.LERP_SIZE)));
+			this.sendWarning("text.uhc.shrinking_start");
+
+			this.bar.set("text.uhc.shrinking_finish", this.logic.getShrinkingTime(), this.deathMatchTick, BossBar.Color.RED);
+		}
+
+		// Finale - Deathmatch chapter
+		else if(world.getTime() == this.deathMatchTick) {
+			this.bar.setFull(new LiteralText("🗡").append(new TranslatableText("text.uhc.deathmatch")).append("🗡"));
+			world.getWorldBorder().setDamagePerBlock(2.5);
+			world.getWorldBorder().setBuffer(0.125);
+			this.sendInfo("🗡", "text.uhc.last_one_wins");
+			this.checkForWinner();
 		}
 	}
 
@@ -398,7 +383,7 @@ public class UHCActive {
 	public boolean breakIndividualBlock(@Nullable ServerPlayerEntity player, BlockPos pos) {
 		if(!this.modulePieceManager.getModules().isEmpty()) {
 			for(BlockLootModulePiece piece : this.modulePieceManager.blockLootModulePieces) {
-				if(piece.breakBlock(this, player, pos)) return true;
+				if(piece.breakBlock(this.gameSpace, player, pos)) return true;
 			}
 		}
 		return false;
