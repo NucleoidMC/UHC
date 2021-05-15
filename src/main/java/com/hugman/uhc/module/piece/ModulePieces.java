@@ -16,6 +16,7 @@ public final class ModulePieces {
 	public static final Identifier BUCKET_BREAK = register("bucket_break", BucketBreakModulePiece.CODEC);
 	public static final Identifier PLAYER_ATTRIBUTES = register("player_attribute", PlayerAttributeModulePiece.CODEC);
 	public static final Identifier PERMANENT_EFFECTS = register("permanent_effect", PermanentEffectModulePiece.CODEC);
+	public static final Identifier ORE = register("ore", OreModulePiece.CODEC);
 
 	private ModulePieces() {
 	}

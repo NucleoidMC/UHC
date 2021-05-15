@@ -9,7 +9,6 @@ import com.hugman.uhc.game.map.UHCMap;
 import com.hugman.uhc.module.piece.BlockLootModulePiece;
 import com.hugman.uhc.module.piece.BucketBreakModulePiece;
 import com.hugman.uhc.module.piece.EntityLootModulePiece;
-import com.hugman.uhc.module.piece.ModulePieceManager;
 import com.hugman.uhc.util.TickUtil;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.boss.BossBar;
@@ -51,7 +50,6 @@ public class UHCActive {
 	private final GameLogic gameLogic;
 	private final UHCMap map;
 	private final UHCConfig config;
-	private final ModulePieceManager modulePieceManager;
 
 	private final PlayerSet participants;
 
@@ -78,12 +76,11 @@ public class UHCActive {
 		this.gameSpace = this.gameLogic.getSpace();
 		this.map = map;
 		this.config = config;
-		this.modulePieceManager = new ModulePieceManager(config);
 
 		this.participants = this.gameSpace.getPlayers();
 
 		this.logic = new UHCLogic(config, this.participants.size());
-		this.spawnLogic = new UHCSpawner(this.gameSpace, this.modulePieceManager);
+		this.spawnLogic = new UHCSpawner(this.gameSpace, this.config);
 		this.bar = UHCBar.create(widgets, this.gameSpace);
 		this.sideBar = UHCSideBar.create(widgets, this.gameSpace);
 	}
@@ -171,7 +168,7 @@ public class UHCActive {
 		else if(world.getTime() == this.startInvulnerableTick) {
 			this.dropPlayers();
 			this.sendInfo("text.uhc.dropped_players");
-			this.sendInfo("text.uhc.world_will_shrink", TickUtil.format(this.finaleCagesTick - world.getTime()));
+			this.sendInfo("text.uhc.world_will_shrink", TickUtil.formatPretty(this.finaleCagesTick - world.getTime()));
 
 			this.bar.set("🛡", "text.uhc.vulnerable", this.logic.getInvulnerabilityTime(), this.startWarmupTick, BossBar.Color.YELLOW);
 		}
@@ -359,9 +356,9 @@ public class UHCActive {
 	}
 
 	public void sendModuleListToChat() {
-		if(!this.modulePieceManager.getModules().isEmpty()) {
+		if(!this.config.getModules().isEmpty()) {
 			MutableText text = new LiteralText("\n").append(new TranslatableText("text.uhc.modules_enabled").formatted(Formatting.GOLD));
-			this.modulePieceManager.getModules().forEach(module -> {
+			this.config.getModules().forEach(module -> {
 				Style style = Style.EMPTY.withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new TranslatableText(module.getDescription())));
 				text.append(new LiteralText("\n  - ").formatted(Formatting.WHITE)).append(Texts.bracketed(new TranslatableText(module.getTranslation()).formatted(Formatting.GREEN)).setStyle(style));
 			});
@@ -381,21 +378,17 @@ public class UHCActive {
 	}
 
 	public boolean breakIndividualBlock(@Nullable ServerPlayerEntity player, BlockPos pos) {
-		if(!this.modulePieceManager.getModules().isEmpty()) {
-			for(BlockLootModulePiece piece : this.modulePieceManager.blockLootModulePieces) {
-				if(piece.breakBlock(this.gameSpace, player, pos)) return true;
-			}
+		for(BlockLootModulePiece piece : this.config.blockLootModulePieces) {
+			if(piece.breakBlock(this.gameSpace, player, pos)) return true;
 		}
 		return false;
 	}
 
 	public ActionResult onBlockBroken(@Nullable ServerPlayerEntity player, BlockPos origin) {
-		if(!this.modulePieceManager.getModules().isEmpty()) {
-			for(BucketBreakModulePiece piece : this.modulePieceManager.bucketBreakModulePieces) {
-				if(piece.breakBlock(this, player, origin)) return ActionResult.PASS;
-			}
-			if(breakIndividualBlock(player, origin)) return ActionResult.PASS;
+		for(BucketBreakModulePiece piece : this.config.bucketBreakModulePieces) {
+			if(piece.breakBlock(this, player, origin)) return ActionResult.PASS;
 		}
+		if(breakIndividualBlock(player, origin)) return ActionResult.PASS;
 		return ActionResult.SUCCESS;
 	}
 
@@ -404,21 +397,19 @@ public class UHCActive {
 	}
 
 	private TypedActionResult<List<ItemStack>> onMobLoot(LivingEntity livingEntity, List<ItemStack> itemStacks) {
-		if(!this.modulePieceManager.getModules().isEmpty()) {
-			boolean replaceDrops = false;
-			List<ItemStack> stacks = new ArrayList<>();
-			for(EntityLootModulePiece piece : this.modulePieceManager.entityLootModulePieces) {
-				if(piece.test(livingEntity)) {
-					replaceDrops = true;
-					stacks.addAll(piece.getLoots(this.gameSpace.getWorld(), livingEntity));
-				}
+		boolean replaceDrops = false;
+		List<ItemStack> stacks = new ArrayList<>();
+		for(EntityLootModulePiece piece : this.config.entityLootModulePieces) {
+			if(piece.test(livingEntity)) {
+				replaceDrops = true;
+				stacks.addAll(piece.getLoots(this.gameSpace.getWorld(), livingEntity));
 			}
-			if(replaceDrops) {
-				return TypedActionResult.pass(stacks);
-			}
-			else {
-				itemStacks.addAll(stacks);
-			}
+		}
+		if(replaceDrops) {
+			return TypedActionResult.pass(stacks);
+		}
+		else {
+			itemStacks.addAll(stacks);
 		}
 		return TypedActionResult.success(itemStacks);
 	}

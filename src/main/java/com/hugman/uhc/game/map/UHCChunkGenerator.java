@@ -1,7 +1,9 @@
 package com.hugman.uhc.game.map;
 
-import com.hugman.uhc.config.UHCMapConfig;
+import com.hugman.uhc.config.UHCConfig;
+import com.hugman.uhc.module.piece.OreModulePiece;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.registry.BuiltinRegistries;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.world.BlockView;
@@ -20,19 +22,21 @@ import net.minecraft.world.gen.chunk.ChunkGeneratorSettings;
 import net.minecraft.world.gen.chunk.NoiseChunkGenerator;
 import xyz.nucleoid.plasmid.game.world.generator.GameChunkGenerator;
 
+import java.util.Random;
+
 public class UHCChunkGenerator extends GameChunkGenerator {
-	private final UHCMapConfig mapConfig;
+	private final UHCConfig config;
 	private final long seed;
 	private final ChunkGenerator subGenerator;
 
-	public UHCChunkGenerator(MinecraftServer server, UHCMapConfig mapConfig) {
+	public UHCChunkGenerator(MinecraftServer server, UHCConfig config) {
 		super(server);
-		this.mapConfig = mapConfig;
+		this.config = config;
 
 		this.seed = server.getOverworld().getRandom().nextLong();
 		BiomeSource biomeSource = new VanillaLayeredBiomeSource(this.seed, false, false, server.getRegistryManager().get(Registry.BIOME_KEY));
 
-		ChunkGeneratorSettings chunkGeneratorSettings = BuiltinRegistries.CHUNK_GENERATOR_SETTINGS.get(this.mapConfig.getChunkSettingsId());
+		ChunkGeneratorSettings chunkGeneratorSettings = BuiltinRegistries.CHUNK_GENERATOR_SETTINGS.get(this.config.getMapConfig().getChunkSettingsId());
 		this.subGenerator = new NoiseChunkGenerator(biomeSource, this.seed, () -> chunkGeneratorSettings);
 	}
 
@@ -63,6 +67,17 @@ public class UHCChunkGenerator extends GameChunkGenerator {
 
 	@Override
 	public void generateFeatures(ChunkRegion region, StructureAccessor structures) {
+		int chunkX = region.getCenterChunkX();
+		int chunkZ = region.getCenterChunkZ();
+		Random random = new Random();
+
+		for(OreModulePiece piece : this.config.oreModulePieces) {
+			int x = random.nextInt(16) + (chunkX * 16);
+			int y = random.nextInt(64);
+			int z = random.nextInt(16) + (chunkZ * 16);
+			piece.generate(region, this, random, new BlockPos(x, y, z));
+		}
+
 		this.subGenerator.generateFeatures(region, structures);
 	}
 

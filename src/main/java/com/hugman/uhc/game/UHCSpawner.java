@@ -1,6 +1,6 @@
 package com.hugman.uhc.game;
 
-import com.hugman.uhc.module.piece.ModulePieceManager;
+import com.hugman.uhc.config.UHCConfig;
 import com.hugman.uhc.module.piece.PermanentEffectModulePiece;
 import com.hugman.uhc.module.piece.PlayerAttributeModulePiece;
 import net.minecraft.block.BlockState;
@@ -24,19 +24,17 @@ import java.util.Random;
 
 public final class UHCSpawner {
 	private final GameSpace gameSpace;
-	private final ModulePieceManager modulePieceManager;
+	private final UHCConfig config;
 	private final List<BlockBounds> blockBounds = new ArrayList<>();
 
-	public UHCSpawner(GameSpace gameSpace, ModulePieceManager modulePieceManager) {
+	public UHCSpawner(GameSpace gameSpace, UHCConfig config) {
 		this.gameSpace = gameSpace;
-		this.modulePieceManager = modulePieceManager;
+		this.config = config;
 	}
 
 	public void resetPlayer(ServerPlayerEntity player, GameMode gameMode, boolean clear) {
-		if(!this.modulePieceManager.getModules().isEmpty()) {
-			for(PlayerAttributeModulePiece piece : this.modulePieceManager.playerAttributeModulePieces) {
-				piece.setAttribute(player);
-			}
+		for(PlayerAttributeModulePiece piece : this.config.playerAttributeModulePieces) {
+			piece.setAttribute(player);
 		}
 		if(clear) {
 			player.inventory.clear();
@@ -53,10 +51,8 @@ public final class UHCSpawner {
 	}
 
 	public void applyEffects(ServerPlayerEntity player, int effectDuration) {
-		if(!this.modulePieceManager.getModules().isEmpty()) {
-			for(PermanentEffectModulePiece piece : this.modulePieceManager.permanentEffectModulePieces) {
-				piece.setEffect(player, effectDuration);
-			}
+		for(PermanentEffectModulePiece piece : this.config.permanentEffectModulePieces) {
+			piece.setEffect(player, effectDuration);
 		}
 	}
 

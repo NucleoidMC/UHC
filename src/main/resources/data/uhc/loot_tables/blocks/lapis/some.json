@@ -28,11 +28,15 @@
 				},
 				{
 					"type": "minecraft:item",
-					"name": "minecraft:book",
+					"name": "minecraft:paper",
 					"functions": [
 						{
 							"function": "minecraft:set_count",
-							"count": 2
+							"count": {
+								"min": 0.0,
+								"max": 1.5,
+								"type": "minecraft:uniform"
+							}
 						},
 						{
 							"function": "minecraft:apply_bonus",

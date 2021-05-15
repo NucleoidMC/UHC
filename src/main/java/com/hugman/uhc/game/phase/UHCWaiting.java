@@ -36,7 +36,7 @@ public class UHCWaiting {
 	}
 
 	public static GameOpenProcedure open(GameOpenContext<UHCConfig> context) {
-		UHCMap map = new UHCMap(context.getConfig().getMapConfig(), context.getServer());
+		UHCMap map = new UHCMap(context.getConfig(), context.getServer());
 
 		BubbleWorldConfig worldConfig = new BubbleWorldConfig()
 				.setGenerator(map.getChunkGenerator())
