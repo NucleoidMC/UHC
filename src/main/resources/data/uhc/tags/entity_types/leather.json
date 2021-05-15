@@ -1,6 +1,7 @@
 {
 	"replace": false,
 	"values": [
+		"#uhc:mob_food/beef",
 		"#uhc:animal_food/beef",
 		"#uhc:animal_food/mutton",
 		"#uhc:animal_food/porkchop"

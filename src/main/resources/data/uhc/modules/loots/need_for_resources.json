@@ -59,6 +59,11 @@
 				"block": "minecraft:brown_mushroom"
 			},
 			"loot_table": "uhc:blocks/stews"
+		},
+		{
+			"type": "uhc:entity_loot",
+			"tag": "uhc:leather",
+			"loot_table": "uhc:entities/leather"
 		}
 	]
 }

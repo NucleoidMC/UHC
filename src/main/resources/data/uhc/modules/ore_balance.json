@@ -19,7 +19,7 @@
 		{
 			"type": "uhc:ore",
 			"block": "minecraft:diamond_ore",
-			"count": 9,
+			"count": 8,
 			"size": 9
 		}
 	]
