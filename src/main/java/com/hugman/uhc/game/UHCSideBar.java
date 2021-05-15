@@ -1,5 +1,6 @@
 package com.hugman.uhc.game;
 
+import com.hugman.uhc.game.phase.UHCActive;
 import com.hugman.uhc.util.TickUtil;
 import net.minecraft.text.LiteralText;
 import net.minecraft.util.Formatting;
@@ -9,20 +10,20 @@ import xyz.nucleoid.plasmid.widget.SidebarWidget;
 
 public final class UHCSideBar {
 	private final SidebarWidget sidebarWidget;
-	private final GameSpace gameSpace;
+	private final UHCActive active;
 
-	private UHCSideBar(SidebarWidget sidebarWidget, GameSpace gameSpace) {
+	private UHCSideBar(SidebarWidget sidebarWidget, UHCActive active) {
 		this.sidebarWidget = sidebarWidget;
-		this.gameSpace = gameSpace;
+		this.active = active;
 	}
 
-	public static UHCSideBar create(GlobalWidgets widgets, GameSpace gameSpace) {
-		return new UHCSideBar(widgets.addSidebar(gameSpace.getGameConfig().getNameText().copy().formatted(Formatting.BOLD, Formatting.GOLD)), gameSpace);
+	public static UHCSideBar create(GlobalWidgets widgets, UHCActive active) {
+		return new UHCSideBar(widgets.addSidebar(active.gameSpace.getGameConfig().getNameText().copy().formatted(Formatting.BOLD, Formatting.GOLD)), active);
 	}
 
 	public void update(long ticks, int worldSize) {
 		sidebarWidget.set(content -> {
-			long count = gameSpace.getPlayers().stream().filter(entity -> entity.interactionManager.getGameMode().isSurvivalLike()).count();
+			long count = active.getParticipants().size();
 
 			content.writeLine("");
 			content.writeFormattedTranslated(Formatting.GRAY, "text.uhc.players", new LiteralText(String.valueOf(count)).formatted(Formatting.WHITE));

@@ -3,7 +3,7 @@
 	"translation": "game.uhc.uhcrun.solo.vanilla",
 	"players": {
 		"min": 1,
-		"threshold": 25,
+		"threshold": 10,
 		"max": 100
 	},
 	"map": {

@@ -32,30 +32,6 @@ public final class UHCSpawner {
 		this.config = config;
 	}
 
-	public void resetPlayer(ServerPlayerEntity player, GameMode gameMode, boolean clear) {
-		for(PlayerAttributeModulePiece piece : this.config.playerAttributeModulePieces) {
-			piece.setAttribute(player);
-		}
-		if(clear) {
-			player.inventory.clear();
-			player.getEnderChestInventory().clear();
-			player.clearStatusEffects();
-			player.getHungerManager().setFoodLevel(20);
-			player.setExperienceLevel(0);
-			player.setExperiencePoints(0);
-			player.setHealth(player.getMaxHealth());
-		}
-		player.extinguish();
-		player.fallDistance = 0.0F;
-		player.setGameMode(gameMode);
-	}
-
-	public void applyEffects(ServerPlayerEntity player, int effectDuration) {
-		for(PermanentEffectModulePiece piece : this.config.permanentEffectModulePieces) {
-			piece.setEffect(player, effectDuration);
-		}
-	}
-
 	public void spawnPlayerAtCenter(ServerPlayerEntity player) {
 		this.spawnPlayerAt(player, this.getSurfaceBlock(0, 0));
 	}
@@ -66,14 +42,14 @@ public final class UHCSpawner {
 		player.teleport(this.gameSpace.getWorld(), pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, 0.0F, 0.0F);
 	}
 
-	public void summonPlayerInCageAt(ServerPlayerEntity player, int x, int z) {
-		Random random = player.getRandom();
+	public void summonPlayerInCageAt(UHCParticipant participant, int x, int z) {
+		Random random = participant.getPlayer().getRandom();
 		BlockPos pos = new BlockPos(x, 200, z);
 		if(this.gameSpace.getWorld().isSkyVisible(pos)) {
 			pos = new BlockPos(x, 200, z);
 		}
 		this.addCageAt(pos, ColoredBlocks.glass(DyeColor.byId(random.nextInt(15))).getDefaultState(), Blocks.BARRIER.getDefaultState(), 3, 4);
-		this.spawnPlayerAt(player, pos);
+		this.spawnPlayerAt(participant.getPlayer(), pos);
 	}
 
 	public void addCageAt(BlockPos origin, BlockState floor, BlockState sides, int width, int height) {

@@ -21,7 +21,7 @@ public final class UHCBar {
 	private BossBar.Color color;
 	private long endTick = 0;
 	private long totalTicks = 0;
-	private boolean canTick = true;
+	private boolean canTick = false;
 
 	private UHCBar(BossBarWidget widget, GameSpace gameSpace) {
 		this.widget = widget;
@@ -39,6 +39,7 @@ public final class UHCBar {
 		this.totalTicks = totalTicks;
 		this.endTick = endTick;
 		this.color = color;
+		this.canTick = true;
 	}
 
 	public void set(String name, long totalTicks, long endTick, BossBar.Color color) {
@@ -53,6 +54,7 @@ public final class UHCBar {
 		this.widget.setTitle(title);
 		this.widget.setStyle(BossBar.Color.GREEN, BossBar.Style.PROGRESS);
 		this.widget.setProgress(1.0f);
+		this.canTick = false;
 	}
 
 	public void close() {

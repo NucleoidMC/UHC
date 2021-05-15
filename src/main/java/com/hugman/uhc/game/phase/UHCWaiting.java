@@ -59,7 +59,7 @@ public class UHCWaiting {
 	}
 
 	private StartResult requestStart() {
-		UHCActive.open(this.gameSpace, this.map, this.config);
+		UHCActive.start(this.gameSpace, this.map, this.config);
 		return StartResult.OK;
 	}
 
