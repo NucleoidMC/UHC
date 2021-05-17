@@ -34,7 +34,23 @@
 				"predicate_type": "minecraft:block_match",
 				"block": "minecraft:cactus"
 			},
-			"loot_table": "uhc:blocks/oak_planks/cactus"
+			"loot_table": "uhc:blocks/oak_planks/plant"
+		},
+		{
+			"type": "uhc:block_loot",
+			"target": {
+				"predicate_type": "minecraft:block_match",
+				"block": "minecraft:kelp"
+			},
+			"loot_table": "uhc:blocks/oak_planks/plant"
+		},
+		{
+			"type": "uhc:block_loot",
+			"target": {
+				"predicate_type": "minecraft:block_match",
+				"block": "minecraft:kelp_plant"
+			},
+			"loot_table": "uhc:blocks/oak_planks/plant"
 		},
 		{
 			"type": "uhc:block_loot",
