@@ -7,44 +7,27 @@ import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.world.GameMode;
 
 public class UHCParticipant {
-	private final ServerPlayerEntity player;
 	private int kills = 0;
 
-	public UHCParticipant(ServerPlayerEntity player) {
-		this.player = player;
+	public UHCParticipant() {
+		this.kills = 0;
 	}
 
-	public ServerPlayerEntity getPlayer() {
-		return player;
+	public static void setAdventure(ServerPlayerEntity player) {
+		player.setGameMode(GameMode.ADVENTURE);
 	}
 
-	public void addKill() {
-		this.kills++;
+	public static void setSurvival(ServerPlayerEntity player) {
+		player.setGameMode(GameMode.SURVIVAL);
 	}
 
-	public int getKills() {
-		return this.kills;
+	public static void setSpectator(ServerPlayerEntity player) {
+		player.setGameMode(GameMode.SPECTATOR);
+		reset(player);
 	}
 
-	public void setAdventure() {
-		this.getPlayer().setGameMode(GameMode.ADVENTURE);
-	}
-
-	public void setSurvival() {
-		this.getPlayer().setGameMode(GameMode.SURVIVAL);
-	}
-
-	public void setSpectator() {
-		this.getPlayer().setGameMode(GameMode.SPECTATOR);
-		this.reset();
-	}
-
-	public String getName() {
-		return this.getPlayer().getEntityName();
-	}
-
-	public void reset() {
-		this.clear();
+	public static void reset(ServerPlayerEntity player) {
+		clear(player);
 		player.inventory.clear();
 		player.getEnderChestInventory().clear();
 		player.clearStatusEffects();
@@ -54,20 +37,28 @@ public class UHCParticipant {
 		player.setHealth(player.getMaxHealth());
 	}
 
-	public void clear() {
+	public static void clear(ServerPlayerEntity player) {
 		player.extinguish();
 		player.fallDistance = 0.0F;
 	}
 
-	public void refreshAttributes(UHCConfig config) {
+	public static void refreshAttributes(ServerPlayerEntity player, UHCConfig config) {
 		for(PlayerAttributeModulePiece piece : config.playerAttributeModulePieces) {
 			piece.setAttribute(player);
 		}
 	}
 
-	public void applyEffects(UHCConfig config, int effectDuration) {
+	public static void applyEffects(ServerPlayerEntity player, UHCConfig config, int effectDuration) {
 		for(PermanentEffectModulePiece piece : config.permanentEffectModulePieces) {
 			piece.setEffect(player, effectDuration);
 		}
+	}
+
+	public void addKill() {
+		this.kills++;
+	}
+
+	public int getKills() {
+		return this.kills;
 	}
 }

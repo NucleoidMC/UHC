@@ -1,7 +1,0 @@
-{
-	"type": "plasmid:random",
-	"translation": "game.uhc.uhcrun.solo",
-	"games": [
-		"uhc:uhcrun/solo/vanilla"
-	]
-}

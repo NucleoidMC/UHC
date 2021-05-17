@@ -1,0 +1,16 @@
+{
+	"translation": "module.uhcrun.leaves_leave_no_leaves",
+	"icon": {
+		"id": "minecraft:apple"
+	},
+	"pieces": [
+		{
+			"type": "uhc:block_loot",
+			"target": {
+				"predicate_type": "minecraft:tag_match",
+				"tag": "minecraft:leaves"
+			},
+			"loot_table": "uhcrun:blocks/leaves"
+		}
+	]
+}

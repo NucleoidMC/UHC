@@ -1,0 +1,26 @@
+{
+	"translation": "module.uhcrun.ore_balance",
+	"icon": {
+		"id": "minecraft:diamond_ore"
+	},
+	"pieces": [
+		{
+			"type": "uhc:ore",
+			"block": "minecraft:lapis_ore",
+			"count": 12,
+			"size": 13
+		},
+		{
+			"type": "uhc:ore",
+			"block": "minecraft:gold_ore",
+			"count": 10,
+			"size": 12
+		},
+		{
+			"type": "uhc:ore",
+			"block": "minecraft:diamond_ore",
+			"count": 9,
+			"size": 9
+		}
+	]
+}

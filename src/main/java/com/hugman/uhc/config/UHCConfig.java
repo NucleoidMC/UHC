@@ -23,6 +23,7 @@ import java.util.stream.Collectors;
 public class UHCConfig {
 	public static final Codec<UHCConfig> CODEC = RecordCodecBuilder.create(instance -> instance.group(
 			PlayerConfig.CODEC.fieldOf("players").forGetter(UHCConfig::getPlayerConfig),
+			Codec.INT.fieldOf("team_size").forGetter(UHCConfig::getTeamSize),
 			UHCMapConfig.CODEC.fieldOf("map").forGetter(UHCConfig::getMapConfig),
 			UHCChapterConfig.CODEC.fieldOf("chapters").forGetter(UHCConfig::getTimeConfig),
 			Identifier.CODEC.listOf().optionalFieldOf("modules", Collections.emptyList()).forGetter(UHCConfig::getModulesIds)
@@ -34,14 +35,16 @@ public class UHCConfig {
 	public final List<PermanentEffectModulePiece> permanentEffectModulePieces;
 	public final List<OreModulePiece> oreModulePieces;
 	private final PlayerConfig playerConfig;
+	private final int teamSize;
 	private final UHCMapConfig mapConfig;
 	private final UHCChapterConfig timeConfig;
 	private final List<Identifier> modulesIds;
 	private final List<Module> modules;
 	private final List<ModulePiece> modulesPieces;
 
-	public UHCConfig(PlayerConfig players, UHCMapConfig mapConfig, UHCChapterConfig timeConfig, List<Identifier> modulesIds) {
+	public UHCConfig(PlayerConfig players, int teamSize, UHCMapConfig mapConfig, UHCChapterConfig timeConfig, List<Identifier> modulesIds) {
 		this.playerConfig = players;
+		this.teamSize = teamSize;
 		this.mapConfig = mapConfig;
 		this.timeConfig = timeConfig;
 		this.modulesIds = modulesIds;
@@ -60,6 +63,10 @@ public class UHCConfig {
 
 	public PlayerConfig getPlayerConfig() {
 		return playerConfig;
+	}
+
+	public int getTeamSize() {
+		return teamSize;
 	}
 
 	public UHCMapConfig getMapConfig() {

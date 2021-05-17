@@ -1,0 +1,69 @@
+{
+	"translation": "module.uhcrun.blasted_ores",
+	"icon": {
+		"id": "minecraft:iron_ingot"
+	},
+	"pieces": [
+		{
+			"type": "uhc:block_loot",
+			"target": {
+				"predicate_type": "minecraft:block_match",
+				"block": "minecraft:coal_ore"
+			},
+			"loot_table": "uhcrun:blocks/coal_ore",
+			"experience": 4
+		},
+		{
+			"type": "uhc:block_loot",
+			"target": {
+				"predicate_type": "minecraft:block_match",
+				"block": "minecraft:iron_ore"
+			},
+			"loot_table": "uhcrun:blocks/iron_ore",
+			"experience": 1
+		},
+		{
+			"type": "uhc:block_loot",
+			"target": {
+				"predicate_type": "minecraft:block_match",
+				"block": "minecraft:gold_ore"
+			},
+			"loot_table": "uhcrun:blocks/gold_ore",
+			"experience": 2
+		},
+		{
+			"type": "uhc:block_loot",
+			"target": {
+				"predicate_type": "minecraft:block_match",
+				"block": "minecraft:lapis_ore"
+			},
+			"loot_table": "uhcrun:blocks/lapis_ore",
+			"experience": 6
+		},
+		{
+			"type": "uhc:block_loot",
+			"target": {
+				"predicate_type": "minecraft:block_match",
+				"block": "minecraft:redstone_ore"
+			},
+			"experience": 8
+		},
+		{
+			"type": "uhc:block_loot",
+			"target": {
+				"predicate_type": "minecraft:block_match",
+				"block": "minecraft:emerald_ore"
+			},
+			"experience": 12
+		},
+		{
+			"type": "uhc:block_loot",
+			"target": {
+				"predicate_type": "minecraft:block_match",
+				"block": "minecraft:diamond_ore"
+			},
+			"loot_table": "uhcrun:blocks/diamond_ore",
+			"experience": 5
+		}
+	]
+}

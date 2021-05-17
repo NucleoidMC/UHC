@@ -1,0 +1,24 @@
+{
+	"type": "uhc:uhc",
+	"translation": "game.uhc.vanilla.solo",
+	"team_size": 1,
+	"players": {
+		"min": 2,
+		"threshold": 8,
+		"max": 100
+	},
+	"map": {
+		"settings": "minecraft:overworld",
+		"shrinking_speed": 0.5,
+		"start_size": {
+			"min": 400,
+			"max": 10000
+		}
+	},
+	"chapters": {
+		"warmup": {
+			"min": 2700,
+			"max": 4200
+		}
+	}
+}
