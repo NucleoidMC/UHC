@@ -33,6 +33,7 @@ public class UHCParticipant {
 	public void setSurvival() {
 		this.getPlayer().setGameMode(GameMode.SURVIVAL);
 	}
+
 	public void setSpectator() {
 		this.getPlayer().setGameMode(GameMode.SPECTATOR);
 		this.reset();

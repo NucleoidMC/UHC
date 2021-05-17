@@ -4,11 +4,10 @@ import com.hugman.uhc.game.phase.UHCActive;
 import com.hugman.uhc.util.TickUtil;
 import net.minecraft.text.LiteralText;
 import net.minecraft.util.Formatting;
-import xyz.nucleoid.plasmid.game.GameSpace;
 import xyz.nucleoid.plasmid.widget.GlobalWidgets;
 import xyz.nucleoid.plasmid.widget.SidebarWidget;
 
-public final class UHCSideBar {
+public class UHCSideBar {
 	private final SidebarWidget sidebarWidget;
 	private final UHCActive active;
 
@@ -26,12 +25,12 @@ public final class UHCSideBar {
 			long count = active.getParticipants().size();
 
 			content.writeLine("");
-			content.writeFormattedTranslated(Formatting.GRAY, "text.uhc.players", new LiteralText(String.valueOf(count)).formatted(Formatting.WHITE));
+			content.writeFormattedTranslated(Formatting.WHITE, "text.uhc.players", new LiteralText(String.valueOf(count)).formatted(Formatting.GREEN));
 			//TODO: write kills
 			content.writeLine("");
-			content.writeFormattedTranslated(Formatting.GRAY, "text.uhc.world", new LiteralText(worldSize + "x" + worldSize).formatted(Formatting.WHITE));
+			content.writeFormattedTranslated(Formatting.WHITE, "text.uhc.world", new LiteralText(worldSize + "x" + worldSize).formatted(Formatting.GREEN));
 			content.writeLine("");
-			content.writeFormattedTranslated(Formatting.GRAY, "text.uhc.time", new LiteralText(TickUtil.format(ticks).asString()).formatted(Formatting.WHITE));
+			content.writeFormattedTranslated(Formatting.WHITE, "text.uhc.time", new LiteralText(TickUtil.format(ticks).asString()).formatted(Formatting.GREEN));
 		});
 	}
 }

@@ -1,0 +1,11 @@
+{
+	"required": true,
+	"package": "com.hugman.uhc.mixin",
+	"compatibilityLevel": "JAVA_8",
+	"mixins": [
+		"BlockDropMixin"
+	],
+	"injectors": {
+		"defaultRequire": 1
+	}
+}

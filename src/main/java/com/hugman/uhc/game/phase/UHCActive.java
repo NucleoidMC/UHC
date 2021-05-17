@@ -7,7 +7,6 @@ import com.hugman.uhc.game.UHCParticipant;
 import com.hugman.uhc.game.UHCSideBar;
 import com.hugman.uhc.game.UHCSpawner;
 import com.hugman.uhc.game.map.UHCMap;
-import com.hugman.uhc.module.piece.BlockLootModulePiece;
 import com.hugman.uhc.module.piece.BucketBreakModulePiece;
 import com.hugman.uhc.module.piece.EntityLootModulePiece;
 import com.hugman.uhc.util.TickUtil;
@@ -242,8 +241,8 @@ public class UHCActive {
 	}
 
 	private UHCParticipant getParticipant(ServerPlayerEntity player) {
-		for (UHCParticipant participant : this.participants) {
-			if (player == participant.getPlayer()) {
+		for(UHCParticipant participant : this.participants) {
+			if(player == participant.getPlayer()) {
 				return participant;
 			}
 		}
@@ -398,18 +397,10 @@ public class UHCActive {
 		}
 	}
 
-	public boolean breakIndividualBlock(@Nullable ServerPlayerEntity player, BlockPos pos) {
-		for(BlockLootModulePiece piece : this.config.blockLootModulePieces) {
-			if(piece.breakBlock(this.gameSpace, player, pos)) return true;
-		}
-		return false;
-	}
-
 	private ActionResult onBlockBroken(@Nullable ServerPlayerEntity player, BlockPos origin) {
 		for(BucketBreakModulePiece piece : this.config.bucketBreakModulePieces) {
-			if(piece.breakBlock(this, player, origin)) return ActionResult.PASS;
+			piece.breakBlock(this, player, origin);
 		}
-		if(breakIndividualBlock(player, origin)) return ActionResult.PASS;
 		return ActionResult.SUCCESS;
 	}
 

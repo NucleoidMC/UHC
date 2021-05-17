@@ -12,7 +12,7 @@ import xyz.nucleoid.plasmid.game.GameSpace;
 import xyz.nucleoid.plasmid.widget.BossBarWidget;
 import xyz.nucleoid.plasmid.widget.GlobalWidgets;
 
-public final class UHCBar {
+public class UHCBar {
 	private final BossBarWidget widget;
 	private final GameSpace gameSpace;
 	private String symbol;

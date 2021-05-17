@@ -1,8 +1,6 @@
 package com.hugman.uhc.game;
 
 import com.hugman.uhc.config.UHCConfig;
-import com.hugman.uhc.module.piece.PermanentEffectModulePiece;
-import com.hugman.uhc.module.piece.PlayerAttributeModulePiece;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.server.network.ServerPlayerEntity;
@@ -11,7 +9,6 @@ import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.DyeColor;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
-import net.minecraft.world.GameMode;
 import net.minecraft.world.Heightmap;
 import net.minecraft.world.chunk.WorldChunk;
 import xyz.nucleoid.plasmid.game.GameSpace;
@@ -22,7 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-public final class UHCSpawner {
+public class UHCSpawner {
 	private final GameSpace gameSpace;
 	private final UHCConfig config;
 	private final List<BlockBounds> blockBounds = new ArrayList<>();

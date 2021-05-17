@@ -31,7 +31,7 @@ public class BucketBreakModulePiece implements ModulePiece {
 		return CODEC;
 	}
 
-	public boolean breakBlock(UHCActive active, @Nullable ServerPlayerEntity player, BlockPos origin) {
+	public void breakBlock(UHCActive active, @Nullable ServerPlayerEntity player, BlockPos origin) {
 		ServerWorld world = active.gameSpace.getWorld();
 		BlockState state = world.getBlockState(origin);
 
@@ -41,14 +41,10 @@ public class BucketBreakModulePiece implements ModulePiece {
 				if(l != origin.asLong()) {
 					BlockPos pos = BlockPos.fromLong(l);
 					if(world.getWorldBorder().contains(pos)) {
-						if(!active.breakIndividualBlock(player, pos)) {
-							world.breakBlock(pos, true, player);
-						}
+						world.breakBlock(pos, true, player);
 					}
 				}
 			}
-			return active.breakIndividualBlock(player, origin);
 		}
-		return false;
 	}
 }
