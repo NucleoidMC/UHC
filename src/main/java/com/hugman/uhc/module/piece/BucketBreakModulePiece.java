@@ -36,7 +36,7 @@ public class BucketBreakModulePiece implements ModulePiece {
 		BlockState state = world.getBlockState(origin);
 
 		if(this.predicate.test(state, world.getRandom())) {
-			LongSet positions = BucketScanner.find(origin, this.amount, BucketScanner.Connectivity.TWENTY_SIX, BucketScanner.Type.BREADTH, pos -> world.getWorldBorder().contains(pos) && this.predicate.test(world.getBlockState(pos), world.getRandom()));
+			LongSet positions = BucketScanner.find(origin, this.amount, BucketScanner.Connectivity.TWENTY_SIX, BucketScanner.Type.BREADTH, (previousPos, pos) -> world.getWorldBorder().contains(pos) && this.predicate.test(world.getBlockState(pos), world.getRandom()));
 			for(long l : positions) {
 				if(l != origin.asLong()) {
 					BlockPos pos = BlockPos.fromLong(l);

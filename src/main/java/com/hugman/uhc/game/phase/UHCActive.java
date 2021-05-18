@@ -10,11 +10,14 @@ import com.hugman.uhc.game.UHCSpawner;
 import com.hugman.uhc.game.map.UHCMap;
 import com.hugman.uhc.module.piece.BucketBreakModulePiece;
 import com.hugman.uhc.module.piece.EntityLootModulePiece;
+import com.hugman.uhc.module.piece.PermanentEffectModulePiece;
+import com.hugman.uhc.module.piece.PlayerAttributeModulePiece;
 import com.hugman.uhc.util.TickUtil;
 import it.unimi.dsi.fastutil.objects.Object2ObjectMap;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.boss.BossBar;
 import net.minecraft.entity.damage.DamageSource;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.packet.s2c.play.WorldBorderS2CPacket;
 import net.minecraft.scoreboard.Team;
@@ -46,6 +49,7 @@ import xyz.nucleoid.plasmid.game.rule.RuleResult;
 import xyz.nucleoid.plasmid.widget.GlobalWidgets;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
@@ -129,7 +133,7 @@ public class UHCActive {
 		world.getWorldBorder().setCenter(0, 0);
 		world.getWorldBorder().setSize(this.logic.getStartMapSize());
 		world.getWorldBorder().setDamagePerBlock(0.5);
-		this.participants.keySet().forEach(player -> player.networkHandler.sendPacket(new WorldBorderS2CPacket(world.getWorldBorder(), WorldBorderS2CPacket.Type.INITIALIZE)));
+		this.gameSpace.getPlayers().forEach(player -> player.networkHandler.sendPacket(new WorldBorderS2CPacket(world.getWorldBorder(), WorldBorderS2CPacket.Type.INITIALIZE)));
 
 		this.gameStartTick = world.getTime();
 		this.startInvulnerableTick = world.getTime() + this.logic.getInCagesTime();
@@ -143,9 +147,9 @@ public class UHCActive {
 
 		// Start - Cage chapter
 		this.participants.keySet().forEach(player -> {
-			UHCParticipant.reset(player);
-			UHCParticipant.refreshAttributes(player, this.config);
-			UHCParticipant.setAdventure(player);
+			this.resetPlayer(player);
+			this.refreshPlayerAttributes(player);
+			player.setGameMode(GameMode.ADVENTURE);
 		});
 		this.tpToCages();
 		this.bar.set("text.uhc.dropping", this.logic.getInCagesTime(), this.startInvulnerableTick, BossBar.Color.PURPLE);
@@ -189,9 +193,9 @@ public class UHCActive {
 		// Finale - Cages chapter
 		else if(world.getTime() == this.finaleCagesTick) {
 			this.participants.keySet().forEach(player -> {
-				UHCParticipant.clear(player);
-				UHCParticipant.refreshAttributes(player, this.config);
-				UHCParticipant.setAdventure(player);
+				this.clearPlayer(player);
+				this.refreshPlayerAttributes(player);
+				player.setGameMode(GameMode.ADVENTURE);
 			});
 			this.tpToCages();
 			this.sendInfo("text.uhc.shrinking_when_pvp");
@@ -278,21 +282,67 @@ public class UHCActive {
 
 	private void eliminateParticipant(ServerPlayerEntity player) {
 		ItemScatterer.spawn(this.gameSpace.getWorld(), player.getBlockPos(), player.inventory);
-		UHCParticipant.setSpectator(player);
+		player.setGameMode(GameMode.SPECTATOR);
+		resetPlayer(player);
 		this.spawnLogic.spawnPlayerAtCenter(player);
 		this.participants.remove(player);
+		this.teamMap.values().remove(player);
 		this.checkForWinner();
+	}
+
+	public void resetPlayer(ServerPlayerEntity player) {
+		this.clearPlayer(player);
+		player.inventory.clear();
+		player.getEnderChestInventory().clear();
+		player.clearStatusEffects();
+		player.getHungerManager().setFoodLevel(20);
+		player.setExperienceLevel(0);
+		player.setExperiencePoints(0);
+		player.setHealth(player.getMaxHealth());
+	}
+
+	public void clearPlayer(ServerPlayerEntity player) {
+		player.extinguish();
+		player.fallDistance = 0.0F;
+	}
+
+	public void refreshPlayerAttributes(ServerPlayerEntity player) {
+		for(PlayerAttributeModulePiece piece : this.config.playerAttributeModulePieces) {
+			piece.setAttribute(player);
+		}
+	}
+
+	public void applyPlayerEffects(ServerPlayerEntity player, int effectDuration) {
+		for(PermanentEffectModulePiece piece : this.config.permanentEffectModulePieces) {
+			piece.setEffect(player, effectDuration);
+		}
 	}
 
 	private void checkForWinner() {
 		PlayerSet players = this.gameSpace.getPlayers();
 
-		if(this.participants.size() <= 1) {
-			Optional<ServerPlayerEntity> oParticipant = this.participants.keySet().stream().findFirst();
-			if(oParticipant.isPresent()) {
-				ServerPlayerEntity participant = oParticipant.get();
-				players.sendMessage(new LiteralText("\n").append(new TranslatableText("text.uhc.player_win", participant.getName()).formatted(Formatting.BOLD, Formatting.GOLD)).append("\n"));
-				UHCParticipant.setAdventure(participant);
+		// Remove empty teams
+		this.teamMap.keys().forEach(team -> {
+			if(this.teamMap.get(team).isEmpty()) this.teamMap.keys().remove(team);
+		});
+		if(this.teamMap.size() <= 1) {
+			Optional<Team> oTeam = this.teamMap.keySet().stream().findFirst();
+			if(oTeam.isPresent()) {
+				Team team = oTeam.get();
+				Collection<ServerPlayerEntity> teamMembers = this.teamMap.get(team);
+				if(teamMembers.size() > 1) {
+					players.sendMessage(new LiteralText("\n").append(new TranslatableText("text.uhc.player_win.team", Texts.join(teamMembers, PlayerEntity::getName)).formatted(Formatting.BOLD, Formatting.GOLD)).append("\n"));
+				}
+				else {
+					Optional<ServerPlayerEntity> participant = teamMembers.stream().findFirst();
+					if(participant.isPresent()) {
+						players.sendMessage(new LiteralText("\n").append(new TranslatableText("text.uhc.player_win.solo", participant.get().getName()).formatted(Formatting.BOLD, Formatting.GOLD)).append("\n"));
+					}
+					else {
+						players.sendMessage(new LiteralText("\n").append(new TranslatableText("text.uhc.none_win").formatted(Formatting.BOLD, Formatting.GOLD)).append("\n"));
+					}
+				}
+				teamMembers.forEach(playerEntity -> playerEntity.setGameMode(GameMode.ADVENTURE));
 				this.setInvulnerable(true);
 				this.setPvp(false);
 			}
@@ -345,10 +395,10 @@ public class UHCActive {
 		this.gameLogic.setRule(GameRule.CRAFTING, RuleResult.ALLOW);
 
 		this.participants.keySet().forEach(player -> {
-			UHCParticipant.setSurvival(player);
-			UHCParticipant.refreshAttributes(player, this.config);
-			UHCParticipant.clear(player);
-			UHCParticipant.applyEffects(player, this.config, (int) this.gameEndTick);
+			player.setGameMode(GameMode.SURVIVAL);
+			this.refreshPlayerAttributes(player);
+			this.clearPlayer(player);
+			this.applyPlayerEffects(player, (int) this.gameEndTick);
 		});
 	}
 
