@@ -17,7 +17,6 @@ import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.LiteralText;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.DyeColor;
-import net.minecraft.util.Formatting;
 import net.minecraft.util.Hand;
 import net.minecraft.util.hit.EntityHitResult;
 import net.minecraft.util.registry.Registry;
@@ -40,8 +39,8 @@ import xyz.nucleoid.plasmid.game.event.PlayerRemoveListener;
 import xyz.nucleoid.plasmid.game.event.RequestStartListener;
 import xyz.nucleoid.plasmid.game.player.TeamAllocator;
 
-import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -99,6 +98,10 @@ public class UHCWaiting {
 		ServerScoreboard scoreboard = gameSpace.getServer().getScoreboard();
 
 		List<DyeColor> teamColors = Arrays.stream(DyeColor.values()).collect(Collectors.toList());
+		teamColors.remove(DyeColor.WHITE);
+		teamColors.remove(DyeColor.BLACK);
+		teamColors.remove(DyeColor.MAGENTA);
+		Collections.shuffle(teamColors);
 
 		for(int i = 0; i < Math.round(gameSpace.getPlayers().size() / (float) config.getTeamSize()); i++) {
 

@@ -10,7 +10,7 @@
 				"predicate_type": "minecraft:tag_match",
 				"tag": "minecraft:base_stone_overworld"
 			},
-			"loot_table": "uhcrun:blocks/stone"
+			"loot_table": "uhcrun:blocks/cobblestone"
 		},
 		{
 			"type": "uhc:block_loot",

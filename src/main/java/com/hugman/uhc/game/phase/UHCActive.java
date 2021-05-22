@@ -21,7 +21,6 @@ import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.packet.s2c.play.WorldBorderS2CPacket;
-import net.minecraft.scoreboard.Team;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundEvents;
@@ -240,9 +239,6 @@ public class UHCActive {
 	}
 
 	private void close() {
-		for(ServerPlayerEntity player : this.gameSpace.getPlayers()) {
-			player.setGameMode(GameMode.ADVENTURE);
-		}
 		teamMap.keySet().forEach(team -> gameSpace.getServer().getScoreboard().removeTeam(team.getTeam()));
 	}
 
@@ -326,7 +322,10 @@ public class UHCActive {
 
 		// Remove empty teams
 		this.teamMap.keys().forEach(team -> {
-			if(this.teamMap.get(team).isEmpty()) this.teamMap.keys().remove(team);
+			if(this.teamMap.get(team).isEmpty()) {
+				gameSpace.getServer().getScoreboard().removeTeam(team.getTeam());
+				this.teamMap.keys().remove(team);
+			}
 		});
 		if(this.teamMap.size() <= 1) {
 			Optional<UHCTeam> oTeam = this.teamMap.keySet().stream().findFirst();

@@ -13,7 +13,6 @@ import java.util.ArrayDeque;
 import java.util.Deque;
 import java.util.Random;
 import java.util.function.BiPredicate;
-import java.util.function.Predicate;
 
 /**
  * Methods for finding connected blocks as a {@link LongSet}. Use {@link BlockPos#fromLong} to retrieve returned positions.
