@@ -13,13 +13,13 @@ public class UHC implements ModInitializer {
 	private static final String MOD_ID = "uhc";
 	public static final Logger LOGGER = LogManager.getLogger(MOD_ID);
 
-	public static Identifier id(String s) {
-		return new Identifier(MOD_ID, s);
-	}
-
 	@Override
 	public void onInitialize() {
 		Modules.register();
 		GameType.register(UHC.id("uhc"), UHCWaiting::open, UHCConfig.CODEC);
+	}
+
+	public static Identifier id(String s) {
+		return new Identifier(MOD_ID, s);
 	}
 }

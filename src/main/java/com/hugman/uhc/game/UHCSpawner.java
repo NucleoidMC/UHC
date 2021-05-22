@@ -22,7 +22,7 @@ import java.util.Map;
 public class UHCSpawner {
 	private final GameSpace gameSpace;
 	private final UHCConfig config;
-	private final Map<Team, BlockBounds> cages = new HashMap<>();
+	private final Map<UHCTeam, BlockBounds> cages = new HashMap<>();
 
 	public UHCSpawner(GameSpace gameSpace, UHCConfig config) {
 		this.gameSpace = gameSpace;
@@ -39,14 +39,14 @@ public class UHCSpawner {
 		player.teleport(this.gameSpace.getWorld(), pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, 0.0F, 0.0F);
 	}
 
-	public void putParticipantInGame(Team team, ServerPlayerEntity participant) {
+	public void putParticipantInGame(UHCTeam team, ServerPlayerEntity participant) {
 		BlockBounds bounds = this.cages.get(team);
 		if(bounds != null) {
 			this.spawnPlayerAt(participant, new BlockPos(bounds.getCenterBottom()).up());
 		}
 	}
 
-	public void summonCage(Team team, int x, int z) {
+	public void summonCage(UHCTeam team, int x, int z) {
 		BlockPos pos = new BlockPos(x, 200, z);
 		if(this.gameSpace.getWorld().isSkyVisible(pos)) {
 			pos = new BlockPos(x, 200, z);
@@ -54,9 +54,9 @@ public class UHCSpawner {
 		this.addCageAt(team, pos, Blocks.BARRIER.getDefaultState(), 3, 4);
 	}
 
-	public void addCageAt(Team team, BlockPos origin, BlockState sides, int width, int height) {
+	public void addCageAt(UHCTeam team, BlockPos origin, BlockState sides, int width, int height) {
 		ServerWorld world = this.gameSpace.getWorld();
-		BlockState floor = ColoredBlocks.glass(DyeColor.byName(team.getColor().getName(), DyeColor.WHITE)).getDefaultState();
+		BlockState floor = ColoredBlocks.glass(team.getColor()).getDefaultState();
 
 		BlockBounds fullCage = new BlockBounds(origin.down().north(width).east(width), origin.up(height).south(width).west(width));
 		BlockBounds cageFloor = new BlockBounds(origin.down().north(width - 1).east(width - 1), origin.down().south(width - 1).west(width - 1));
