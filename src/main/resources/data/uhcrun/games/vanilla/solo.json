@@ -3,7 +3,7 @@
 	"translation": "game.uhcrun.vanilla.solo",
 	"team_size": 1,
 	"players": {
-		"min": 1,
+		"min": 2,
 		"threshold": 8,
 		"max": 100
 	},

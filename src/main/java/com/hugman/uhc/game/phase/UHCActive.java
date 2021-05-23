@@ -251,6 +251,14 @@ public class UHCActive {
 		return participants.get(player);
 	}
 
+	@Nullable
+	public UHCTeam getTeam(ServerPlayerEntity player) {
+		for(UHCTeam theTowersTeam : this.teamMap.keys()) {
+			if(this.teamMap.get(theTowersTeam).contains(player)) return theTowersTeam;
+		}
+		return null;
+	}
+
 	private void addSpectator(ServerPlayerEntity player) {
 		player.networkHandler.sendPacket(new WorldBorderS2CPacket(this.gameSpace.getWorld().getWorldBorder(), WorldBorderS2CPacket.Type.INITIALIZE));
 		player.setGameMode(GameMode.SPECTATOR);
@@ -285,7 +293,13 @@ public class UHCActive {
 		this.resetPlayer(player);
 		this.spawnLogic.spawnPlayerAtCenter(player);
 		this.participants.remove(player);
-		this.teamMap.values().remove(player);
+		UHCTeam team = getTeam(player);
+		if(team != null) {
+			if(team.getTeam().getPlayerList().size() == 1) {
+				this.gameSpace.getWorld().getScoreboard().removeTeam(team.getTeam());
+			}
+			this.teamMap.values().remove(player);
+		}
 		this.checkForWinner();
 	}
 

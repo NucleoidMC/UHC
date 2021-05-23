@@ -104,7 +104,6 @@ public class UHCWaiting {
 		Collections.shuffle(teamColors);
 
 		for(int i = 0; i < Math.round(gameSpace.getPlayers().size() / (float) config.getTeamSize()); i++) {
-
 			Team team = scoreboard.addTeam(RandomStringUtils.randomAlphabetic(16));
 			UHCTeam uhcTeam = new UHCTeam(team, teamColors.get(i));
 
