@@ -6,6 +6,7 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import it.unimi.dsi.fastutil.longs.LongSet;
 import net.minecraft.block.BlockState;
+import net.minecraft.block.LeavesBlock;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.structure.rule.RuleTest;
@@ -36,7 +37,24 @@ public class BucketBreakModulePiece implements ModulePiece {
 		BlockState state = world.getBlockState(origin);
 
 		if(this.predicate.test(state, world.getRandom())) {
-			LongSet positions = BucketScanner.create((previousPos, pos) -> world.getWorldBorder().contains(pos) && this.predicate.test(world.getBlockState(pos), world.getRandom()))
+			LongSet positions = BucketScanner.create((previousPos, nextPos) -> {
+				if(world.getWorldBorder().contains(nextPos)) {
+					BlockState previousState = world.getBlockState(previousPos);
+					BlockState nextState = world.getBlockState(nextPos);
+					if(this.predicate.test(nextState, world.getRandom())) return true;
+					else {
+						if(nextState.getBlock() instanceof LeavesBlock) {
+							if(!(previousState.getBlock() instanceof LeavesBlock)) {
+								return nextState.get(LeavesBlock.DISTANCE) == 1;
+							}
+							else {
+								return nextState.get(LeavesBlock.DISTANCE) > previousState.get(LeavesBlock.DISTANCE);
+							}
+						}
+					}
+				}
+				return false;
+			})
 					.maxAmount(this.amount)
 					.connectivity(BucketScanner.Connectivity.TWENTY_SIX)
 					.searchType(BucketScanner.SearchType.BREADTH_FIRST)
