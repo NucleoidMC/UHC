@@ -78,6 +78,7 @@
 		},
 		{
 			"type": "uhc:entity_loot",
+			"replace": false,
 			"tag": "uhcrun:leather",
 			"loot_table": "uhcrun:entities/leather"
 		}

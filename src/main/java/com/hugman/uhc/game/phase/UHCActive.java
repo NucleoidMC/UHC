@@ -474,20 +474,15 @@ public class UHCActive {
 	}
 
 	private TypedActionResult<List<ItemStack>> onMobLoot(LivingEntity livingEntity, List<ItemStack> itemStacks) {
-		boolean replaceDrops = false;
+		boolean keepOld = true;
 		List<ItemStack> stacks = new ArrayList<>();
 		for(EntityLootModulePiece piece : this.config.entityLootModulePieces) {
 			if(piece.test(livingEntity)) {
-				replaceDrops = true;
 				stacks.addAll(piece.getLoots(this.gameSpace.getWorld(), livingEntity));
+				if(piece.replace()) keepOld = false;
 			}
 		}
-		if(replaceDrops) {
-			return TypedActionResult.pass(stacks);
-		}
-		else {
-			itemStacks.addAll(stacks);
-		}
-		return TypedActionResult.success(itemStacks);
+		if(keepOld) stacks.addAll(itemStacks);
+		return TypedActionResult.pass(stacks);
 	}
 }

@@ -23,17 +23,19 @@ import java.util.Optional;
 
 public class EntityLootModulePiece implements ModulePiece {
 	public static final Codec<EntityLootModulePiece> CODEC = RecordCodecBuilder.create(instance -> instance.group(
+			Codec.BOOL.optionalFieldOf("replace", true).forGetter(module -> module.replace),
 			Tag.codec(() -> ServerTagManagerHolder.getTagManager().getEntityTypes()).optionalFieldOf("tag").forGetter(module -> module.tag),
 			Registry.ENTITY_TYPE.optionalFieldOf("entity").forGetter(module -> module.entity),
 			Identifier.CODEC.optionalFieldOf("loot_table", LootTables.EMPTY).forGetter(module -> module.lootTable)
 	).apply(instance, EntityLootModulePiece::new));
 
+	private final boolean replace;
 	private final Optional<Tag<EntityType<?>>> tag;
 	private final Optional<EntityType<?>> entity;
 	private final Identifier lootTable;
 
-	// TODO: add a replace argument to make some modules good of their own (for example uhc:loots/chicken_arrows)
-	public EntityLootModulePiece(Optional<Tag<EntityType<?>>> tag, Optional<EntityType<?>> entity, Identifier lootTable) {
+	public EntityLootModulePiece(boolean replace, Optional<Tag<EntityType<?>>> tag, Optional<EntityType<?>> entity, Identifier lootTable) {
+		this.replace = replace;
 		this.tag = tag;
 		this.entity = entity;
 		this.lootTable = lootTable;
@@ -42,6 +44,10 @@ public class EntityLootModulePiece implements ModulePiece {
 	@Override
 	public Codec<? extends ModulePiece> getCodec() {
 		return CODEC;
+	}
+
+	public boolean replace() {
+		return replace;
 	}
 
 	public boolean test(LivingEntity livingEntity) {
