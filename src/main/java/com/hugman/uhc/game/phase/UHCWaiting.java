@@ -111,7 +111,7 @@ public class UHCWaiting {
 			team.setShowFriendlyInvisibles(true);
 			team.setCollisionRule(AbstractTeam.CollisionRule.PUSH_OTHER_TEAMS);
 			team.setDisplayName(new LiteralText("Team"));
-			if(config.getTeamSize() > 0) team.setColor(uhcTeam.getFormatting());
+			if(config.getTeamSize() > 1) team.setColor(uhcTeam.getFormatting());
 
 			teams.add(uhcTeam);
 		}
