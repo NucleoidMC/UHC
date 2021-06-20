@@ -341,7 +341,7 @@ public class UHCActive {
 				this.teamMap.keys().remove(team);
 			}
 		});
-		if(this.teamMap.size() <= 1) {
+		if(this.teamMap.keySet().size() <= 1) {
 			Optional<UHCTeam> oTeam = this.teamMap.keySet().stream().findFirst();
 			if(oTeam.isPresent()) {
 				UHCTeam team = oTeam.get();
