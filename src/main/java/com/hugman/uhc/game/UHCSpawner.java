@@ -8,22 +8,23 @@ import net.minecraft.server.world.ChunkTicketType;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.Heightmap;
 import net.minecraft.world.chunk.WorldChunk;
+import xyz.nucleoid.map_templates.BlockBounds;
 import xyz.nucleoid.plasmid.game.GameSpace;
-import xyz.nucleoid.plasmid.util.BlockBounds;
 import xyz.nucleoid.plasmid.util.ColoredBlocks;
 
 import java.util.HashMap;
 import java.util.Map;
 
 public class UHCSpawner {
-	private final GameSpace gameSpace;
+	private final ServerWorld world;
 	private final UHCConfig config;
 	private final Map<UHCTeam, BlockBounds> cages = new HashMap<>();
 
-	public UHCSpawner(GameSpace gameSpace, UHCConfig config) {
-		this.gameSpace = gameSpace;
+	public UHCSpawner(ServerWorld world, UHCConfig config) {
+		this.world = world;
 		this.config = config;
 	}
 
@@ -33,32 +34,32 @@ public class UHCSpawner {
 
 	public void spawnPlayerAt(ServerPlayerEntity player, BlockPos pos) {
 		ChunkPos chunkPos = new ChunkPos(pos.getX() >> 4, pos.getZ() >> 4);
-		this.gameSpace.getWorld().getChunkManager().addTicket(ChunkTicketType.POST_TELEPORT, chunkPos, 1, player.getEntityId());
-		player.teleport(this.gameSpace.getWorld(), pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, 0.0F, 0.0F);
+		this.world.getChunkManager().addTicket(ChunkTicketType.POST_TELEPORT, chunkPos, 1, player.getId());
+		player.teleport(this.world, pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, 0.0F, 0.0F);
 	}
 
 	public void putParticipantInGame(UHCTeam team, ServerPlayerEntity participant) {
 		BlockBounds bounds = this.cages.get(team);
 		if(bounds != null) {
-			this.spawnPlayerAt(participant, new BlockPos(bounds.getCenterBottom()).up());
+			this.spawnPlayerAt(participant, new BlockPos(bounds.centerBottom()).up());
 		}
 	}
 
 	public void summonCage(UHCTeam team, int x, int z) {
 		BlockPos pos = new BlockPos(x, 200, z);
-		if(this.gameSpace.getWorld().isSkyVisible(pos)) {
+		if(this.world.isSkyVisible(pos)) {
 			pos = new BlockPos(x, 200, z);
 		}
 		this.addCageAt(team, pos, Blocks.BARRIER.getDefaultState(), 3, 4);
 	}
 
 	public void addCageAt(UHCTeam team, BlockPos origin, BlockState sides, int width, int height) {
-		ServerWorld world = this.gameSpace.getWorld();
+		ServerWorld world = this.world;
 		BlockState floor = ColoredBlocks.glass(team.getColor()).getDefaultState();
 
-		BlockBounds fullCage = new BlockBounds(origin.down().north(width).east(width), origin.up(height).south(width).west(width));
-		BlockBounds cageFloor = new BlockBounds(origin.down().north(width - 1).east(width - 1), origin.down().south(width - 1).west(width - 1));
-		BlockBounds cageAir = new BlockBounds(origin.north(width - 1).east(width - 1), origin.up(height - 1).south(width - 1).west(width - 1));
+		BlockBounds fullCage = BlockBounds.of(origin.down().north(width).east(width), origin.up(height).south(width).west(width));
+		BlockBounds cageFloor = BlockBounds.of(origin.down().north(width - 1).east(width - 1), origin.down().south(width - 1).west(width - 1));
+		BlockBounds cageAir = BlockBounds.of(origin.north(width - 1).east(width - 1), origin.up(height - 1).south(width - 1).west(width - 1));
 
 		fullCage.forEach(pos -> world.setBlockState(pos, sides));
 		cageFloor.forEach(pos -> world.setBlockState(pos, floor));
@@ -68,12 +69,15 @@ public class UHCSpawner {
 	}
 
 	public void clearCages() {
-		this.cages.values().forEach(bounds -> bounds.forEach(pos -> this.gameSpace.getWorld().setBlockState(pos, Blocks.AIR.getDefaultState())));
+		this.cages.values().forEach(bounds -> bounds.forEach(pos -> this.world.setBlockState(pos, Blocks.AIR.getDefaultState())));
 	}
 
 	public BlockPos getSurfaceBlock(int x, int z) {
-		WorldChunk chunk = this.gameSpace.getWorld().getWorldChunk(new BlockPos(x, 0, z));
+		return new BlockPos(getSurfaceBlock(world, x, z));
+	}
 
-		return new BlockPos(x, chunk.sampleHeightmap(Heightmap.Type.MOTION_BLOCKING_NO_LEAVES, x, z) + 1, z);
+	public static Vec3d getSurfaceBlock(ServerWorld world, int x, int z) {
+		WorldChunk chunk = world.getWorldChunk(new BlockPos(x, 0, z));
+		return new Vec3d(x, chunk.sampleHeightmap(Heightmap.Type.MOTION_BLOCKING_NO_LEAVES, x, z) + 1, z);
 	}
 }

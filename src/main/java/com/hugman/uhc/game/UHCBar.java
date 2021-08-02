@@ -2,6 +2,7 @@ package com.hugman.uhc.game;
 
 import com.hugman.uhc.util.TickUtil;
 import net.minecraft.entity.boss.BossBar;
+import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.LiteralText;
@@ -9,8 +10,8 @@ import net.minecraft.text.Text;
 import net.minecraft.text.TranslatableText;
 import net.minecraft.util.Formatting;
 import xyz.nucleoid.plasmid.game.GameSpace;
-import xyz.nucleoid.plasmid.widget.BossBarWidget;
-import xyz.nucleoid.plasmid.widget.GlobalWidgets;
+import xyz.nucleoid.plasmid.game.common.GlobalWidgets;
+import xyz.nucleoid.plasmid.game.common.widget.BossBarWidget;
 
 public class UHCBar {
 	private final BossBarWidget widget;
@@ -29,7 +30,7 @@ public class UHCBar {
 	}
 
 	public static UHCBar create(GlobalWidgets widgets, GameSpace gameSpace) {
-		return new UHCBar(widgets.addBossBar(gameSpace.getGameConfig().getNameText(), BossBar.Color.BLUE, BossBar.Style.PROGRESS), gameSpace);
+		return new UHCBar(widgets.addBossBar(gameSpace.getSourceConfig().getName(), BossBar.Color.BLUE, BossBar.Style.PROGRESS), gameSpace);
 	}
 
 	public void set(String symbol, String name, long totalTicks, long endTick, BossBar.Color color) {
@@ -62,8 +63,8 @@ public class UHCBar {
 		this.canTick = false;
 	}
 
-	public void tick() {
-		long ticks = this.endTick - gameSpace.getWorld().getTime();
+	public void tick(ServerWorld world) {
+		long ticks = this.endTick - world.getTime();
 		if(ticks % 20 == 0 && canTick) {
 			long seconds = TickUtil.asSeconds(ticks);
 			long totalSeconds = TickUtil.asSeconds(totalTicks);

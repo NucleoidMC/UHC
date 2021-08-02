@@ -6,6 +6,7 @@ import net.minecraft.block.Block;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.world.StructureWorldAccess;
+import net.minecraft.world.gen.YOffset;
 import net.minecraft.world.gen.chunk.ChunkGenerator;
 import net.minecraft.world.gen.feature.Feature;
 import net.minecraft.world.gen.feature.OreFeatureConfig;
@@ -35,6 +36,6 @@ public class OreModulePiece implements ModulePiece {
 	}
 
 	public void generate(StructureWorldAccess world, ChunkGenerator chunkGenerator, Random random, BlockPos pos) {
-		Feature.ORE.configure(new OreFeatureConfig(OreFeatureConfig.Rules.BASE_STONE_OVERWORLD, this.block.getDefaultState(), this.size)).rangeOf(256).spreadHorizontally().repeat(this.count).generate(world, chunkGenerator, random, pos);
+		Feature.ORE.configure(new OreFeatureConfig(OreFeatureConfig.Rules.BASE_STONE_OVERWORLD, this.block.getDefaultState(), this.size)).uniformRange(YOffset.getBottom(), YOffset.fixed(256)).spreadHorizontally().repeat(this.count).generate(world, chunkGenerator, random, pos);
 	}
 }

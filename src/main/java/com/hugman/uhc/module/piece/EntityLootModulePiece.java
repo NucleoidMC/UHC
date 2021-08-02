@@ -24,7 +24,7 @@ import java.util.Optional;
 public class EntityLootModulePiece implements ModulePiece {
 	public static final Codec<EntityLootModulePiece> CODEC = RecordCodecBuilder.create(instance -> instance.group(
 			Codec.BOOL.optionalFieldOf("replace", true).forGetter(module -> module.replace),
-			Tag.codec(() -> ServerTagManagerHolder.getTagManager().getEntityTypes()).optionalFieldOf("tag").forGetter(module -> module.tag),
+			Tag.codec(() -> ServerTagManagerHolder.getTagManager().getOrCreateTagGroup(Registry.ENTITY_TYPE_KEY)).optionalFieldOf("tag").forGetter(module -> module.tag),
 			Registry.ENTITY_TYPE.optionalFieldOf("entity").forGetter(module -> module.entity),
 			Identifier.CODEC.optionalFieldOf("loot_table", LootTables.EMPTY).forGetter(module -> module.lootTable)
 	).apply(instance, EntityLootModulePiece::new));

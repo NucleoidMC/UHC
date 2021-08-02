@@ -5,6 +5,7 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.LeavesBlock;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.structure.rule.RuleTest;
@@ -14,7 +15,7 @@ import xyz.nucleoid.plasmid.util.BlockTraversal;
 
 public class BucketBreakModulePiece implements ModulePiece {
 	public static final Codec<BucketBreakModulePiece> CODEC = RecordCodecBuilder.create(instance -> instance.group(
-			RuleTest.field_25012.fieldOf("target").forGetter(module -> module.predicate),
+			RuleTest.TYPE_CODEC.fieldOf("target").forGetter(module -> module.predicate),
 			Codec.intRange(0, Integer.MAX_VALUE).optionalFieldOf("amount", 128).forGetter(module -> module.amount)
 	).apply(instance, BucketBreakModulePiece::new));
 
@@ -31,8 +32,8 @@ public class BucketBreakModulePiece implements ModulePiece {
 		return CODEC;
 	}
 
-	public void breakBlock(UHCActive active, @Nullable ServerPlayerEntity player, BlockPos origin) {
-		ServerWorld world = active.gameSpace.getWorld();
+	public void breakBlock(UHCActive active, @Nullable LivingEntity entity, BlockPos origin) {
+		ServerWorld world = active.world;
 		BlockState state = world.getBlockState(origin);
 
 		if(this.predicate.test(state, world.getRandom())) {
@@ -49,20 +50,20 @@ public class BucketBreakModulePiece implements ModulePiece {
 				BlockState previousState = world.getBlockState(fromPos);
 				BlockState nextState = world.getBlockState(nextPos);
 				if(this.predicate.test(nextState, world.getRandom())) {
-					world.breakBlock(nextPos, true, player);
+					world.breakBlock(nextPos, true, entity);
 					return BlockTraversal.Result.CONTINUE;
 				}
 				else {
 					if(nextState.getBlock() instanceof LeavesBlock) {
 						if(!(previousState.getBlock() instanceof LeavesBlock)) {
 							if(nextState.get(LeavesBlock.DISTANCE) == 1) {
-								world.breakBlock(nextPos, true, player);
+								world.breakBlock(nextPos, true, entity);
 								return BlockTraversal.Result.CONTINUE;
 							}
 						}
 						else {
 							if(nextState.get(LeavesBlock.DISTANCE) > previousState.get(LeavesBlock.DISTANCE)) {
-								world.breakBlock(nextPos, true, player);
+								world.breakBlock(nextPos, true, entity);
 								return BlockTraversal.Result.CONTINUE;
 							}
 						}

@@ -23,7 +23,7 @@ import java.util.Collection;
 import java.util.Set;
 
 public final class Modules {
-	private static final TinyRegistry<Module> REGISTRY = TinyRegistry.newStable();
+	private static final TinyRegistry<Module> REGISTRY = TinyRegistry.create();
 
 	private Modules() {
 	}

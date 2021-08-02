@@ -16,42 +16,23 @@ public class UHCTeam {
 	}
 
 	private static Formatting formatByDye(DyeColor dye) {
-		switch(dye) {
-			case WHITE:
-				return Formatting.WHITE;
-			case ORANGE:
-				return Formatting.GOLD;
-			case MAGENTA:
-				return Formatting.LIGHT_PURPLE;
-			case LIGHT_BLUE:
-				return Formatting.AQUA;
-			case YELLOW:
-				return Formatting.YELLOW;
-			case LIME:
-				return Formatting.GREEN;
-			case PINK:
-				return Formatting.LIGHT_PURPLE;
-			case GRAY:
-				return Formatting.DARK_GRAY;
-			case LIGHT_GRAY:
-				return Formatting.GRAY;
-			case CYAN:
-				return Formatting.DARK_AQUA;
-			case PURPLE:
-				return Formatting.DARK_PURPLE;
-			case BLUE:
-				return Formatting.BLUE;
-			case BROWN:
-				return Formatting.DARK_RED;
-			case GREEN:
-				return Formatting.DARK_GREEN;
-			case RED:
-				return Formatting.RED;
-			case BLACK:
-				return Formatting.BLACK;
-			default:
-				return Formatting.RESET;
-		}
+		return switch(dye) {
+			case WHITE -> Formatting.WHITE;
+			case ORANGE -> Formatting.GOLD;
+			case MAGENTA, PINK -> Formatting.LIGHT_PURPLE;
+			case LIGHT_BLUE -> Formatting.AQUA;
+			case YELLOW -> Formatting.YELLOW;
+			case LIME -> Formatting.GREEN;
+			case GRAY -> Formatting.DARK_GRAY;
+			case LIGHT_GRAY -> Formatting.GRAY;
+			case CYAN -> Formatting.DARK_AQUA;
+			case PURPLE -> Formatting.DARK_PURPLE;
+			case BLUE -> Formatting.BLUE;
+			case BROWN -> Formatting.DARK_RED;
+			case GREEN -> Formatting.DARK_GREEN;
+			case RED -> Formatting.RED;
+			case BLACK -> Formatting.BLACK;
+		};
 	}
 
 	public Team getTeam() {

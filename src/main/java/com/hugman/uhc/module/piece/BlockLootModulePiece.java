@@ -25,7 +25,7 @@ import java.util.Random;
 public class BlockLootModulePiece implements ModulePiece {
 	public static final Codec<BlockLootModulePiece> CODEC = RecordCodecBuilder.create(instance -> instance.group(
 			Codec.BOOL.optionalFieldOf("replace", true).forGetter(module -> module.replace),
-			RuleTest.field_25012.fieldOf("target").forGetter(module -> module.predicate),
+			RuleTest.TYPE_CODEC.fieldOf("target").forGetter(module -> module.predicate),
 			Identifier.CODEC.optionalFieldOf("loot_table", LootTables.EMPTY).forGetter(module -> module.lootTable),
 			Codec.intRange(0, Integer.MAX_VALUE).optionalFieldOf("experience", 0).forGetter(module -> module.experience)
 	).apply(instance, BlockLootModulePiece::new));

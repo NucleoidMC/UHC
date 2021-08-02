@@ -8,7 +8,7 @@ import xyz.nucleoid.plasmid.registry.TinyRegistry;
 import java.util.function.Function;
 
 public final class ModulePieces {
-	private static final TinyRegistry<Codec<? extends ModulePiece>> REGISTRY = TinyRegistry.newStable();
+	private static final TinyRegistry<Codec<? extends ModulePiece>> REGISTRY = TinyRegistry.create();
 	public static final Codec<ModulePiece> CODEC = REGISTRY.dispatchStable(ModulePiece::getCodec, Function.identity());
 
 	public static final Identifier BLOCK_LOOT = register("block_loot", BlockLootModulePiece.CODEC);

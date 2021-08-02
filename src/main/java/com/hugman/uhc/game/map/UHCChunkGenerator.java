@@ -8,6 +8,7 @@ import net.minecraft.util.registry.BuiltinRegistries;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.world.BlockView;
 import net.minecraft.world.ChunkRegion;
+import net.minecraft.world.HeightLimitView;
 import net.minecraft.world.Heightmap;
 import net.minecraft.world.WorldAccess;
 import net.minecraft.world.biome.Biome;
@@ -20,9 +21,12 @@ import net.minecraft.world.gen.StructureAccessor;
 import net.minecraft.world.gen.chunk.ChunkGenerator;
 import net.minecraft.world.gen.chunk.ChunkGeneratorSettings;
 import net.minecraft.world.gen.chunk.NoiseChunkGenerator;
+import net.minecraft.world.gen.chunk.VerticalBlockSample;
 import xyz.nucleoid.plasmid.game.world.generator.GameChunkGenerator;
 
 import java.util.Random;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.Executor;
 
 public class UHCChunkGenerator extends GameChunkGenerator {
 	private final UHCConfig config;
@@ -56,8 +60,8 @@ public class UHCChunkGenerator extends GameChunkGenerator {
 	}
 
 	@Override
-	public void populateNoise(WorldAccess world, StructureAccessor structures, Chunk chunk) {
-		this.subGenerator.populateNoise(world, structures, chunk);
+	public CompletableFuture<Chunk> populateNoise(Executor executor, StructureAccessor accessor, Chunk chunk) {
+		return this.subGenerator.populateNoise(executor, accessor, chunk);
 	}
 
 	@Override
@@ -67,8 +71,8 @@ public class UHCChunkGenerator extends GameChunkGenerator {
 
 	@Override
 	public void generateFeatures(ChunkRegion region, StructureAccessor structures) {
-		int chunkX = region.getCenterChunkX();
-		int chunkZ = region.getCenterChunkZ();
+		int chunkX = region.getCenterPos().getRegionX();
+		int chunkZ = region.getCenterPos().getRegionZ();
 		Random random = new Random();
 
 		for(OreModulePiece piece : this.config.oreModulePieces) {
@@ -87,12 +91,12 @@ public class UHCChunkGenerator extends GameChunkGenerator {
 	}
 
 	@Override
-	public int getHeight(int x, int z, Heightmap.Type heightmapType) {
-		return this.subGenerator.getHeight(x, z, heightmapType);
+	public int getHeight(int x, int z, Heightmap.Type heightmap, HeightLimitView world) {
+		return this.subGenerator.getHeight(x, z, heightmap, world);
 	}
 
 	@Override
-	public BlockView getColumnSample(int x, int z) {
-		return this.subGenerator.getColumnSample(x, z);
+	public VerticalBlockSample getColumnSample(int x, int z, HeightLimitView world) {
+		return this.subGenerator.getColumnSample(x, z, world);
 	}
 }

@@ -9,18 +9,22 @@ import com.hugman.uhc.game.UHCSideBar;
 import com.hugman.uhc.game.UHCSpawner;
 import com.hugman.uhc.game.UHCTeam;
 import com.hugman.uhc.game.map.UHCMap;
+import com.hugman.uhc.module.piece.BlockLootModulePiece;
 import com.hugman.uhc.module.piece.BucketBreakModulePiece;
 import com.hugman.uhc.module.piece.EntityLootModulePiece;
 import com.hugman.uhc.module.piece.PermanentEffectModulePiece;
 import com.hugman.uhc.module.piece.PlayerAttributeModulePiece;
 import com.hugman.uhc.util.TickUtil;
 import it.unimi.dsi.fastutil.objects.Object2ObjectMap;
+import net.minecraft.block.BlockState;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.boss.BossBar;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
-import net.minecraft.network.packet.s2c.play.WorldBorderS2CPacket;
+import net.minecraft.network.packet.s2c.play.WorldBorderInitializeS2CPacket;
+import net.minecraft.network.packet.s2c.play.WorldBorderInterpolateSizeS2CPacket;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundEvents;
@@ -37,16 +41,24 @@ import net.minecraft.util.TypedActionResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.GameMode;
+import net.minecraft.world.explosion.Explosion;
 import org.jetbrains.annotations.Nullable;
+import xyz.nucleoid.plasmid.game.GameActivity;
 import xyz.nucleoid.plasmid.game.GameCloseReason;
-import xyz.nucleoid.plasmid.game.GameLogic;
 import xyz.nucleoid.plasmid.game.GameSpace;
-import xyz.nucleoid.plasmid.game.event.*;
-import xyz.nucleoid.plasmid.game.player.JoinResult;
+import xyz.nucleoid.plasmid.game.common.GlobalWidgets;
+import xyz.nucleoid.plasmid.game.event.GameActivityEvents;
+import xyz.nucleoid.plasmid.game.event.GamePlayerEvents;
+import xyz.nucleoid.plasmid.game.player.PlayerOffer;
+import xyz.nucleoid.plasmid.game.player.PlayerOfferResult;
 import xyz.nucleoid.plasmid.game.player.PlayerSet;
-import xyz.nucleoid.plasmid.game.rule.GameRule;
-import xyz.nucleoid.plasmid.game.rule.RuleResult;
-import xyz.nucleoid.plasmid.widget.GlobalWidgets;
+import xyz.nucleoid.plasmid.game.rule.GameRuleType;
+import xyz.nucleoid.stimuli.event.block.BlockBreakEvent;
+import xyz.nucleoid.stimuli.event.block.BlockDropItemsEvent;
+import xyz.nucleoid.stimuli.event.entity.EntityDropItemsEvent;
+import xyz.nucleoid.stimuli.event.player.PlayerDamageEvent;
+import xyz.nucleoid.stimuli.event.player.PlayerDeathEvent;
+import xyz.nucleoid.stimuli.event.world.ExplosionDetonatedEvent;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -54,8 +66,9 @@ import java.util.List;
 import java.util.Optional;
 
 public class UHCActive {
+	private final GameActivity activity;
 	public final GameSpace gameSpace;
-	private final GameLogic gameLogic;
+	public final ServerWorld world;
 	private final UHCMap map;
 	private final UHCConfig config;
 
@@ -80,9 +93,10 @@ public class UHCActive {
 	private boolean invulnerable;
 	private boolean isFinished = false;
 
-	private UHCActive(GameLogic gameLogic, UHCConfig config, UHCMap map, GlobalWidgets widgets, Object2ObjectMap<ServerPlayerEntity, UHCParticipant> participants, Multimap<UHCTeam, ServerPlayerEntity> teamMap) {
-		this.gameLogic = gameLogic;
-		this.gameSpace = this.gameLogic.getSpace();
+	private UHCActive(GameActivity activity, ServerWorld world, UHCConfig config, UHCMap map, GlobalWidgets widgets, Object2ObjectMap<ServerPlayerEntity, UHCParticipant> participants, Multimap<UHCTeam, ServerPlayerEntity> teamMap) {
+		this.activity = activity;
+		this.gameSpace = this.activity.getGameSpace();
+		this.world = world;
 		this.map = map;
 		this.config = config;
 
@@ -90,50 +104,50 @@ public class UHCActive {
 		this.teamMap = teamMap;
 
 		this.logic = new UHCLogic(config, this.participants.size());
-		this.spawnLogic = new UHCSpawner(this.gameSpace, this.config);
+		this.spawnLogic = new UHCSpawner(this.world, this.config);
 		this.bar = UHCBar.create(widgets, this.gameSpace);
 		this.sideBar = UHCSideBar.create(widgets, this);
 	}
 
-	public static void start(GameSpace gameSpace, UHCConfig config, UHCMap map, Object2ObjectMap<ServerPlayerEntity, UHCParticipant> participants, Multimap<UHCTeam, ServerPlayerEntity> teams) {
-		gameSpace.openGame(game -> {
-			GlobalWidgets widgets = new GlobalWidgets(game);
-			UHCActive active = new UHCActive(game, config, map, widgets, participants, teams);
+	public static void start(GameSpace gameSpace, ServerWorld world, UHCConfig config, UHCMap map, Object2ObjectMap<ServerPlayerEntity, UHCParticipant> participants, Multimap<UHCTeam, ServerPlayerEntity> teams) {
+		gameSpace.setActivity(activity -> {
+			GlobalWidgets widgets = GlobalWidgets.addTo(activity);
+			UHCActive active = new UHCActive(activity, world, config, map, widgets, participants, teams);
 
-			game.setRule(GameRule.CRAFTING, RuleResult.ALLOW);
-			game.setRule(GameRule.PORTALS, RuleResult.DENY);
-			game.setRule(GameRule.PVP, RuleResult.DENY);
-			game.setRule(GameRule.BLOCK_DROPS, RuleResult.ALLOW);
-			game.setRule(GameRule.FALL_DAMAGE, RuleResult.ALLOW);
-			game.setRule(GameRule.HUNGER, RuleResult.ALLOW);
+			activity.allow(GameRuleType.CRAFTING);
+			activity.deny(GameRuleType.PORTALS);
+			activity.deny(GameRuleType.PVP);
+			activity.allow(GameRuleType.BLOCK_DROPS);
+			activity.allow(GameRuleType.FALL_DAMAGE);
+			activity.allow(GameRuleType.HUNGER);
 
-			game.on(GameOpenListener.EVENT, active::open);
-			game.on(GameCloseListener.EVENT, active::close);
+			activity.listen(GameActivityEvents.ENABLE, active::enable);
+			activity.listen(GameActivityEvents.DISABLE, active::disable);
 
-			game.on(OfferPlayerListener.EVENT, player -> JoinResult.ok());
-			game.on(PlayerAddListener.EVENT, active::addSpectator);
-			game.on(PlayerRemoveListener.EVENT, active::removePlayer);
+			activity.listen(GamePlayerEvents.OFFER, active::offerPlayer);
+			activity.listen(GamePlayerEvents.LEAVE, active::playerLeave);
 
-			game.on(GameTickListener.EVENT, active::tick);
+			activity.listen(GameActivityEvents.TICK, active::tick);
 
-			game.on(PlayerDamageListener.EVENT, active::onPlayerDamage);
-			game.on(PlayerDeathListener.EVENT, active::onPlayerDeath);
+			activity.listen(PlayerDamageEvent.EVENT, active::onPlayerDamage);
+			activity.listen(PlayerDeathEvent.EVENT, active::onPlayerDeath);
 
-			game.on(EntityDropLootListener.EVENT, active::onMobLoot);
-			game.on(BreakBlockListener.EVENT, active::onBlockBroken);
-			game.on(ExplosionListener.EVENT, active::onExplosion);
+			activity.listen(EntityDropItemsEvent.EVENT, active::onMobLoot);
+			activity.listen(BlockBreakEvent.EVENT, active::onBlockBroken);
+			activity.listen(BlockDropItemsEvent.EVENT, active::onBlockDrop);
+			activity.listen(ExplosionDetonatedEvent.EVENT, active::onExplosion);
 		});
 	}
 
 	// GENERAL GAME MANAGEMENT
-	private void open() {
-		ServerWorld world = this.gameSpace.getWorld();
+	private void enable() {
+		ServerWorld world = this.world;
 
 		// Setup
 		world.getWorldBorder().setCenter(0, 0);
 		world.getWorldBorder().setSize(this.logic.getStartMapSize());
 		world.getWorldBorder().setDamagePerBlock(0.5);
-		this.gameSpace.getPlayers().forEach(player -> player.networkHandler.sendPacket(new WorldBorderS2CPacket(world.getWorldBorder(), WorldBorderS2CPacket.Type.INITIALIZE)));
+		this.gameSpace.getPlayers().forEach(player -> player.networkHandler.sendPacket(new WorldBorderInitializeS2CPacket(world.getWorldBorder())));
 
 		this.gameStartTick = world.getTime();
 		this.startInvulnerableTick = world.getTime() + this.logic.getInCagesTime();
@@ -149,17 +163,17 @@ public class UHCActive {
 		this.participants.keySet().forEach(player -> {
 			this.resetPlayer(player);
 			this.refreshPlayerAttributes(player);
-			player.setGameMode(GameMode.ADVENTURE);
+			player.changeGameMode(GameMode.ADVENTURE);
 		});
 		this.tpToCages();
 		this.bar.set("text.uhc.dropping", this.logic.getInCagesTime(), this.startInvulnerableTick, BossBar.Color.PURPLE);
 	}
 
 	private void tick() {
-		ServerWorld world = this.gameSpace.getWorld();
+		ServerWorld world = this.world;
 		long worldTime = world.getTime();
 
-		this.bar.tick();
+		this.bar.tick(world);
 		this.sideBar.update(worldTime - this.gameStartTick, (int) world.getWorldBorder().getSize());
 
 
@@ -197,7 +211,7 @@ public class UHCActive {
 			this.participants.keySet().forEach(player -> {
 				this.clearPlayer(player);
 				this.refreshPlayerAttributes(player);
-				player.setGameMode(GameMode.ADVENTURE);
+				player.changeGameMode(GameMode.ADVENTURE);
 			});
 			this.tpToCages();
 			this.sendInfo("text.uhc.shrinking_when_pvp");
@@ -222,7 +236,7 @@ public class UHCActive {
 			this.sendWarning("🗡", "text.uhc.pvp_enabled");
 
 			world.getWorldBorder().interpolateSize(this.logic.getStartMapSize(), this.logic.getEndMapSize(), this.logic.getShrinkingTime() * 50L);
-			this.gameSpace.getPlayers().forEach(player -> player.networkHandler.sendPacket(new WorldBorderS2CPacket(world.getWorldBorder(), WorldBorderS2CPacket.Type.LERP_SIZE)));
+			this.gameSpace.getPlayers().forEach(player -> player.networkHandler.sendPacket(new WorldBorderInterpolateSizeS2CPacket(world.getWorldBorder())));
 			this.sendWarning("text.uhc.shrinking_start");
 
 			this.bar.set("text.uhc.shrinking_finish", this.logic.getShrinkingTime(), this.deathMatchTick, BossBar.Color.RED);
@@ -238,7 +252,7 @@ public class UHCActive {
 		}
 	}
 
-	private void close() {
+	private void disable() {
 		teamMap.keySet().forEach(team -> gameSpace.getServer().getScoreboard().removeTeam(team.getTeam()));
 	}
 
@@ -259,17 +273,20 @@ public class UHCActive {
 		return null;
 	}
 
-	private void addSpectator(ServerPlayerEntity player) {
-		player.networkHandler.sendPacket(new WorldBorderS2CPacket(this.gameSpace.getWorld().getWorldBorder(), WorldBorderS2CPacket.Type.INITIALIZE));
-		player.setGameMode(GameMode.SPECTATOR);
-		this.spawnLogic.spawnPlayerAtCenter(player);
+	private PlayerOfferResult offerPlayer(PlayerOffer offer) {
+		return offer.accept(this.world, UHCSpawner.getSurfaceBlock(world, 0, 0)).and(() -> {
+			ServerPlayerEntity player = offer.player();
+
+			player.changeGameMode(GameMode.SPECTATOR);
+			player.networkHandler.sendPacket(new WorldBorderInitializeS2CPacket(this.world.getWorldBorder()));
+		});
 	}
 
-	private void removePlayer(ServerPlayerEntity player) {
+	private void playerLeave(ServerPlayerEntity player) {
 		if(participants.containsKey(player)) {
 			PlayerSet players = this.gameSpace.getPlayers();
 			players.sendMessage(new LiteralText("\n☠ ").append(new TranslatableText("text.uhc.player_eliminated", player.getDisplayName())).append("\n").formatted(Formatting.DARK_RED));
-			players.sendSound(SoundEvents.ENTITY_WITHER_SPAWN);
+			players.playSound(SoundEvents.ENTITY_WITHER_SPAWN);
 			this.eliminateParticipant(player);
 		}
 	}
@@ -278,7 +295,7 @@ public class UHCActive {
 		if(participants.containsKey(player)) {
 			PlayerSet players = this.gameSpace.getPlayers();
 			players.sendMessage(new LiteralText("\n☠ ").append(source.getDeathMessage(player).copy()).append("!\n").formatted(Formatting.DARK_RED));
-			players.sendSound(SoundEvents.ENTITY_WITHER_SPAWN);
+			players.playSound(SoundEvents.ENTITY_WITHER_SPAWN);
 			this.eliminateParticipant(player);
 		}
 		else {
@@ -288,15 +305,15 @@ public class UHCActive {
 	}
 
 	private void eliminateParticipant(ServerPlayerEntity player) {
-		ItemScatterer.spawn(this.gameSpace.getWorld(), player.getBlockPos(), player.inventory);
-		player.setGameMode(GameMode.SPECTATOR);
+		ItemScatterer.spawn(player.getServerWorld(), player.getBlockPos(), player.getInventory());
+		player.changeGameMode(GameMode.SPECTATOR);
 		this.resetPlayer(player);
 		this.spawnLogic.spawnPlayerAtCenter(player);
 		this.participants.remove(player);
 		UHCTeam team = getTeam(player);
 		if(team != null) {
 			if(team.getTeam().getPlayerList().size() == 1) {
-				this.gameSpace.getWorld().getScoreboard().removeTeam(team.getTeam());
+				this.world.getScoreboard().removeTeam(team.getTeam());
 			}
 			this.teamMap.values().remove(player);
 		}
@@ -305,7 +322,7 @@ public class UHCActive {
 
 	public void resetPlayer(ServerPlayerEntity player) {
 		this.clearPlayer(player);
-		player.inventory.clear();
+		player.getInventory().clear();
 		player.getEnderChestInventory().clear();
 		player.clearStatusEffects();
 		player.getHungerManager().setFoodLevel(20);
@@ -358,15 +375,15 @@ public class UHCActive {
 						players.sendMessage(new LiteralText("\n").append(new TranslatableText("text.uhc.none_win").formatted(Formatting.BOLD, Formatting.GOLD)).append("\n"));
 					}
 				}
-				teamMembers.forEach(playerEntity -> playerEntity.setGameMode(GameMode.ADVENTURE));
+				teamMembers.forEach(playerEntity -> playerEntity.changeGameMode(GameMode.ADVENTURE));
 				this.setInvulnerable(true);
 				this.setPvp(false);
 			}
 			else {
 				players.sendMessage(new LiteralText("\n").append(new TranslatableText("text.uhc.none_win").formatted(Formatting.BOLD, Formatting.GOLD)).append("\n"));
 			}
-			players.sendSound(SoundEvents.UI_TOAST_CHALLENGE_COMPLETE);
-			this.gameCloseTick = this.gameSpace.getWorld().getTime() + 200;
+			players.playSound(SoundEvents.UI_TOAST_CHALLENGE_COMPLETE);
+			this.gameCloseTick = this.world.getTime() + 200;
 			this.bar.close();
 			this.isFinished = true;
 			this.participants.clear();
@@ -376,20 +393,31 @@ public class UHCActive {
 	// GAME STATES
 	private void setInvulnerable(boolean b) {
 		this.invulnerable = b;
-		this.gameLogic.setRule(GameRule.HUNGER, b ? RuleResult.DENY : RuleResult.ALLOW);
-		this.gameLogic.setRule(GameRule.FALL_DAMAGE, b ? RuleResult.DENY : RuleResult.ALLOW);
+		if(b) {
+			this.activity.deny(GameRuleType.HUNGER);
+			this.activity.deny(GameRuleType.FALL_DAMAGE);
+		}
+		else {
+			this.activity.allow(GameRuleType.HUNGER);
+			this.activity.allow(GameRuleType.FALL_DAMAGE);
+		}
 	}
 
 	private void setPvp(boolean b) {
-		this.gameLogic.setRule(GameRule.PVP, b ? RuleResult.ALLOW : RuleResult.DENY);
+		if(b) {
+			this.activity.allow(GameRuleType.PVP);
+		}
+		else {
+			this.activity.deny(GameRuleType.PVP);
+		}
 	}
 
 	private void tpToCages() {
 		this.setInvulnerable(true);
-		this.gameLogic.setRule(GameRule.BREAK_BLOCKS, RuleResult.DENY);
-		this.gameLogic.setRule(GameRule.PLACE_BLOCKS, RuleResult.DENY);
-		this.gameLogic.setRule(GameRule.INTERACTION, RuleResult.DENY);
-		this.gameLogic.setRule(GameRule.CRAFTING, RuleResult.DENY);
+		this.activity.deny(GameRuleType.BREAK_BLOCKS);
+		this.activity.deny(GameRuleType.PLACE_BLOCKS);
+		this.activity.deny(GameRuleType.INTERACTION);
+		this.activity.deny(GameRuleType.CRAFTING);
 
 		int index = 0;
 		for(UHCTeam team : this.teamMap.keySet()) {
@@ -405,13 +433,13 @@ public class UHCActive {
 
 	private void dropCages() {
 		this.spawnLogic.clearCages();
-		this.gameLogic.setRule(GameRule.BREAK_BLOCKS, RuleResult.ALLOW);
-		this.gameLogic.setRule(GameRule.PLACE_BLOCKS, RuleResult.ALLOW);
-		this.gameLogic.setRule(GameRule.INTERACTION, RuleResult.ALLOW);
-		this.gameLogic.setRule(GameRule.CRAFTING, RuleResult.ALLOW);
+		this.activity.allow(GameRuleType.BREAK_BLOCKS);
+		this.activity.allow(GameRuleType.PLACE_BLOCKS);
+		this.activity.allow(GameRuleType.INTERACTION);
+		this.activity.allow(GameRuleType.CRAFTING);
 
 		this.participants.keySet().forEach(player -> {
-			player.setGameMode(GameMode.SURVIVAL);
+			player.changeGameMode(GameMode.SURVIVAL);
 			this.refreshPlayerAttributes(player);
 			this.clearPlayer(player);
 			this.applyPlayerEffects(player, (int) this.gameEndTick);
@@ -448,7 +476,7 @@ public class UHCActive {
 			});
 			text.append("\n");
 			this.gameSpace.getPlayers().sendMessage(text);
-			this.gameSpace.getPlayers().sendSound(SoundEvents.ENTITY_ITEM_PICKUP);
+			this.gameSpace.getPlayers().playSound(SoundEvents.ENTITY_ITEM_PICKUP);
 		}
 	}
 
@@ -462,15 +490,19 @@ public class UHCActive {
 		}
 	}
 
-	private ActionResult onBlockBroken(@Nullable ServerPlayerEntity player, BlockPos origin) {
+	private ActionResult onBlockBroken(ServerPlayerEntity playerEntity, ServerWorld world, BlockPos pos) {
 		for(BucketBreakModulePiece piece : this.config.bucketBreakModulePieces) {
-			piece.breakBlock(this, player, origin);
+			piece.breakBlock(this, playerEntity, pos);
 		}
 		return ActionResult.SUCCESS;
 	}
 
-	private void onExplosion(List<BlockPos> positions) {
-		positions.forEach(pos -> onBlockBroken(null, pos));
+	private void onExplosion(Explosion explosion, boolean b) {
+		explosion.getAffectedBlocks().forEach(pos -> {
+			for(BucketBreakModulePiece piece : this.config.bucketBreakModulePieces) {
+				piece.breakBlock(this, explosion.getCausingEntity(), pos);
+			}
+		});
 	}
 
 	private TypedActionResult<List<ItemStack>> onMobLoot(LivingEntity livingEntity, List<ItemStack> itemStacks) {
@@ -478,7 +510,23 @@ public class UHCActive {
 		List<ItemStack> stacks = new ArrayList<>();
 		for(EntityLootModulePiece piece : this.config.entityLootModulePieces) {
 			if(piece.test(livingEntity)) {
-				stacks.addAll(piece.getLoots(this.gameSpace.getWorld(), livingEntity));
+				stacks.addAll(piece.getLoots(this.world, livingEntity));
+				if(piece.replace()) keepOld = false;
+			}
+		}
+		if(keepOld) stacks.addAll(itemStacks);
+		return TypedActionResult.pass(stacks);
+	}
+
+
+
+	private TypedActionResult<List<ItemStack>> onBlockDrop(@Nullable Entity entity, ServerWorld world, BlockPos pos, BlockState state, List<ItemStack> itemStacks) {
+		boolean keepOld = true;
+		List<ItemStack> stacks = new ArrayList<>();
+		for(BlockLootModulePiece piece : this.config.blockLootModulePieces) {
+			if(piece.test(state, world.getRandom())) {
+				piece.spawnExperience(world, pos);
+				itemStacks.addAll(piece.getLoots(world, pos, entity, entity instanceof LivingEntity ? ((LivingEntity) entity).getActiveItem() : ItemStack.EMPTY));
 				if(piece.replace()) keepOld = false;
 			}
 		}

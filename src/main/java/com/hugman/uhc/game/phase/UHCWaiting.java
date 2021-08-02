@@ -4,40 +4,38 @@ import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 import com.hugman.uhc.config.UHCConfig;
 import com.hugman.uhc.game.UHCParticipant;
+import com.hugman.uhc.game.UHCSpawner;
 import com.hugman.uhc.game.UHCTeam;
 import com.hugman.uhc.game.map.UHCMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.scoreboard.AbstractTeam;
 import net.minecraft.scoreboard.ServerScoreboard;
 import net.minecraft.scoreboard.Team;
 import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.server.world.ServerWorld;
 import net.minecraft.text.LiteralText;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.DyeColor;
-import net.minecraft.util.Hand;
-import net.minecraft.util.hit.EntityHitResult;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.util.registry.RegistryKey;
 import net.minecraft.world.GameMode;
 import net.minecraft.world.GameRules;
 import org.apache.commons.lang3.RandomStringUtils;
-import xyz.nucleoid.fantasy.BubbleWorldConfig;
-import xyz.nucleoid.fantasy.BubbleWorldSpawner;
+import xyz.nucleoid.fantasy.RuntimeWorldConfig;
 import xyz.nucleoid.plasmid.game.GameOpenContext;
 import xyz.nucleoid.plasmid.game.GameOpenProcedure;
+import xyz.nucleoid.plasmid.game.GameResult;
 import xyz.nucleoid.plasmid.game.GameSpace;
-import xyz.nucleoid.plasmid.game.GameWaitingLobby;
-import xyz.nucleoid.plasmid.game.StartResult;
-import xyz.nucleoid.plasmid.game.event.AttackEntityListener;
-import xyz.nucleoid.plasmid.game.event.PlayerAddListener;
-import xyz.nucleoid.plasmid.game.event.PlayerDamageListener;
-import xyz.nucleoid.plasmid.game.event.PlayerDeathListener;
-import xyz.nucleoid.plasmid.game.event.PlayerRemoveListener;
-import xyz.nucleoid.plasmid.game.event.RequestStartListener;
-import xyz.nucleoid.plasmid.game.player.TeamAllocator;
+import xyz.nucleoid.plasmid.game.common.GameWaitingLobby;
+import xyz.nucleoid.plasmid.game.common.team.TeamAllocator;
+import xyz.nucleoid.plasmid.game.event.GameActivityEvents;
+import xyz.nucleoid.plasmid.game.event.GamePlayerEvents;
+import xyz.nucleoid.plasmid.game.player.PlayerOffer;
+import xyz.nucleoid.plasmid.game.player.PlayerOfferResult;
+import xyz.nucleoid.stimuli.event.player.PlayerAttackEntityEvent;
+import xyz.nucleoid.stimuli.event.player.PlayerDamageEvent;
+import xyz.nucleoid.stimuli.event.player.PlayerDeathEvent;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -48,52 +46,59 @@ import java.util.stream.Collectors;
 public class UHCWaiting {
 	public final Object2ObjectMap<ServerPlayerEntity, UHCParticipant> participants;
 	private final GameSpace gameSpace;
+	private final ServerWorld world;
 	private final UHCMap map;
 	private final UHCConfig config;
 
-	private UHCWaiting(GameSpace gameSpace, UHCMap map, UHCConfig config) {
+	private UHCWaiting(GameSpace gameSpace, ServerWorld world, UHCMap map, UHCConfig config) {
 		this.gameSpace = gameSpace;
+		this.world = world;
 		this.map = map;
 		this.config = config;
 		this.participants = new Object2ObjectOpenHashMap<>();
 	}
 
 	public static GameOpenProcedure open(GameOpenContext<UHCConfig> context) {
-		UHCMap map = new UHCMap(context.getConfig(), context.getServer());
+		UHCMap map = new UHCMap(context.config(), context.server());
 
-		BubbleWorldConfig worldConfig = new BubbleWorldConfig()
+		RuntimeWorldConfig worldConfig = new RuntimeWorldConfig	()
 				.setGenerator(map.getChunkGenerator())
-				.setSpawner(BubbleWorldSpawner.atSurface(0, 0))
-				.setDefaultGameMode(GameMode.ADVENTURE)
 				.setGameRule(GameRules.NATURAL_REGENERATION, false)
 				.setGameRule(GameRules.DO_MOB_SPAWNING, true)
 				.setGameRule(GameRules.DO_DAYLIGHT_CYCLE, true)
-				.setDimensionType(RegistryKey.of(Registry.DIMENSION_TYPE_KEY, context.getConfig().getMapConfig().getDimension()));
+				.setDimensionType(RegistryKey.of(Registry.DIMENSION_TYPE_KEY, context.config().getMapConfig().getDimension()));
 
-		return context.createOpenProcedure(worldConfig, game -> {
-			UHCWaiting waiting = new UHCWaiting(game.getSpace(), map, context.getConfig());
-			GameWaitingLobby.applyTo(game, context.getConfig().getPlayerConfig());
+		return context.openWithWorld(worldConfig, (game, world) -> {
+			UHCWaiting waiting = new UHCWaiting(game.getGameSpace(), world, map, context.config());
+			GameWaitingLobby.applyTo(game, context.config().getPlayerConfig());
 
-			game.on(PlayerAddListener.EVENT, waiting::addPlayer);
-			game.on(PlayerRemoveListener.EVENT, waiting::removePlayer);
+			game.listen(GamePlayerEvents.OFFER, waiting::offerPlayer);
+			game.listen(GamePlayerEvents.REMOVE, waiting::removePlayer);
 
-			game.on(RequestStartListener.EVENT, waiting::requestStart);
-			game.on(PlayerDeathListener.EVENT, waiting::onPlayerDeath);
-			game.on(PlayerDamageListener.EVENT, waiting::onPlayerDamaged);
-			game.on(AttackEntityListener.EVENT, waiting::onEntityDamaged);
+			game.listen(GameActivityEvents.REQUEST_START, waiting::requestStart);
+			game.listen(PlayerDeathEvent.EVENT, (player, source) -> ActionResult.FAIL);
+			game.listen(PlayerDamageEvent.EVENT, (player, source, amount) -> ActionResult.FAIL);
+			game.listen(PlayerAttackEntityEvent.EVENT, (attacker, hand, attacked, hitResult) -> ActionResult.FAIL);
 		});
 	}
 
-	private void addPlayer(ServerPlayerEntity player) {
+	private PlayerOfferResult offerPlayer(PlayerOffer offer) {
 		UHCParticipant participant = new UHCParticipant();
-		participants.put(player, participant);
+		participants.put(offer.player(), participant);
+
+		return offer.accept(this.world, UHCSpawner.getSurfaceBlock(world, 0, 0))
+				.and(() -> {
+					ServerPlayerEntity player = offer.player();
+
+					player.changeGameMode(GameMode.ADVENTURE);
+				});
 	}
 
 	private void removePlayer(ServerPlayerEntity player) {
 		participants.remove(player);
 	}
 
-	private StartResult requestStart() {
+	private GameResult requestStart() {
 		HashSet<UHCTeam> teams = new HashSet<>();
 		ServerScoreboard scoreboard = gameSpace.getServer().getScoreboard();
 
@@ -128,19 +133,7 @@ public class UHCWaiting {
 			teamPlayers.put(uhcTeam, player);
 		});
 
-		UHCActive.start(this.gameSpace, this.config, this.map, this.participants, teamPlayers);
-		return StartResult.OK;
-	}
-
-	private ActionResult onEntityDamaged(ServerPlayerEntity entity, Hand hand, Entity entity1, EntityHitResult entityHitResult) {
-		return ActionResult.FAIL;
-	}
-
-	private ActionResult onPlayerDamaged(ServerPlayerEntity entity, DamageSource damageSource, float v) {
-		return ActionResult.FAIL;
-	}
-
-	private ActionResult onPlayerDeath(ServerPlayerEntity player, DamageSource source) {
-		return ActionResult.FAIL;
+		UHCActive.start(this.gameSpace, this.world, this.config, this.map, this.participants, teamPlayers);
+		return GameResult.ok();
 	}
 }
