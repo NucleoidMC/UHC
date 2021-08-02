@@ -61,12 +61,12 @@ public class UHCWaiting {
 	public static GameOpenProcedure open(GameOpenContext<UHCConfig> context) {
 		UHCMap map = new UHCMap(context.config(), context.server());
 
-		RuntimeWorldConfig worldConfig = new RuntimeWorldConfig	()
+		RuntimeWorldConfig worldConfig = new RuntimeWorldConfig()
 				.setGenerator(map.getChunkGenerator())
 				.setGameRule(GameRules.NATURAL_REGENERATION, false)
 				.setGameRule(GameRules.DO_MOB_SPAWNING, true)
 				.setGameRule(GameRules.DO_DAYLIGHT_CYCLE, true)
-				.setDimensionType(RegistryKey.of(Registry.DIMENSION_TYPE_KEY, context.config().getMapConfig().getDimension()));
+				.setDimensionType(RegistryKey.of(Registry.DIMENSION_TYPE_KEY, context.config().getMapConfig().dimension()));
 
 		return context.openWithWorld(worldConfig, (game, world) -> {
 			UHCWaiting waiting = new UHCWaiting(game.getGameSpace(), world, map, context.config());

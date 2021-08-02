@@ -51,7 +51,7 @@ public class UHCConfig {
 
 		this.modules = modulesIds.stream().map(Modules::get).collect(Collectors.toList());
 		this.modulesPieces = new ArrayList<>();
-		this.modules.forEach(module -> modulesPieces.addAll(module.getPieces()));
+		this.modules.forEach(module -> modulesPieces.addAll(module.pieces()));
 
 		this.blockLootModulePieces = getAllModulesPieces(ModulePieces.BLOCK_LOOT);
 		this.entityLootModulePieces = getAllModulesPieces(ModulePieces.ENTITY_LOOT);

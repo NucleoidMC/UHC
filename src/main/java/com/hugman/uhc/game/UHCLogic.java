@@ -12,30 +12,30 @@ public class UHCLogic {
 	}
 
 	public double getStartMapSize() {
-		return config.getMapConfig().getStartSize().crossProduct(playerDose);
+		return config.getMapConfig().startSize().crossProduct(playerDose);
 	}
 
 	public double getEndMapSize() {
-		return config.getMapConfig().getEndSize().crossProduct(playerDose);
+		return config.getMapConfig().endSize().crossProduct(playerDose);
 	}
 
 	public long getInCagesTime() {
-		return (long) (config.getTimeConfig().getInCagesTime().crossProduct(playerDose) * 20L);
+		return (long) (config.getTimeConfig().inCagesTime().crossProduct(playerDose) * 20L);
 	}
 
 	public long getInvulnerabilityTime() {
-		return (long) (config.getTimeConfig().getInvulnerabilityTime().crossProduct(playerDose) * 20L);
+		return (long) (config.getTimeConfig().invulnerabilityTime().crossProduct(playerDose) * 20L);
 	}
 
 	public long getWarmupTime() {
-		return (long) (config.getTimeConfig().getWarmupTime().crossProduct(playerDose) * 20L);
+		return (long) (config.getTimeConfig().warmupTime().crossProduct(playerDose) * 20L);
 	}
 
 	public long getDeathmatchTime() {
-		return (long) (config.getTimeConfig().getDeathmatchTime().crossProduct(playerDose) * 20L);
+		return (long) (config.getTimeConfig().deathmatchTime().crossProduct(playerDose) * 20L);
 	}
 
 	public long getShrinkingTime() {
-		return (long) ((getStartMapSize() - getEndMapSize()) / config.getMapConfig().getShrinkingSpeed() * 10L);
+		return (long) ((getStartMapSize() - getEndMapSize()) / config.getMapConfig().shrinkingSpeed() * 10L);
 	}
 }

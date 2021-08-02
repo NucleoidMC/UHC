@@ -6,11 +6,9 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.registry.BuiltinRegistries;
 import net.minecraft.util.registry.Registry;
-import net.minecraft.world.BlockView;
 import net.minecraft.world.ChunkRegion;
 import net.minecraft.world.HeightLimitView;
 import net.minecraft.world.Heightmap;
-import net.minecraft.world.WorldAccess;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.biome.source.BiomeAccess;
 import net.minecraft.world.biome.source.BiomeSource;
@@ -40,7 +38,7 @@ public class UHCChunkGenerator extends GameChunkGenerator {
 		this.seed = server.getOverworld().getRandom().nextLong();
 		BiomeSource biomeSource = new VanillaLayeredBiomeSource(this.seed, false, false, server.getRegistryManager().get(Registry.BIOME_KEY));
 
-		ChunkGeneratorSettings chunkGeneratorSettings = BuiltinRegistries.CHUNK_GENERATOR_SETTINGS.get(this.config.getMapConfig().getChunkSettingsId());
+		ChunkGeneratorSettings chunkGeneratorSettings = BuiltinRegistries.CHUNK_GENERATOR_SETTINGS.get(this.config.getMapConfig().chunkSettings());
 		this.subGenerator = new NoiseChunkGenerator(biomeSource, this.seed, () -> chunkGeneratorSettings);
 	}
 
@@ -71,14 +69,11 @@ public class UHCChunkGenerator extends GameChunkGenerator {
 
 	@Override
 	public void generateFeatures(ChunkRegion region, StructureAccessor structures) {
-		int chunkX = region.getCenterPos().getRegionX();
-		int chunkZ = region.getCenterPos().getRegionZ();
 		Random random = new Random();
-
 		for(OreModulePiece piece : this.config.oreModulePieces) {
-			int x = random.nextInt(16) + (chunkX * 16);
+			int x = random.nextInt(16) + (region.getCenterPos().getRegionX() * 16);
 			int y = random.nextInt(64);
-			int z = random.nextInt(16) + (chunkZ * 16);
+			int z = random.nextInt(16) + (region.getCenterPos().getRegionZ() * 16);
 			piece.generate(region, this, random, new BlockPos(x, y, z));
 		}
 

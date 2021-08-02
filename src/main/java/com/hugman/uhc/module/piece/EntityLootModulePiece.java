@@ -21,7 +21,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
-public class EntityLootModulePiece implements ModulePiece {
+public record EntityLootModulePiece(boolean replace, Optional<Tag<EntityType<?>>> tag, Optional<EntityType<?>> entity, Identifier lootTable) implements ModulePiece {
 	public static final Codec<EntityLootModulePiece> CODEC = RecordCodecBuilder.create(instance -> instance.group(
 			Codec.BOOL.optionalFieldOf("replace", true).forGetter(module -> module.replace),
 			Tag.codec(() -> ServerTagManagerHolder.getTagManager().getOrCreateTagGroup(Registry.ENTITY_TYPE_KEY)).optionalFieldOf("tag").forGetter(module -> module.tag),
@@ -29,25 +29,9 @@ public class EntityLootModulePiece implements ModulePiece {
 			Identifier.CODEC.optionalFieldOf("loot_table", LootTables.EMPTY).forGetter(module -> module.lootTable)
 	).apply(instance, EntityLootModulePiece::new));
 
-	private final boolean replace;
-	private final Optional<Tag<EntityType<?>>> tag;
-	private final Optional<EntityType<?>> entity;
-	private final Identifier lootTable;
-
-	public EntityLootModulePiece(boolean replace, Optional<Tag<EntityType<?>>> tag, Optional<EntityType<?>> entity, Identifier lootTable) {
-		this.replace = replace;
-		this.tag = tag;
-		this.entity = entity;
-		this.lootTable = lootTable;
-	}
-
 	@Override
 	public Codec<? extends ModulePiece> getCodec() {
 		return CODEC;
-	}
-
-	public boolean replace() {
-		return replace;
 	}
 
 	public boolean test(LivingEntity livingEntity) {

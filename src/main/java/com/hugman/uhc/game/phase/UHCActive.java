@@ -66,9 +66,9 @@ import java.util.List;
 import java.util.Optional;
 
 public class UHCActive {
-	private final GameActivity activity;
 	public final GameSpace gameSpace;
 	public final ServerWorld world;
+	private final GameActivity activity;
 	private final UHCMap map;
 	private final UHCConfig config;
 
@@ -244,7 +244,7 @@ public class UHCActive {
 
 		// Finale - Deathmatch chapter
 		else if(worldTime == this.deathMatchTick) {
-			this.bar.setFull(new LiteralText("🗡").append(new TranslatableText("text.uhc.deathmatch")).append("🗡"));
+			this.bar.setFull(new LiteralText("🗡").append(new TranslatableText("text.uhc.deathmatchTime")).append("🗡"));
 			world.getWorldBorder().setDamagePerBlock(2.5);
 			world.getWorldBorder().setSafeZone(0.125);
 			this.sendInfo("🗡", "text.uhc.last_one_wins");
@@ -423,8 +423,8 @@ public class UHCActive {
 		for(UHCTeam team : this.teamMap.keySet()) {
 			double theta = ((double) index++ / this.teamMap.size()) * 2 * Math.PI;
 
-			int x = MathHelper.floor(Math.cos(theta) * (this.logic.getStartMapSize() / 2 - this.config.getMapConfig().getSpawnOffset()));
-			int z = MathHelper.floor(Math.sin(theta) * (this.logic.getStartMapSize() / 2 - this.config.getMapConfig().getSpawnOffset()));
+			int x = MathHelper.floor(Math.cos(theta) * (this.logic.getStartMapSize() / 2 - this.config.getMapConfig().spawnOffset()));
+			int z = MathHelper.floor(Math.sin(theta) * (this.logic.getStartMapSize() / 2 - this.config.getMapConfig().spawnOffset()));
 
 			this.spawnLogic.summonCage(team, x, z);
 		}
@@ -471,8 +471,8 @@ public class UHCActive {
 		if(!this.config.getModules().isEmpty()) {
 			MutableText text = new LiteralText("\n").append(new TranslatableText("text.uhc.modules_enabled").formatted(Formatting.GOLD));
 			this.config.getModules().forEach(module -> {
-				Style style = Style.EMPTY.withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new TranslatableText(module.getDescription())));
-				text.append(new LiteralText("\n  - ").formatted(Formatting.WHITE)).append(Texts.bracketed(new TranslatableText(module.getTranslation()).formatted(Formatting.GREEN)).setStyle(style));
+				Style style = Style.EMPTY.withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new TranslatableText(module.description().orElseGet(() -> module.translation() + ".description"))));
+				text.append(new LiteralText("\n  - ").formatted(Formatting.WHITE)).append(Texts.bracketed(new TranslatableText(module.translation()).formatted(Formatting.GREEN)).setStyle(style));
 			});
 			text.append("\n");
 			this.gameSpace.getPlayers().sendMessage(text);
@@ -517,8 +517,6 @@ public class UHCActive {
 		if(keepOld) stacks.addAll(itemStacks);
 		return TypedActionResult.pass(stacks);
 	}
-
-
 
 	private TypedActionResult<List<ItemStack>> onBlockDrop(@Nullable Entity entity, ServerWorld world, BlockPos pos, BlockState state, List<ItemStack> itemStacks) {
 		boolean keepOld = true;

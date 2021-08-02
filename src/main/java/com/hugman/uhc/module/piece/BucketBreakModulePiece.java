@@ -6,26 +6,17 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.LeavesBlock;
 import net.minecraft.entity.LivingEntity;
-import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.structure.rule.RuleTest;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.Nullable;
 import xyz.nucleoid.plasmid.util.BlockTraversal;
 
-public class BucketBreakModulePiece implements ModulePiece {
+public record BucketBreakModulePiece(RuleTest predicate, int amount) implements ModulePiece {
 	public static final Codec<BucketBreakModulePiece> CODEC = RecordCodecBuilder.create(instance -> instance.group(
 			RuleTest.TYPE_CODEC.fieldOf("target").forGetter(module -> module.predicate),
 			Codec.intRange(0, Integer.MAX_VALUE).optionalFieldOf("amount", 128).forGetter(module -> module.amount)
 	).apply(instance, BucketBreakModulePiece::new));
-
-	private final RuleTest predicate;
-	private final int amount;
-
-	public BucketBreakModulePiece(RuleTest predicate, int amount) {
-		this.predicate = predicate;
-		this.amount = amount;
-	}
 
 	@Override
 	public Codec<? extends ModulePiece> getCodec() {

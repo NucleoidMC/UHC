@@ -12,7 +12,6 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.Heightmap;
 import net.minecraft.world.chunk.WorldChunk;
 import xyz.nucleoid.map_templates.BlockBounds;
-import xyz.nucleoid.plasmid.game.GameSpace;
 import xyz.nucleoid.plasmid.util.ColoredBlocks;
 
 import java.util.HashMap;
@@ -26,6 +25,11 @@ public class UHCSpawner {
 	public UHCSpawner(ServerWorld world, UHCConfig config) {
 		this.world = world;
 		this.config = config;
+	}
+
+	public static Vec3d getSurfaceBlock(ServerWorld world, int x, int z) {
+		WorldChunk chunk = world.getWorldChunk(new BlockPos(x, 0, z));
+		return new Vec3d(x, chunk.sampleHeightmap(Heightmap.Type.MOTION_BLOCKING_NO_LEAVES, x, z) + 1, z);
 	}
 
 	public void spawnPlayerAtCenter(ServerPlayerEntity player) {
@@ -74,10 +78,5 @@ public class UHCSpawner {
 
 	public BlockPos getSurfaceBlock(int x, int z) {
 		return new BlockPos(getSurfaceBlock(world, x, z));
-	}
-
-	public static Vec3d getSurfaceBlock(ServerWorld world, int x, int z) {
-		WorldChunk chunk = world.getWorldChunk(new BlockPos(x, 0, z));
-		return new Vec3d(x, chunk.sampleHeightmap(Heightmap.Type.MOTION_BLOCKING_NO_LEAVES, x, z) + 1, z);
 	}
 }
