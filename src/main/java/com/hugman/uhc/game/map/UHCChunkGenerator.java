@@ -4,6 +4,7 @@ import com.hugman.uhc.config.UHCConfig;
 import com.hugman.uhc.module.piece.OreModulePiece;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.ChunkPos;
 import net.minecraft.util.registry.BuiltinRegistries;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.world.ChunkRegion;
@@ -14,6 +15,7 @@ import net.minecraft.world.biome.source.BiomeAccess;
 import net.minecraft.world.biome.source.BiomeSource;
 import net.minecraft.world.biome.source.VanillaLayeredBiomeSource;
 import net.minecraft.world.chunk.Chunk;
+import net.minecraft.world.gen.ChunkRandom;
 import net.minecraft.world.gen.GenerationStep;
 import net.minecraft.world.gen.StructureAccessor;
 import net.minecraft.world.gen.chunk.ChunkGenerator;
@@ -22,7 +24,6 @@ import net.minecraft.world.gen.chunk.NoiseChunkGenerator;
 import net.minecraft.world.gen.chunk.VerticalBlockSample;
 import xyz.nucleoid.plasmid.game.world.generator.GameChunkGenerator;
 
-import java.util.Random;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 
@@ -38,7 +39,7 @@ public class UHCChunkGenerator extends GameChunkGenerator {
 		this.seed = server.getOverworld().getRandom().nextLong();
 		BiomeSource biomeSource = new VanillaLayeredBiomeSource(this.seed, false, false, server.getRegistryManager().get(Registry.BIOME_KEY));
 
-		ChunkGeneratorSettings chunkGeneratorSettings = BuiltinRegistries.CHUNK_GENERATOR_SETTINGS.get(this.config.getMapConfig().chunkSettings());
+		ChunkGeneratorSettings chunkGeneratorSettings = BuiltinRegistries.CHUNK_GENERATOR_SETTINGS.get(this.config.mapConfig().chunkSettings());
 		this.subGenerator = new NoiseChunkGenerator(biomeSource, this.seed, () -> chunkGeneratorSettings);
 	}
 
@@ -69,12 +70,14 @@ public class UHCChunkGenerator extends GameChunkGenerator {
 
 	@Override
 	public void generateFeatures(ChunkRegion region, StructureAccessor structures) {
-		Random random = new Random();
+		ChunkPos chunkPos = region.getCenterPos();
+		int i = chunkPos.getStartX();
+		int j = chunkPos.getStartZ();
+		BlockPos blockPos = new BlockPos(i, region.getBottomY(), j);
+		ChunkRandom chunkRandom = new ChunkRandom();
+		chunkRandom.setPopulationSeed(region.getSeed(), i, j);
 		for(OreModulePiece piece : this.config.oreModulePieces) {
-			int x = random.nextInt(16) + (region.getCenterPos().getRegionX() * 16);
-			int y = random.nextInt(64);
-			int z = random.nextInt(16) + (region.getCenterPos().getRegionZ() * 16);
-			piece.generate(region, this, random, new BlockPos(x, y, z));
+			piece.generate(region, this, chunkRandom, blockPos);
 		}
 
 		this.subGenerator.generateFeatures(region, structures);
