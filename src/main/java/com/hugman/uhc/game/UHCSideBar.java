@@ -23,7 +23,7 @@ public class UHCSideBar {
 
 	public void update(long ticks, int worldSize) {
 		sidebarWidget.set(content -> {
-			long count = active.getParticipants().size();
+			long count = active.getParticipants().values().stream().filter(participant -> !participant.isEliminated()).count();
 
 			content.add(new LiteralText(""));
 			content.add(new TranslatableText("text.uhc.players", new LiteralText(String.valueOf(count)).formatted(Formatting.GREEN)).formatted(Formatting.WHITE));

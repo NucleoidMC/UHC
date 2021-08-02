@@ -1,7 +1,5 @@
 package com.hugman.uhc.game.phase;
 
-import com.google.common.collect.HashMultimap;
-import com.google.common.collect.Multimap;
 import com.hugman.uhc.config.UHCConfig;
 import com.hugman.uhc.game.UHCParticipant;
 import com.hugman.uhc.game.UHCSpawner;
@@ -9,7 +7,6 @@ import com.hugman.uhc.game.map.UHCMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import net.minecraft.scoreboard.AbstractTeam;
-import net.minecraft.scoreboard.ServerScoreboard;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.text.LiteralText;
@@ -40,27 +37,10 @@ import xyz.nucleoid.stimuli.event.player.PlayerDeathEvent;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class UHCWaiting {
-	public final Object2ObjectMap<ServerPlayerEntity, UHCParticipant> participants;
-	private final GameSpace gameSpace;
-	private final TeamManager teamManager;
-	private final ServerWorld world;
-	private final UHCMap map;
-	private final UHCConfig config;
-
-	private UHCWaiting(GameSpace gameSpace, TeamManager teamManager, ServerWorld world, UHCMap map, UHCConfig config) {
-		this.gameSpace = gameSpace;
-		this.teamManager = teamManager;
-		this.world = world;
-		this.map = map;
-		this.config = config;
-		this.participants = new Object2ObjectOpenHashMap<>();
-	}
-
+public record UHCWaiting(GameSpace gameSpace, TeamManager teamManager, ServerWorld world, UHCMap map, UHCConfig config) {
 	public static GameOpenProcedure open(GameOpenContext<UHCConfig> context) {
 		UHCMap map = new UHCMap(context.config(), context.server());
 
@@ -79,7 +59,6 @@ public class UHCWaiting {
 			UHCWaiting waiting = new UHCWaiting(activity.getGameSpace(), teamManager, world, map, context.config());
 
 			activity.listen(GamePlayerEvents.OFFER, waiting::offerPlayer);
-			activity.listen(GamePlayerEvents.REMOVE, waiting::removePlayer);
 
 			activity.listen(GameActivityEvents.REQUEST_START, waiting::requestStart);
 			activity.listen(PlayerDeathEvent.EVENT, (player, source) -> ActionResult.FAIL);
@@ -89,17 +68,10 @@ public class UHCWaiting {
 	}
 
 	private PlayerOfferResult offerPlayer(PlayerOffer offer) {
-		UHCParticipant participant = new UHCParticipant();
-		participants.put(offer.player(), participant);
-
 		return offer.accept(this.world, UHCSpawner.getSurfaceBlock(world, 0, 0)).and(() -> {
 			ServerPlayerEntity player = offer.player();
 			player.changeGameMode(GameMode.ADVENTURE);
 		});
-	}
-
-	private void removePlayer(ServerPlayerEntity player) {
-		participants.remove(player);
 	}
 
 	private GameResult requestStart() {
@@ -121,12 +93,15 @@ public class UHCWaiting {
 		}
 
 		TeamAllocator<GameTeam, ServerPlayerEntity> allocator = new TeamAllocator<>(teams);
+		Object2ObjectMap<ServerPlayerEntity, UHCParticipant> participants = new Object2ObjectOpenHashMap<>();
 		for(ServerPlayerEntity playerEntity : gameSpace.getPlayers()) {
 			allocator.add(playerEntity, null);
+			UHCParticipant participant = new UHCParticipant();
+			participants.put(playerEntity, participant);
 		}
 		allocator.allocate((gameTeam, playerEntity) -> teamManager.addPlayerTo(playerEntity, gameTeam));
 
-		UHCActive.start(this.gameSpace, this.world, this.config, this.map, this.participants, this.teamManager, teams);
+		UHCActive.start(this.gameSpace, this.world, this.config, this.map, participants, this.teamManager, teams);
 		return GameResult.ok();
 	}
 }

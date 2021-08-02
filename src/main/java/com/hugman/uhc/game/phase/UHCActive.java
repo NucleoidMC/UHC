@@ -1,5 +1,6 @@
 package com.hugman.uhc.game.phase;
 
+import com.hugman.uhc.UHC;
 import com.hugman.uhc.config.UHCConfig;
 import com.hugman.uhc.game.UHCBar;
 import com.hugman.uhc.game.UHCLogic;
@@ -93,7 +94,7 @@ public class UHCActive {
 	private boolean invulnerable;
 	private boolean isFinished = false;
 
-	private UHCActive(GameActivity activity, GameSpace gameSpace, ServerWorld world, UHCConfig config, UHCMap map, GlobalWidgets widgets, Object2ObjectMap<ServerPlayerEntity, UHCParticipant> participants, TeamManager teamManager, List<GameTeam> teams) {
+	private UHCActive(GameActivity activity, GameSpace gameSpace, ServerWorld world, UHCConfig config, UHCMap map, GlobalWidgets widgets, Object2ObjectMap<ServerPlayerEntity, UHCParticipant> participants, TeamManager teamManager, List<GameTeam> teamsAlive) {
 		this.activity = activity;
 		this.gameSpace = gameSpace;
 		this.world = world;
@@ -102,7 +103,7 @@ public class UHCActive {
 
 		this.participants = participants;
 		this.teamManager = teamManager;
-		this.teamsAlive = teams;
+		this.teamsAlive = teamsAlive;
 
 		this.logic = new UHCLogic(config, this.participants.size());
 		this.spawnLogic = new UHCSpawner(this.world);
@@ -114,6 +115,7 @@ public class UHCActive {
 		gameSpace.setActivity(activity -> {
 			GlobalWidgets widgets = GlobalWidgets.addTo(activity);
 			UHCActive active = new UHCActive(activity, gameSpace, world, config, map, widgets, participants, teamManager, teams);
+			teamManager.applyTo(activity);
 
 			activity.allow(GameRuleType.CRAFTING);
 			activity.deny(GameRuleType.PORTALS);
@@ -160,10 +162,12 @@ public class UHCActive {
 		this.gameCloseTick = this.gameEndTick + 600;
 
 		// Start - Cage chapter
-		this.participants.keySet().forEach(player -> {
-			this.resetPlayer(player);
-			this.refreshPlayerAttributes(player);
-			player.changeGameMode(GameMode.ADVENTURE);
+		this.participants.forEach((player, participant) -> {
+			if(!participant.isEliminated()) {
+				this.resetPlayer(player);
+				this.refreshPlayerAttributes(player);
+				player.changeGameMode(GameMode.ADVENTURE);
+			}
 		});
 		this.tpToCages();
 		this.bar.set("text.uhc.dropping", this.logic.getInCagesTime(), this.startInvulnerableTick, BossBar.Color.PURPLE);
@@ -175,7 +179,6 @@ public class UHCActive {
 
 		this.bar.tick(world);
 		this.sideBar.update(worldTime - this.gameStartTick, (int) world.getWorldBorder().getSize());
-
 
 		// Game ends
 		if(isFinished) {
@@ -208,10 +211,12 @@ public class UHCActive {
 
 		// Finale - Cages chapter
 		else if(worldTime == this.finaleCagesTick) {
-			this.participants.keySet().forEach(player -> {
-				this.clearPlayer(player);
-				this.refreshPlayerAttributes(player);
-				player.changeGameMode(GameMode.ADVENTURE);
+			this.participants.forEach((player, participant) -> {
+				if(!participant.isEliminated()) {
+					this.clearPlayer(player);
+					this.refreshPlayerAttributes(player);
+					player.changeGameMode(GameMode.ADVENTURE);
+				}
 			});
 			this.tpToCages();
 			this.sendInfo("text.uhc.shrinking_when_pvp");
@@ -272,23 +277,26 @@ public class UHCActive {
 
 	private void playerLeave(ServerPlayerEntity player) {
 		if(participants.containsKey(player)) {
-			PlayerSet players = this.gameSpace.getPlayers();
-			players.sendMessage(new LiteralText("\n☠ ").append(new TranslatableText("text.uhc.player_eliminated", player.getDisplayName())).append("\n").formatted(Formatting.DARK_RED));
-			players.playSound(SoundEvents.ENTITY_WITHER_SPAWN);
-			this.eliminateParticipant(player);
+			if(!getParticipant(player).isEliminated()) {
+				PlayerSet players = this.gameSpace.getPlayers();
+				players.sendMessage(new LiteralText("\n☠ ").append(new TranslatableText("text.uhc.player_eliminated", player.getDisplayName())).append("\n").formatted(Formatting.DARK_RED));
+				players.playSound(SoundEvents.ENTITY_WITHER_SPAWN);
+				this.eliminateParticipant(player);
+			}
 		}
 	}
 
 	private ActionResult onPlayerDeath(ServerPlayerEntity player, DamageSource source) {
 		if(participants.containsKey(player)) {
-			PlayerSet players = this.gameSpace.getPlayers();
-			players.sendMessage(new LiteralText("\n☠ ").append(source.getDeathMessage(player).copy()).append("!\n").formatted(Formatting.DARK_RED));
-			players.playSound(SoundEvents.ENTITY_WITHER_SPAWN);
-			this.eliminateParticipant(player);
+			if(!getParticipant(player).isEliminated()) {
+				PlayerSet players = this.gameSpace.getPlayers();
+				players.sendMessage(new LiteralText("\n☠ ").append(source.getDeathMessage(player).copy()).append("!\n").formatted(Formatting.DARK_RED));
+				players.playSound(SoundEvents.ENTITY_WITHER_SPAWN);
+				this.eliminateParticipant(player);
+				return ActionResult.FAIL;
+			}
 		}
-		else {
-			this.spawnLogic.spawnPlayerAtCenter(player);
-		}
+		this.spawnLogic.spawnPlayerAtCenter(player);
 		return ActionResult.FAIL;
 	}
 
@@ -297,8 +305,7 @@ public class UHCActive {
 		player.changeGameMode(GameMode.SPECTATOR);
 		this.resetPlayer(player);
 		this.spawnLogic.spawnPlayerAtCenter(player);
-		this.participants.remove(player);
-		this.teamManager.removePlayer(player);
+		getParticipant(player).eliminate();
 		this.checkForWinner();
 	}
 
@@ -333,38 +340,38 @@ public class UHCActive {
 	private void checkForWinner() {
 		PlayerSet players = this.gameSpace.getPlayers();
 
-		teamsAlive.forEach(team -> {
-			if(teamManager.playersIn(team).isEmpty()) {
-				teamsAlive.remove(team);
-			}
-		});
+		// Remove empty teams
+		teamsAlive.removeIf(team -> teamManager.playersIn(team).stream().allMatch(playerEntity -> getParticipant(playerEntity) != null));
+		// Only one team is left, so they win
 		if(teamsAlive.size() <= 1) {
-			GameTeam lastTeam = teamsAlive.get(0);
-			PlayerSet teamMembers = teamManager.playersIn(lastTeam);
-			if(teamMembers.size() > 1) {
-				players.sendMessage(new LiteralText("\n").append(new TranslatableText("text.uhc.player_win.team", Texts.join(teamMembers.stream().toList(), PlayerEntity::getName)).formatted(Formatting.BOLD, Formatting.GOLD)).append("\n"));
+			if(teamsAlive.size() <= 0) {
+				players.sendMessage(new LiteralText("\n").append(new TranslatableText("text.uhc.none_win").formatted(Formatting.BOLD, Formatting.GOLD)).append("\n"));
+				UHC.LOGGER.warn("There are no teams left! Consider reviewing the minimum amount of players needed to start a game, so that there are at least 2 teams in the game.");
 			}
 			else {
-				Optional<ServerPlayerEntity> participant = teamMembers.stream().findFirst();
-				if(participant.isPresent()) {
-					players.sendMessage(new LiteralText("\n").append(new TranslatableText("text.uhc.player_win.solo", participant.get().getName()).formatted(Formatting.BOLD, Formatting.GOLD)).append("\n"));
+				GameTeam lastTeam = teamsAlive.get(0);
+				PlayerSet teamMembers = teamManager.playersIn(lastTeam);
+				if(teamMembers.size() <= 0) {
+					players.sendMessage(new LiteralText("\n").append(new TranslatableText("text.uhc.none_win").formatted(Formatting.BOLD, Formatting.GOLD)).append("\n"));
+					UHC.LOGGER.warn("There is only one team left, but there are no players in it!");
+				}
+				else if(teamMembers.size() == 1) {
+					Optional<ServerPlayerEntity> participant = teamMembers.stream().findFirst();
+					participant.ifPresent(playerEntity -> players.sendMessage(new LiteralText("\n").append(new TranslatableText("text.uhc.player_win.solo", playerEntity.getName()).formatted(Formatting.BOLD, Formatting.GOLD)).append("\n")));
 				}
 				else {
-					players.sendMessage(new LiteralText("\n").append(new TranslatableText("text.uhc.none_win").formatted(Formatting.BOLD, Formatting.GOLD)).append("\n"));
+					players.sendMessage(new LiteralText("\n").append(new TranslatableText("text.uhc.player_win.team", Texts.join(teamMembers.stream().toList(), PlayerEntity::getName)).formatted(Formatting.BOLD, Formatting.GOLD)).append("\n"));
 				}
+				teamMembers.forEach(playerEntity -> playerEntity.changeGameMode(GameMode.ADVENTURE));
+				this.setInvulnerable(true);
+				this.setPvp(false);
 			}
-			teamMembers.forEach(playerEntity -> playerEntity.changeGameMode(GameMode.ADVENTURE));
-			this.setInvulnerable(true);
-			this.setPvp(false);
+			players.playSound(SoundEvents.UI_TOAST_CHALLENGE_COMPLETE);
+			this.gameCloseTick = this.world.getTime() + 200;
+			this.bar.close();
+			this.isFinished = true;
+			this.participants.clear();
 		}
-		else {
-			players.sendMessage(new LiteralText("\n").append(new TranslatableText("text.uhc.none_win").formatted(Formatting.BOLD, Formatting.GOLD)).append("\n"));
-		}
-		players.playSound(SoundEvents.UI_TOAST_CHALLENGE_COMPLETE);
-		this.gameCloseTick = this.world.getTime() + 200;
-		this.bar.close();
-		this.isFinished = true;
-		this.participants.clear();
 	}
 
 	// GAME STATES
@@ -415,11 +422,13 @@ public class UHCActive {
 		this.activity.allow(GameRuleType.INTERACTION);
 		this.activity.allow(GameRuleType.CRAFTING);
 
-		this.participants.keySet().forEach(player -> {
-			player.changeGameMode(GameMode.SURVIVAL);
-			this.refreshPlayerAttributes(player);
-			this.clearPlayer(player);
-			this.applyPlayerEffects(player, (int) this.gameEndTick);
+		this.participants.forEach((player, participant) -> {
+			if(!participant.isEliminated()) {
+				player.changeGameMode(GameMode.SURVIVAL);
+				this.refreshPlayerAttributes(player);
+				this.clearPlayer(player);
+				this.applyPlayerEffects(player, (int) this.gameEndTick);
+			}
 		});
 	}
 
