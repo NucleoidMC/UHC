@@ -232,7 +232,7 @@ public class UHCActive {
 		else if(worldTime == this.deathMatchTick) {
 			this.bar.setFull(new LiteralText("🗡").append(new TranslatableText("text.uhc.deathmatch")).append("🗡"));
 			world.getWorldBorder().setDamagePerBlock(2.5);
-			world.getWorldBorder().setBuffer(0.125);
+			world.getWorldBorder().setSafeZone(0.125);
 			this.sendInfo("🗡", "text.uhc.last_one_wins");
 			this.checkForWinner();
 		}

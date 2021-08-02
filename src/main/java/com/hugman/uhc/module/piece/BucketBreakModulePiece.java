@@ -3,8 +3,6 @@ package com.hugman.uhc.module.piece;
 import com.hugman.uhc.game.phase.UHCActive;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import it.unimi.dsi.fastutil.longs.LongArraySet;
-import it.unimi.dsi.fastutil.longs.LongSet;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.LeavesBlock;
 import net.minecraft.server.network.ServerPlayerEntity;
@@ -42,7 +40,7 @@ public class BucketBreakModulePiece implements ModulePiece {
 					.order(BlockTraversal.Order.BREADTH_FIRST)
 					.connectivity(BlockTraversal.Connectivity.TWENTY_SIX);
 			traversal.accept(origin, (nextPos, fromPos, depth) -> {
-				if (depth > this.amount) {
+				if(depth > this.amount) {
 					return BlockTraversal.Result.TERMINATE;
 				}
 				if(origin.asLong() == nextPos.asLong()) {

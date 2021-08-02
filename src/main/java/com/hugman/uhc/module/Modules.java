@@ -38,7 +38,7 @@ public final class Modules {
 			}
 
 			@Override
-			public void apply(ResourceManager manager) {
+			public void reload(ResourceManager manager) {
 				REGISTRY.clear();
 
 				Collection<Identifier> resources = manager.findResources("modules", path -> path.endsWith(".json"));
