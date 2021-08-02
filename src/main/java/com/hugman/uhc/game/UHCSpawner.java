@@ -1,6 +1,5 @@
 package com.hugman.uhc.game;
 
-import com.hugman.uhc.config.UHCConfig;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.server.network.ServerPlayerEntity;
@@ -12,6 +11,7 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.Heightmap;
 import net.minecraft.world.chunk.WorldChunk;
 import xyz.nucleoid.map_templates.BlockBounds;
+import xyz.nucleoid.plasmid.game.common.team.GameTeam;
 import xyz.nucleoid.plasmid.util.ColoredBlocks;
 
 import java.util.HashMap;
@@ -19,12 +19,10 @@ import java.util.Map;
 
 public class UHCSpawner {
 	private final ServerWorld world;
-	private final UHCConfig config;
-	private final Map<UHCTeam, BlockBounds> cages = new HashMap<>();
+	private final Map<GameTeam, BlockBounds> cages = new HashMap<>();
 
-	public UHCSpawner(ServerWorld world, UHCConfig config) {
+	public UHCSpawner(ServerWorld world) {
 		this.world = world;
-		this.config = config;
 	}
 
 	public static Vec3d getSurfaceBlock(ServerWorld world, int x, int z) {
@@ -42,14 +40,14 @@ public class UHCSpawner {
 		player.teleport(this.world, pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, 0.0F, 0.0F);
 	}
 
-	public void putParticipantInGame(UHCTeam team, ServerPlayerEntity participant) {
+	public void putParticipantInCage(GameTeam team, ServerPlayerEntity participant) {
 		BlockBounds bounds = this.cages.get(team);
 		if(bounds != null) {
 			this.spawnPlayerAt(participant, new BlockPos(bounds.centerBottom()).up());
 		}
 	}
 
-	public void summonCage(UHCTeam team, int x, int z) {
+	public void summonCage(GameTeam team, int x, int z) {
 		BlockPos pos = new BlockPos(x, 200, z);
 		if(this.world.isSkyVisible(pos)) {
 			pos = new BlockPos(x, 200, z);
@@ -57,9 +55,9 @@ public class UHCSpawner {
 		this.addCageAt(team, pos, Blocks.BARRIER.getDefaultState(), 3, 4);
 	}
 
-	public void addCageAt(UHCTeam team, BlockPos origin, BlockState sides, int width, int height) {
+	public void addCageAt(GameTeam team, BlockPos origin, BlockState sides, int width, int height) {
 		ServerWorld world = this.world;
-		BlockState floor = ColoredBlocks.glass(team.getColor()).getDefaultState();
+		BlockState floor = ColoredBlocks.glass(team.blockDyeColor()).getDefaultState();
 
 		BlockBounds fullCage = BlockBounds.of(origin.down().north(width).east(width), origin.up(height).south(width).west(width));
 		BlockBounds cageFloor = BlockBounds.of(origin.down().north(width - 1).east(width - 1), origin.down().south(width - 1).west(width - 1));

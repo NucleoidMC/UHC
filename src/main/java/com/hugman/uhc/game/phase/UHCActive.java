@@ -1,13 +1,11 @@
 package com.hugman.uhc.game.phase;
 
-import com.google.common.collect.Multimap;
 import com.hugman.uhc.config.UHCConfig;
 import com.hugman.uhc.game.UHCBar;
 import com.hugman.uhc.game.UHCLogic;
 import com.hugman.uhc.game.UHCParticipant;
 import com.hugman.uhc.game.UHCSideBar;
 import com.hugman.uhc.game.UHCSpawner;
-import com.hugman.uhc.game.UHCTeam;
 import com.hugman.uhc.game.map.UHCMap;
 import com.hugman.uhc.module.piece.BlockLootModulePiece;
 import com.hugman.uhc.module.piece.BucketBreakModulePiece;
@@ -47,6 +45,8 @@ import xyz.nucleoid.plasmid.game.GameActivity;
 import xyz.nucleoid.plasmid.game.GameCloseReason;
 import xyz.nucleoid.plasmid.game.GameSpace;
 import xyz.nucleoid.plasmid.game.common.GlobalWidgets;
+import xyz.nucleoid.plasmid.game.common.team.GameTeam;
+import xyz.nucleoid.plasmid.game.common.team.TeamManager;
 import xyz.nucleoid.plasmid.game.event.GameActivityEvents;
 import xyz.nucleoid.plasmid.game.event.GamePlayerEvents;
 import xyz.nucleoid.plasmid.game.player.PlayerOffer;
@@ -61,7 +61,6 @@ import xyz.nucleoid.stimuli.event.player.PlayerDeathEvent;
 import xyz.nucleoid.stimuli.event.world.ExplosionDetonatedEvent;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
@@ -69,11 +68,12 @@ public class UHCActive {
 	public final GameSpace gameSpace;
 	public final ServerWorld world;
 	private final GameActivity activity;
-	private final UHCMap map;
 	private final UHCConfig config;
+	private final UHCMap map;
 
 	private final Object2ObjectMap<ServerPlayerEntity, UHCParticipant> participants;
-	private final Multimap<UHCTeam, ServerPlayerEntity> teamMap;
+	private final TeamManager teamManager;
+	private final List<GameTeam> teamsAlive;
 
 	private final UHCLogic logic;
 	private final UHCSpawner spawnLogic;
@@ -93,26 +93,27 @@ public class UHCActive {
 	private boolean invulnerable;
 	private boolean isFinished = false;
 
-	private UHCActive(GameActivity activity, ServerWorld world, UHCConfig config, UHCMap map, GlobalWidgets widgets, Object2ObjectMap<ServerPlayerEntity, UHCParticipant> participants, Multimap<UHCTeam, ServerPlayerEntity> teamMap) {
+	private UHCActive(GameActivity activity, GameSpace gameSpace, ServerWorld world, UHCConfig config, UHCMap map, GlobalWidgets widgets, Object2ObjectMap<ServerPlayerEntity, UHCParticipant> participants, TeamManager teamManager, List<GameTeam> teams) {
 		this.activity = activity;
-		this.gameSpace = this.activity.getGameSpace();
+		this.gameSpace = gameSpace;
 		this.world = world;
-		this.map = map;
 		this.config = config;
+		this.map = map;
 
 		this.participants = participants;
-		this.teamMap = teamMap;
+		this.teamManager = teamManager;
+		this.teamsAlive = teams;
 
 		this.logic = new UHCLogic(config, this.participants.size());
-		this.spawnLogic = new UHCSpawner(this.world, this.config);
+		this.spawnLogic = new UHCSpawner(this.world);
 		this.bar = UHCBar.create(widgets, this.gameSpace);
 		this.sideBar = UHCSideBar.create(widgets, this);
 	}
 
-	public static void start(GameSpace gameSpace, ServerWorld world, UHCConfig config, UHCMap map, Object2ObjectMap<ServerPlayerEntity, UHCParticipant> participants, Multimap<UHCTeam, ServerPlayerEntity> teams) {
+	public static void start(GameSpace gameSpace, ServerWorld world, UHCConfig config, UHCMap map, Object2ObjectMap<ServerPlayerEntity, UHCParticipant> participants, TeamManager teamManager, List<GameTeam> teams) {
 		gameSpace.setActivity(activity -> {
 			GlobalWidgets widgets = GlobalWidgets.addTo(activity);
-			UHCActive active = new UHCActive(activity, world, config, map, widgets, participants, teams);
+			UHCActive active = new UHCActive(activity, gameSpace, world, config, map, widgets, participants, teamManager, teams);
 
 			activity.allow(GameRuleType.CRAFTING);
 			activity.deny(GameRuleType.PORTALS);
@@ -122,7 +123,6 @@ public class UHCActive {
 			activity.allow(GameRuleType.HUNGER);
 
 			activity.listen(GameActivityEvents.ENABLE, active::enable);
-			activity.listen(GameActivityEvents.DISABLE, active::disable);
 
 			activity.listen(GamePlayerEvents.OFFER, active::offerPlayer);
 			activity.listen(GamePlayerEvents.LEAVE, active::playerLeave);
@@ -252,10 +252,6 @@ public class UHCActive {
 		}
 	}
 
-	private void disable() {
-		teamMap.keySet().forEach(team -> gameSpace.getServer().getScoreboard().removeTeam(team.getTeam()));
-	}
-
 	// GENERAL PLAYER MANAGEMENT
 	public Object2ObjectMap<ServerPlayerEntity, UHCParticipant> getParticipants() {
 		return participants;
@@ -263,14 +259,6 @@ public class UHCActive {
 
 	private UHCParticipant getParticipant(ServerPlayerEntity player) {
 		return participants.get(player);
-	}
-
-	@Nullable
-	public UHCTeam getTeam(ServerPlayerEntity player) {
-		for(UHCTeam theTowersTeam : this.teamMap.keys()) {
-			if(this.teamMap.get(theTowersTeam).contains(player)) return theTowersTeam;
-		}
-		return null;
 	}
 
 	private PlayerOfferResult offerPlayer(PlayerOffer offer) {
@@ -310,13 +298,7 @@ public class UHCActive {
 		this.resetPlayer(player);
 		this.spawnLogic.spawnPlayerAtCenter(player);
 		this.participants.remove(player);
-		UHCTeam team = getTeam(player);
-		if(team != null) {
-			if(team.getTeam().getPlayerList().size() == 1) {
-				this.world.getScoreboard().removeTeam(team.getTeam());
-			}
-			this.teamMap.values().remove(player);
-		}
+		this.teamManager.removePlayer(player);
 		this.checkForWinner();
 	}
 
@@ -351,43 +333,38 @@ public class UHCActive {
 	private void checkForWinner() {
 		PlayerSet players = this.gameSpace.getPlayers();
 
-		// Remove empty teams
-		this.teamMap.keys().forEach(team -> {
-			if(this.teamMap.get(team).isEmpty()) {
-				gameSpace.getServer().getScoreboard().removeTeam(team.getTeam());
-				this.teamMap.keys().remove(team);
+		teamsAlive.forEach(team -> {
+			if(teamManager.playersIn(team).isEmpty()) {
+				teamsAlive.remove(team);
 			}
 		});
-		if(this.teamMap.keySet().size() <= 1) {
-			Optional<UHCTeam> oTeam = this.teamMap.keySet().stream().findFirst();
-			if(oTeam.isPresent()) {
-				UHCTeam team = oTeam.get();
-				Collection<ServerPlayerEntity> teamMembers = this.teamMap.get(team);
-				if(teamMembers.size() > 1) {
-					players.sendMessage(new LiteralText("\n").append(new TranslatableText("text.uhc.player_win.team", Texts.join(teamMembers, PlayerEntity::getName)).formatted(Formatting.BOLD, Formatting.GOLD)).append("\n"));
-				}
-				else {
-					Optional<ServerPlayerEntity> participant = teamMembers.stream().findFirst();
-					if(participant.isPresent()) {
-						players.sendMessage(new LiteralText("\n").append(new TranslatableText("text.uhc.player_win.solo", participant.get().getName()).formatted(Formatting.BOLD, Formatting.GOLD)).append("\n"));
-					}
-					else {
-						players.sendMessage(new LiteralText("\n").append(new TranslatableText("text.uhc.none_win").formatted(Formatting.BOLD, Formatting.GOLD)).append("\n"));
-					}
-				}
-				teamMembers.forEach(playerEntity -> playerEntity.changeGameMode(GameMode.ADVENTURE));
-				this.setInvulnerable(true);
-				this.setPvp(false);
+		if(teamsAlive.size() <= 1) {
+			GameTeam lastTeam = teamsAlive.get(0);
+			PlayerSet teamMembers = teamManager.playersIn(lastTeam);
+			if(teamMembers.size() > 1) {
+				players.sendMessage(new LiteralText("\n").append(new TranslatableText("text.uhc.player_win.team", Texts.join(teamMembers.stream().toList(), PlayerEntity::getName)).formatted(Formatting.BOLD, Formatting.GOLD)).append("\n"));
 			}
 			else {
-				players.sendMessage(new LiteralText("\n").append(new TranslatableText("text.uhc.none_win").formatted(Formatting.BOLD, Formatting.GOLD)).append("\n"));
+				Optional<ServerPlayerEntity> participant = teamMembers.stream().findFirst();
+				if(participant.isPresent()) {
+					players.sendMessage(new LiteralText("\n").append(new TranslatableText("text.uhc.player_win.solo", participant.get().getName()).formatted(Formatting.BOLD, Formatting.GOLD)).append("\n"));
+				}
+				else {
+					players.sendMessage(new LiteralText("\n").append(new TranslatableText("text.uhc.none_win").formatted(Formatting.BOLD, Formatting.GOLD)).append("\n"));
+				}
 			}
-			players.playSound(SoundEvents.UI_TOAST_CHALLENGE_COMPLETE);
-			this.gameCloseTick = this.world.getTime() + 200;
-			this.bar.close();
-			this.isFinished = true;
-			this.participants.clear();
+			teamMembers.forEach(playerEntity -> playerEntity.changeGameMode(GameMode.ADVENTURE));
+			this.setInvulnerable(true);
+			this.setPvp(false);
 		}
+		else {
+			players.sendMessage(new LiteralText("\n").append(new TranslatableText("text.uhc.none_win").formatted(Formatting.BOLD, Formatting.GOLD)).append("\n"));
+		}
+		players.playSound(SoundEvents.UI_TOAST_CHALLENGE_COMPLETE);
+		this.gameCloseTick = this.world.getTime() + 200;
+		this.bar.close();
+		this.isFinished = true;
+		this.participants.clear();
 	}
 
 	// GAME STATES
@@ -420,15 +397,15 @@ public class UHCActive {
 		this.activity.deny(GameRuleType.CRAFTING);
 
 		int index = 0;
-		for(UHCTeam team : this.teamMap.keySet()) {
-			double theta = ((double) index++ / this.teamMap.size()) * 2 * Math.PI;
+		for(GameTeam team : teamsAlive) {
+			double theta = ((double) index++ / teamsAlive.size()) * 2 * Math.PI;
 
-			int x = MathHelper.floor(Math.cos(theta) * (this.logic.getStartMapSize() / 2 - this.config.getMapConfig().spawnOffset()));
-			int z = MathHelper.floor(Math.sin(theta) * (this.logic.getStartMapSize() / 2 - this.config.getMapConfig().spawnOffset()));
+			int x = MathHelper.floor(Math.cos(theta) * (this.logic.getStartMapSize() / 2 - this.config.mapConfig().spawnOffset()));
+			int z = MathHelper.floor(Math.sin(theta) * (this.logic.getStartMapSize() / 2 - this.config.mapConfig().spawnOffset()));
 
 			this.spawnLogic.summonCage(team, x, z);
+			teamManager.playersIn(team).forEach(player -> this.spawnLogic.putParticipantInCage(team, player));
 		}
-		this.teamMap.forEach(this.spawnLogic::putParticipantInGame);
 	}
 
 	private void dropCages() {
@@ -468,9 +445,9 @@ public class UHCActive {
 	}
 
 	public void sendModuleListToChat() {
-		if(!this.config.getModules().isEmpty()) {
+		if(!this.config.modules().isEmpty()) {
 			MutableText text = new LiteralText("\n").append(new TranslatableText("text.uhc.modules_enabled").formatted(Formatting.GOLD));
-			this.config.getModules().forEach(module -> {
+			this.config.modules().forEach(module -> {
 				Style style = Style.EMPTY.withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new TranslatableText(module.description().orElseGet(() -> module.translation() + ".description"))));
 				text.append(new LiteralText("\n  - ").formatted(Formatting.WHITE)).append(Texts.bracketed(new TranslatableText(module.translation()).formatted(Formatting.GREEN)).setStyle(style));
 			});
@@ -524,7 +501,7 @@ public class UHCActive {
 		for(BlockLootModulePiece piece : this.config.blockLootModulePieces) {
 			if(piece.test(state, world.getRandom())) {
 				piece.spawnExperience(world, pos);
-				itemStacks.addAll(piece.getLoots(world, pos, entity, entity instanceof LivingEntity ? ((LivingEntity) entity).getActiveItem() : ItemStack.EMPTY));
+				stacks.addAll(piece.getLoots(world, pos, entity, entity instanceof LivingEntity ? ((LivingEntity) entity).getActiveItem() : ItemStack.EMPTY));
 				if(piece.replace()) keepOld = false;
 			}
 		}

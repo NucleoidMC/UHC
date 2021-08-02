@@ -26,6 +26,6 @@ public record OreModulePiece(Block block, int count, int size) implements Module
 	}
 
 	public void generate(StructureWorldAccess world, ChunkGenerator chunkGenerator, Random random, BlockPos pos) {
-		Feature.ORE.configure(new OreFeatureConfig(OreFeatureConfig.Rules.BASE_STONE_OVERWORLD, this.block.getDefaultState(), this.size)).uniformRange(YOffset.getBottom(), YOffset.fixed(256)).spreadHorizontally().repeat(this.count).generate(world, chunkGenerator, random, pos);
+		Feature.ORE.configure(new OreFeatureConfig(OreFeatureConfig.Rules.BASE_STONE_OVERWORLD, this.block.getDefaultState(), this.size)).uniformRange(YOffset.getBottom(), YOffset.fixed(127)).spreadHorizontally().repeat(this.count).generate(world, chunkGenerator, random, pos);
 	}
 }

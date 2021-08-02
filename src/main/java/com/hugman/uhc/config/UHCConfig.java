@@ -22,11 +22,11 @@ import java.util.stream.Collectors;
 
 public class UHCConfig {
 	public static final Codec<UHCConfig> CODEC = RecordCodecBuilder.create(instance -> instance.group(
-			PlayerConfig.CODEC.fieldOf("players").forGetter(UHCConfig::getPlayerConfig),
-			Codec.INT.fieldOf("team_size").forGetter(UHCConfig::getTeamSize),
-			UHCMapConfig.CODEC.fieldOf("map").forGetter(UHCConfig::getMapConfig),
-			UHCChapterConfig.CODEC.fieldOf("chapters").forGetter(UHCConfig::getTimeConfig),
-			Identifier.CODEC.listOf().optionalFieldOf("modules", Collections.emptyList()).forGetter(UHCConfig::getModulesIds)
+			PlayerConfig.CODEC.fieldOf("players").forGetter(UHCConfig::playerConfig),
+			Codec.INT.fieldOf("team_size").forGetter(UHCConfig::teamSize),
+			UHCMapConfig.CODEC.fieldOf("map").forGetter(UHCConfig::mapConfig),
+			UHCChapterConfig.CODEC.fieldOf("chapters").forGetter(UHCConfig::timeConfig),
+			Identifier.CODEC.listOf().optionalFieldOf("modules", Collections.emptyList()).forGetter(UHCConfig::modulesIds)
 	).apply(instance, UHCConfig::new));
 	public final List<BlockLootModulePiece> blockLootModulePieces;
 	public final List<EntityLootModulePiece> entityLootModulePieces;
@@ -61,27 +61,27 @@ public class UHCConfig {
 		this.oreModulePieces = getAllModulesPieces(ModulePieces.ORE);
 	}
 
-	public PlayerConfig getPlayerConfig() {
+	public PlayerConfig playerConfig() {
 		return playerConfig;
 	}
 
-	public int getTeamSize() {
+	public int teamSize() {
 		return teamSize;
 	}
 
-	public UHCMapConfig getMapConfig() {
+	public UHCMapConfig mapConfig() {
 		return mapConfig;
 	}
 
-	public UHCChapterConfig getTimeConfig() {
+	public UHCChapterConfig timeConfig() {
 		return timeConfig;
 	}
 
-	private List<Identifier> getModulesIds() {
+	private List<Identifier> modulesIds() {
 		return modulesIds;
 	}
 
-	public List<Module> getModules() {
+	public List<Module> modules() {
 		return modules;
 	}
 
