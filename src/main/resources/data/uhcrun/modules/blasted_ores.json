@@ -7,8 +7,8 @@
 		{
 			"type": "uhc:block_loot",
 			"target": {
-				"predicate_type": "minecraft:block_match",
-				"block": "minecraft:coal_ore"
+				"predicate_type": "minecraft:tag_match",
+				"tag": "minecraft:coal_ores"
 			},
 			"loot_table": "uhcrun:blocks/coal_ore",
 			"experience": 4
@@ -16,8 +16,8 @@
 		{
 			"type": "uhc:block_loot",
 			"target": {
-				"predicate_type": "minecraft:block_match",
-				"block": "minecraft:iron_ore"
+				"predicate_type": "minecraft:tag_match",
+				"tag": "minecraft:iron_ores"
 			},
 			"loot_table": "uhcrun:blocks/iron_ore",
 			"experience": 1
@@ -25,8 +25,16 @@
 		{
 			"type": "uhc:block_loot",
 			"target": {
-				"predicate_type": "minecraft:block_match",
-				"block": "minecraft:gold_ore"
+				"predicate_type": "minecraft:tag_match",
+				"tag": "minecraft:copper_ores"
+			},
+			"loot_table": "uhcrun:blocks/copper_ore"
+		},
+		{
+			"type": "uhc:block_loot",
+			"target": {
+				"predicate_type": "minecraft:tag_match",
+				"tag": "minecraft:gold_ores"
 			},
 			"loot_table": "uhcrun:blocks/gold_ore",
 			"experience": 2
@@ -34,8 +42,8 @@
 		{
 			"type": "uhc:block_loot",
 			"target": {
-				"predicate_type": "minecraft:block_match",
-				"block": "minecraft:lapis_ore"
+				"predicate_type": "minecraft:tag_match",
+				"tag": "minecraft:lapis_ores"
 			},
 			"loot_table": "uhcrun:blocks/lapis_ore",
 			"experience": 6
@@ -43,24 +51,24 @@
 		{
 			"type": "uhc:block_loot",
 			"target": {
-				"predicate_type": "minecraft:block_match",
-				"block": "minecraft:redstone_ore"
+				"predicate_type": "minecraft:tag_match",
+				"tag": "minecraft:redstone_ores"
 			},
 			"experience": 8
 		},
 		{
 			"type": "uhc:block_loot",
 			"target": {
-				"predicate_type": "minecraft:block_match",
-				"block": "minecraft:emerald_ore"
+				"predicate_type": "minecraft:tag_match",
+				"tag": "minecraft:emerald_ores"
 			},
 			"experience": 12
 		},
 		{
 			"type": "uhc:block_loot",
 			"target": {
-				"predicate_type": "minecraft:block_match",
-				"block": "minecraft:diamond_ore"
+				"predicate_type": "minecraft:tag_match",
+				"tag": "minecraft:diamond_ores"
 			},
 			"loot_table": "uhcrun:blocks/diamond_ore",
 			"experience": 5
