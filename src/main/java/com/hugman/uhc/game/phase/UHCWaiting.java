@@ -52,14 +52,12 @@ public record UHCWaiting(GameSpace gameSpace, TeamManager teamManager, ServerWor
 				.setDimensionType(RegistryKey.of(Registry.DIMENSION_TYPE_KEY, context.config().mapConfig().dimension()));
 
 		return context.openWithWorld(worldConfig, (activity, world) -> {
-			GameWaitingLobby.applyTo(activity, context.config().playerConfig());
-
+			GameWaitingLobby.addTo(activity, context.config().playerConfig());
 			TeamManager teamManager = TeamManager.addTo(activity);
 
 			UHCWaiting waiting = new UHCWaiting(activity.getGameSpace(), teamManager, world, map, context.config());
 
 			activity.listen(GamePlayerEvents.OFFER, waiting::offerPlayer);
-
 			activity.listen(GameActivityEvents.REQUEST_START, waiting::requestStart);
 			activity.listen(PlayerDeathEvent.EVENT, (player, source) -> ActionResult.FAIL);
 			activity.listen(PlayerDamageEvent.EVENT, (player, source, amount) -> ActionResult.FAIL);

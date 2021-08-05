@@ -376,32 +376,24 @@ public class UHCActive {
 
 	// GAME STATES
 	private void setInvulnerable(boolean b) {
-		this.invulnerable = b;
-		if(b) {
-			this.activity.deny(GameRuleType.HUNGER);
-			this.activity.deny(GameRuleType.FALL_DAMAGE);
-		}
-		else {
-			this.activity.allow(GameRuleType.HUNGER);
-			this.activity.allow(GameRuleType.FALL_DAMAGE);
-		}
+		this.activity.setRule(GameRuleType.HUNGER, b ? ActionResult.FAIL : ActionResult.SUCCESS);
+		this.activity.setRule(GameRuleType.FALL_DAMAGE, b ? ActionResult.FAIL : ActionResult.SUCCESS);
 	}
 
 	private void setPvp(boolean b) {
-		if(b) {
-			this.activity.allow(GameRuleType.PVP);
-		}
-		else {
-			this.activity.deny(GameRuleType.PVP);
-		}
+		this.activity.setRule(GameRuleType.PVP, b ? ActionResult.SUCCESS : ActionResult.FAIL);
+	}
+
+	private void setInteractWithWorld(boolean b) {
+		this.activity.setRule(GameRuleType.BREAK_BLOCKS, b ? ActionResult.SUCCESS : ActionResult.FAIL);
+		this.activity.setRule(GameRuleType.PLACE_BLOCKS, b ? ActionResult.SUCCESS : ActionResult.FAIL);
+		this.activity.setRule(GameRuleType.INTERACTION, b ? ActionResult.SUCCESS : ActionResult.FAIL);
+		this.activity.setRule(GameRuleType.CRAFTING, b ? ActionResult.SUCCESS : ActionResult.FAIL);
 	}
 
 	private void tpToCages() {
 		this.setInvulnerable(true);
-		this.activity.deny(GameRuleType.BREAK_BLOCKS);
-		this.activity.deny(GameRuleType.PLACE_BLOCKS);
-		this.activity.deny(GameRuleType.INTERACTION);
-		this.activity.deny(GameRuleType.CRAFTING);
+		this.setInteractWithWorld(false);
 
 		int index = 0;
 		for(GameTeam team : teamsAlive) {
@@ -417,10 +409,7 @@ public class UHCActive {
 
 	private void dropCages() {
 		this.spawnLogic.clearCages();
-		this.activity.allow(GameRuleType.BREAK_BLOCKS);
-		this.activity.allow(GameRuleType.PLACE_BLOCKS);
-		this.activity.allow(GameRuleType.INTERACTION);
-		this.activity.allow(GameRuleType.CRAFTING);
+		this.setInteractWithWorld(true);
 
 		this.participants.forEach((player, participant) -> {
 			if(!participant.isEliminated()) {
@@ -478,7 +467,7 @@ public class UHCActive {
 
 	private ActionResult onBlockBroken(ServerPlayerEntity playerEntity, ServerWorld world, BlockPos pos) {
 		for(BucketBreakModulePiece piece : this.config.bucketBreakModulePieces) {
-			piece.breakBlock(this, playerEntity, pos);
+			piece.breakBlock(this.world, playerEntity, pos);
 		}
 		return ActionResult.SUCCESS;
 	}
@@ -486,7 +475,7 @@ public class UHCActive {
 	private void onExplosion(Explosion explosion, boolean b) {
 		explosion.getAffectedBlocks().forEach(pos -> {
 			for(BucketBreakModulePiece piece : this.config.bucketBreakModulePieces) {
-				piece.breakBlock(this, explosion.getCausingEntity(), pos);
+				piece.breakBlock(this.world, explosion.getCausingEntity(), pos);
 			}
 		});
 	}

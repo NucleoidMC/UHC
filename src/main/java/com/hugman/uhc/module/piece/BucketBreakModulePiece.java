@@ -3,6 +3,8 @@ package com.hugman.uhc.module.piece;
 import com.hugman.uhc.game.phase.UHCActive;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import it.unimi.dsi.fastutil.longs.LongArraySet;
+import it.unimi.dsi.fastutil.longs.LongSet;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.LeavesBlock;
 import net.minecraft.entity.LivingEntity;
@@ -23,14 +25,14 @@ public record BucketBreakModulePiece(RuleTest predicate, int amount) implements 
 		return CODEC;
 	}
 
-	public void breakBlock(UHCActive active, @Nullable LivingEntity entity, BlockPos origin) {
-		ServerWorld world = active.world;
+	public void breakBlock(ServerWorld world, @Nullable LivingEntity entity, BlockPos origin) {
 		BlockState state = world.getBlockState(origin);
 
 		if(this.predicate.test(state, world.getRandom())) {
 			BlockTraversal traversal = BlockTraversal.create()
 					.order(BlockTraversal.Order.BREADTH_FIRST)
 					.connectivity(BlockTraversal.Connectivity.TWENTY_SIX);
+			LongSet blockPosList = new LongArraySet();
 			traversal.accept(origin, (nextPos, fromPos, depth) -> {
 				if(depth > this.amount) {
 					return BlockTraversal.Result.TERMINATE;
@@ -41,20 +43,20 @@ public record BucketBreakModulePiece(RuleTest predicate, int amount) implements 
 				BlockState previousState = world.getBlockState(fromPos);
 				BlockState nextState = world.getBlockState(nextPos);
 				if(this.predicate.test(nextState, world.getRandom())) {
-					world.breakBlock(nextPos, true, entity);
+					blockPosList.add(nextPos.asLong());
 					return BlockTraversal.Result.CONTINUE;
 				}
 				else {
 					if(nextState.getBlock() instanceof LeavesBlock) {
 						if(!(previousState.getBlock() instanceof LeavesBlock)) {
 							if(nextState.get(LeavesBlock.DISTANCE) == 1) {
-								world.breakBlock(nextPos, true, entity);
+								blockPosList.add(nextPos.asLong());
 								return BlockTraversal.Result.CONTINUE;
 							}
 						}
 						else {
-							if(nextState.get(LeavesBlock.DISTANCE) > previousState.get(LeavesBlock.DISTANCE)) {
-								world.breakBlock(nextPos, true, entity);
+							if(nextState.get(LeavesBlock.DISTANCE) >= previousState.get(LeavesBlock.DISTANCE)) {
+								blockPosList.add(nextPos.asLong());
 								return BlockTraversal.Result.CONTINUE;
 							}
 						}
@@ -62,6 +64,7 @@ public record BucketBreakModulePiece(RuleTest predicate, int amount) implements 
 				}
 				return BlockTraversal.Result.TERMINATE;
 			});
+			blockPosList.stream().iterator().forEachRemaining(l -> world.breakBlock(BlockPos.fromLong(l), true, entity));
 		}
 	}
 }
