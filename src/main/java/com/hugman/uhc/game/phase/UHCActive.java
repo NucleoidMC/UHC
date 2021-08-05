@@ -376,6 +376,7 @@ public class UHCActive {
 
 	// GAME STATES
 	private void setInvulnerable(boolean b) {
+		this.invulnerable = b;
 		this.activity.setRule(GameRuleType.HUNGER, b ? ActionResult.FAIL : ActionResult.SUCCESS);
 		this.activity.setRule(GameRuleType.FALL_DAMAGE, b ? ActionResult.FAIL : ActionResult.SUCCESS);
 	}
