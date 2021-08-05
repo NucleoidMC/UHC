@@ -341,7 +341,7 @@ public class UHCActive {
 		PlayerSet players = this.gameSpace.getPlayers();
 
 		// Remove empty teams
-		teamsAlive.removeIf(team -> teamManager.playersIn(team).stream().allMatch(playerEntity -> getParticipant(playerEntity) != null));
+		teamsAlive.removeIf(team -> teamManager.playersIn(team).stream().allMatch(playerEntity -> getParticipant(playerEntity).isEliminated()));
 		// Only one team is left, so they win
 		if(teamsAlive.size() <= 1) {
 			if(teamsAlive.size() <= 0) {
