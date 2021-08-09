@@ -71,7 +71,7 @@ public record UHCModule(String translation, Optional<String> description, ItemSt
 						}
 					}
 					catch(IOException e) {
-						Plasmid.LOGGER.error("Failed to read UHC module at {}", path, e);
+						UHC.LOGGER.error("Failed to read UHC module at {}", path, e);
 					}
 				}
 			}
