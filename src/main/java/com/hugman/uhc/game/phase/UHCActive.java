@@ -66,15 +66,15 @@ import java.util.List;
 import java.util.Optional;
 
 public class UHCActive {
-	public final GameSpace gameSpace;
-	public final ServerWorld world;
+	private final GameSpace gameSpace;
+	private final ServerWorld world;
 	private final GameActivity activity;
 	private final UHCConfig config;
 	private final UHCMap map;
 
 	private final Object2ObjectMap<ServerPlayerEntity, UHCParticipant> participants;
-	private final TeamManager teamManager;
 	private final List<GameTeam> teamsAlive;
+	private final TeamManager teamManager;
 
 	private final UHCLogic logic;
 	private final UHCSpawner spawnLogic;
@@ -94,28 +94,28 @@ public class UHCActive {
 	private boolean invulnerable;
 	private boolean isFinished = false;
 
-	private UHCActive(GameActivity activity, GameSpace gameSpace, ServerWorld world, UHCConfig config, UHCMap map, GlobalWidgets widgets, Object2ObjectMap<ServerPlayerEntity, UHCParticipant> participants, TeamManager teamManager, List<GameTeam> teamsAlive) {
+	private UHCActive(GameActivity activity, GameSpace gameSpace, ServerWorld world, UHCConfig config, UHCMap map, GlobalWidgets widgets, Object2ObjectMap<ServerPlayerEntity, UHCParticipant> participantMap, List<GameTeam> teams, TeamManager teamManager) {
 		this.activity = activity;
 		this.gameSpace = gameSpace;
 		this.world = world;
 		this.config = config;
 		this.map = map;
 
-		this.participants = participants;
+		this.participants = participantMap;
 		this.teamManager = teamManager;
-		this.teamsAlive = teamsAlive;
+		this.teamsAlive = teams;
 
 		this.logic = new UHCLogic(config, this.participants.size());
 		this.spawnLogic = new UHCSpawner(this.world);
 		this.bar = UHCBar.create(widgets, this.gameSpace);
-		this.sideBar = UHCSideBar.create(widgets, this);
+		this.sideBar = UHCSideBar.create(widgets, gameSpace);
 	}
 
-	public static void start(GameSpace gameSpace, ServerWorld world, UHCConfig config, UHCMap map, Object2ObjectMap<ServerPlayerEntity, UHCParticipant> participants, TeamManager teamManager, List<GameTeam> teams) {
+	public static void start(GameSpace gameSpace, ServerWorld world, UHCConfig config, UHCMap map, Object2ObjectMap<ServerPlayerEntity, UHCParticipant> participantMap, List<GameTeam> teams, TeamManager teamManager) {
 		gameSpace.setActivity(activity -> {
 			GlobalWidgets widgets = GlobalWidgets.addTo(activity);
-			UHCActive active = new UHCActive(activity, gameSpace, world, config, map, widgets, participants, teamManager, teams);
 			teamManager.applyTo(activity);
+			UHCActive active = new UHCActive(activity, gameSpace, world, config, map, widgets, participantMap, teams, teamManager);
 
 			activity.allow(GameRuleType.CRAFTING);
 			activity.deny(GameRuleType.PORTALS);
@@ -178,7 +178,7 @@ public class UHCActive {
 		long worldTime = world.getTime();
 
 		this.bar.tick(world);
-		this.sideBar.update(worldTime - this.gameStartTick, (int) world.getWorldBorder().getSize());
+		this.sideBar.update(worldTime - this.gameStartTick, (int) world.getWorldBorder().getSize(), this.participants);
 
 		// Game ends
 		if(isFinished) {
@@ -258,10 +258,6 @@ public class UHCActive {
 	}
 
 	// GENERAL PLAYER MANAGEMENT
-	public Object2ObjectMap<ServerPlayerEntity, UHCParticipant> getParticipants() {
-		return participants;
-	}
-
 	private UHCParticipant getParticipant(ServerPlayerEntity player) {
 		return participants.get(player);
 	}

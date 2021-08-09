@@ -1,7 +1,6 @@
 package com.hugman.uhc.config;
 
-import com.hugman.uhc.module.Module;
-import com.hugman.uhc.module.Modules;
+import com.hugman.uhc.module.UHCModule;
 import com.hugman.uhc.module.piece.BlockLootModulePiece;
 import com.hugman.uhc.module.piece.BucketBreakModulePiece;
 import com.hugman.uhc.module.piece.EntityLootModulePiece;
@@ -39,7 +38,7 @@ public class UHCConfig {
 	private final UHCMapConfig mapConfig;
 	private final UHCChapterConfig timeConfig;
 	private final List<Identifier> modulesIds;
-	private final List<Module> modules;
+	private final List<UHCModule> modules;
 	private final List<ModulePiece> modulesPieces;
 
 	public UHCConfig(PlayerConfig players, int teamSize, UHCMapConfig mapConfig, UHCChapterConfig timeConfig, List<Identifier> modulesIds) {
@@ -49,7 +48,7 @@ public class UHCConfig {
 		this.timeConfig = timeConfig;
 		this.modulesIds = modulesIds;
 
-		this.modules = modulesIds.stream().map(Modules::get).collect(Collectors.toList());
+		this.modules = modulesIds.stream().map(UHCModule::get).collect(Collectors.toList());
 		this.modulesPieces = new ArrayList<>();
 		this.modules.forEach(module -> modulesPieces.addAll(module.pieces()));
 
@@ -81,7 +80,7 @@ public class UHCConfig {
 		return modulesIds;
 	}
 
-	public List<Module> modules() {
+	public List<UHCModule> modules() {
 		return modules;
 	}
 

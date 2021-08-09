@@ -40,7 +40,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public record UHCWaiting(GameSpace gameSpace, TeamManager teamManager, ServerWorld world, UHCMap map, UHCConfig config) {
+public record UHCWaiting(GameSpace gameSpace, ServerWorld world, UHCMap map, UHCConfig config, TeamManager teamManager) {
 	public static GameOpenProcedure open(GameOpenContext<UHCConfig> context) {
 		UHCMap map = new UHCMap(context.config(), context.server());
 
@@ -55,7 +55,7 @@ public record UHCWaiting(GameSpace gameSpace, TeamManager teamManager, ServerWor
 			GameWaitingLobby.addTo(activity, context.config().playerConfig());
 			TeamManager teamManager = TeamManager.addTo(activity);
 
-			UHCWaiting waiting = new UHCWaiting(activity.getGameSpace(), teamManager, world, map, context.config());
+			UHCWaiting waiting = new UHCWaiting(activity.getGameSpace(), world, map, context.config(), teamManager);
 
 			activity.listen(GamePlayerEvents.OFFER, waiting::offerPlayer);
 			activity.listen(GameActivityEvents.REQUEST_START, waiting::requestStart);
@@ -91,15 +91,18 @@ public record UHCWaiting(GameSpace gameSpace, TeamManager teamManager, ServerWor
 		}
 
 		TeamAllocator<GameTeam, ServerPlayerEntity> allocator = new TeamAllocator<>(teams);
-		Object2ObjectMap<ServerPlayerEntity, UHCParticipant> participants = new Object2ObjectOpenHashMap<>();
+		Object2ObjectMap<ServerPlayerEntity, UHCParticipant> participantMap = new Object2ObjectOpenHashMap<>();
+
 		for(ServerPlayerEntity playerEntity : gameSpace.getPlayers()) {
 			allocator.add(playerEntity, null);
-			UHCParticipant participant = new UHCParticipant();
-			participants.put(playerEntity, participant);
 		}
-		allocator.allocate((gameTeam, playerEntity) -> teamManager.addPlayerTo(playerEntity, gameTeam));
+		allocator.allocate((gameTeam, playerEntity) -> {
+			teamManager.addPlayerTo(playerEntity, gameTeam);
+			UHCParticipant participant = new UHCParticipant();
+			participantMap.put(playerEntity, participant);
+		});
 
-		UHCActive.start(this.gameSpace, this.world, this.config, this.map, participants, this.teamManager, teams);
+		UHCActive.start(this.gameSpace, this.world, this.config, this.map, participantMap, teams, this.teamManager);
 		return GameResult.ok();
 	}
 }

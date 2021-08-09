@@ -39,7 +39,7 @@ public class UHCChunkGenerator extends GameChunkGenerator {
 		this.seed = server.getOverworld().getRandom().nextLong();
 		BiomeSource biomeSource = new VanillaLayeredBiomeSource(this.seed, false, false, server.getRegistryManager().get(Registry.BIOME_KEY));
 
-		ChunkGeneratorSettings chunkGeneratorSettings = BuiltinRegistries.CHUNK_GENERATOR_SETTINGS.get(this.config.mapConfig().chunkSettings());
+		ChunkGeneratorSettings chunkGeneratorSettings = this.config.mapConfig().chunkSettings();
 		this.subGenerator = new NoiseChunkGenerator(biomeSource, this.seed, () -> chunkGeneratorSettings);
 	}
 

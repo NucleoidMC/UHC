@@ -2,11 +2,18 @@ package com.hugman.uhc.module;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
+import com.hugman.uhc.UHC;
+import com.hugman.uhc.module.piece.ModulePiece;
+import com.hugman.uhc.module.piece.ModulePieces;
 import com.mojang.datafixers.util.Pair;
+import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
 import com.mojang.serialization.JsonOps;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
 import net.fabricmc.fabric.api.resource.SimpleSynchronousResourceReloadListener;
+import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
 import net.minecraft.resource.Resource;
 import net.minecraft.resource.ResourceManager;
 import net.minecraft.resource.ResourceType;
@@ -20,13 +27,19 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.util.Collection;
+import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
-public final class Modules {
-	private static final TinyRegistry<Module> REGISTRY = TinyRegistry.create();
+public record UHCModule(String translation, Optional<String> description, ItemStack icon, List<ModulePiece> pieces) {
+	public static final Codec<UHCModule> CODEC = RecordCodecBuilder.create(instance -> instance.group(
+			Codec.STRING.fieldOf("translation").forGetter(UHCModule::translation),
+			Codec.STRING.optionalFieldOf("description").forGetter(UHCModule::description),
+			ItemStack.CODEC.optionalFieldOf("icon", new ItemStack(Items.BARRIER)).forGetter(UHCModule::icon),
+			ModulePieces.CODEC.listOf().fieldOf("pieces").forGetter(UHCModule::pieces)
+	).apply(instance, UHCModule::new));
 
-	private Modules() {
-	}
+	private static final TinyRegistry<UHCModule> REGISTRY = TinyRegistry.create();
 
 	public static void register() {
 		ResourceManagerHelper serverData = ResourceManagerHelper.get(ResourceType.SERVER_DATA);
@@ -34,14 +47,14 @@ public final class Modules {
 		serverData.registerReloadListener(new SimpleSynchronousResourceReloadListener() {
 			@Override
 			public Identifier getFabricId() {
-				return new Identifier(Plasmid.ID, "modules");
+				return UHC.id("modules");
 			}
 
 			@Override
 			public void reload(ResourceManager manager) {
 				REGISTRY.clear();
 
-				Collection<Identifier> resources = manager.findResources("modules", path -> path.endsWith(".json"));
+				Collection<Identifier> resources = manager.findResources("uhc_modules", path -> path.endsWith(".json"));
 
 				for(Identifier path : resources) {
 					try {
@@ -51,14 +64,14 @@ public final class Modules {
 
 							Identifier identifier = identifierFromPath(path);
 
-							DataResult<Module> result = Module.CODEC.decode(JsonOps.INSTANCE, json).map(Pair::getFirst);
+							DataResult<UHCModule> result = UHCModule.CODEC.decode(JsonOps.INSTANCE, json).map(Pair::getFirst);
 
 							result.result().ifPresent(module -> REGISTRY.register(identifier, module));
-							result.error().ifPresent(error -> Plasmid.LOGGER.error("Failed to decode module at {}: {}", path, error.toString()));
+							result.error().ifPresent(error -> Plasmid.LOGGER.error("Failed to decode UHC module at {}: {}", path, error.toString()));
 						}
 					}
 					catch(IOException e) {
-						Plasmid.LOGGER.error("Failed to read module at {}", path, e);
+						Plasmid.LOGGER.error("Failed to read UHC module at {}", path, e);
 					}
 				}
 			}
@@ -67,12 +80,12 @@ public final class Modules {
 
 	private static Identifier identifierFromPath(Identifier location) {
 		String path = location.getPath();
-		path = path.substring("modules/".length(), path.length() - ".json".length());
+		path = path.substring("uhc_modules/".length(), path.length() - ".json".length());
 		return new Identifier(location.getNamespace(), path);
 	}
 
 	@Nullable
-	public static Module get(Identifier identifier) {
+	public static UHCModule get(Identifier identifier) {
 		return REGISTRY.get(identifier);
 	}
 
