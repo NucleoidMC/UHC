@@ -1,8 +1,6 @@
 {
 	"translation": "module.uhcrun.creeper_tnt",
-	"icon": {
-		"id": "minecraft:tnt"
-	},
+	"icon": "minecraft:tnt",
 	"pieces": [
 		{
 			"type": "uhc:entity_loot",

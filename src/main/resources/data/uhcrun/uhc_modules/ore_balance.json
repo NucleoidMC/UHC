@@ -1,8 +1,6 @@
 {
 	"translation": "module.uhcrun.ore_balance",
-	"icon": {
-		"id": "minecraft:diamond_ore"
-	},
+	"icon": "minecraft:diamond_ore",
 	"pieces": [
 		{
 			"type": "uhc:ore",

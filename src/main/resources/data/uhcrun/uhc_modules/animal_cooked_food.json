@@ -1,8 +1,6 @@
 {
 	"translation": "module.uhcrun.animal_cooked_food",
-	"icon": {
-		"id": "minecraft:cooked_beef"
-	},
+	"icon": "minecraft:cooked_beef",
 	"pieces": [
 		{
 			"type": "uhc:entity_loot",

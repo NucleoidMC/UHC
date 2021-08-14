@@ -1,10 +1,11 @@
 {
+	"command.uhc.modules.no_modules_activated": "Cette partie n'as pas de modules d'activés !",
 	"game.uhc": "UHC",
 	"game.uhc.uhc": "UHC",
-	"game.uhc.vanilla.solo": "UHC: Vanilla (Solo)",
 	"game.uhc.vanilla.duos": "UHC: Vanilla (Duos)",
-	"game.uhc.vanilla.trios": "UHC: Vanilla (Trios)",
+	"game.uhc.vanilla.solo": "UHC: Vanilla (Solo)",
 	"game.uhc.vanilla.squads": "UHC: Vanilla (Sections)",
+	"game.uhc.vanilla.trios": "UHC: Vanilla (Trios)",
 	"text.uhc.and": "et",
 	"text.uhc.deathmatch": "Match à mort",
 	"text.uhc.dropped_players": "Les joueurs ont été lâchés sur la carte.",
@@ -37,5 +38,6 @@
 	"text.uhc.vulnerable.countdown_bar": "Les dégâts seront activés dans %s",
 	"text.uhc.vulnerable.countdown_text": "Vous serez vulnérable aux dégâts dans %s.",
 	"text.uhc.world": "Monde : %s",
-	"text.uhc.world_will_shrink": "Vous serez téléporté dans %s. Puis, le monde commencera à rétrécir et le PvP sera activé."
+	"text.uhc.world_will_shrink": "Vous serez téléporté dans %s. Puis, le monde commencera à rétrécir et le PvP sera activé.",
+	"ui.uhc.modules.title": "Modules actifs"
 }

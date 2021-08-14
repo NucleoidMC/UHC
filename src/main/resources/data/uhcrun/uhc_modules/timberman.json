@@ -1,8 +1,6 @@
 {
 	"translation": "module.uhcrun.timberman",
-	"icon": {
-		"id": "minecraft:golden_axe"
-	},
+	"icon": "minecraft:golden_axe",
 	"pieces": [
 		{
 			"type": "uhc:bucket_break",

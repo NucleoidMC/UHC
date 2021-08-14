@@ -1,8 +1,6 @@
 {
 	"translation": "module.uhcrun.dasher",
-	"icon": {
-		"id": "minecraft:iron_boots"
-	},
+	"icon": "minecraft:iron_boots",
 	"pieces": [
 		{
 			"type": "uhc:player_attribute",

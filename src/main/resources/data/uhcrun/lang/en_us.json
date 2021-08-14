@@ -19,9 +19,15 @@
 	"module.uhcrun.mob_cooked_food": "Mob Cooked Food",
 	"module.uhcrun.mob_cooked_food.description": "Many mobs drop cooked food in larger quantities",
 	"module.uhcrun.need_for_resources": "Need for resources",
-	"module.uhcrun.need_for_resources.description": "All stones types drop cobblestone, gravel drop arrows, sand drop glass, cactus/kelp drop planks, dead bushes drop bread, mushrooms drop stews and more entities drop leather",
+	"module.uhcrun.need_for_resources.description.1": "All stones types drop cobblestone",
+	"module.uhcrun.need_for_resources.description.2": "Gravel drop arrows",
+	"module.uhcrun.need_for_resources.description.3": "Sand drop glass",
+	"module.uhcrun.need_for_resources.description.4": "Cactus/kelp drop planks",
+	"module.uhcrun.need_for_resources.description.5": "Dead bushes drop bread",
+	"module.uhcrun.need_for_resources.description.6": "Mushrooms drop stews",
+	"module.uhcrun.need_for_resources.description.7": "More entities drop leather",
 	"module.uhcrun.ore_balance": "Ore Balance",
-	"module.uhcrun.ore_balance.description": "Lapis, gold and diamond ores are more frequent and can be found at any level",
+	"module.uhcrun.ore_balance.description": "Lapis, gold and diamond ores are more frequent",
 	"module.uhcrun.timberman": "Timberman",
 	"module.uhcrun.timberman.description": "Trees get cut instantly and drop oak planks"
 }

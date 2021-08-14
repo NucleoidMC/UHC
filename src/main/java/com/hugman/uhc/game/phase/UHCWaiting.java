@@ -3,7 +3,7 @@ package com.hugman.uhc.game.phase;
 import com.hugman.uhc.config.UHCConfig;
 import com.hugman.uhc.game.UHCParticipant;
 import com.hugman.uhc.game.UHCSpawner;
-import com.hugman.uhc.game.map.UHCMap;
+import com.hugman.uhc.map.UHCMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import net.minecraft.scoreboard.AbstractTeam;

@@ -1,4 +1,4 @@
-package com.hugman.uhc.game.map;
+package com.hugman.uhc.map;
 
 import com.hugman.uhc.config.UHCConfig;
 import net.minecraft.server.MinecraftServer;

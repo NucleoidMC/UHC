@@ -1,6 +1,5 @@
 package com.hugman.uhc.module.piece;
 
-import com.hugman.uhc.game.phase.UHCActive;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import it.unimi.dsi.fastutil.longs.LongArraySet;

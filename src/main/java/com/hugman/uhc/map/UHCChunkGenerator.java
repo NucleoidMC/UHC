@@ -1,11 +1,10 @@
-package com.hugman.uhc.game.map;
+package com.hugman.uhc.map;
 
 import com.hugman.uhc.config.UHCConfig;
 import com.hugman.uhc.module.piece.OreModulePiece;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
-import net.minecraft.util.registry.BuiltinRegistries;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.world.ChunkRegion;
 import net.minecraft.world.HeightLimitView;
@@ -29,18 +28,17 @@ import java.util.concurrent.Executor;
 
 public class UHCChunkGenerator extends GameChunkGenerator {
 	private final UHCConfig config;
-	private final long seed;
 	private final ChunkGenerator subGenerator;
 
 	public UHCChunkGenerator(MinecraftServer server, UHCConfig config) {
 		super(server);
 		this.config = config;
 
-		this.seed = server.getOverworld().getRandom().nextLong();
-		BiomeSource biomeSource = new VanillaLayeredBiomeSource(this.seed, false, false, server.getRegistryManager().get(Registry.BIOME_KEY));
+		long seed = server.getOverworld().getRandom().nextLong();
+		BiomeSource biomeSource = new VanillaLayeredBiomeSource(seed, false, false, server.getRegistryManager().get(Registry.BIOME_KEY));
 
 		ChunkGeneratorSettings chunkGeneratorSettings = this.config.mapConfig().chunkSettings();
-		this.subGenerator = new NoiseChunkGenerator(biomeSource, this.seed, () -> chunkGeneratorSettings);
+		this.subGenerator = new NoiseChunkGenerator(biomeSource, seed, () -> chunkGeneratorSettings);
 	}
 
 	@Override

@@ -7,7 +7,7 @@ import com.hugman.uhc.game.UHCLogic;
 import com.hugman.uhc.game.UHCParticipant;
 import com.hugman.uhc.game.UHCSideBar;
 import com.hugman.uhc.game.UHCSpawner;
-import com.hugman.uhc.game.map.UHCMap;
+import com.hugman.uhc.map.UHCMap;
 import com.hugman.uhc.module.piece.BlockLootModulePiece;
 import com.hugman.uhc.module.piece.BucketBreakModulePiece;
 import com.hugman.uhc.module.piece.EntityLootModulePiece;
@@ -443,8 +443,10 @@ public class UHCActive {
 		if(!this.config.modules().isEmpty()) {
 			MutableText text = new LiteralText("\n").append(new TranslatableText("text.uhc.modules_enabled").formatted(Formatting.GOLD));
 			this.config.modules().forEach(module -> {
-				Style style = Style.EMPTY.withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new TranslatableText(module.description().orElseGet(() -> module.translation() + ".description"))));
-				text.append(new LiteralText("\n  - ").formatted(Formatting.WHITE)).append(Texts.bracketed(new TranslatableText(module.translation()).formatted(Formatting.GREEN)).setStyle(style));
+				MutableText descriptionLines = new LiteralText("");
+				module.getDescriptionLines().forEach(s -> descriptionLines.append(new TranslatableText(s)));
+				Style style = Style.EMPTY.withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, descriptionLines)).withColor(module.color());
+				text.append(new LiteralText("\n  - ").formatted(Formatting.WHITE)).append(Texts.bracketed(new TranslatableText(module.translation())).setStyle(style));
 			});
 			text.append("\n");
 			this.gameSpace.getPlayers().sendMessage(text);

@@ -1,8 +1,6 @@
 {
 	"translation": "module.uhcrun.leaves_leave_no_leaves",
-	"icon": {
-		"id": "minecraft:apple"
-	},
+	"icon": "minecraft:apple",
 	"pieces": [
 		{
 			"type": "uhc:block_loot",

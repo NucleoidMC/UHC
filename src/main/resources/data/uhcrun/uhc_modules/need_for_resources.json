@@ -1,8 +1,15 @@
 {
 	"translation": "module.uhcrun.need_for_resources",
-	"icon": {
-		"id": "minecraft:cactus"
-	},
+	"description": [
+		"module.uhcrun.need_for_resources.description.1",
+		"module.uhcrun.need_for_resources.description.2",
+		"module.uhcrun.need_for_resources.description.3",
+		"module.uhcrun.need_for_resources.description.4",
+		"module.uhcrun.need_for_resources.description.5",
+		"module.uhcrun.need_for_resources.description.6",
+		"module.uhcrun.need_for_resources.description.7"
+	],
+	"icon": "minecraft:cactus",
 	"pieces": [
 		{
 			"type": "uhc:block_loot",

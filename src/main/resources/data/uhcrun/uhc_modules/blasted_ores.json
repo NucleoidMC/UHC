@@ -1,8 +1,6 @@
 {
 	"translation": "module.uhcrun.blasted_ores",
-	"icon": {
-		"id": "minecraft:iron_ingot"
-	},
+	"icon": "minecraft:iron_ingot",
 	"pieces": [
 		{
 			"type": "uhc:block_loot",

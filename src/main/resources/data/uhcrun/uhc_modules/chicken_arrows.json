@@ -1,8 +1,6 @@
 {
 	"translation": "module.uhcrun.chicken_arrows",
-	"icon": {
-		"id": "minecraft:feather"
-	},
+	"icon": "minecraft:feather",
 	"pieces": [
 		{
 			"type": "uhc:entity_loot",
