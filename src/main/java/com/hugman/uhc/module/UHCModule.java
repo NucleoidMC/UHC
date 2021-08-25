@@ -44,7 +44,7 @@ public record UHCModule(String translation, Optional<Either<String, List<String>
 			ModulePieces.CODEC.listOf().fieldOf("pieces").forGetter(UHCModule::pieces)
 	).apply(instance, UHCModule::new));
 
-	private static final TinyRegistry<UHCModule> REGISTRY = TinyRegistry.create();
+	public static final TinyRegistry<UHCModule> REGISTRY = TinyRegistry.create();
 
 	public static void register() {
 		ResourceManagerHelper serverData = ResourceManagerHelper.get(ResourceType.SERVER_DATA);
@@ -87,15 +87,6 @@ public record UHCModule(String translation, Optional<Either<String, List<String>
 		String path = location.getPath();
 		path = path.substring("uhc_modules/".length(), path.length() - ".json".length());
 		return new Identifier(location.getNamespace(), path);
-	}
-
-	@Nullable
-	public static UHCModule get(Identifier identifier) {
-		return REGISTRY.get(identifier);
-	}
-
-	public static Set<Identifier> getKeys() {
-		return REGISTRY.keySet();
 	}
 
 	public List<String> getDescriptionLines() {

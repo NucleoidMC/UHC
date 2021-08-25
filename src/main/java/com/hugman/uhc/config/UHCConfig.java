@@ -1,14 +1,7 @@
 package com.hugman.uhc.config;
 
 import com.hugman.uhc.module.UHCModule;
-import com.hugman.uhc.module.piece.BlockLootModulePiece;
-import com.hugman.uhc.module.piece.BucketBreakModulePiece;
-import com.hugman.uhc.module.piece.EntityLootModulePiece;
-import com.hugman.uhc.module.piece.ModulePiece;
-import com.hugman.uhc.module.piece.ModulePieces;
-import com.hugman.uhc.module.piece.OreModulePiece;
-import com.hugman.uhc.module.piece.PermanentEffectModulePiece;
-import com.hugman.uhc.module.piece.PlayerAttributeModulePiece;
+import com.hugman.uhc.module.piece.*;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.util.Identifier;
@@ -20,13 +13,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class UHCConfig {
-	public static final Codec<UHCConfig> CODEC = RecordCodecBuilder.create(instance -> instance.group(
-			PlayerConfig.CODEC.fieldOf("players").forGetter(UHCConfig::playerConfig),
-			Codec.INT.fieldOf("team_size").forGetter(UHCConfig::teamSize),
-			UHCMapConfig.CODEC.fieldOf("map").forGetter(UHCConfig::mapConfig),
-			UHCChapterConfig.CODEC.fieldOf("chapters").forGetter(UHCConfig::timeConfig),
-			Identifier.CODEC.listOf().optionalFieldOf("modules", Collections.emptyList()).forGetter(UHCConfig::modulesIds)
-	).apply(instance, UHCConfig::new));
+	public static final Codec<UHCConfig> CODEC = RecordCodecBuilder.create(instance -> instance.group(PlayerConfig.CODEC.fieldOf("players").forGetter(UHCConfig::playerConfig), Codec.INT.fieldOf("team_size").forGetter(UHCConfig::teamSize), UHCMapConfig.CODEC.fieldOf("map").forGetter(UHCConfig::mapConfig), UHCChapterConfig.CODEC.fieldOf("chapters").forGetter(UHCConfig::timeConfig), UHCModule.REGISTRY.listOf().optionalFieldOf("modules", Collections.emptyList()).forGetter(UHCConfig::modules)).apply(instance, UHCConfig::new));
 	public final List<BlockLootModulePiece> blockLootModulePieces;
 	public final List<EntityLootModulePiece> entityLootModulePieces;
 	public final List<BucketBreakModulePiece> bucketBreakModulePieces;
@@ -37,18 +24,16 @@ public class UHCConfig {
 	private final int teamSize;
 	private final UHCMapConfig mapConfig;
 	private final UHCChapterConfig timeConfig;
-	private final List<Identifier> modulesIds;
 	private final List<UHCModule> modules;
 	private final List<ModulePiece> modulesPieces;
 
-	public UHCConfig(PlayerConfig players, int teamSize, UHCMapConfig mapConfig, UHCChapterConfig timeConfig, List<Identifier> modulesIds) {
+	public UHCConfig(PlayerConfig players, int teamSize, UHCMapConfig mapConfig, UHCChapterConfig timeConfig, List<UHCModule> modules) {
 		this.playerConfig = players;
 		this.teamSize = teamSize;
 		this.mapConfig = mapConfig;
 		this.timeConfig = timeConfig;
-		this.modulesIds = modulesIds;
+		this.modules = modules;
 
-		this.modules = modulesIds.stream().map(UHCModule::get).collect(Collectors.toList());
 		this.modulesPieces = new ArrayList<>();
 		this.modules.forEach(module -> modulesPieces.addAll(module.pieces()));
 
@@ -76,17 +61,11 @@ public class UHCConfig {
 		return timeConfig;
 	}
 
-	private List<Identifier> modulesIds() {
-		return modulesIds;
-	}
-
 	public List<UHCModule> modules() {
 		return modules;
 	}
 
 	private <V extends ModulePiece> List<V> getAllModulesPieces(Identifier id) {
-		return modulesPieces.stream().filter(item -> ModulePieces.getId(item).equals(id))
-				.map(piece -> (V) piece)
-				.collect(Collectors.toList());
+		return modulesPieces.stream().filter(piece -> ModulePieces.getId(piece).equals(id)).map(piece -> (V) piece).collect(Collectors.toList());
 	}
 }
