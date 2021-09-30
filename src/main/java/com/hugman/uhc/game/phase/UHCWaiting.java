@@ -23,9 +23,7 @@ import xyz.nucleoid.plasmid.game.GameOpenProcedure;
 import xyz.nucleoid.plasmid.game.GameResult;
 import xyz.nucleoid.plasmid.game.GameSpace;
 import xyz.nucleoid.plasmid.game.common.GameWaitingLobby;
-import xyz.nucleoid.plasmid.game.common.team.GameTeam;
-import xyz.nucleoid.plasmid.game.common.team.TeamAllocator;
-import xyz.nucleoid.plasmid.game.common.team.TeamManager;
+import xyz.nucleoid.plasmid.game.common.team.*;
 import xyz.nucleoid.plasmid.game.event.GameActivityEvents;
 import xyz.nucleoid.plasmid.game.event.GamePlayerEvents;
 import xyz.nucleoid.plasmid.game.player.PlayerOffer;
@@ -73,36 +71,7 @@ public record UHCWaiting(GameSpace gameSpace, ServerWorld world, UHCMap map, UHC
 	}
 
 	private GameResult requestStart() {
-		List<GameTeam> teams = new ArrayList<>();
-
-		List<DyeColor> teamColors = Arrays.stream(DyeColor.values()).collect(Collectors.toList());
-		teamColors.remove(DyeColor.WHITE);
-		teamColors.remove(DyeColor.BLACK);
-		teamColors.remove(DyeColor.MAGENTA);
-		Collections.shuffle(teamColors);
-
-		for(int i = 0; i < Math.round(gameSpace.getPlayers().size() / (float) config.teamSize()); i++) {
-			GameTeam gameTeam = new GameTeam(RandomStringUtils.randomAlphabetic(16), new LiteralText("UHC Team"), GameTeam.Colors.from(teamColors.get(i)));
-
-			teamManager.addTeam(gameTeam);
-			teamManager.setFriendlyFire(gameTeam, false);
-			teamManager.setCollisionRule(gameTeam, AbstractTeam.CollisionRule.PUSH_OTHER_TEAMS);
-			teams.add(gameTeam);
-		}
-
-		TeamAllocator<GameTeam, ServerPlayerEntity> allocator = new TeamAllocator<>(teams);
-		Object2ObjectMap<ServerPlayerEntity, UHCParticipant> participantMap = new Object2ObjectOpenHashMap<>();
-
-		for(ServerPlayerEntity playerEntity : gameSpace.getPlayers()) {
-			allocator.add(playerEntity, null);
-		}
-		allocator.allocate((gameTeam, playerEntity) -> {
-			teamManager.addPlayerTo(playerEntity, gameTeam);
-			UHCParticipant participant = new UHCParticipant();
-			participantMap.put(playerEntity, participant);
-		});
-
-		UHCActive.start(this.gameSpace, this.world, this.config, this.map, participantMap, teams, this.teamManager);
+		UHCActive.start(this.gameSpace, this.world, this.config, this.map);
 		return GameResult.ok();
 	}
 }

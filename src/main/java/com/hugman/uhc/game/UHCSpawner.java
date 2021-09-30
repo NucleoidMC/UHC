@@ -57,7 +57,7 @@ public class UHCSpawner {
 
 	public void addCageAt(GameTeam team, BlockPos origin, BlockState sides, int width, int height) {
 		ServerWorld world = this.world;
-		BlockState floor = ColoredBlocks.glass(team.blockDyeColor()).getDefaultState();
+		BlockState floor = ColoredBlocks.glass(team.config().blockDyeColor()).getDefaultState();
 
 		BlockBounds fullCage = BlockBounds.of(origin.down().north(width).east(width), origin.up(height).south(width).west(width));
 		BlockBounds cageFloor = BlockBounds.of(origin.down().north(width - 1).east(width - 1), origin.down().south(width - 1).west(width - 1));

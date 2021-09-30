@@ -30,7 +30,7 @@ public class UHCBar {
 	}
 
 	public static UHCBar create(GlobalWidgets widgets, GameSpace gameSpace) {
-		return new UHCBar(widgets.addBossBar(gameSpace.getSourceConfig().getName(), BossBar.Color.BLUE, BossBar.Style.PROGRESS), gameSpace);
+		return new UHCBar(widgets.addBossBar(gameSpace.getMetadata().sourceConfig().name(), BossBar.Color.BLUE, BossBar.Style.PROGRESS), gameSpace);
 	}
 
 	public void set(String symbol, String name, long totalTicks, long endTick, BossBar.Color color) {

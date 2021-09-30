@@ -12,7 +12,7 @@ import xyz.nucleoid.plasmid.game.common.widget.SidebarWidget;
 
 public record UHCSideBar(SidebarWidget sidebarWidget) {
 	public static UHCSideBar create(GlobalWidgets widgets, GameSpace gameSpace) {
-		return new UHCSideBar(widgets.addSidebar(gameSpace.getSourceConfig().getName().copy().formatted(Formatting.BOLD, Formatting.GOLD)));
+		return new UHCSideBar(widgets.addSidebar(gameSpace.getMetadata().sourceConfig().name().copy().formatted(Formatting.BOLD, Formatting.GOLD)));
 	}
 
 	public void update(long ticks, int worldSize, Object2ObjectMap<ServerPlayerEntity, UHCParticipant> participantMap) {

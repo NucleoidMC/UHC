@@ -21,7 +21,7 @@
 		"fabricloader": ">=0.9.1",
 		"fabric": "*",
 		"minecraft": "1.17.x",
-		"plasmid": "0.5.x",
+		"plasmid": ">=0.5.10",
 		"java": ">=16"
 	}
 }

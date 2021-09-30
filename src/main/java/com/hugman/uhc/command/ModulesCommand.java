@@ -36,7 +36,7 @@ public class ModulesCommand {
 	public static boolean isSourceUHC(ServerCommandSource source) {
 		ManagedGameSpace gameSpace = GameSpaceManager.get().byWorld(source.getWorld());
 		if(gameSpace != null) {
-			return gameSpace.getSourceConfig().getConfig() instanceof UHCConfig;
+			return gameSpace.getMetadata().sourceConfig().config() instanceof UHCConfig;
 		}
 		return false;
 	}
@@ -45,7 +45,7 @@ public class ModulesCommand {
 		ServerCommandSource source = context.getSource();
 		ManagedGameSpace gameSpace = GameSpaceManager.get().byWorld(source.getWorld());
 		ServerPlayerEntity player = source.getPlayer();
-		UHCConfig config = (UHCConfig) Objects.requireNonNull(gameSpace).getSourceConfig().getConfig();
+		UHCConfig config = (UHCConfig) Objects.requireNonNull(gameSpace).getMetadata().sourceConfig().config();
 		List<UHCModule> modules = config.modules();
 		if(!modules.isEmpty()) {
 			ScreenHandlerType<?> type = Registry.SCREEN_HANDLER.get(new Identifier("generic_9x" + MathHelper.clamp(1, MathHelper.ceil((float) modules.size() / 9), 6)));
