@@ -39,7 +39,7 @@ public record UHCModule(String translation, Optional<Either<String, List<String>
 	public static final Codec<UHCModule> CODEC = RecordCodecBuilder.create(instance -> instance.group(
 			Codec.STRING.fieldOf("translation").forGetter(UHCModule::translation),
 			Codec.either(Codec.STRING, Codec.STRING.listOf()).optionalFieldOf("description").forGetter(UHCModule::description),
-			Registry.ITEM.optionalFieldOf("icon", Items.BARRIER).forGetter(UHCModule::icon),
+			Registry.ITEM.getCodec().optionalFieldOf("icon", Items.BARRIER).forGetter(UHCModule::icon),
 			MoreCodecs.TEXT_COLOR.optionalFieldOf("color", TextColor.parse("#39db7f")).forGetter(UHCModule::color),
 			ModulePieces.CODEC.listOf().fieldOf("pieces").forGetter(UHCModule::pieces)
 	).apply(instance, UHCModule::new));

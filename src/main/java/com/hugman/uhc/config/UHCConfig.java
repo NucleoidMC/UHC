@@ -13,7 +13,13 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class UHCConfig {
-	public static final Codec<UHCConfig> CODEC = RecordCodecBuilder.create(instance -> instance.group(PlayerConfig.CODEC.fieldOf("players").forGetter(UHCConfig::playerConfig), Codec.INT.fieldOf("team_size").forGetter(UHCConfig::teamSize), UHCMapConfig.CODEC.fieldOf("map").forGetter(UHCConfig::mapConfig), UHCChapterConfig.CODEC.fieldOf("chapters").forGetter(UHCConfig::timeConfig), UHCModule.REGISTRY.listOf().optionalFieldOf("modules", Collections.emptyList()).forGetter(UHCConfig::modules)).apply(instance, UHCConfig::new));
+	public static final Codec<UHCConfig> CODEC = RecordCodecBuilder.create(instance -> instance.group(
+			PlayerConfig.CODEC.fieldOf("players").forGetter(UHCConfig::playerConfig),
+			Codec.INT.fieldOf("team_size").forGetter(UHCConfig::teamSize),
+			UHCMapConfig.CODEC.fieldOf("map").forGetter(UHCConfig::mapConfig),
+			UHCChapterConfig.CODEC.fieldOf("chapters").forGetter(UHCConfig::timeConfig),
+			UHCModule.REGISTRY.listOf().optionalFieldOf("modules", Collections.emptyList()).forGetter(UHCConfig::modules))
+			.apply(instance, UHCConfig::new));
 	public final List<BlockLootModulePiece> blockLootModulePieces;
 	public final List<EntityLootModulePiece> entityLootModulePieces;
 	public final List<BucketBreakModulePiece> bucketBreakModulePieces;

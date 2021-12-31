@@ -9,7 +9,7 @@ import net.minecraft.util.registry.Registry;
 
 public record PermanentEffectModulePiece(StatusEffect effect, int amplifier) implements ModulePiece {
 	public static final Codec<PermanentEffectModulePiece> CODEC = RecordCodecBuilder.create(instance -> instance.group(
-			Registry.STATUS_EFFECT.fieldOf("effect").forGetter(module -> module.effect),
+			Registry.STATUS_EFFECT.getCodec().fieldOf("effect").forGetter(module -> module.effect),
 			Codec.intRange(0, Integer.MAX_VALUE).optionalFieldOf("amplifier", 0).forGetter(module -> module.amplifier)
 	).apply(instance, PermanentEffectModulePiece::new));
 

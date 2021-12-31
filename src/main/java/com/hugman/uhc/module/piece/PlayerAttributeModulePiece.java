@@ -10,7 +10,7 @@ import net.minecraft.util.registry.Registry;
 
 public record PlayerAttributeModulePiece(EntityAttribute attribute, double value) implements ModulePiece {
 	public static final Codec<PlayerAttributeModulePiece> CODEC = RecordCodecBuilder.create(instance -> instance.group(
-			Registry.ATTRIBUTE.fieldOf("attribute").forGetter(module -> module.attribute),
+			Registry.ATTRIBUTE.getCodec().fieldOf("attribute").forGetter(module -> module.attribute),
 			Codec.doubleRange(0.0F, Double.MAX_VALUE).fieldOf("value").forGetter(module -> module.value)
 	).apply(instance, PlayerAttributeModulePiece::new));
 

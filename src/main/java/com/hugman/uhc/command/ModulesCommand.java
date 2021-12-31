@@ -30,7 +30,10 @@ public class ModulesCommand {
 	public static final SimpleCommandExceptionType NO_MODULES_ACTIVATED = new SimpleCommandExceptionType(new TranslatableText("command.uhc.modules.no_modules_activated"));
 
 	public static void register(CommandDispatcher<ServerCommandSource> dispatcher) {
-		dispatcher.register(CommandManager.literal("modules").requires(ModulesCommand::isSourceUHC).executes(ModulesCommand::displayModules));
+		dispatcher.register(
+				CommandManager.literal("modules")
+						.requires(ModulesCommand::isSourceUHC)
+						.executes(ModulesCommand::displayModules));
 	}
 
 	public static boolean isSourceUHC(ServerCommandSource source) {
@@ -43,13 +46,10 @@ public class ModulesCommand {
 
 	private static int displayModules(CommandContext<ServerCommandSource> context) throws CommandSyntaxException {
 		ServerCommandSource source = context.getSource();
-		ManagedGameSpace gameSpace = GameSpaceManager.get().byWorld(source.getWorld());
-		ServerPlayerEntity player = source.getPlayer();
-		UHCConfig config = (UHCConfig) Objects.requireNonNull(gameSpace).getMetadata().sourceConfig().config();
-		List<UHCModule> modules = config.modules();
+		List<UHCModule> modules = ((UHCConfig) Objects.requireNonNull(GameSpaceManager.get().byWorld(source.getWorld())).getMetadata().sourceConfig().config()).modules();
 		if(!modules.isEmpty()) {
 			ScreenHandlerType<?> type = Registry.SCREEN_HANDLER.get(new Identifier("generic_9x" + MathHelper.clamp(1, MathHelper.ceil((float) modules.size() / 9), 6)));
-			SimpleGui gui = new SimpleGui(type, player, false);
+			SimpleGui gui = new SimpleGui(type, source.getPlayer(), false);
 			gui.setTitle(new TranslatableText("ui.uhc.modules.title"));
 			for(UHCModule module : modules) {
 				GuiElementBuilder elementBuilder = new GuiElementBuilder(module.icon())

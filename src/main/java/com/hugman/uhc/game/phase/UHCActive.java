@@ -330,7 +330,7 @@ public class UHCActive {
 	}
 
 	private void eliminateParticipant(ServerPlayerEntity player) {
-		ItemScatterer.spawn(player.getServerWorld(), player.getBlockPos(), player.getInventory());
+		ItemScatterer.spawn(player.getWorld(), player.getBlockPos(), player.getInventory());
 		player.changeGameMode(GameMode.SPECTATOR);
 		this.resetPlayer(player);
 		this.spawnLogic.spawnPlayerAtCenter(player);
