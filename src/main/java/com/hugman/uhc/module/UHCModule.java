@@ -65,7 +65,7 @@ public record UHCModule(String translation, Optional<Either<String, List<String>
 					try {
 						Resource resource = manager.getResource(path);
 						try(Reader reader = new BufferedReader(new InputStreamReader(resource.getInputStream()))) {
-							JsonElement json = new JsonParser().parse(reader);
+							JsonElement json = JsonParser.parseReader(reader);
 
 							Identifier identifier = identifierFromPath(path);
 

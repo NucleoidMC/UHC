@@ -1,7 +1,7 @@
 package com.hugman.uhc.map;
 
 import com.hugman.uhc.config.UHCConfig;
-import com.hugman.uhc.module.piece.OreModulePiece;
+import com.hugman.uhc.module.piece.PlacedFeaturesModulePiece;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
@@ -70,8 +70,8 @@ public class UHCChunkGenerator extends GameChunkGenerator {
 		BlockPos blockPos = new BlockPos(i, chunk.getBottomY(), j);
 		ChunkRandom chunkRandom = new ChunkRandom(new AtomicSimpleRandom(0L));
 		chunkRandom.setPopulationSeed(world.getSeed(), i, j);
-		for(OreModulePiece piece : this.config.oreModulePieces) {
-			piece.getFeature().generate(world, this, chunkRandom, blockPos);
+		for(PlacedFeaturesModulePiece piece : this.config.placedFeaturesModulePieces) {
+			piece.getValues(world).forEach(v -> v.generate(world, this, chunkRandom, blockPos));
 		}
 
 		this.subGenerator.generateFeatures(world, chunk, structureAccessor);

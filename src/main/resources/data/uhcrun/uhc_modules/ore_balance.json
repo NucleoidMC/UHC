@@ -3,22 +3,12 @@
 	"icon": "minecraft:diamond_ore",
 	"pieces": [
 		{
-			"type": "uhc:ore",
-			"block": "minecraft:lapis_ore",
-			"count": 12,
-			"size": 13
-		},
-		{
-			"type": "uhc:ore",
-			"block": "minecraft:gold_ore",
-			"count": 10,
-			"size": 12
-		},
-		{
-			"type": "uhc:ore",
-			"block": "minecraft:diamond_ore",
-			"count": 9,
-			"size": 9
+			"type": "uhc:placed_features",
+			"values": [
+				"uhcrun:ores/lapis",
+				"uhcrun:ores/gold",
+				"uhcrun:ores/diamond"
+			]
 		}
 	]
 }

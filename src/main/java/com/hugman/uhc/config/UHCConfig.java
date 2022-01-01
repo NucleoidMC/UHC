@@ -25,7 +25,7 @@ public class UHCConfig {
 	public final List<BucketBreakModulePiece> bucketBreakModulePieces;
 	public final List<PlayerAttributeModulePiece> playerAttributeModulePieces;
 	public final List<PermanentEffectModulePiece> permanentEffectModulePieces;
-	public final List<OreModulePiece> oreModulePieces;
+	public final List<PlacedFeaturesModulePiece> placedFeaturesModulePieces;
 	private final PlayerConfig playerConfig;
 	private final int teamSize;
 	private final UHCMapConfig mapConfig;
@@ -46,9 +46,9 @@ public class UHCConfig {
 		this.blockLootModulePieces = getAllModulesPieces(ModulePieces.BLOCK_LOOT);
 		this.entityLootModulePieces = getAllModulesPieces(ModulePieces.ENTITY_LOOT);
 		this.bucketBreakModulePieces = getAllModulesPieces(ModulePieces.BUCKET_BREAK);
-		this.playerAttributeModulePieces = getAllModulesPieces(ModulePieces.PLAYER_ATTRIBUTES);
-		this.permanentEffectModulePieces = getAllModulesPieces(ModulePieces.PERMANENT_EFFECTS);
-		this.oreModulePieces = getAllModulesPieces(ModulePieces.ORE);
+		this.playerAttributeModulePieces = getAllModulesPieces(ModulePieces.PLAYER_ATTRIBUTE);
+		this.permanentEffectModulePieces = getAllModulesPieces(ModulePieces.PERMANENT_EFFECT);
+		this.placedFeaturesModulePieces = getAllModulesPieces(ModulePieces.PLACED_FEATURES);
 	}
 
 	public PlayerConfig playerConfig() {
