@@ -13,15 +13,23 @@ import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.Nullable;
 import xyz.nucleoid.plasmid.util.BlockTraversal;
 
-public record BucketBreakModulePiece(RuleTest predicate, int amount) implements ModulePiece {
-	public static final Codec<BucketBreakModulePiece> CODEC = RecordCodecBuilder.create(instance -> instance.group(
+public class TraversalBreakModulePiece extends ModulePiece {
+	public static final Codec<TraversalBreakModulePiece> CODEC = RecordCodecBuilder.create(instance -> instance.group(
 			RuleTest.TYPE_CODEC.fieldOf("target").forGetter(module -> module.predicate),
 			Codec.intRange(0, Integer.MAX_VALUE).optionalFieldOf("amount", 128).forGetter(module -> module.amount)
-	).apply(instance, BucketBreakModulePiece::new));
+	).apply(instance, TraversalBreakModulePiece::new));
+
+	private final RuleTest predicate;
+	private final int amount;
+
+	private TraversalBreakModulePiece(RuleTest predicate, int amount) {
+		this.predicate = predicate;
+		this.amount = amount;
+	}
 
 	@Override
-	public Codec<? extends ModulePiece> getCodec() {
-		return CODEC;
+	public ModulePieceType<?> getType() {
+		return ModulePieceType.TRAVERSAL_BREAK;
 	}
 
 	public void breakBlock(ServerWorld world, @Nullable LivingEntity entity, BlockPos origin) {
@@ -63,7 +71,7 @@ public record BucketBreakModulePiece(RuleTest predicate, int amount) implements 
 				}
 				return BlockTraversal.Result.TERMINATE;
 			});
-			blockPosList.stream().iterator().forEachRemaining(l -> world.breakBlock(BlockPos.fromLong(l), true, entity));
+			blockPosList.longStream().forEach(l -> world.breakBlock(BlockPos.fromLong(l), true, entity));
 		}
 	}
 }

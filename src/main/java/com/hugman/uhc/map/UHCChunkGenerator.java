@@ -1,6 +1,7 @@
 package com.hugman.uhc.map;
 
 import com.hugman.uhc.config.UHCConfig;
+import com.hugman.uhc.module.piece.ModulePieceType;
 import com.hugman.uhc.module.piece.PlacedFeaturesModulePiece;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.BlockPos;
@@ -20,8 +21,8 @@ import net.minecraft.world.gen.StructureAccessor;
 import net.minecraft.world.gen.chunk.Blender;
 import net.minecraft.world.gen.chunk.ChunkGenerator;
 import net.minecraft.world.gen.chunk.VerticalBlockSample;
-import net.minecraft.world.gen.random.AtomicSimpleRandom;
 import net.minecraft.world.gen.random.ChunkRandom;
+import net.minecraft.world.gen.random.Xoroshiro128PlusPlusRandom;
 import xyz.nucleoid.plasmid.game.world.generator.GameChunkGenerator;
 
 import java.util.concurrent.CompletableFuture;
@@ -29,11 +30,13 @@ import java.util.concurrent.Executor;
 
 public class UHCChunkGenerator extends GameChunkGenerator {
 	private final UHCConfig config;
+	private final long seed;
 	private final ChunkGenerator subGenerator;
 
 	public UHCChunkGenerator(MinecraftServer server, UHCConfig config, long seed) {
 		super(server);
 		this.config = config;
+		this.seed = seed;
 		this.subGenerator = GeneratorOptions.createOverworldGenerator(server.getRegistryManager(), seed);
 	}
 
@@ -68,12 +71,11 @@ public class UHCChunkGenerator extends GameChunkGenerator {
 		int i = chunkPos.getStartX();
 		int j = chunkPos.getStartZ();
 		BlockPos blockPos = new BlockPos(i, chunk.getBottomY(), j);
-		ChunkRandom chunkRandom = new ChunkRandom(new AtomicSimpleRandom(0L));
+		ChunkRandom chunkRandom = new ChunkRandom(new Xoroshiro128PlusPlusRandom(this.seed));
 		chunkRandom.setPopulationSeed(world.getSeed(), i, j);
-		for(PlacedFeaturesModulePiece piece : this.config.placedFeaturesModulePieces) {
+		for(PlacedFeaturesModulePiece piece : this.config.getModulesPieces(ModulePieceType.PLACED_FEATURES)) {
 			piece.getValues(world).forEach(v -> v.generate(world, this, chunkRandom, blockPos));
 		}
-
 		this.subGenerator.generateFeatures(world, chunk, structureAccessor);
 	}
 

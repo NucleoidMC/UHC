@@ -3,7 +3,7 @@
 	"icon": "minecraft:golden_axe",
 	"pieces": [
 		{
-			"type": "uhc:bucket_break",
+			"type": "uhc:traversal_break",
 			"target": {
 				"predicate_type": "minecraft:tag_match",
 				"tag": "minecraft:logs"

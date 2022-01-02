@@ -11,7 +11,6 @@ public record DoubleRange(double min, double max) {
 			Codec.doubleRange(0.0D, Double.MAX_VALUE).fieldOf("max").forGetter(config -> config.max)
 	).apply(instance, DoubleRange::new));
 
-
 	public double random(Random random) {
 		return (random.nextDouble() * (max - min)) + min;
 	}

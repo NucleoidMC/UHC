@@ -7,9 +7,6 @@ import net.minecraft.text.Text;
 import net.minecraft.text.TranslatableText;
 
 public final class TickUtil {
-	private TickUtil() {
-	}
-
 	public static long asSeconds(long t) {
 		return t / 20;
 	}

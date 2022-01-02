@@ -8,19 +8,26 @@ import net.minecraft.world.StructureWorldAccess;
 import net.minecraft.world.gen.feature.PlacedFeature;
 
 import java.util.List;
+import java.util.Objects;
 
-public record PlacedFeaturesModulePiece(List<Identifier> values) implements ModulePiece {
+public class PlacedFeaturesModulePiece extends ModulePiece {
 	public static final Codec<PlacedFeaturesModulePiece> CODEC = RecordCodecBuilder.create(instance -> instance.group(
 			Identifier.CODEC.listOf().fieldOf("values").forGetter(module -> module.values)
 	).apply(instance, PlacedFeaturesModulePiece::new));
 
+	private final List<Identifier> values;
+
+	private PlacedFeaturesModulePiece(List<Identifier> values) {
+		this.values = values;
+	}
+
 	@Override
-	public Codec<? extends ModulePiece> getCodec() {
-		return CODEC;
+	public ModulePieceType<?> getType() {
+		return ModulePieceType.PLACED_FEATURES;
 	}
 
 	public List<PlacedFeature> getValues(StructureWorldAccess world) {
-		var registry = world.getRegistryManager().get(Registry.PLACED_FEATURE_KEY);
-		return values.stream().map(registry::get).toList();
+		Registry<PlacedFeature> registry = world.getRegistryManager().get(Registry.PLACED_FEATURE_KEY);
+		return values.stream().map(registry::get).filter(Objects::nonNull).toList();
 	}
 }

@@ -1,7 +1,7 @@
 package com.hugman.uhc.command;
 
 import com.hugman.uhc.config.UHCConfig;
-import com.hugman.uhc.module.UHCModule;
+import com.hugman.uhc.module.Module;
 import com.mojang.brigadier.Command;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.context.CommandContext;
@@ -12,7 +12,6 @@ import eu.pb4.sgui.api.gui.SimpleGui;
 import net.minecraft.screen.ScreenHandlerType;
 import net.minecraft.server.command.CommandManager;
 import net.minecraft.server.command.ServerCommandSource;
-import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.LiteralText;
 import net.minecraft.text.Style;
 import net.minecraft.text.TranslatableText;
@@ -46,12 +45,12 @@ public class ModulesCommand {
 
 	private static int displayModules(CommandContext<ServerCommandSource> context) throws CommandSyntaxException {
 		ServerCommandSource source = context.getSource();
-		List<UHCModule> modules = ((UHCConfig) Objects.requireNonNull(GameSpaceManager.get().byWorld(source.getWorld())).getMetadata().sourceConfig().config()).modules();
+		List<Module> modules = ((UHCConfig) Objects.requireNonNull(GameSpaceManager.get().byWorld(source.getWorld())).getMetadata().sourceConfig().config()).modules();
 		if(!modules.isEmpty()) {
 			ScreenHandlerType<?> type = Registry.SCREEN_HANDLER.get(new Identifier("generic_9x" + MathHelper.clamp(1, MathHelper.ceil((float) modules.size() / 9), 6)));
 			SimpleGui gui = new SimpleGui(type, source.getPlayer(), false);
 			gui.setTitle(new TranslatableText("ui.uhc.modules.title"));
-			for(UHCModule module : modules) {
+			for(Module module : modules) {
 				GuiElementBuilder elementBuilder = new GuiElementBuilder(module.icon())
 						.setName(new TranslatableText(module.translation()).formatted(Formatting.BOLD).setStyle(Style.EMPTY.withColor(module.color())))
 						.hideFlags();

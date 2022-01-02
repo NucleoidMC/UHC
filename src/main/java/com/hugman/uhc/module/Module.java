@@ -3,8 +3,8 @@ package com.hugman.uhc.module;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
 import com.hugman.uhc.UHC;
+import com.hugman.uhc.UHCRegistries;
 import com.hugman.uhc.module.piece.ModulePiece;
-import com.hugman.uhc.module.piece.ModulePieces;
 import com.mojang.datafixers.util.Either;
 import com.mojang.datafixers.util.Pair;
 import com.mojang.serialization.Codec;
@@ -21,9 +21,7 @@ import net.minecraft.resource.ResourceType;
 import net.minecraft.text.TextColor;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
-import org.jetbrains.annotations.Nullable;
 import xyz.nucleoid.codecs.MoreCodecs;
-import xyz.nucleoid.plasmid.registry.TinyRegistry;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -33,18 +31,15 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 
-public record UHCModule(String translation, Optional<Either<String, List<String>>> description, Item icon, TextColor color, List<ModulePiece> pieces) {
-	public static final Codec<UHCModule> CODEC = RecordCodecBuilder.create(instance -> instance.group(
-			Codec.STRING.fieldOf("translation").forGetter(UHCModule::translation),
-			Codec.either(Codec.STRING, Codec.STRING.listOf()).optionalFieldOf("description").forGetter(UHCModule::description),
-			Registry.ITEM.getCodec().optionalFieldOf("icon", Items.BARRIER).forGetter(UHCModule::icon),
-			MoreCodecs.TEXT_COLOR.optionalFieldOf("color", TextColor.parse("#39db7f")).forGetter(UHCModule::color),
-			ModulePieces.CODEC.listOf().fieldOf("pieces").forGetter(UHCModule::pieces)
-	).apply(instance, UHCModule::new));
-
-	public static final TinyRegistry<UHCModule> REGISTRY = TinyRegistry.create();
+public record Module(String translation, Optional<Either<String, List<String>>> description, Item icon, TextColor color, List<ModulePiece> pieces) {
+	public static final Codec<Module> CODEC = RecordCodecBuilder.create(instance -> instance.group(
+			Codec.STRING.fieldOf("translation").forGetter(Module::translation),
+			Codec.either(Codec.STRING, Codec.STRING.listOf()).optionalFieldOf("description").forGetter(Module::description),
+			Registry.ITEM.getCodec().optionalFieldOf("icon", Items.BARRIER).forGetter(Module::icon),
+			MoreCodecs.TEXT_COLOR.optionalFieldOf("color", TextColor.parse("#39db7f")).forGetter(Module::color),
+			ModulePiece.TYPE_CODEC.listOf().fieldOf("pieces").forGetter(Module::pieces)
+	).apply(instance, Module::new));
 
 	public static void register() {
 		ResourceManagerHelper serverData = ResourceManagerHelper.get(ResourceType.SERVER_DATA);
@@ -57,7 +52,7 @@ public record UHCModule(String translation, Optional<Either<String, List<String>
 
 			@Override
 			public void reload(ResourceManager manager) {
-				REGISTRY.clear();
+				UHCRegistries.MODULES.clear();
 
 				Collection<Identifier> resources = manager.findResources("uhc_modules", path -> path.endsWith(".json"));
 
@@ -69,13 +64,12 @@ public record UHCModule(String translation, Optional<Either<String, List<String>
 
 							Identifier identifier = identifierFromPath(path);
 
-							DataResult<UHCModule> result = UHCModule.CODEC.decode(JsonOps.INSTANCE, json).map(Pair::getFirst);
+							DataResult<Module> result = Module.CODEC.decode(JsonOps.INSTANCE, json).map(Pair::getFirst);
 
-							result.result().ifPresent(module -> REGISTRY.register(identifier, module));
+							result.result().ifPresent(module -> UHCRegistries.MODULES.register(identifier, module));
 							result.error().ifPresent(error -> UHC.LOGGER.error("Failed to decode UHC module at {}: {}", path, error.toString()));
 						}
-					}
-					catch(IOException e) {
+					} catch(IOException e) {
 						UHC.LOGGER.error("Failed to read UHC module at {}", path, e);
 					}
 				}
@@ -83,10 +77,10 @@ public record UHCModule(String translation, Optional<Either<String, List<String>
 		});
 	}
 
-	private static Identifier identifierFromPath(Identifier location) {
-		String path = location.getPath();
+	private static Identifier identifierFromPath(Identifier id) {
+		String path = id.getPath();
 		path = path.substring("uhc_modules/".length(), path.length() - ".json".length());
-		return new Identifier(location.getNamespace(), path);
+		return new Identifier(id.getNamespace(), path);
 	}
 
 	public List<String> getDescriptionLines() {

@@ -22,7 +22,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 
-public record BlockLootModulePiece(boolean replace, RuleTest predicate, Identifier lootTable, int experience) implements ModulePiece {
+public class BlockLootModulePiece extends ModulePiece {
 	public static final Codec<BlockLootModulePiece> CODEC = RecordCodecBuilder.create(instance -> instance.group(
 			Codec.BOOL.optionalFieldOf("replace", true).forGetter(module -> module.replace),
 			RuleTest.TYPE_CODEC.fieldOf("target").forGetter(module -> module.predicate),
@@ -30,9 +30,21 @@ public record BlockLootModulePiece(boolean replace, RuleTest predicate, Identifi
 			Codec.intRange(0, Integer.MAX_VALUE).optionalFieldOf("experience", 0).forGetter(module -> module.experience)
 	).apply(instance, BlockLootModulePiece::new));
 
+	private final boolean replace;
+	private final RuleTest predicate;
+	private final Identifier lootTable;
+	private final int experience;
+
+	private BlockLootModulePiece(boolean replace, RuleTest predicate, Identifier lootTable, int experience) {
+		this.replace = replace;
+		this.predicate = predicate;
+		this.lootTable = lootTable;
+		this.experience = experience;
+	}
+
 	@Override
-	public Codec<? extends ModulePiece> getCodec() {
-		return CODEC;
+	public ModulePieceType<?> getType() {
+		return ModulePieceType.BLOCK_LOOT;
 	}
 
 	public boolean test(BlockState state, Random random) {
@@ -60,5 +72,9 @@ public record BlockLootModulePiece(boolean replace, RuleTest predicate, Identifi
 			stacks = lootTable.generateLoot(lootContext);
 		}
 		return stacks;
+	}
+
+	public boolean shouldReplace() {
+		return replace;
 	}
 }
