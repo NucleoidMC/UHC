@@ -1,7 +1,6 @@
 {
 	"command.uhc.modules.no_modules_activated": "This game has no modules activated!",
-	"game.uhc": "UHC",
-	"game.uhc.uhc": "UHC",
+	"gameType.uhc.uhc": "UHC",
 	"game.uhc.vanilla.duos": "UHC: Vanilla (Duos)",
 	"game.uhc.vanilla.solo": "UHC: Vanilla (Solo)",
 	"game.uhc.vanilla.squads": "UHC: Vanilla (Squads)",
