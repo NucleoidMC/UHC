@@ -2,9 +2,10 @@ package com.hugman.uhc;
 
 import com.hugman.uhc.module.Module;
 import com.hugman.uhc.module.piece.ModulePieceType;
-import xyz.nucleoid.plasmid.registry.TinyRegistry;
+import net.fabricmc.fabric.api.event.registry.FabricRegistryBuilder;
+import net.minecraft.util.registry.SimpleRegistry;
 
 public class UHCRegistries {
-	public static final TinyRegistry<Module> MODULES = TinyRegistry.create();
-	public static final TinyRegistry<ModulePieceType<?>> MODULE_PIECE_TYPES = TinyRegistry.create();
+	public static final SimpleRegistry<Module> MODULE = FabricRegistryBuilder.createSimple(Module.class, UHC.id("uhc/module")).buildAndRegister();
+	public static final SimpleRegistry<ModulePieceType> MODULE_PIECE_TYPE = FabricRegistryBuilder.createSimple(ModulePieceType.class, UHC.id("uhc/module_type")).buildAndRegister();
 }

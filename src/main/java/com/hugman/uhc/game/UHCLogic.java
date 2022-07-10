@@ -8,7 +8,7 @@ public class UHCLogic {
 
 	public UHCLogic(UHCConfig config, int playerAmount) {
 		this.config = config;
-		this.playerDose = (playerAmount - (float) config.playerConfig().minPlayers()) / ((float) config.playerConfig().maxPlayers() - (float) config.playerConfig().minPlayers());
+		this.playerDose = (playerAmount - (float) config.players().minPlayers()) / ((float) config.players().maxPlayers() - (float) config.players().minPlayers());
 	}
 
 	public double getStartMapSize() {
@@ -20,19 +20,19 @@ public class UHCLogic {
 	}
 
 	public long getInCagesTime() {
-		return (long) (config.timeConfig().inCagesTime().crossProduct(playerDose) * 20L);
+		return (long) (config.chapterConfig().inCagesTime().crossProduct(playerDose) * 20L);
 	}
 
 	public long getInvulnerabilityTime() {
-		return (long) (config.timeConfig().invulnerabilityTime().crossProduct(playerDose) * 20L);
+		return (long) (config.chapterConfig().invulnerabilityTime().crossProduct(playerDose) * 20L);
 	}
 
 	public long getWarmupTime() {
-		return (long) (config.timeConfig().warmupTime().crossProduct(playerDose) * 20L);
+		return (long) (config.chapterConfig().warmupTime().crossProduct(playerDose) * 20L);
 	}
 
 	public long getDeathmatchTime() {
-		return (long) (config.timeConfig().deathmatchTime().crossProduct(playerDose) * 20L);
+		return (long) (config.chapterConfig().deathmatchTime().crossProduct(playerDose) * 20L);
 	}
 
 	public long getShrinkingTime() {

@@ -12,8 +12,7 @@ import net.minecraft.loot.context.LootContext;
 import net.minecraft.loot.context.LootContextParameters;
 import net.minecraft.loot.context.LootContextTypes;
 import net.minecraft.server.world.ServerWorld;
-import net.minecraft.tag.ServerTagManagerHolder;
-import net.minecraft.tag.Tag;
+import net.minecraft.tag.TagKey;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
 
@@ -21,20 +20,20 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
-public class EntityLootModulePiece extends ModulePiece {
+public class EntityLootModulePiece implements ModulePiece {
 	public static final Codec<EntityLootModulePiece> CODEC = RecordCodecBuilder.create(instance -> instance.group(
 			Codec.BOOL.optionalFieldOf("replace", true).forGetter(module -> module.replace),
-			Tag.codec(() -> ServerTagManagerHolder.getTagManager().getOrCreateTagGroup(Registry.ENTITY_TYPE_KEY)).optionalFieldOf("tag").forGetter(module -> module.tag),
+			TagKey.stringCodec(Registry.ENTITY_TYPE_KEY).optionalFieldOf("tag").forGetter(module -> module.tag),
 			Registry.ENTITY_TYPE.getCodec().optionalFieldOf("entity").forGetter(module -> module.entity),
 			Identifier.CODEC.optionalFieldOf("loot_table", LootTables.EMPTY).forGetter(module -> module.lootTable)
 	).apply(instance, EntityLootModulePiece::new));
 
 	private final boolean replace;
-	private final Optional<Tag<EntityType<?>>> tag;
+	private final Optional<TagKey<EntityType<?>>> tag;
 	private final Optional<EntityType<?>> entity;
 	private final Identifier lootTable;
 
-	private EntityLootModulePiece(boolean replace, Optional<Tag<EntityType<?>>> tag, Optional<EntityType<?>> entity, Identifier lootTable) {
+	private EntityLootModulePiece(boolean replace, Optional<TagKey<EntityType<?>>> tag, Optional<EntityType<?>> entity, Identifier lootTable) {
 		this.replace = replace;
 		this.tag = tag;
 		this.entity = entity;
@@ -48,14 +47,13 @@ public class EntityLootModulePiece extends ModulePiece {
 
 	public boolean test(LivingEntity livingEntity) {
 		boolean valid = false;
-		if(tag.isPresent()) {
-			Tag<EntityType<?>> entityTypeTag = tag.get();
-			if(entityTypeTag.contains(livingEntity.getType())) {
+		if(this.tag.isPresent()) {
+			if(livingEntity.getType().isIn(this.tag.get())) {
 				valid = true;
 			}
 		}
-		else if(entity.isPresent()) {
-			EntityType<?> entityType = entity.get();
+		else if(this.entity.isPresent()) {
+			EntityType<?> entityType = this.entity.get();
 			if(entityType.equals(livingEntity.getType())) {
 				valid = true;
 			}

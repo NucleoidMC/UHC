@@ -1,33 +1,25 @@
 package com.hugman.uhc.module.piece;
 
 import com.mojang.serialization.Codec;
-import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.registry.Registry;
+import net.minecraft.util.dynamic.Codecs;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.registry.RegistryEntryList;
 import net.minecraft.world.StructureWorldAccess;
+import net.minecraft.world.gen.chunk.ChunkGenerator;
 import net.minecraft.world.gen.feature.PlacedFeature;
 
-import java.util.List;
-import java.util.Objects;
+import java.util.Random;
 
-public class PlacedFeaturesModulePiece extends ModulePiece {
-	public static final Codec<PlacedFeaturesModulePiece> CODEC = RecordCodecBuilder.create(instance -> instance.group(
-			Identifier.CODEC.listOf().fieldOf("values").forGetter(module -> module.values)
-	).apply(instance, PlacedFeaturesModulePiece::new));
-
-	private final List<Identifier> values;
-
-	private PlacedFeaturesModulePiece(List<Identifier> values) {
-		this.values = values;
-	}
+public record PlacedFeaturesModulePiece(RegistryEntryList<PlacedFeature> features) implements ModulePiece {
+	public static final Codec<PlacedFeaturesModulePiece> CODEC = PlacedFeature.LIST_CODEC.optionalFieldOf("features", RegistryEntryList.of()).xmap(PlacedFeaturesModulePiece::new, config -> config.features).codec();
 
 	@Override
 	public ModulePieceType<?> getType() {
 		return ModulePieceType.PLACED_FEATURES;
 	}
 
-	public List<PlacedFeature> getValues(StructureWorldAccess world) {
-		Registry<PlacedFeature> registry = world.getRegistryManager().get(Registry.PLACED_FEATURE_KEY);
-		return values.stream().map(registry::get).filter(Objects::nonNull).toList();
+	public void generate(StructureWorldAccess world, ChunkGenerator generator, Random random, BlockPos pos) {
+		this.features().stream().forEach(entry -> entry.value().generate(world, generator, random, pos));
 	}
 }

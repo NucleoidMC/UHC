@@ -8,6 +8,7 @@ import com.hugman.uhc.game.UHCParticipant;
 import com.hugman.uhc.game.UHCSideBar;
 import com.hugman.uhc.game.UHCSpawner;
 import com.hugman.uhc.map.UHCMap;
+import com.hugman.uhc.module.Module;
 import com.hugman.uhc.module.piece.BlockLootModulePiece;
 import com.hugman.uhc.module.piece.EntityLootModulePiece;
 import com.hugman.uhc.module.piece.ModulePieceType;
@@ -368,13 +369,13 @@ public class UHCActive {
 	}
 
 	public void refreshPlayerAttributes(ServerPlayerEntity player) {
-		for(PlayerAttributeModulePiece piece : this.config.getModulesPieces(ModulePieceType.PLAYER_ATTRIBUTE)) {
+		for(PlayerAttributeModulePiece piece : this.config.getModulesPieces(this.world, ModulePieceType.PLAYER_ATTRIBUTE)) {
 			piece.setAttribute(player);
 		}
 	}
 
 	public void applyPlayerEffects(ServerPlayerEntity player, int effectDuration) {
-		for(PermanentEffectModulePiece piece : this.config.getModulesPieces(ModulePieceType.PERMANENT_EFFECT)) {
+		for(PermanentEffectModulePiece piece : this.config.getModulesPieces(this.world, ModulePieceType.PERMANENT_EFFECT)) {
 			piece.setEffect(player, effectDuration);
 		}
 	}
@@ -486,9 +487,10 @@ public class UHCActive {
 	}
 
 	public void sendModuleListToChat() {
-		if(!this.config.modules().isEmpty()) {
+		List<Module> modules = this.config.getModules(this.world);
+		if(!modules.isEmpty()) {
 			MutableText text = new LiteralText("\n").append(new TranslatableText("text.uhc.modules_enabled").formatted(Formatting.GOLD));
-			this.config.modules().forEach(module -> {
+			modules.forEach(module -> {
 				MutableText descriptionLines = new LiteralText("");
 				module.getDescriptionLines().forEach(s -> descriptionLines.append(new TranslatableText(s)));
 				Style style = Style.EMPTY.withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, descriptionLines)).withColor(module.color());
@@ -511,7 +513,7 @@ public class UHCActive {
 	}
 
 	private ActionResult onBlockBroken(ServerPlayerEntity playerEntity, ServerWorld world, BlockPos pos) {
-		for(TraversalBreakModulePiece piece : this.config.getModulesPieces(ModulePieceType.TRAVERSAL_BREAK)) {
+		for(TraversalBreakModulePiece piece : this.config.getModulesPieces(this.world, ModulePieceType.TRAVERSAL_BREAK)) {
 			piece.breakBlock(this.world, playerEntity, pos);
 		}
 		return ActionResult.SUCCESS;
@@ -519,7 +521,7 @@ public class UHCActive {
 
 	private void onExplosion(Explosion explosion, boolean b) {
 		explosion.getAffectedBlocks().forEach(pos -> {
-			for(TraversalBreakModulePiece piece : this.config.getModulesPieces(ModulePieceType.TRAVERSAL_BREAK)) {
+			for(TraversalBreakModulePiece piece : this.config.getModulesPieces(this.world, ModulePieceType.TRAVERSAL_BREAK)) {
 				piece.breakBlock(this.world, explosion.getCausingEntity(), pos);
 			}
 		});
@@ -528,7 +530,7 @@ public class UHCActive {
 	private TypedActionResult<List<ItemStack>> onMobLoot(LivingEntity livingEntity, List<ItemStack> itemStacks) {
 		boolean keepOld = true;
 		List<ItemStack> stacks = new ArrayList<>();
-		for(EntityLootModulePiece piece : this.config.getModulesPieces(ModulePieceType.ENTITY_LOOT)) {
+		for(EntityLootModulePiece piece : this.config.getModulesPieces(this.world, ModulePieceType.ENTITY_LOOT)) {
 			if(piece.test(livingEntity)) {
 				stacks.addAll(piece.getLoots(this.world, livingEntity));
 				if(piece.shouldReplace()) keepOld = false;
@@ -541,7 +543,7 @@ public class UHCActive {
 	private TypedActionResult<List<ItemStack>> onBlockDrop(@Nullable Entity entity, ServerWorld world, BlockPos pos, BlockState state, List<ItemStack> itemStacks) {
 		boolean keepOld = true;
 		List<ItemStack> stacks = new ArrayList<>();
-		for(BlockLootModulePiece piece : this.config.getModulesPieces(ModulePieceType.BLOCK_LOOT)) {
+		for(BlockLootModulePiece piece : this.config.getModulesPieces(this.world, ModulePieceType.BLOCK_LOOT)) {
 			if(piece.test(state, world.getRandom())) {
 				piece.spawnExperience(world, pos);
 				stacks.addAll(piece.getLoots(world, pos, entity, entity instanceof LivingEntity ? ((LivingEntity) entity).getActiveItem() : ItemStack.EMPTY));

@@ -9,6 +9,7 @@ import com.hugman.uhc.module.piece.ModulePieceType;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.command.v1.CommandRegistrationCallback;
 import net.minecraft.util.Identifier;
+import net.minecraft.world.gen.YOffset;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import xyz.nucleoid.plasmid.game.GameType;
@@ -22,7 +23,7 @@ public class UHC implements ModInitializer {
 
 	@Override
 	public void onInitialize() {
-		Module.register();
+		Reflection.initialize(Module.class);
 		Reflection.initialize(ModulePieceType.class);
 		CommandRegistrationCallback.EVENT.register((dispatcher, dedicated) -> ModulesCommand.register(dispatcher));
 		GameType.register(UHC.id("uhc"), UHCConfig.CODEC, UHCWaiting::open);

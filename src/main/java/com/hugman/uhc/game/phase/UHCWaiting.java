@@ -37,7 +37,7 @@ public record UHCWaiting(GameSpace gameSpace, ServerWorld world, UHCMap map, UHC
 				.setDimensionType(RegistryKey.of(Registry.DIMENSION_TYPE_KEY, context.config().mapConfig().dimension()));
 
 		return context.openWithWorld(worldConfig, (activity, world) -> {
-			GameWaitingLobby.addTo(activity, context.config().playerConfig());
+			GameWaitingLobby.addTo(activity, context.config().players());
 			TeamManager teamManager = TeamManager.addTo(activity);
 
 			UHCWaiting waiting = new UHCWaiting(activity.getGameSpace(), world, map, context.config(), teamManager);

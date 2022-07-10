@@ -1,0 +1,9 @@
+{
+  "required": true,
+  "package": "com.hugman.uhc.mixin",
+  "compatibilityLevel": "JAVA_17",
+  "mixins": ["DynamicRegistryManagerMixin"],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

@@ -19,6 +19,8 @@ import net.minecraft.util.Formatting;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.registry.Registry;
+import net.minecraft.util.registry.RegistryEntry;
+import net.minecraft.util.registry.RegistryEntryList;
 import xyz.nucleoid.plasmid.game.manager.GameSpaceManager;
 import xyz.nucleoid.plasmid.game.manager.ManagedGameSpace;
 
@@ -45,11 +47,12 @@ public class ModulesCommand {
 
 	private static int displayModules(CommandContext<ServerCommandSource> context) throws CommandSyntaxException {
 		ServerCommandSource source = context.getSource();
-		List<Module> modules = ((UHCConfig) Objects.requireNonNull(GameSpaceManager.get().byWorld(source.getWorld())).getMetadata().sourceConfig().config()).modules();
-		if(!modules.isEmpty()) {
+		List<Module> modules = ((UHCConfig) Objects.requireNonNull(GameSpaceManager.get().byWorld(source.getWorld())).getMetadata().sourceConfig().config()).getModules(source.getWorld());
+		if(modules.size() != 0) {
 			ScreenHandlerType<?> type = Registry.SCREEN_HANDLER.get(new Identifier("generic_9x" + MathHelper.clamp(1, MathHelper.ceil((float) modules.size() / 9), 6)));
 			SimpleGui gui = new SimpleGui(type, source.getPlayer(), false);
 			gui.setTitle(new TranslatableText("ui.uhc.modules.title"));
+			int i = 0;
 			for(Module module : modules) {
 				GuiElementBuilder elementBuilder = new GuiElementBuilder(module.icon())
 						.setName(new TranslatableText(module.translation()).formatted(Formatting.BOLD).setStyle(Style.EMPTY.withColor(module.color())))
@@ -57,7 +60,7 @@ public class ModulesCommand {
 				for(String s : module.getDescriptionLines()) {
 					elementBuilder.addLoreLine(new LiteralText("- ").append(new TranslatableText(s)).formatted(Formatting.GRAY));
 				}
-				gui.setSlot(modules.indexOf(module), elementBuilder);
+				gui.setSlot(i++, elementBuilder);
 			}
 			gui.open();
 			return Command.SINGLE_SUCCESS;

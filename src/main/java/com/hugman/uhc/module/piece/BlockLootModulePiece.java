@@ -22,7 +22,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 
-public class BlockLootModulePiece extends ModulePiece {
+public class BlockLootModulePiece implements ModulePiece {
 	public static final Codec<BlockLootModulePiece> CODEC = RecordCodecBuilder.create(instance -> instance.group(
 			Codec.BOOL.optionalFieldOf("replace", true).forGetter(module -> module.replace),
 			RuleTest.TYPE_CODEC.fieldOf("target").forGetter(module -> module.predicate),

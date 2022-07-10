@@ -4,6 +4,7 @@ import com.hugman.uhc.UHC;
 import com.hugman.uhc.UHCRegistries;
 import com.mojang.serialization.Codec;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.registry.Registry;
 
 public record ModulePieceType<T extends ModulePiece>(Codec<T> codec) {
 	public static final ModulePieceType<BlockLootModulePiece> BLOCK_LOOT = register("block_loot", BlockLootModulePiece.CODEC);
@@ -18,8 +19,6 @@ public record ModulePieceType<T extends ModulePiece>(Codec<T> codec) {
 	}
 
 	public static <T extends ModulePiece> ModulePieceType<T> register(Identifier identifier, Codec<T> codec) {
-		ModulePieceType<T> type = new ModulePieceType<T>(codec);
-		UHCRegistries.MODULE_PIECE_TYPES.register(identifier, type);
-		return type;
+		return Registry.register(UHCRegistries.MODULE_PIECE_TYPE, identifier, new ModulePieceType<T>(codec));
 	}
 }

@@ -8,7 +8,7 @@ import net.minecraft.network.packet.s2c.play.EntityAttributesS2CPacket;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.registry.Registry;
 
-public class PlayerAttributeModulePiece extends ModulePiece {
+public class PlayerAttributeModulePiece implements ModulePiece {
 	public static final Codec<PlayerAttributeModulePiece> CODEC = RecordCodecBuilder.create(instance -> instance.group(
 			Registry.ATTRIBUTE.getCodec().fieldOf("attribute").forGetter(module -> module.attribute),
 			Codec.doubleRange(0.0F, Double.MAX_VALUE).fieldOf("value").forGetter(module -> module.value)

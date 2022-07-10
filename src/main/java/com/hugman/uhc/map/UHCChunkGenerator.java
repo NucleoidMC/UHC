@@ -1,11 +1,13 @@
 package com.hugman.uhc.map;
 
+import com.hugman.uhc.UHC;
 import com.hugman.uhc.config.UHCConfig;
 import com.hugman.uhc.module.piece.ModulePieceType;
 import com.hugman.uhc.module.piece.PlacedFeaturesModulePiece;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
+import net.minecraft.util.math.ChunkSectionPos;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.world.ChunkRegion;
 import net.minecraft.world.HeightLimitView;
@@ -67,14 +69,13 @@ public class UHCChunkGenerator extends GameChunkGenerator {
 
 	@Override
 	public void generateFeatures(StructureWorldAccess world, Chunk chunk, StructureAccessor structureAccessor) {
-		ChunkPos chunkPos = chunk.getPos();
-		int i = chunkPos.getStartX();
-		int j = chunkPos.getStartZ();
-		BlockPos blockPos = new BlockPos(i, chunk.getBottomY(), j);
+		BlockPos blockPos = ChunkSectionPos.from(chunk.getPos(), world.getBottomSectionCoord()).getMinPos();
+
 		ChunkRandom chunkRandom = new ChunkRandom(new Xoroshiro128PlusPlusRandom(this.seed));
-		chunkRandom.setPopulationSeed(world.getSeed(), i, j);
-		for(PlacedFeaturesModulePiece piece : this.config.getModulesPieces(ModulePieceType.PLACED_FEATURES)) {
-			piece.getValues(world).forEach(v -> v.generate(world, this, chunkRandom, blockPos));
+		chunkRandom.setPopulationSeed(world.getSeed(), blockPos.getX(), blockPos.getZ());
+
+		for(PlacedFeaturesModulePiece piece : this.config.getModulesPieces(world, ModulePieceType.PLACED_FEATURES)) {
+			piece.generate(world, this, chunkRandom, blockPos);
 		}
 		this.subGenerator.generateFeatures(world, chunk, structureAccessor);
 	}

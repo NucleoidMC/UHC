@@ -1,73 +1,76 @@
 package com.hugman.uhc.config;
 
+import com.hugman.uhc.UHC;
 import com.hugman.uhc.UHCRegistries;
 import com.hugman.uhc.module.Module;
 import com.hugman.uhc.module.piece.ModulePiece;
 import com.hugman.uhc.module.piece.ModulePieceType;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import net.minecraft.server.world.ServerWorld;
+import net.minecraft.util.Identifier;
+import net.minecraft.util.registry.*;
+import net.minecraft.world.RegistryWorldView;
 import xyz.nucleoid.plasmid.game.common.config.PlayerConfig;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
-public class UHCConfig {
+public record UHCConfig(PlayerConfig players, int teamSize, UHCMapConfig mapConfig, UHCChapterConfig chapterConfig, List<Identifier> moduleIds) {
 	public static final Codec<UHCConfig> CODEC = RecordCodecBuilder.create(instance -> instance.group(
-					PlayerConfig.CODEC.fieldOf("players").forGetter(UHCConfig::playerConfig),
-					Codec.INT.fieldOf("team_size").forGetter(UHCConfig::teamSize),
-					UHCMapConfig.CODEC.fieldOf("map").forGetter(UHCConfig::mapConfig),
-					UHCChapterConfig.CODEC.fieldOf("chapters").forGetter(UHCConfig::timeConfig),
-					UHCRegistries.MODULES.listOf().optionalFieldOf("modules", Collections.emptyList()).forGetter(UHCConfig::modules))
-			.apply(instance, UHCConfig::new));
-	private final PlayerConfig playerConfig;
-	private final int teamSize;
-	private final UHCMapConfig mapConfig;
-	private final UHCChapterConfig timeConfig;
-	private final List<Module> modules;
+			PlayerConfig.CODEC.fieldOf("players").forGetter(UHCConfig::players),
+			Codec.INT.fieldOf("team_size").forGetter(UHCConfig::teamSize),
+			UHCMapConfig.CODEC.fieldOf("map").forGetter(UHCConfig::mapConfig),
+			UHCChapterConfig.CODEC.fieldOf("chapters").forGetter(UHCConfig::chapterConfig),
+			Identifier.CODEC.listOf().fieldOf("modules").orElse(List.of()).forGetter(UHCConfig::moduleIds)
+			// NOTE: we cannot use Module.REGISTRY_LIST_CODEC as Plasmid
+			// loads the game configs before all the other dynamic registries
+			// we need to work around this and use raw identifiers there
+	).apply(instance, UHCConfig::new));
 
-	private final Map<ModulePieceType<?>, List<ModulePiece>> modulePieces;
+	public List<Module> getModules(RegistryWorldView world) {
+		return getModules(world.getRegistryManager());
+	}
 
-	public UHCConfig(PlayerConfig players, int teamSize, UHCMapConfig mapConfig, UHCChapterConfig timeConfig, List<Module> modules) {
-		this.playerConfig = players;
-		this.teamSize = teamSize;
-		this.mapConfig = mapConfig;
-		this.timeConfig = timeConfig;
-		this.modules = modules;
-
-		this.modulePieces = new HashMap<>();
-		for(Module module : modules) {
-			for(ModulePiece modulePiece : module.pieces()) {
-				if(!modulePieces.containsKey(modulePiece.getType())) modulePieces.put(modulePiece.getType(), new ArrayList<>());
-				modulePieces.get(modulePiece.getType()).add(modulePiece);
+	public List<Module> getModules(DynamicRegistryManager registryManager) {
+		List<Module> modules = new ArrayList<>();
+		if(!this.moduleIds.isEmpty()) {
+			Registry<Module> registry = registryManager.get(UHCRegistries.MODULE.getKey());
+			for(Identifier moduleId : this.moduleIds) {
+				Module module = registry.get(moduleId);
+				if(module == null) {
+					UHC.LOGGER.error("Module {} not found", moduleId);
+					continue;
+				}
+				modules.add(module);
 			}
 		}
-	}
-
-	public PlayerConfig playerConfig() {
-		return playerConfig;
-	}
-
-	public int teamSize() {
-		return teamSize;
-	}
-
-	public UHCMapConfig mapConfig() {
-		return mapConfig;
-	}
-
-	public UHCChapterConfig timeConfig() {
-		return timeConfig;
-	}
-
-	public List<Module> modules() {
 		return modules;
 	}
 
-	public <V extends ModulePiece> List<V> getModulesPieces(ModulePieceType<V> pieceType) {
-		if(!modulePieces.containsKey(pieceType)) return Collections.emptyList();
-		return (List<V>) modulePieces.get(pieceType);
+	public List<ModulePiece> getModulesPieces(RegistryWorldView world) {
+		return getModulesPieces(world.getRegistryManager());
+	}
+
+	public List<ModulePiece> getModulesPieces(DynamicRegistryManager registryManager) {
+		List<ModulePiece> modulePieces = new ArrayList<>();
+		if(!this.moduleIds.isEmpty()) {
+			Registry<Module> registry = registryManager.get(UHCRegistries.MODULE.getKey());
+			for(Identifier moduleId : this.moduleIds) {
+				Module module = registry.get(moduleId);
+				if(module == null) {
+					continue;
+				}
+				modulePieces.addAll(module.pieces());
+			}
+		}
+		return modulePieces;
+	}
+
+	public <V extends ModulePiece> List<V> getModulesPieces(RegistryWorldView world, ModulePieceType<V> type) {
+		return getModulesPieces(world.getRegistryManager(), type);
+	}
+
+	public <V extends ModulePiece> List<V> getModulesPieces(DynamicRegistryManager registryManager, ModulePieceType<V> type) {
+		return (List<V>) getModulesPieces(registryManager).stream().filter(piece -> piece.getType().equals(type)).toList();
 	}
 }

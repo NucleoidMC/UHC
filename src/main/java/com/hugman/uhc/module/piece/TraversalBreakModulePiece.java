@@ -13,7 +13,7 @@ import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.Nullable;
 import xyz.nucleoid.plasmid.util.BlockTraversal;
 
-public class TraversalBreakModulePiece extends ModulePiece {
+public class TraversalBreakModulePiece implements ModulePiece {
 	public static final Codec<TraversalBreakModulePiece> CODEC = RecordCodecBuilder.create(instance -> instance.group(
 			RuleTest.TYPE_CODEC.fieldOf("target").forGetter(module -> module.predicate),
 			Codec.intRange(0, Integer.MAX_VALUE).optionalFieldOf("amount", 128).forGetter(module -> module.amount)
