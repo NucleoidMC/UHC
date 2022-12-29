@@ -1,4 +1,4 @@
-package com.hugman.uhc.module.piece;
+package com.hugman.uhc.modifier;
 
 import com.mojang.serialization.Codec;
 import net.minecraft.registry.entry.RegistryEntryList;

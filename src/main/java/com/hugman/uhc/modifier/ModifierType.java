@@ -1,4 +1,4 @@
-package com.hugman.uhc.module.piece;
+package com.hugman.uhc.modifier;
 
 import com.hugman.uhc.UHC;
 import com.hugman.uhc.UHCRegistries;

@@ -2,9 +2,9 @@ package com.hugman.uhc.config;
 
 import com.hugman.uhc.UHC;
 import com.hugman.uhc.UHCRegistries;
+import com.hugman.uhc.modifier.Modifier;
+import com.hugman.uhc.modifier.ModifierType;
 import com.hugman.uhc.module.Module;
-import com.hugman.uhc.module.piece.Modifier;
-import com.hugman.uhc.module.piece.ModifierType;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.util.Identifier;

@@ -1,6 +1,6 @@
 package com.hugman.uhc.module;
 
-import com.hugman.uhc.module.piece.Modifier;
+import com.hugman.uhc.modifier.Modifier;
 import com.mojang.datafixers.util.Either;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;

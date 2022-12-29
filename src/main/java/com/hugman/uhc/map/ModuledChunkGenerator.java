@@ -1,8 +1,8 @@
 package com.hugman.uhc.map;
 
 import com.hugman.uhc.config.UHCConfig;
-import com.hugman.uhc.module.piece.ModifierType;
-import com.hugman.uhc.module.piece.PlacedFeaturesModifier;
+import com.hugman.uhc.modifier.ModifierType;
+import com.hugman.uhc.modifier.PlacedFeaturesModifier;
 import com.mojang.datafixers.util.Pair;
 import net.minecraft.entity.SpawnGroup;
 import net.minecraft.registry.RegistryWrapper;
