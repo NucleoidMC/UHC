@@ -3,8 +3,7 @@ package com.hugman.uhc.game;
 import com.hugman.uhc.util.TickUtil;
 import it.unimi.dsi.fastutil.objects.Object2ObjectMap;
 import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.text.LiteralText;
-import net.minecraft.text.TranslatableText;
+import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 import xyz.nucleoid.plasmid.game.GameSpace;
 import xyz.nucleoid.plasmid.game.common.GlobalWidgets;
@@ -19,13 +18,13 @@ public record UHCSideBar(SidebarWidget sidebarWidget) {
 		sidebarWidget.set(content -> {
 			long count = participantMap.values().stream().filter(participant -> !participant.isEliminated()).count();
 
-			content.add(new LiteralText(""));
-			content.add(new TranslatableText("text.uhc.players", new LiteralText(String.valueOf(count)).formatted(Formatting.GREEN)).formatted(Formatting.WHITE));
+			content.add(Text.literal(""));
+			content.add(Text.translatable("text.uhc.players", Text.literal(String.valueOf(count)).formatted(Formatting.GREEN)).formatted(Formatting.WHITE));
 			//TODO: write kills
-			content.add(new LiteralText(""));
-			content.add(new TranslatableText("text.uhc.world", new LiteralText(worldSize + "x" + worldSize).formatted(Formatting.GREEN)).formatted(Formatting.WHITE));
-			content.add(new LiteralText(""));
-			content.add(new TranslatableText("text.uhc.time", new LiteralText(TickUtil.format(ticks).asString()).formatted(Formatting.GREEN)).formatted(Formatting.WHITE));
+			content.add(Text.literal(""));
+			content.add(Text.translatable("text.uhc.world", Text.literal(worldSize + "x" + worldSize).formatted(Formatting.GREEN)).formatted(Formatting.WHITE));
+			content.add(Text.literal(""));
+			content.add(Text.translatable("text.uhc.time", TickUtil.format(ticks).formatted(Formatting.GREEN)).formatted(Formatting.WHITE));
 		});
 	}
 }

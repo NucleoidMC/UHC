@@ -42,14 +42,14 @@ public class UHCSpawner {
 
 	public void putParticipantInCage(GameTeam team, ServerPlayerEntity participant) {
 		BlockBounds bounds = this.cages.get(team);
-		if(bounds != null) {
+		if (bounds != null) {
 			this.spawnPlayerAt(participant, new BlockPos(bounds.centerBottom()).up());
 		}
 	}
 
 	public void summonCage(GameTeam team, int x, int z) {
 		BlockPos pos = new BlockPos(x, 200, z);
-		if(this.world.isSkyVisible(pos)) {
+		if (this.world.isSkyVisible(pos)) {
 			pos = new BlockPos(x, 200, z);
 		}
 		this.addCageAt(team, pos, Blocks.BARRIER.getDefaultState(), 3, 4);

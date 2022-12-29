@@ -1,24 +1,34 @@
 {
-	"type": "uhc:uhc",
-	"translation": "game.uhc.vanilla.trios",
-	"team_size": 3,
-	"players": {
-		"min": 6,
-		"threshold": 24,
-		"max": 100
-	},
-	"map": {
-		"settings": "minecraft:overworld",
-		"shrinking_speed": 0.5,
-		"start_size": {
-			"min": 400,
-			"max": 10000
-		}
-	},
-	"chapters": {
-		"warmup": {
-			"min": 2700,
-			"max": 4200
-		}
-	}
+  "type": "uhc:uhc",
+  "translation": "game.uhc.vanilla.trios",
+  "team_size": 3,
+  "players": {
+    "min": 6,
+    "threshold": 24,
+    "max": 100
+  },
+  "map": {
+    "dimension": {
+      "type": "minecraft:overworld",
+      "generator": {
+        "type": "minecraft:noise",
+        "settings": "minecraft:overworld",
+        "biome_source": {
+          "type": "minecraft:multi_noise",
+          "preset": "minecraft:overworld"
+        }
+      }
+    },
+    "shrinking_speed": 0.5,
+    "start_size": {
+      "min": 400,
+      "max": 10000
+    }
+  },
+  "chapters": {
+    "warmup": {
+      "min": 2700,
+      "max": 4200
+    }
+  }
 }

@@ -1,16 +1,16 @@
 {
-	"translation": "module.uhcrun.mob_cooked_food",
-	"icon": "minecraft:cooked_beef",
-	"pieces": [
-		{
-			"type": "uhc:entity_loot",
-			"tag": "uhcrun:mob_food/beef",
-			"loot_table": "uhcrun:entities/cooked_food/beef"
-		},
-		{
-			"type": "uhc:entity_loot",
-			"tag": "uhcrun:mob_food/fish",
-			"loot_table": "uhcrun:entities/cooked_food/fish"
-		}
-	]
+  "translation": "module.uhcrun.mob_cooked_food",
+  "icon": "minecraft:cooked_beef",
+  "modifiers": [
+    {
+      "type": "uhc:entity_loot",
+      "tag": "uhcrun:mob_food/beef",
+      "loot_table": "uhcrun:entities/cooked_food/beef"
+    },
+    {
+      "type": "uhc:entity_loot",
+      "tag": "uhcrun:mob_food/fish",
+      "loot_table": "uhcrun:entities/cooked_food/fish"
+    }
+  ]
 }

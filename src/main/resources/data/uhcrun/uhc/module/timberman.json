@@ -1,21 +1,21 @@
 {
-	"translation": "module.uhcrun.timberman",
-	"icon": "minecraft:golden_axe",
-	"pieces": [
-		{
-			"type": "uhc:traversal_break",
-			"target": {
-				"predicate_type": "minecraft:tag_match",
-				"tag": "minecraft:logs"
-			}
-		},
-		{
-			"type": "uhc:block_loot",
-			"target": {
-				"predicate_type": "minecraft:tag_match",
-				"tag": "minecraft:logs"
-			},
-			"loot_table": "uhcrun:blocks/logs"
-		}
-	]
+  "translation": "module.uhcrun.timberman",
+  "icon": "minecraft:golden_axe",
+  "modifiers": [
+    {
+      "type": "uhc:traversal_break",
+      "target": {
+        "predicate_type": "minecraft:tag_match",
+        "tag": "minecraft:logs"
+      }
+    },
+    {
+      "type": "uhc:block_loot",
+      "target": {
+        "predicate_type": "minecraft:tag_match",
+        "tag": "minecraft:logs"
+      },
+      "loot_table": "uhcrun:blocks/logs"
+    }
+  ]
 }

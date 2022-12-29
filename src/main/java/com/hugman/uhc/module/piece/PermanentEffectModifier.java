@@ -4,18 +4,18 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.entity.effect.StatusEffect;
 import net.minecraft.entity.effect.StatusEffectInstance;
+import net.minecraft.registry.Registries;
 import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.util.registry.Registry;
 
-public record PermanentEffectModulePiece(StatusEffect effect, int amplifier) implements ModulePiece {
-	public static final Codec<PermanentEffectModulePiece> CODEC = RecordCodecBuilder.create(instance -> instance.group(
-			Registry.STATUS_EFFECT.getCodec().fieldOf("effect").forGetter(module -> module.effect),
+public record PermanentEffectModifier(StatusEffect effect, int amplifier) implements Modifier {
+	public static final Codec<PermanentEffectModifier> CODEC = RecordCodecBuilder.create(instance -> instance.group(
+			Registries.STATUS_EFFECT.getCodec().fieldOf("effect").forGetter(module -> module.effect),
 			Codec.intRange(0, Integer.MAX_VALUE).optionalFieldOf("amplifier", 0).forGetter(module -> module.amplifier)
-	).apply(instance, PermanentEffectModulePiece::new));
+	).apply(instance, PermanentEffectModifier::new));
 
 	@Override
-	public ModulePieceType<?> getType() {
-		return ModulePieceType.PERMANENT_EFFECT;
+	public ModifierType<?> getType() {
+		return ModifierType.PERMANENT_EFFECT;
 	}
 
 	public void setEffect(ServerPlayerEntity player, int effectDuration) {

@@ -1,12 +1,12 @@
 {
-	"replace": false,
-	"values": [
-		"minecraft:cow",
-		"minecraft:hoglin",
-		"minecraft:mooshroom",
-		"minecraft:polar_bear",
-		"minecraft:panda",
-		"minecraft:horse",
-		"minecraft:mule"
-	]
+  "replace": false,
+  "values": [
+    "minecraft:cow",
+    "minecraft:hoglin",
+    "minecraft:mooshroom",
+    "minecraft:polar_bear",
+    "minecraft:panda",
+    "minecraft:horse",
+    "minecraft:mule"
+  ]
 }

@@ -13,56 +13,54 @@ import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.Nullable;
 import xyz.nucleoid.plasmid.util.BlockTraversal;
 
-public class TraversalBreakModulePiece implements ModulePiece {
-	public static final Codec<TraversalBreakModulePiece> CODEC = RecordCodecBuilder.create(instance -> instance.group(
+public class TraversalBreakModifier implements Modifier {
+	public static final Codec<TraversalBreakModifier> CODEC = RecordCodecBuilder.create(instance -> instance.group(
 			RuleTest.TYPE_CODEC.fieldOf("target").forGetter(module -> module.predicate),
 			Codec.intRange(0, Integer.MAX_VALUE).optionalFieldOf("amount", 128).forGetter(module -> module.amount)
-	).apply(instance, TraversalBreakModulePiece::new));
+	).apply(instance, TraversalBreakModifier::new));
 
 	private final RuleTest predicate;
 	private final int amount;
 
-	private TraversalBreakModulePiece(RuleTest predicate, int amount) {
+	private TraversalBreakModifier(RuleTest predicate, int amount) {
 		this.predicate = predicate;
 		this.amount = amount;
 	}
 
 	@Override
-	public ModulePieceType<?> getType() {
-		return ModulePieceType.TRAVERSAL_BREAK;
+	public ModifierType<?> getType() {
+		return ModifierType.TRAVERSAL_BREAK;
 	}
 
 	public void breakBlock(ServerWorld world, @Nullable LivingEntity entity, BlockPos origin) {
 		BlockState state = world.getBlockState(origin);
 
-		if(this.predicate.test(state, world.getRandom())) {
+		if (this.predicate.test(state, world.getRandom())) {
 			BlockTraversal traversal = BlockTraversal.create()
 					.order(BlockTraversal.Order.BREADTH_FIRST)
 					.connectivity(BlockTraversal.Connectivity.TWENTY_SIX);
 			LongSet blockPosList = new LongArraySet();
 			traversal.accept(origin, (nextPos, fromPos, depth) -> {
-				if(depth > this.amount) {
+				if (depth > this.amount) {
 					return BlockTraversal.Result.TERMINATE;
 				}
-				if(origin.asLong() == nextPos.asLong()) {
+				if (origin.asLong() == nextPos.asLong()) {
 					return BlockTraversal.Result.CONTINUE;
 				}
 				BlockState previousState = world.getBlockState(fromPos);
 				BlockState nextState = world.getBlockState(nextPos);
-				if(this.predicate.test(nextState, world.getRandom())) {
+				if (this.predicate.test(nextState, world.getRandom())) {
 					blockPosList.add(nextPos.asLong());
 					return BlockTraversal.Result.CONTINUE;
-				}
-				else {
-					if(nextState.getBlock() instanceof LeavesBlock) {
-						if(!(previousState.getBlock() instanceof LeavesBlock)) {
-							if(nextState.get(LeavesBlock.DISTANCE) == 1) {
+				} else {
+					if (nextState.getBlock() instanceof LeavesBlock) {
+						if (!(previousState.getBlock() instanceof LeavesBlock)) {
+							if (nextState.get(LeavesBlock.DISTANCE) == 1) {
 								blockPosList.add(nextPos.asLong());
 								return BlockTraversal.Result.CONTINUE;
 							}
-						}
-						else {
-							if(nextState.get(LeavesBlock.DISTANCE) >= previousState.get(LeavesBlock.DISTANCE)) {
+						} else {
+							if (nextState.get(LeavesBlock.DISTANCE) >= previousState.get(LeavesBlock.DISTANCE)) {
 								blockPosList.add(nextPos.asLong());
 								return BlockTraversal.Result.CONTINUE;
 							}

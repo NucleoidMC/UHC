@@ -1,27 +1,22 @@
 {
-	"schemaVersion": 1,
-	"id": "uhc",
-	"version": "${version}",
-	"name": "UHC",
-	"description": "Open source Fabric implementation of the UHC minigame",
-	"authors": [
-		"Hugman"
-	],
-	"license": "MIT",
-	"environment": "*",
-	"entrypoints": {
-		"main": [
-			"com.hugman.uhc.UHC"
-		]
-	},
-	"mixins": [
-		"uhc.mixins.json"
-	],
-	"depends": {
-		"fabricloader": ">=0.12.12",
-		"fabric": "*",
-		"minecraft": "1.18.x",
-		"plasmid": ">=0.5",
-		"java": ">=17"
-	}
+  "schemaVersion": 1,
+  "id": "uhc",
+  "version": "${version}",
+  "name": "UHC",
+  "description": "Open source Fabric implementation of the UHC minigame",
+  "authors": [
+    "Hugman"
+  ],
+  "license": "MIT",
+  "environment": "*",
+  "entrypoints": {
+    "main": [
+      "com.hugman.uhc.UHC"
+    ]
+  },
+  "depends": {
+    "fabric": "*",
+    "minecraft": ">=1.19.3",
+    "plasmid": ">=0.5"
+  }
 }

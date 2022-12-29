@@ -1,12 +1,12 @@
 {
-	"translation": "module.uhcrun.chicken_arrows",
-	"icon": "minecraft:feather",
-	"pieces": [
-		{
-			"type": "uhc:entity_loot",
-			"replace": false,
-			"entity": "minecraft:chicken",
-			"loot_table": "uhcrun:entities/arrows"
-		}
-	]
+  "translation": "module.uhcrun.chicken_arrows",
+  "icon": "minecraft:feather",
+  "modifiers": [
+    {
+      "type": "uhc:entity_loot",
+      "replace": false,
+      "entity": "minecraft:chicken",
+      "loot_table": "uhcrun:entities/arrows"
+    }
+  ]
 }

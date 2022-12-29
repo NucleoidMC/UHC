@@ -1,37 +1,37 @@
 {
-	"type": "minecraft:block",
-	"pools": [
-		{
-			"rolls": 1,
-			"entries": [
-				{
-					"type": "minecraft:item",
-					"name": "minecraft:cooked_beef",
-					"functions": [
-						{
-							"function": "minecraft:set_count",
-							"count": {
-								"min": 1.0,
-								"max": 2.0,
-								"type": "minecraft:uniform"
-							}
-						}
-					],
-					"conditions": [
-						{
-							"condition": "minecraft:table_bonus",
-							"enchantment": "minecraft:fortune",
-							"chances": [
-								0.4,
-								0.45,
-								0.5,
-								0.55,
-								0.6
-							]
-						}
-					]
-				}
-			]
-		}
-	]
+  "type": "minecraft:block",
+  "pools": [
+    {
+      "rolls": 1,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "minecraft:cooked_beef",
+          "functions": [
+            {
+              "function": "minecraft:set_count",
+              "count": {
+                "min": 1.0,
+                "max": 2.0,
+                "type": "minecraft:uniform"
+              }
+            }
+          ],
+          "conditions": [
+            {
+              "condition": "minecraft:table_bonus",
+              "enchantment": "minecraft:fortune",
+              "chances": [
+                0.4,
+                0.45,
+                0.5,
+                0.55,
+                0.6
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
 }

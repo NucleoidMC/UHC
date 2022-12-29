@@ -1,36 +1,46 @@
 {
-	"type": "uhc:uhc",
-	"translation": "game.uhcrun.vanilla.trios",
-	"team_size": 3,
-	"players": {
-		"min": 6,
-		"threshold": 24,
-		"max": 100
-	},
-	"map": {
-		"settings": "minecraft:overworld",
-		"shrinking_speed": 0.6,
-		"start_size": {
-			"min": 200,
-			"max": 8000
-		}
-	},
-	"chapters": {
-		"warmup": {
-			"min": 1200,
-			"max": 1400
-		}
-	},
-	"modules": [
-		"uhcrun:timberman",
-		"uhcrun:leaves_leave_no_leaves",
-		"uhcrun:dasher",
-		"uhcrun:ore_balance",
-		"uhcrun:blasted_ores",
-		"uhcrun:need_for_resources",
-		"uhcrun:animal_cooked_food",
-		"uhcrun:mob_cooked_food",
-		"uhcrun:creeper_tnt",
-		"uhcrun:chicken_arrows"
-	]
+  "type": "uhc:uhc",
+  "translation": "game.uhcrun.vanilla.trios",
+  "team_size": 3,
+  "players": {
+    "min": 6,
+    "threshold": 24,
+    "max": 100
+  },
+  "map": {
+    "dimension": {
+      "type": "minecraft:overworld",
+      "generator": {
+        "type": "minecraft:noise",
+        "settings": "minecraft:overworld",
+        "biome_source": {
+          "type": "minecraft:multi_noise",
+          "preset": "minecraft:overworld"
+        }
+      }
+    },
+    "shrinking_speed": 0.6,
+    "start_size": {
+      "min": 200,
+      "max": 8000
+    }
+  },
+  "chapters": {
+    "warmup": {
+      "min": 1200,
+      "max": 1400
+    }
+  },
+  "modules": [
+    "uhcrun:timberman",
+    "uhcrun:leaves_leave_no_leaves",
+    "uhcrun:dasher",
+    "uhcrun:ore_balance",
+    "uhcrun:blasted_ores",
+    "uhcrun:need_for_resources",
+    "uhcrun:animal_cooked_food",
+    "uhcrun:mob_cooked_food",
+    "uhcrun:creeper_tnt",
+    "uhcrun:chicken_arrows"
+  ]
 }

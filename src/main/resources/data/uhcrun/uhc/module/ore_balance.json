@@ -1,7 +1,7 @@
 {
   "translation": "module.uhcrun.ore_balance",
   "icon": "minecraft:diamond_ore",
-  "pieces": [
+  "modifiers": [
     {
       "type": "uhc:placed_features",
       "features": [
