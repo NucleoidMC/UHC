@@ -8,9 +8,7 @@ import net.minecraft.entity.ExperienceOrbEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.loot.LootTable;
 import net.minecraft.loot.LootTables;
-import net.minecraft.loot.context.LootContext;
-import net.minecraft.loot.context.LootContextParameters;
-import net.minecraft.loot.context.LootContextTypes;
+import net.minecraft.loot.context.*;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.structure.rule.RuleTest;
 import net.minecraft.util.Identifier;
@@ -20,7 +18,9 @@ import net.minecraft.util.math.random.Random;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class BlockLootModifier implements Modifier {
 	public static final Codec<BlockLootModifier> CODEC = RecordCodecBuilder.create(instance -> instance.group(
@@ -61,17 +61,18 @@ public class BlockLootModifier implements Modifier {
 	}
 
 	public List<ItemStack> getLoots(ServerWorld world, BlockPos pos, @Nullable Entity entity, ItemStack stack) {
-		LootContext.Builder builder = new LootContext.Builder(world).random(world.random).parameter(LootContextParameters.ORIGIN, Vec3d.ofCenter(pos)).parameter(LootContextParameters.TOOL, stack).optionalParameter(LootContextParameters.BLOCK_ENTITY, world.getBlockEntity(pos));
-		if (entity != null) {
-			builder = builder.optionalParameter(LootContextParameters.THIS_ENTITY, entity);
+		if (this.lootTable == LootTables.EMPTY) {
+			return Collections.emptyList();
 		}
-		List<ItemStack> stacks = Collections.emptyList();
-		if (this.lootTable != LootTables.EMPTY) {
-			LootContext lootContext = builder.parameter(LootContextParameters.BLOCK_STATE, world.getBlockState(pos)).build(LootContextTypes.BLOCK);
-			LootTable lootTable = lootContext.getWorld().getServer().getLootManager().getTable(this.lootTable);
-			stacks = lootTable.generateLoot(lootContext);
-		}
-		return stacks;
+		LootContextParameterSet lootContext = new LootContextParameterSet.Builder(world)
+				.add(LootContextParameters.ORIGIN, Vec3d.ofCenter(pos))
+				.add(LootContextParameters.TOOL, stack)
+				.add(LootContextParameters.BLOCK_STATE, world.getBlockState(pos))
+				.addOptional(LootContextParameters.BLOCK_ENTITY, world.getBlockEntity(pos))
+				.addOptional(LootContextParameters.THIS_ENTITY, entity)
+				.build(LootContextTypes.BLOCK);
+		LootTable lootTable = world.getServer().getLootManager().getLootTable(this.lootTable);
+		return lootTable.generateLoot(lootContext);
 	}
 
 	public boolean shouldReplace() {

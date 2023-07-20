@@ -5,10 +5,12 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.damage.DamageSource;
+import net.minecraft.entity.damage.DamageSources;
 import net.minecraft.item.ItemStack;
 import net.minecraft.loot.LootTable;
 import net.minecraft.loot.LootTables;
 import net.minecraft.loot.context.LootContext;
+import net.minecraft.loot.context.LootContextParameterSet;
 import net.minecraft.loot.context.LootContextParameters;
 import net.minecraft.loot.context.LootContextTypes;
 import net.minecraft.registry.Registries;
@@ -62,14 +64,16 @@ public class EntityLootModifier implements Modifier {
 	}
 
 	public List<ItemStack> getLoots(ServerWorld world, LivingEntity livingEntity) {
-		LootContext.Builder builder = new LootContext.Builder(world).random(livingEntity.getRandom()).parameter(LootContextParameters.THIS_ENTITY, livingEntity).parameter(LootContextParameters.ORIGIN, livingEntity.getPos()).parameter(LootContextParameters.DAMAGE_SOURCE, DamageSource.GENERIC);
 		if (this.lootTable == LootTables.EMPTY) {
 			return Collections.emptyList();
-		} else {
-			LootContext lootContext = builder.build(LootContextTypes.ENTITY);
-			LootTable lootTable = lootContext.getWorld().getServer().getLootManager().getTable(this.lootTable);
-			return lootTable.generateLoot(lootContext);
 		}
+		LootContextParameterSet lootContext = new LootContextParameterSet.Builder(world)
+				.add(LootContextParameters.THIS_ENTITY, livingEntity)
+				.add(LootContextParameters.ORIGIN, livingEntity.getPos())
+				.add(LootContextParameters.DAMAGE_SOURCE, livingEntity.getDamageSources().generic())
+				.build(LootContextTypes.ENTITY);
+		LootTable lootTable = world.getServer().getLootManager().getLootTable(this.lootTable);
+		return lootTable.generateLoot(lootContext);
 	}
 
 	public boolean shouldReplace() {

@@ -43,7 +43,7 @@ public class UHCSpawner {
 	public void putParticipantInCage(GameTeam team, ServerPlayerEntity participant) {
 		BlockBounds bounds = this.cages.get(team);
 		if (bounds != null) {
-			this.spawnPlayerAt(participant, new BlockPos(bounds.centerBottom()).up());
+			this.spawnPlayerAt(participant, BlockPos.ofFloored(bounds.centerBottom()).up());
 		}
 	}
 
@@ -75,6 +75,6 @@ public class UHCSpawner {
 	}
 
 	public BlockPos getSurfaceBlock(int x, int z) {
-		return new BlockPos(getSurfaceBlock(world, x, z));
+		return BlockPos.ofFloored(getSurfaceBlock(world, x, z));
 	}
 }
