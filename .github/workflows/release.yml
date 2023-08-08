@@ -1,39 +1,50 @@
+# Automatically builds and publishes the mod when a new release is created on GitHub.
+# It uploads the mod to GitHub, CurseForge and Modrinth.
+
 name: Release
 
 on:
   release:
-    types:
-      - published
+    types: [published]
 
 jobs:
-  build:
+  publish:
+    name: Build & Publish
     runs-on: ubuntu-latest
-
     steps:
-      - uses: actions/cache@v2
-        with:
-          path: |
-            ~/.gradle/loom-cache
-            ~/.gradle/caches
-            ~/.gradle/wrapper
-          key: gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
-          restore-keys: |
-            gradle-
 
-      - uses: actions/checkout@v2
-      - name: Set up JDK
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Set up JDK 17
         uses: actions/setup-java@v1
         with:
-          java-version: 17
+          java-version: '17'
 
       - name: Grant execute permission for gradlew
-        run: chmod +x gradlew
+        run: chmod +x ./gradlew
 
       - name: Build with Gradle
-        run: ./gradlew build
+        run: ./gradlew clean build -Pversion=${{ github.event.release.tag_name }}
 
-      - name: Upload GitHub release
-        uses: AButler/upload-release-assets@v2.0
+      - name: Publish mod to GitHub, CurseForge and Modrinth
+        id: publish
+        uses: Kir-Antipov/mc-publish@v3.3
         with:
-          files: 'build/libs/*.jar;!build/libs/*-sources.jar;!build/libs/*-dev.jar'
-          repo-token: ${{ secrets.GITHUB_TOKEN }}
+          curseforge-token: ${{ secrets.CURSEFORGE_TOKEN }}
+          modrinth-token: ${{ secrets.MODRINTH_TOKEN }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+
+          changelog: ${{ github.event.release.body }}
+          java: 17
+
+          modrinth-featured: false
+
+      - name: Add job summary
+        run: |
+          echo "# Results" >> $GITHUB_STEP_SUMMARY
+          echo "- [CurseForge Link](${{ steps.publish.outputs.curseforge-url }})" >> $GITHUB_STEP_SUMMARY
+          echo "- [Modrinth Link](${{ steps.publish.outputs.modrinth-url }})" >> $GITHUB_STEP_SUMMARY
+          echo "- [GitHub Link](${{ steps.publish.outputs.github-url }})" >> $GITHUB_STEP_SUMMARY
+          echo "# Changelog" >> $GITHUB_STEP_SUMMARY
+          echo "${{ github.event.release.body }}" >> $GITHUB_STEP_SUMMARY

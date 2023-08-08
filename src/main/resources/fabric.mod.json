@@ -1,13 +1,19 @@
 {
   "schemaVersion": 1,
+  "name": "UHC",
   "id": "uhc",
   "version": "${version}",
-  "name": "UHC",
-  "description": "Open source Fabric implementation of the UHC minigame",
+  "icon": "assets/uhc/logo.png",
+  "description": " Ultra Hardcore survival minigame for Minecraft!",
   "authors": [
     "Hugman"
   ],
-  "license": "MIT",
+  "contact": {
+    "homepage": "https://nucleoid.xyz/",
+    "sources": "https://github.com/NucleoidMC/UHC",
+    "issues": "https://github.com/NucleoidMC/UHC/issues"
+  },
+  "license": "LGPL-3.0-or-later",
   "environment": "*",
   "entrypoints": {
     "main": [
@@ -15,8 +21,20 @@
     ]
   },
   "depends": {
-    "fabric": "*",
-    "minecraft": ">=1.19.3",
-    "plasmid": ">=0.5"
+    "java": ">=17",
+    "minecraft": ">=1.20",
+    "fabricloader": ">=0.9.1",
+    "fabric-api": ">=0.86.1",
+    "plasmid": "0.5.x"
+  },
+  "custom": {
+    "mc-publish": {
+      "curseforge": 899404,
+      "modrinth": "jWgoSg0B",
+      "loaders": [
+        "fabric",
+        "quilt"
+      ]
+    }
   }
 }
