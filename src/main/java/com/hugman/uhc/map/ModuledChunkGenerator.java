@@ -60,7 +60,7 @@ public class ModuledChunkGenerator extends GameChunkGenerator {
 		ChunkRandom chunkRandom = new ChunkRandom(new Xoroshiro128PlusPlusRandom(this.seed));
 		chunkRandom.setPopulationSeed(world.getSeed(), blockPos.getX(), blockPos.getZ());
 
-		for (PlacedFeaturesModifier piece : this.config.getModulesPieces(ModifierType.PLACED_FEATURES)) {
+		for (PlacedFeaturesModifier piece : this.config.getModifiers(ModifierType.PLACED_FEATURES)) {
 			piece.generate(world, this, chunkRandom, blockPos);
 		}
 		this.subGenerator.generateFeatures(world, chunk, structureAccessor);
