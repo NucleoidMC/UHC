@@ -20,6 +20,9 @@
       "com.hugman.uhc.UHC"
     ]
   },
+  "mixins": [
+    "uhc.mixins.json"
+  ],
   "depends": {
     "java": ">=17",
     "minecraft": ">=1.20",

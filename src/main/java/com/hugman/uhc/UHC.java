@@ -9,6 +9,7 @@ import com.hugman.uhc.module.Module;
 import com.hugman.uhc.registry.UHCRegistries;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
+import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.util.Identifier;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -30,5 +31,13 @@ public class UHC implements ModInitializer {
 
 		CommandRegistrationCallback.EVENT.register((dispatcher, dedicated, environment) -> ModulesCommand.register(dispatcher));
 		GameType.register(UHC.id("uhc"), UHCConfig.CODEC, UHCWaiting::open);
+	}
+
+	public static void debug(String s) {
+		if(debug()) LOGGER.info(s);
+	}
+
+	public static boolean debug() {
+		return FabricLoader.getInstance().isDevelopmentEnvironment();
 	}
 }

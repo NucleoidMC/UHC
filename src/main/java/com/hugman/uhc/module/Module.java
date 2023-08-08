@@ -28,7 +28,6 @@ public record Module(String translation, Optional<Either<String, List<String>>> 
 			Modifier.TYPE_CODEC.listOf().fieldOf("modifiers").forGetter(Module::modifiers)
 	).apply(instance, Module::new));
 
-
 	public static final Codec<RegistryEntry<Module>> REGISTRY_CODEC = RegistryElementCodec.of(UHCRegistries.MODULE, CODEC);
 	public static final Codec<RegistryEntryList<Module>> LIST_CODEC = RegistryCodecs.entryList(UHCRegistries.MODULE, CODEC);
 	public static final Codec<List<RegistryEntryList<Module>>> LISTS_CODEC = RegistryCodecs.entryList(UHCRegistries.MODULE, CODEC, true).listOf();
