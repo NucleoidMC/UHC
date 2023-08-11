@@ -38,6 +38,7 @@ public class TraversalBreakModifier implements Modifier {
 
 	public void breakBlock(ServerWorld world, @Nullable LivingEntity entity, BlockPos origin) {
 		BlockState state = world.getBlockState(origin);
+		var originLong = origin.asLong();
 
 		if (this.predicate.test(state, world.getRandom())) {
 			BlockTraversal traversal = BlockTraversal.create()
@@ -63,6 +64,8 @@ public class TraversalBreakModifier implements Modifier {
 				BlockTraversal leavesTraversal = BlockTraversal.create()
 						.order(BlockTraversal.Order.BREADTH_FIRST)
 						.connectivity(BlockTraversal.Connectivity.SIX);
+
+				posLongSet.add(originLong);
 				for(var posLong : posLongSet) {
 					BlockPos pos = BlockPos.fromLong(posLong);
 					leavesTraversal.accept(pos, (nextPos, fromPos, depth) -> {
@@ -89,6 +92,7 @@ public class TraversalBreakModifier implements Modifier {
 					});
 					posLongSet.addAll(leavesLongSet);
 				}
+				posLongSet.remove(originLong);
 			}
 			posLongSet.forEach(value -> world.breakBlock(BlockPos.fromLong(value), true, entity));
 		}
