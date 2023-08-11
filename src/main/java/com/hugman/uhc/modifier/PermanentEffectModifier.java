@@ -18,7 +18,7 @@ public record PermanentEffectModifier(StatusEffect effect, int amplifier) implem
 		return ModifierType.PERMANENT_EFFECT;
 	}
 
-	public void setEffect(ServerPlayerEntity player, int effectDuration) {
-		player.addStatusEffect(new StatusEffectInstance(effect, effectDuration, amplifier, false, false, true));
+	public void setEffect(ServerPlayerEntity player) {
+		player.addStatusEffect(new StatusEffectInstance(effect, -1, amplifier, false, false, true));
 	}
 }

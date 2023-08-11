@@ -1,10 +1,16 @@
 package com.hugman.uhc.map;
 
+import com.hugman.uhc.UHC;
 import com.hugman.uhc.config.UHCConfig;
 import com.hugman.uhc.modifier.ModifierType;
 import com.hugman.uhc.modifier.PlacedFeaturesModifier;
+import com.hugman.uhc.util.ChunkGeneratorSettingsProvider;
 import com.mojang.datafixers.util.Pair;
+import com.mojang.serialization.Codec;
+import net.minecraft.SharedConstants;
 import net.minecraft.entity.SpawnGroup;
+import net.minecraft.registry.Registry;
+import net.minecraft.registry.RegistryKeys;
 import net.minecraft.registry.RegistryWrapper;
 import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.registry.entry.RegistryEntryList;
@@ -28,10 +34,9 @@ import net.minecraft.world.biome.source.BiomeSource;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.gen.GenerationStep;
 import net.minecraft.world.gen.StructureAccessor;
-import net.minecraft.world.gen.chunk.Blender;
-import net.minecraft.world.gen.chunk.ChunkGenerator;
-import net.minecraft.world.gen.chunk.VerticalBlockSample;
+import net.minecraft.world.gen.chunk.*;
 import net.minecraft.world.gen.chunk.placement.StructurePlacementCalculator;
+import net.minecraft.world.gen.feature.PlacedFeature;
 import net.minecraft.world.gen.noise.NoiseConfig;
 import net.minecraft.world.gen.structure.Structure;
 import org.jetbrains.annotations.Nullable;
@@ -40,30 +45,49 @@ import xyz.nucleoid.plasmid.game.world.generator.GameChunkGenerator;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
+import java.util.function.Supplier;
 
-public class ModuledChunkGenerator extends GameChunkGenerator {
+public class ModuledChunkGenerator extends GameChunkGenerator implements ChunkGeneratorSettingsProvider {
 	private final UHCConfig config;
 	private final long seed;
 	private final ChunkGenerator subGenerator;
+	private final ChunkGeneratorSettings settings;
 
 	public ModuledChunkGenerator(MinecraftServer server, UHCConfig config) {
 		super(config.mapConfig().dimension().chunkGenerator().getBiomeSource());
 		this.config = config;
 		this.seed = server.getOverworld().getRandom().nextLong();
 		this.subGenerator = config.mapConfig().dimension().chunkGenerator();
+		if(this.subGenerator instanceof NoiseChunkGenerator generator) {
+			this.settings = generator.getSettings().value();
+		}
+		else {
+			this.settings = null;
+		}
 	}
 
 	@Override
 	public void generateFeatures(StructureWorldAccess world, Chunk chunk, StructureAccessor structureAccessor) {
-		BlockPos blockPos = ChunkSectionPos.from(chunk.getPos(), world.getBottomSectionCoord()).getMinPos();
+		this.subGenerator.generateFeatures(world, chunk, structureAccessor);
+		var chunkPos = chunk.getPos();
+		if (SharedConstants.isOutsideGenerationArea(chunkPos)) {
+			return;
+		}
+		var blockPos = ChunkSectionPos.from(chunk.getPos(), world.getBottomSectionCoord()).getMinPos();
 
 		ChunkRandom chunkRandom = new ChunkRandom(new Xoroshiro128PlusPlusRandom(this.seed));
-		chunkRandom.setPopulationSeed(world.getSeed(), blockPos.getX(), blockPos.getZ());
+		long popSeed = chunkRandom.setPopulationSeed(world.getSeed(), blockPos.getX(), blockPos.getZ());
 
-		for (PlacedFeaturesModifier piece : this.config.getModulesPieces(ModifierType.PLACED_FEATURES)) {
-			piece.generate(world, this, chunkRandom, blockPos);
+		List<PlacedFeaturesModifier> placedFeaturesModifiers = this.config.getModifiers(ModifierType.PLACED_FEATURES);
+		for (int i = 0; i < placedFeaturesModifiers.size(); i++) {
+			chunkRandom.setDecoratorSeed(popSeed, i, 0);
+			for(var placedFeatureEntry : placedFeaturesModifiers.get(i).features()) {
+				Supplier<String> s = () -> placedFeatureEntry.getKey().map(Object::toString).orElseGet(placedFeatureEntry::toString);
+				world.setCurrentlyGeneratingStructureName(s);
+				placedFeatureEntry.value().generate(world, this, chunkRandom, blockPos);
+			}
 		}
-		this.subGenerator.generateFeatures(world, chunk, structureAccessor);
+		world.setCurrentlyGeneratingStructureName(null);
 	}
 
 	/*=================*/
@@ -168,5 +192,10 @@ public class ModuledChunkGenerator extends GameChunkGenerator {
 
 	private long getSeed() {
 		return seed;
+	}
+
+	@Override
+	public @Nullable ChunkGeneratorSettings getSettings() {
+		return this.settings;
 	}
 }

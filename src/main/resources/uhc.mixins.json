@@ -1,0 +1,12 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "com.hugman.uhc.mixin",
+  "compatibilityLevel": "JAVA_17",
+  "mixins": [
+    "ThreadedAnvilChunkStorageMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}
