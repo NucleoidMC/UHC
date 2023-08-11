@@ -7,6 +7,7 @@ import it.unimi.dsi.fastutil.longs.LongSet;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.LeavesBlock;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.registry.tag.BlockTags;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.structure.rule.RuleTest;
 import net.minecraft.util.math.BlockPos;
@@ -16,15 +17,18 @@ import xyz.nucleoid.plasmid.util.BlockTraversal;
 public class TraversalBreakModifier implements Modifier {
 	public static final Codec<TraversalBreakModifier> CODEC = RecordCodecBuilder.create(instance -> instance.group(
 			RuleTest.TYPE_CODEC.fieldOf("target").forGetter(module -> module.predicate),
-			Codec.intRange(0, Integer.MAX_VALUE).optionalFieldOf("amount", 128).forGetter(module -> module.amount)
+			Codec.intRange(0, Integer.MAX_VALUE).optionalFieldOf("amount", 128).forGetter(module -> module.amount),
+			Codec.BOOL.optionalFieldOf("include_leaves", false).forGetter(module -> module.includeLeaves)
 	).apply(instance, TraversalBreakModifier::new));
 
 	private final RuleTest predicate;
 	private final int amount;
+	private final boolean includeLeaves;
 
-	private TraversalBreakModifier(RuleTest predicate, int amount) {
+	private TraversalBreakModifier(RuleTest predicate, int amount, boolean includeLeaves) {
 		this.predicate = predicate;
 		this.amount = amount;
+		this.includeLeaves = includeLeaves;
 	}
 
 	@Override
@@ -39,37 +43,54 @@ public class TraversalBreakModifier implements Modifier {
 			BlockTraversal traversal = BlockTraversal.create()
 					.order(BlockTraversal.Order.BREADTH_FIRST)
 					.connectivity(BlockTraversal.Connectivity.TWENTY_SIX);
-			LongSet blockPosList = new LongArraySet();
+			LongSet posLongSet = new LongArraySet();
 			traversal.accept(origin, (nextPos, fromPos, depth) -> {
+				var nextPosLong = nextPos.asLong();
 				if (depth > this.amount) {
 					return BlockTraversal.Result.TERMINATE;
 				}
-				if (origin.asLong() == nextPos.asLong()) {
+				if (origin.asLong() == nextPosLong || posLongSet.contains(nextPosLong)) {
 					return BlockTraversal.Result.CONTINUE;
 				}
-				BlockState previousState = world.getBlockState(fromPos);
-				BlockState nextState = world.getBlockState(nextPos);
-				if (this.predicate.test(nextState, world.getRandom())) {
-					blockPosList.add(nextPos.asLong());
+				if (this.predicate.test(world.getBlockState(nextPos), world.getRandom())) {
+					posLongSet.add(nextPos.asLong());
 					return BlockTraversal.Result.CONTINUE;
-				} else {
-					if (nextState.getBlock() instanceof LeavesBlock) {
-						if (!(previousState.getBlock() instanceof LeavesBlock)) {
-							if (nextState.get(LeavesBlock.DISTANCE) == 1) {
-								blockPosList.add(nextPos.asLong());
-								return BlockTraversal.Result.CONTINUE;
-							}
-						} else {
-							if (nextState.get(LeavesBlock.DISTANCE) >= previousState.get(LeavesBlock.DISTANCE)) {
-								blockPosList.add(nextPos.asLong());
-								return BlockTraversal.Result.CONTINUE;
-							}
-						}
-					}
 				}
 				return BlockTraversal.Result.TERMINATE;
 			});
-			blockPosList.longStream().forEach(l -> world.breakBlock(BlockPos.fromLong(l), true, entity));
+			if(includeLeaves) {
+				LongSet leavesLongSet = new LongArraySet();
+				BlockTraversal leavesTraversal = BlockTraversal.create()
+						.order(BlockTraversal.Order.BREADTH_FIRST)
+						.connectivity(BlockTraversal.Connectivity.SIX);
+				for(var posLong : posLongSet) {
+					BlockPos pos = BlockPos.fromLong(posLong);
+					leavesTraversal.accept(pos, (nextPos, fromPos, depth) -> {
+						var nextPosLong = nextPos.asLong();
+						if (depth > this.amount) {
+							return BlockTraversal.Result.TERMINATE;
+						}
+						if (pos.asLong() == nextPosLong) {
+							return BlockTraversal.Result.CONTINUE;
+						}
+						if (posLongSet.contains(nextPosLong) || leavesLongSet.contains(nextPosLong)) {
+							return BlockTraversal.Result.CONTINUE;
+						}
+						BlockState fromState = world.getBlockState(fromPos);
+						BlockState nextState = world.getBlockState(nextPos);
+						if (nextState.contains(LeavesBlock.DISTANCE) && nextState.isIn(BlockTags.LEAVES)) {
+							var currentDistance = fromState.contains(LeavesBlock.DISTANCE) ? fromState.get(LeavesBlock.DISTANCE) : 0;
+							if (nextState.get(LeavesBlock.DISTANCE) > currentDistance) {
+								leavesLongSet.add(nextPos.asLong());
+								return BlockTraversal.Result.CONTINUE;
+							}
+						}
+						return BlockTraversal.Result.TERMINATE;
+					});
+					posLongSet.addAll(leavesLongSet);
+				}
+			}
+			posLongSet.forEach(value -> world.breakBlock(BlockPos.fromLong(value), true, entity));
 		}
 	}
 }
