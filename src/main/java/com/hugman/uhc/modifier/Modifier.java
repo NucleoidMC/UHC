@@ -1,6 +1,6 @@
 package com.hugman.uhc.modifier;
 
-import com.hugman.uhc.UHCRegistries;
+import com.hugman.uhc.registry.UHCRegistries;
 import com.mojang.serialization.Codec;
 
 public interface Modifier {

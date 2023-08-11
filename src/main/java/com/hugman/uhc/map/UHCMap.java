@@ -12,8 +12,8 @@ public class UHCMap {
 
 	public UHCMap(UHCConfig config, MinecraftServer server) {
 		this.config = config;
-		this.chunkGenerator = config.mapConfig().dimension().chunkGenerator(); // temporary fix
-		//this.chunkGenerator = new ModuledChunkGenerator(server, config);
+		//this.chunkGenerator = config.mapConfig().dimension().chunkGenerator(); // temporary fix
+		this.chunkGenerator = new ModuledChunkGenerator(server, config);
 	}
 
 	public RuntimeWorldConfig createRuntimeWorldConfig() {

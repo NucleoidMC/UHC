@@ -342,14 +342,14 @@ public class UHCActive {
 	}
 
 	public void refreshPlayerAttributes(ServerPlayerEntity player) {
-		for (PlayerAttributeModifier piece : this.config.getModulesPieces(ModifierType.PLAYER_ATTRIBUTE)) {
+		for (PlayerAttributeModifier piece : this.config.getModifiers(ModifierType.PLAYER_ATTRIBUTE)) {
 			piece.setAttribute(player);
 		}
 	}
 
-	public void applyPlayerEffects(ServerPlayerEntity player, int effectDuration) {
-		for (PermanentEffectModifier piece : this.config.getModulesPieces(ModifierType.PERMANENT_EFFECT)) {
-			piece.setEffect(player, effectDuration);
+	public void applyPlayerEffects(ServerPlayerEntity player) {
+		for (PermanentEffectModifier piece : this.config.getModifiers(ModifierType.PERMANENT_EFFECT)) {
+			piece.setEffect(player);
 		}
 	}
 
@@ -360,7 +360,7 @@ public class UHCActive {
 		teamsAlive.removeIf(team -> teamManager.playersIn(team.key()).stream().allMatch(playerEntity -> getParticipant(playerEntity).isEliminated()));
 		// Only one team is left, so they win
 		if (teamsAlive.size() <= 1) {
-			if (teamsAlive.size() <= 0) {
+			if (teamsAlive.isEmpty()) {
 				players.sendMessage(Text.literal("\n").append(Text.translatable("text.uhc.none_win").formatted(Formatting.BOLD, Formatting.GOLD)).append("\n"));
 				UHC.LOGGER.warn("There are no teams left! Consider reviewing the minimum amount of players needed to start a game, so that there are at least 2 teams in the game.");
 			} else {
@@ -430,7 +430,7 @@ public class UHCActive {
 				player.changeGameMode(GameMode.SURVIVAL);
 				this.refreshPlayerAttributes(player);
 				this.clearPlayer(player);
-				this.applyPlayerEffects(player, (int) this.gameEndTick);
+				this.applyPlayerEffects(player);
 			}
 		});
 	}
@@ -457,10 +457,11 @@ public class UHCActive {
 	}
 
 	public void sendModuleListToChat() {
-		List<Module> modules = this.config.getModules();
-		if (!modules.isEmpty()) {
+		var moduleEntries = this.config.modules();
+		if (moduleEntries.size() > 0) {
 			MutableText text = Text.literal("\n").append(Text.translatable("text.uhc.modules_enabled").formatted(Formatting.GOLD));
-			modules.forEach(module -> {
+			moduleEntries.forEach(moduleEntry -> {
+				var module = moduleEntry.value();
 				MutableText descriptionLines = Text.literal("");
 				module.getDescriptionLines().forEach(s -> descriptionLines.append(Text.translatable(s)));
 				Style style = Style.EMPTY.withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, descriptionLines)).withColor(module.color());
@@ -482,7 +483,7 @@ public class UHCActive {
 	}
 
 	private ActionResult onBlockBroken(ServerPlayerEntity playerEntity, ServerWorld world, BlockPos pos) {
-		for (TraversalBreakModifier piece : this.config.getModulesPieces(ModifierType.TRAVERSAL_BREAK)) {
+		for (TraversalBreakModifier piece : this.config.getModifiers(ModifierType.TRAVERSAL_BREAK)) {
 			piece.breakBlock(this.world, playerEntity, pos);
 		}
 		return ActionResult.SUCCESS;
@@ -490,7 +491,7 @@ public class UHCActive {
 
 	private void onExplosion(Explosion explosion, boolean b) {
 		explosion.getAffectedBlocks().forEach(pos -> {
-			for (TraversalBreakModifier piece : this.config.getModulesPieces(ModifierType.TRAVERSAL_BREAK)) {
+			for (TraversalBreakModifier piece : this.config.getModifiers(ModifierType.TRAVERSAL_BREAK)) {
 				piece.breakBlock(this.world, explosion.getCausingEntity(), pos);
 			}
 		});
@@ -499,7 +500,7 @@ public class UHCActive {
 	private TypedActionResult<List<ItemStack>> onMobLoot(LivingEntity livingEntity, List<ItemStack> itemStacks) {
 		boolean keepOld = true;
 		List<ItemStack> stacks = new ArrayList<>();
-		for (EntityLootModifier piece : this.config.getModulesPieces(ModifierType.ENTITY_LOOT)) {
+		for (EntityLootModifier piece : this.config.getModifiers(ModifierType.ENTITY_LOOT)) {
 			if (piece.test(livingEntity)) {
 				stacks.addAll(piece.getLoots(this.world, livingEntity));
 				if (piece.shouldReplace()) keepOld = false;
@@ -512,7 +513,7 @@ public class UHCActive {
 	private TypedActionResult<List<ItemStack>> onBlockDrop(@Nullable Entity entity, ServerWorld world, BlockPos pos, BlockState state, List<ItemStack> itemStacks) {
 		boolean keepOld = true;
 		List<ItemStack> stacks = new ArrayList<>();
-		for (BlockLootModifier piece : this.config.getModulesPieces(ModifierType.BLOCK_LOOT)) {
+		for (BlockLootModifier piece : this.config.getModifiers(ModifierType.BLOCK_LOOT)) {
 			if (piece.test(state, world.getRandom())) {
 				piece.spawnExperience(world, pos);
 				stacks.addAll(piece.getLoots(world, pos, entity, entity instanceof LivingEntity ? ((LivingEntity) entity).getActiveItem() : ItemStack.EMPTY));

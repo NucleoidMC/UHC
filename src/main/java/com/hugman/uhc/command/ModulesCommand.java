@@ -10,6 +10,7 @@ import com.mojang.brigadier.exceptions.SimpleCommandExceptionType;
 import eu.pb4.sgui.api.elements.GuiElementBuilder;
 import eu.pb4.sgui.api.gui.SimpleGui;
 import net.minecraft.registry.Registries;
+import net.minecraft.registry.entry.RegistryEntryList;
 import net.minecraft.screen.ScreenHandlerType;
 import net.minecraft.server.command.CommandManager;
 import net.minecraft.server.command.ServerCommandSource;
@@ -21,7 +22,6 @@ import net.minecraft.util.math.MathHelper;
 import xyz.nucleoid.plasmid.game.manager.GameSpaceManager;
 import xyz.nucleoid.plasmid.game.manager.ManagedGameSpace;
 
-import java.util.List;
 import java.util.Objects;
 
 public class ModulesCommand {
@@ -44,13 +44,14 @@ public class ModulesCommand {
 
 	private static int displayModules(CommandContext<ServerCommandSource> context) throws CommandSyntaxException {
 		ServerCommandSource source = context.getSource();
-		List<Module> modules = ((UHCConfig) Objects.requireNonNull(GameSpaceManager.get().byWorld(source.getWorld())).getMetadata().sourceConfig().config()).getModules();
-		if (modules.size() != 0) {
-			ScreenHandlerType<?> type = Registries.SCREEN_HANDLER.get(new Identifier("generic_9x" + MathHelper.clamp(1, MathHelper.ceil((float) modules.size() / 9), 6)));
+		RegistryEntryList<Module> moduleEntries = ((UHCConfig) Objects.requireNonNull(GameSpaceManager.get().byWorld(source.getWorld())).getMetadata().sourceConfig().config()).modules();
+		if (moduleEntries.size() != 0) {
+			ScreenHandlerType<?> type = Registries.SCREEN_HANDLER.get(new Identifier("generic_9x" + MathHelper.clamp(1, MathHelper.ceil((float) moduleEntries.size() / 9), 6)));
 			SimpleGui gui = new SimpleGui(type, source.getPlayer(), false);
 			gui.setTitle(Text.translatable("ui.uhc.modules.title"));
 			int i = 0;
-			for (Module module : modules) {
+			for (var moduleEntry : moduleEntries) {
+				var module = moduleEntry.value();
 				GuiElementBuilder elementBuilder = new GuiElementBuilder(module.icon())
 						.setName(Text.translatable(module.translation()).formatted(Formatting.BOLD).setStyle(Style.EMPTY.withColor(module.color())))
 						.hideFlags();

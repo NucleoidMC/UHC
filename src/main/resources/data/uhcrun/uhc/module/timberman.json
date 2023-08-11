@@ -7,7 +7,8 @@
       "target": {
         "predicate_type": "minecraft:tag_match",
         "tag": "minecraft:logs"
-      }
+      },
+      "include_leaves": true
     },
     {
       "type": "uhc:block_loot",

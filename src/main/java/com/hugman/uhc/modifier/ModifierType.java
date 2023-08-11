@@ -1,7 +1,7 @@
 package com.hugman.uhc.modifier;
 
 import com.hugman.uhc.UHC;
-import com.hugman.uhc.UHCRegistries;
+import com.hugman.uhc.registry.UHCRegistries;
 import com.mojang.serialization.Codec;
 import net.minecraft.registry.Registry;
 import net.minecraft.util.Identifier;

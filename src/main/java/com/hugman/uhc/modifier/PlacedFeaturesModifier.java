@@ -17,6 +17,6 @@ public record PlacedFeaturesModifier(RegistryEntryList<PlacedFeature> features) 
 	}
 
 	public void generate(StructureWorldAccess world, ChunkGenerator generator, Random random, BlockPos pos) {
-		this.features().stream().forEach(entry -> entry.value().generate(world, generator, random, pos));
+		this.features().forEach(entry -> entry.value().generate(world, generator, random, pos));
 	}
 }
