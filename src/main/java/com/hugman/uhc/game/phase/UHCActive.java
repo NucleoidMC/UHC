@@ -347,9 +347,9 @@ public class UHCActive {
 		}
 	}
 
-	public void applyPlayerEffects(ServerPlayerEntity player, int effectDuration) {
+	public void applyPlayerEffects(ServerPlayerEntity player) {
 		for (PermanentEffectModifier piece : this.config.getModifiers(ModifierType.PERMANENT_EFFECT)) {
-			piece.setEffect(player, effectDuration);
+			piece.setEffect(player);
 		}
 	}
 
@@ -360,7 +360,7 @@ public class UHCActive {
 		teamsAlive.removeIf(team -> teamManager.playersIn(team.key()).stream().allMatch(playerEntity -> getParticipant(playerEntity).isEliminated()));
 		// Only one team is left, so they win
 		if (teamsAlive.size() <= 1) {
-			if (teamsAlive.size() <= 0) {
+			if (teamsAlive.isEmpty()) {
 				players.sendMessage(Text.literal("\n").append(Text.translatable("text.uhc.none_win").formatted(Formatting.BOLD, Formatting.GOLD)).append("\n"));
 				UHC.LOGGER.warn("There are no teams left! Consider reviewing the minimum amount of players needed to start a game, so that there are at least 2 teams in the game.");
 			} else {
@@ -430,7 +430,7 @@ public class UHCActive {
 				player.changeGameMode(GameMode.SURVIVAL);
 				this.refreshPlayerAttributes(player);
 				this.clearPlayer(player);
-				this.applyPlayerEffects(player, (int) this.gameEndTick);
+				this.applyPlayerEffects(player);
 			}
 		});
 	}
