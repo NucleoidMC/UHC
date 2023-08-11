@@ -3,9 +3,7 @@ package com.hugman.uhc.game.phase;
 import com.hugman.uhc.UHC;
 import com.hugman.uhc.config.UHCConfig;
 import com.hugman.uhc.game.*;
-import com.hugman.uhc.map.UHCMap;
 import com.hugman.uhc.modifier.*;
-import com.hugman.uhc.module.Module;
 import com.hugman.uhc.util.TickUtil;
 import it.unimi.dsi.fastutil.objects.Object2ObjectMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
@@ -56,7 +54,6 @@ public class UHCActive {
 	private final ServerWorld world;
 	private final GameActivity activity;
 	private final UHCConfig config;
-	private final UHCMap map;
 
 	private Object2ObjectMap<ServerPlayerEntity, UHCParticipant> participants;
 	private List<GameTeam> teamsAlive;
@@ -80,12 +77,11 @@ public class UHCActive {
 	private boolean invulnerable;
 	private boolean isFinished = false;
 
-	private UHCActive(GameActivity activity, GameSpace gameSpace, ServerWorld world, UHCConfig config, UHCMap map, GlobalWidgets widgets) {
+	private UHCActive(GameActivity activity, GameSpace gameSpace, ServerWorld world, UHCConfig config, GlobalWidgets widgets) {
 		this.activity = activity;
 		this.gameSpace = gameSpace;
 		this.world = world;
 		this.config = config;
-		this.map = map;
 
 		fillTeams();
 		TeamChat.addTo(activity, teamManager);
@@ -132,10 +128,10 @@ public class UHCActive {
 		});
 	}
 
-	public static void start(GameSpace gameSpace, ServerWorld world, UHCConfig config, UHCMap map) {
+	public static void start(GameSpace gameSpace, ServerWorld world, UHCConfig config) {
 		gameSpace.setActivity(activity -> {
 			GlobalWidgets widgets = GlobalWidgets.addTo(activity);
-			UHCActive active = new UHCActive(activity, gameSpace, world, config, map, widgets);
+			UHCActive active = new UHCActive(activity, gameSpace, world, config, widgets);
 
 			activity.allow(GameRuleType.CRAFTING);
 			activity.deny(GameRuleType.PORTALS);

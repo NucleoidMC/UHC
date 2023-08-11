@@ -30,11 +30,11 @@ public class ModulesCommand {
 	public static void register(CommandDispatcher<ServerCommandSource> dispatcher) {
 		dispatcher.register(
 				CommandManager.literal("modules")
-						.requires(ModulesCommand::isSourceUHC)
+						.requires(ModulesCommand::isSourceInUHC)
 						.executes(ModulesCommand::displayModules));
 	}
 
-	public static boolean isSourceUHC(ServerCommandSource source) {
+	public static boolean isSourceInUHC(ServerCommandSource source) {
 		ManagedGameSpace gameSpace = GameSpaceManager.get().byWorld(source.getWorld());
 		if (gameSpace != null) {
 			return gameSpace.getMetadata().sourceConfig().config() instanceof UHCConfig;

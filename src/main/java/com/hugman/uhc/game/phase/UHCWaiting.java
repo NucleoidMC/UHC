@@ -21,16 +21,15 @@ import xyz.nucleoid.stimuli.event.player.PlayerAttackEntityEvent;
 import xyz.nucleoid.stimuli.event.player.PlayerDamageEvent;
 import xyz.nucleoid.stimuli.event.player.PlayerDeathEvent;
 
-public record UHCWaiting(GameSpace gameSpace, ServerWorld world, UHCMap map, UHCConfig config,
-						 TeamManager teamManager) {
+public record UHCWaiting(GameSpace gameSpace, ServerWorld world, UHCConfig config, TeamManager teamManager) {
 	public static GameOpenProcedure open(GameOpenContext<UHCConfig> context) {
-		UHCMap map = new UHCMap(context.config(), context.server());
+		UHCMap map = UHCMap.of(context.config(), context.server());
 
 		return context.openWithWorld(map.createRuntimeWorldConfig(), (activity, world) -> {
 			GameWaitingLobby.addTo(activity, context.config().players());
 			TeamManager teamManager = TeamManager.addTo(activity);
 
-			UHCWaiting waiting = new UHCWaiting(activity.getGameSpace(), world, map, context.config(), teamManager);
+			UHCWaiting waiting = new UHCWaiting(activity.getGameSpace(), world, context.config(), teamManager);
 
 			activity.listen(GamePlayerEvents.OFFER, waiting::offerPlayer);
 			activity.listen(GameActivityEvents.REQUEST_START, waiting::requestStart);
@@ -48,7 +47,7 @@ public record UHCWaiting(GameSpace gameSpace, ServerWorld world, UHCMap map, UHC
 	}
 
 	private GameResult requestStart() {
-		UHCActive.start(this.gameSpace, this.world, this.config, this.map);
+		UHCActive.start(this.gameSpace, this.world, this.config);
 		return GameResult.ok();
 	}
 }
