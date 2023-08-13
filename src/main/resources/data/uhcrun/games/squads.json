@@ -1,10 +1,20 @@
 {
   "type": "uhc:uhc",
-  "translation": "game.uhcrun.vanilla.test",
-  "team_size": 1,
+  "name": {
+    "translate": "game.generic.mode",
+    "with": [
+      {
+        "translate": "game.uhcrun"
+      },
+      {
+        "translate": "mode.squads"
+      }
+    ]
+  },
+  "team_size": 4,
   "players": {
-    "min": 1,
-    "threshold": 8,
+    "min": 8,
+    "threshold": 32,
     "max": 100
   },
   "map": {
@@ -26,17 +36,9 @@
     }
   },
   "chapters": {
-    "in_cages": {
-      "min": 10,
-      "max": 10
-    },
-    "invulnerability": {
-      "min": 10,
-      "max": 10
-    },
     "warmup": {
-      "min": 200,
-      "max": 200
+      "min": 1200,
+      "max": 1400
     }
   },
   "modules": [

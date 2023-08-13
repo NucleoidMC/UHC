@@ -1,6 +1,16 @@
 {
   "type": "uhc:uhc",
-  "translation": "game.uhcrun.vanilla.squads",
+  "name": {
+    "translate": "game.generic.mode",
+    "with": [
+      {
+        "translate": "game.uhc"
+      },
+      {
+        "translate": "mode.squads"
+      }
+    ]
+  },
   "team_size": 4,
   "players": {
     "min": 8,
@@ -19,28 +29,16 @@
         }
       }
     },
-    "shrinking_speed": 0.6,
+    "shrinking_speed": 0.5,
     "start_size": {
-      "min": 200,
-      "max": 8000
+      "min": 400,
+      "max": 10000
     }
   },
   "chapters": {
     "warmup": {
-      "min": 1200,
-      "max": 1400
+      "min": 2700,
+      "max": 4200
     }
-  },
-  "modules": [
-    "uhcrun:timberman",
-    "uhcrun:leaves_leave_no_leaves",
-    "uhcrun:dasher",
-    "uhcrun:ore_balance",
-    "uhcrun:blasted_ores",
-    "uhcrun:need_for_resources",
-    "uhcrun:animal_cooked_food",
-    "uhcrun:mob_cooked_food",
-    "uhcrun:creeper_tnt",
-    "uhcrun:chicken_arrows"
-  ]
+  }
 }

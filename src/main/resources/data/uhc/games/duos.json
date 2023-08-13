@@ -1,11 +1,15 @@
 {
   "type": "uhc:uhc",
-  "translation": "game.uhc.vanilla.solo",
-  "team_size": 1,
-  "players": {
-    "min": 2,
-    "threshold": 8,
-    "max": 100
+  "name": {
+    "translate": "game.generic.mode",
+    "with": [
+      {
+        "translate": "game.uhc"
+      },
+      {
+        "translate": "mode.duos"
+      }
+    ]
   },
   "map": {
     "dimension": {
@@ -24,6 +28,12 @@
       "min": 400,
       "max": 10000
     }
+  },
+  "team_size": 2,
+  "players": {
+    "min": 4,
+    "threshold": 16,
+    "max": 100
   },
   "chapters": {
     "warmup": {

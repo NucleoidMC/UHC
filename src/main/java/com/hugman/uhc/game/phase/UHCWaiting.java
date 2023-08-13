@@ -23,7 +23,7 @@ import xyz.nucleoid.stimuli.event.player.PlayerDeathEvent;
 
 public record UHCWaiting(GameSpace gameSpace, ServerWorld world, UHCConfig config, TeamManager teamManager) {
 	public static GameOpenProcedure open(GameOpenContext<UHCConfig> context) {
-		UHCMap map = UHCMap.of(context.config(), context.server());
+		UHCMap map = UHCMap.of(context.config());
 
 		return context.openWithWorld(map.createRuntimeWorldConfig(), (activity, world) -> {
 			GameWaitingLobby.addTo(activity, context.config().players());

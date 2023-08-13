@@ -1,8 +1,6 @@
 {
-  "game.uhcrun.vanilla.solo": "UHCRun: Vanilla (Solo)",
-  "game.uhcrun.vanilla.duos": "UHCRun: Vanilla (Duos)",
-  "game.uhcrun.vanilla.trios": "UHCRun: Vanilla (Trios)",
-  "game.uhcrun.vanilla.squads": "UHCRun: Vanilla (Squads)",
+  "game.uhcrun": "UHCRun",
+
   "module.uhcrun.dasher": "Dasher",
   "module.uhcrun.dasher.description": "Permanent haste and speed",
   "module.uhcrun.animal_cooked_food": "Animal Cooked Food",

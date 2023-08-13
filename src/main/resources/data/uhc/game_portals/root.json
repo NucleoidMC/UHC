@@ -1,0 +1,17 @@
+{
+  "type": "nucleoid_extras:styled/advanced_menu",
+  "name": {
+    "translate": "game.uhc"
+  },
+  "icon": "minecraft:golden_apple",
+  "entries": [
+    {
+      "type": "plasmid:portal",
+      "portal": "uhc:normal"
+    },
+    {
+      "type": "plasmid:portal",
+      "portal": "uhcrun:normal"
+    }
+  ]
+}

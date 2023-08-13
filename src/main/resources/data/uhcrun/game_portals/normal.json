@@ -1,0 +1,41 @@
+{
+  "type": "nucleoid_extras:styled/advanced_menu",
+  "name": {
+    "translate": "game.uhcrun"
+  },
+  "icon": "minecraft:golden_apple",
+  "entries": [
+    {
+      "type": "plasmid:game",
+      "icon": "minecraft:red_candle",
+      "game": "uhcrun:solo",
+      "name": {
+        "translate": "mode.solo"
+      }
+    },
+    {
+      "type": "plasmid:game",
+      "icon": "minecraft:lime_candle",
+      "game": "uhcrun:duos",
+      "name": {
+        "translate": "mode.duos"
+      }
+    },
+    {
+      "type": "plasmid:game",
+      "icon": "minecraft:pink_candle",
+      "game": "uhcrun:trios",
+      "name": {
+        "translate": "mode.trios"
+      }
+    },
+    {
+      "type": "plasmid:game",
+      "icon": "minecraft:blue_candle",
+      "game": "uhcrun:squads",
+      "name": {
+        "translate": "mode.squads"
+      }
+    }
+  ]
+}

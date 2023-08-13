@@ -1,6 +1,16 @@
 {
   "type": "uhc:uhc",
-  "translation": "game.uhc.vanilla.trios",
+  "name": {
+    "translate": "game.generic.mode",
+    "with": [
+      {
+        "translate": "game.uhc"
+      },
+      {
+        "translate": "mode.trios"
+      }
+    ]
+  },
   "team_size": 3,
   "players": {
     "min": 6,

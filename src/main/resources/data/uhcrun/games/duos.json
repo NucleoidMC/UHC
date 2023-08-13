@@ -1,10 +1,20 @@
 {
   "type": "uhc:uhc",
-  "translation": "game.uhcrun.vanilla.trios",
-  "team_size": 3,
+  "name": {
+    "translate": "game.generic.mode",
+    "with": [
+      {
+        "translate": "game.uhcrun"
+      },
+      {
+        "translate": "mode.duos"
+      }
+    ]
+  },
+  "team_size": 2,
   "players": {
-    "min": 6,
-    "threshold": 24,
+    "min": 4,
+    "threshold": 16,
     "max": 100
   },
   "map": {
