@@ -7,11 +7,11 @@
   "entries": [
     {
       "type": "plasmid:portal",
-      "portal": "uhc:normal"
+      "portal": "uhc:standard"
     },
     {
       "type": "plasmid:portal",
-      "portal": "uhcrun:normal"
+      "portal": "uhcrun:standard"
     }
   ]
 }

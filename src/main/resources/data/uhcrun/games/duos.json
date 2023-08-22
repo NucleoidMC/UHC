@@ -1,5 +1,5 @@
 {
-  "type": "uhc:uhc",
+  "type": "uhc:standard",
   "name": {
     "translate": "game.generic.mode",
     "with": [
@@ -41,16 +41,5 @@
       "max": 1400
     }
   },
-  "modules": [
-    "uhcrun:timberman",
-    "uhcrun:leaves_leave_no_leaves",
-    "uhcrun:dasher",
-    "uhcrun:ore_balance",
-    "uhcrun:blasted_ores",
-    "uhcrun:need_for_resources",
-    "uhcrun:animal_cooked_food",
-    "uhcrun:mob_cooked_food",
-    "uhcrun:creeper_tnt",
-    "uhcrun:chicken_arrows"
-  ]
+  "modules": "#uhcrun:standard"
 }

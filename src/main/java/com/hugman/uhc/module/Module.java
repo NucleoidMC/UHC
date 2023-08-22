@@ -2,6 +2,7 @@ package com.hugman.uhc.module;
 
 import com.hugman.uhc.modifier.Modifier;
 import com.hugman.uhc.registry.UHCRegistries;
+import com.hugman.uhc.registry.UHCRegistryKeys;
 import com.mojang.datafixers.util.Either;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
@@ -28,9 +29,9 @@ public record Module(String translation, Optional<Either<String, List<String>>> 
 			Modifier.TYPE_CODEC.listOf().fieldOf("modifiers").forGetter(Module::modifiers)
 	).apply(instance, Module::new));
 
-	public static final Codec<RegistryEntry<Module>> REGISTRY_CODEC = RegistryElementCodec.of(UHCRegistries.MODULE, CODEC);
-	public static final Codec<RegistryEntryList<Module>> LIST_CODEC = RegistryCodecs.entryList(UHCRegistries.MODULE, CODEC);
-	public static final Codec<List<RegistryEntryList<Module>>> LISTS_CODEC = RegistryCodecs.entryList(UHCRegistries.MODULE, CODEC, true).listOf();
+	public static final Codec<RegistryEntry<Module>> REGISTRY_CODEC = RegistryElementCodec.of(UHCRegistryKeys.MODULE, CODEC);
+	public static final Codec<RegistryEntryList<Module>> LIST_CODEC = RegistryCodecs.entryList(UHCRegistryKeys.MODULE, CODEC);
+	public static final Codec<List<RegistryEntryList<Module>>> LISTS_CODEC = RegistryCodecs.entryList(UHCRegistryKeys.MODULE, CODEC, true).listOf();
 
 	public List<String> getDescriptionLines() {
 		List<String> list = new ArrayList<>();

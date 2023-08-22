@@ -6,7 +6,7 @@ import com.hugman.uhc.config.UHCConfig;
 import com.hugman.uhc.game.phase.UHCWaiting;
 import com.hugman.uhc.modifier.ModifierType;
 import com.hugman.uhc.module.Module;
-import com.hugman.uhc.registry.UHCRegistries;
+import com.hugman.uhc.registry.UHCRegistryKeys;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.fabricmc.loader.api.FabricLoader;
@@ -27,10 +27,10 @@ public class UHC implements ModInitializer {
 		Reflection.initialize(Module.class);
 		Reflection.initialize(ModifierType.class);
 
-		UHCRegistries.register();
+		UHCRegistryKeys.registerDynamics();
 
 		CommandRegistrationCallback.EVENT.register((dispatcher, dedicated, environment) -> ModulesCommand.register(dispatcher));
-		GameType.register(UHC.id("uhc"), UHCConfig.CODEC, UHCWaiting::open);
+		GameType.register(UHC.id("standard"), UHCConfig.CODEC, UHCWaiting::open);
 	}
 
 	public static void debug(String s) {

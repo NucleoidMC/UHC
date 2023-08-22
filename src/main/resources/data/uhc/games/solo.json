@@ -1,5 +1,5 @@
 {
-  "type": "uhc:uhc",
+  "type": "uhc:standard",
   "name": {
     "translate": "game.generic.mode",
     "with": [
