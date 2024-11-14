@@ -25,45 +25,45 @@ import xyz.nucleoid.plasmid.api.game.GameSpaceManager;
 import java.util.Objects;
 
 public class ModulesCommand {
-	public static final SimpleCommandExceptionType NO_MODULES_ACTIVATED = new SimpleCommandExceptionType(Text.translatable("command.uhc.modules.no_modules_activated"));
+    public static final SimpleCommandExceptionType NO_MODULES_ACTIVATED = new SimpleCommandExceptionType(Text.translatable("command.uhc.modules.no_modules_activated"));
 
-	public static void register(CommandDispatcher<ServerCommandSource> dispatcher) {
-		dispatcher.register(
-				CommandManager.literal("modules")
-						.requires(ModulesCommand::isSourceInUHC)
-						.executes(ModulesCommand::displayModules));
-	}
+    public static void register(CommandDispatcher<ServerCommandSource> dispatcher) {
+        dispatcher.register(
+                CommandManager.literal("modules")
+                        .requires(ModulesCommand::isSourceInUHC)
+                        .executes(ModulesCommand::displayModules));
+    }
 
-	public static boolean isSourceInUHC(ServerCommandSource source) {
-		GameSpace gameSpace = GameSpaceManager.get().byWorld(source.getWorld());
-		if (gameSpace != null) {
-			return gameSpace.getMetadata().sourceConfig().value().config() instanceof UHCConfig;
-		}
-		return false;
-	}
+    public static boolean isSourceInUHC(ServerCommandSource source) {
+        GameSpace gameSpace = GameSpaceManager.get().byWorld(source.getWorld());
+        if (gameSpace != null) {
+            return gameSpace.getMetadata().sourceConfig().value().config() instanceof UHCConfig;
+        }
+        return false;
+    }
 
-	private static int displayModules(CommandContext<ServerCommandSource> context) throws CommandSyntaxException {
-		ServerCommandSource source = context.getSource();
-		RegistryEntryList<Module> moduleEntries = ((UHCConfig) Objects.requireNonNull(GameSpaceManager.get().byWorld(source.getWorld())).getMetadata().sourceConfig().value().config()).modules();
-		if (moduleEntries.size() != 0) {
-			ScreenHandlerType<?> type = Registries.SCREEN_HANDLER.get(Identifier.of("generic_9x" + MathHelper.clamp(1, MathHelper.ceil((float) moduleEntries.size() / 9), 6)));
-			SimpleGui gui = new SimpleGui(type, source.getPlayer(), false);
-			gui.setTitle(Text.translatable("ui.uhc.modules.title"));
-			int i = 0;
-			for (var moduleEntry : moduleEntries) {
-				var module = moduleEntry.value();
-				GuiElementBuilder elementBuilder = new GuiElementBuilder(module.icon())
-						.setName(Text.translatable(module.translation()).formatted(Formatting.BOLD).setStyle(Style.EMPTY.withColor(module.color())))
-						.hideDefaultTooltip();
-				for (String s : module.getDescriptionLines()) {
-					elementBuilder.addLoreLine(Text.literal("- ").append(Text.translatable(s)).formatted(Formatting.GRAY));
-				}
-				gui.setSlot(i++, elementBuilder);
-			}
-			gui.open();
-			return Command.SINGLE_SUCCESS;
-		} else {
-			throw NO_MODULES_ACTIVATED.create();
-		}
-	}
+    private static int displayModules(CommandContext<ServerCommandSource> context) throws CommandSyntaxException {
+        ServerCommandSource source = context.getSource();
+        RegistryEntryList<Module> moduleEntries = ((UHCConfig) Objects.requireNonNull(GameSpaceManager.get().byWorld(source.getWorld())).getMetadata().sourceConfig().value().config()).modules();
+        if (moduleEntries.size() != 0) {
+            ScreenHandlerType<?> type = Registries.SCREEN_HANDLER.get(Identifier.of("generic_9x" + MathHelper.clamp(1, MathHelper.ceil((float) moduleEntries.size() / 9), 6)));
+            SimpleGui gui = new SimpleGui(type, source.getPlayer(), false);
+            gui.setTitle(Text.translatable("ui.uhc.modules.title"));
+            int i = 0;
+            for (var moduleEntry : moduleEntries) {
+                var module = moduleEntry.value();
+                GuiElementBuilder elementBuilder = new GuiElementBuilder(module.icon())
+                        .setName(Text.translatable(module.translation()).formatted(Formatting.BOLD).setStyle(Style.EMPTY.withColor(module.color())))
+                        .hideDefaultTooltip();
+                for (String s : module.getDescriptionLines()) {
+                    elementBuilder.addLoreLine(Text.literal("- ").append(Text.translatable(s)).formatted(Formatting.GRAY));
+                }
+                gui.setSlot(i++, elementBuilder);
+            }
+            gui.open();
+            return Command.SINGLE_SUCCESS;
+        } else {
+            throw NO_MODULES_ACTIVATED.create();
+        }
+    }
 }

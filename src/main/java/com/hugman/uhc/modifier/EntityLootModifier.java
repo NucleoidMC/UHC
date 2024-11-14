@@ -10,7 +10,6 @@ import net.minecraft.loot.LootTable;
 import net.minecraft.loot.context.LootContextParameters;
 import net.minecraft.loot.context.LootContextTypes;
 import net.minecraft.loot.context.LootWorldContext;
-import net.minecraft.registry.Registries;
 import net.minecraft.registry.RegistryCodecs;
 import net.minecraft.registry.RegistryKey;
 import net.minecraft.registry.RegistryKeys;
@@ -21,7 +20,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
-public record EntityLootModifier(boolean replace, RegistryEntryList<EntityType<?>> entities, Optional<RegistryKey<LootTable>> lootTable) implements Modifier {
+public record EntityLootModifier(boolean replace, RegistryEntryList<EntityType<?>> entities,
+                                 Optional<RegistryKey<LootTable>> lootTable) implements Modifier {
     public static final MapCodec<EntityLootModifier> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
             Codec.BOOL.optionalFieldOf("replace", true).forGetter(EntityLootModifier::replace),
             RegistryCodecs.entryList(RegistryKeys.ENTITY_TYPE).optionalFieldOf("entities", RegistryEntryList.empty()).forGetter(EntityLootModifier::entities),
