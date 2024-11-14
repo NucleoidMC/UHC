@@ -488,7 +488,7 @@ public class UHCActive {
         for (TraversalBreakModifier piece : this.config.getModifiers(ModifierType.TRAVERSAL_BREAK)) {
             piece.breakBlock(this.world, playerEntity, pos);
         }
-        return EventResult.DENY;
+        return EventResult.ALLOW;
     }
 
     private EventResult onExplosion(Explosion explosion, List<BlockPos> positions) {
