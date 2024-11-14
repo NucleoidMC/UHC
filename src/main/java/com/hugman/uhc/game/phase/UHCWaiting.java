@@ -7,16 +7,18 @@ import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.ActionResult;
 import net.minecraft.world.GameMode;
-import xyz.nucleoid.plasmid.game.GameOpenContext;
-import xyz.nucleoid.plasmid.game.GameOpenProcedure;
-import xyz.nucleoid.plasmid.game.GameResult;
-import xyz.nucleoid.plasmid.game.GameSpace;
-import xyz.nucleoid.plasmid.game.common.GameWaitingLobby;
-import xyz.nucleoid.plasmid.game.common.team.TeamManager;
-import xyz.nucleoid.plasmid.game.event.GameActivityEvents;
-import xyz.nucleoid.plasmid.game.event.GamePlayerEvents;
-import xyz.nucleoid.plasmid.game.player.PlayerOffer;
-import xyz.nucleoid.plasmid.game.player.PlayerOfferResult;
+import xyz.nucleoid.plasmid.api.game.GameOpenContext;
+import xyz.nucleoid.plasmid.api.game.GameOpenProcedure;
+import xyz.nucleoid.plasmid.api.game.GameResult;
+import xyz.nucleoid.plasmid.api.game.GameSpace;
+import xyz.nucleoid.plasmid.api.game.common.GameWaitingLobby;
+import xyz.nucleoid.plasmid.api.game.common.team.TeamManager;
+import xyz.nucleoid.plasmid.api.game.event.GameActivityEvents;
+import xyz.nucleoid.plasmid.api.game.event.GamePlayerEvents;
+import xyz.nucleoid.plasmid.api.game.player.JoinAcceptor;
+import xyz.nucleoid.plasmid.api.game.player.JoinAcceptorResult;
+import xyz.nucleoid.plasmid.api.game.player.JoinOffer;
+import xyz.nucleoid.stimuli.event.EventResult;
 import xyz.nucleoid.stimuli.event.player.PlayerAttackEntityEvent;
 import xyz.nucleoid.stimuli.event.player.PlayerDamageEvent;
 import xyz.nucleoid.stimuli.event.player.PlayerDeathEvent;
@@ -31,19 +33,19 @@ public record UHCWaiting(GameSpace gameSpace, ServerWorld world, UHCConfig confi
 
 			UHCWaiting waiting = new UHCWaiting(activity.getGameSpace(), world, context.config(), teamManager);
 
-			activity.listen(GamePlayerEvents.OFFER, waiting::offerPlayer);
+			activity.listen(GamePlayerEvents.OFFER, JoinOffer::accept);
+			activity.listen(GamePlayerEvents.ACCEPT, waiting::acceptPlayer);
 			activity.listen(GameActivityEvents.REQUEST_START, waiting::requestStart);
-			activity.listen(PlayerDeathEvent.EVENT, (player, source) -> ActionResult.FAIL);
-			activity.listen(PlayerDamageEvent.EVENT, (player, source, amount) -> ActionResult.FAIL);
-			activity.listen(PlayerAttackEntityEvent.EVENT, (attacker, hand, attacked, hitResult) -> ActionResult.FAIL);
+			activity.listen(PlayerDeathEvent.EVENT, (player, source) -> EventResult.DENY);
+			activity.listen(PlayerDamageEvent.EVENT, (player, source, amount) -> EventResult.DENY);
+			activity.listen(PlayerAttackEntityEvent.EVENT, (attacker, hand, attacked, hitResult) -> EventResult.DENY);
 		});
 	}
 
-	private PlayerOfferResult offerPlayer(PlayerOffer offer) {
-		return offer.accept(this.world, UHCSpawner.getSurfaceBlock(world, 0, 0)).and(() -> {
-			ServerPlayerEntity player = offer.player();
-			player.changeGameMode(GameMode.ADVENTURE);
-		});
+	private JoinAcceptorResult acceptPlayer(JoinAcceptor joinAcceptor) {
+		return joinAcceptor
+				.teleport(this.world, UHCSpawner.getSurfaceBlock(world, 0, 0))
+				.thenRunForEach(player -> player.changeGameMode(GameMode.ADVENTURE));
 	}
 
 	private GameResult requestStart() {

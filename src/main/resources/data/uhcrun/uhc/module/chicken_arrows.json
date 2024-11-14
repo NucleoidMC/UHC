@@ -5,7 +5,7 @@
     {
       "type": "uhc:entity_loot",
       "replace": false,
-      "entity": "minecraft:chicken",
+      "entities": "minecraft:chicken",
       "loot_table": "uhcrun:entities/arrows"
     }
   ]

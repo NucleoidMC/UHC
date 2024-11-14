@@ -11,8 +11,8 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.Heightmap;
 import net.minecraft.world.chunk.WorldChunk;
 import xyz.nucleoid.map_templates.BlockBounds;
-import xyz.nucleoid.plasmid.game.common.team.GameTeam;
-import xyz.nucleoid.plasmid.util.ColoredBlocks;
+import xyz.nucleoid.plasmid.api.game.common.team.GameTeam;
+import xyz.nucleoid.plasmid.api.util.ColoredBlocks;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -37,7 +37,7 @@ public class UHCSpawner {
 	public void spawnPlayerAt(ServerPlayerEntity player, BlockPos pos) {
 		ChunkPos chunkPos = new ChunkPos(pos.getX() >> 4, pos.getZ() >> 4);
 		this.world.getChunkManager().addTicket(ChunkTicketType.POST_TELEPORT, chunkPos, 1, player.getId());
-		player.teleport(this.world, pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, 0.0F, 0.0F);
+		player.refreshPositionAndAngles(pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, 0.0F, 0.0F);
 	}
 
 	public void putParticipantInCage(GameTeam team, ServerPlayerEntity participant) {

@@ -7,9 +7,9 @@ import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
-import xyz.nucleoid.plasmid.game.GameSpace;
-import xyz.nucleoid.plasmid.game.common.GlobalWidgets;
-import xyz.nucleoid.plasmid.game.common.widget.BossBarWidget;
+import xyz.nucleoid.plasmid.api.game.GameSpace;
+import xyz.nucleoid.plasmid.api.game.common.GlobalWidgets;
+import xyz.nucleoid.plasmid.api.game.common.widget.BossBarWidget;
 
 public class UHCBar {
 	private final BossBarWidget widget;
@@ -28,7 +28,7 @@ public class UHCBar {
 	}
 
 	public static UHCBar create(GlobalWidgets widgets, GameSpace gameSpace) {
-		return new UHCBar(widgets.addBossBar(gameSpace.getMetadata().sourceConfig().name(), BossBar.Color.BLUE, BossBar.Style.PROGRESS), gameSpace);
+		return new UHCBar(widgets.addBossBar(gameSpace.getMetadata().sourceConfig().value().name(), BossBar.Color.BLUE, BossBar.Style.PROGRESS), gameSpace);
 	}
 
 	public void set(String symbol, String name, long totalTicks, long endTick, BossBar.Color color) {
@@ -84,7 +84,7 @@ public class UHCBar {
 			if (this.message != null && seconds != 0) {
 				entity.sendMessage(Text.literal(symbol).append(Text.translatable(this.message, TickUtil.formatPretty(seconds * 20).formatted(Formatting.RED))).formatted(Formatting.GOLD), false);
 			}
-			entity.playSound(SoundEvents.ENTITY_EXPERIENCE_ORB_PICKUP, SoundCategory.PLAYERS, 1.0F, pitch);
+			entity.playSound(SoundEvents.ENTITY_EXPERIENCE_ORB_PICKUP, 1.0F, pitch);
 		});
 	}
 }

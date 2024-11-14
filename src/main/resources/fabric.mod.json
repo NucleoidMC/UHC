@@ -20,15 +20,12 @@
       "com.hugman.uhc.UHC"
     ]
   },
-  "mixins": [
-    "uhc.mixins.json"
-  ],
   "depends": {
     "java": ">=17",
-    "minecraft": ">=1.20",
-    "fabricloader": ">=0.9.1",
-    "fabric-api": ">=0.86.1",
-    "plasmid": "0.5.x"
+    "minecraft": ">=1.21.3",
+    "plasmid": "0.6.x",
+    "fabricloader": ">=0.16.0",
+    "fabric-api": ">=0.86.1"
   },
   "custom": {
     "mc-publish": {

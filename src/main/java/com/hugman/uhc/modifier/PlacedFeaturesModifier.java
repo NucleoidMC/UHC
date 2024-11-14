@@ -1,6 +1,7 @@
 package com.hugman.uhc.modifier;
 
 import com.mojang.serialization.Codec;
+import com.mojang.serialization.MapCodec;
 import net.minecraft.registry.entry.RegistryEntryList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.random.Random;
@@ -9,7 +10,7 @@ import net.minecraft.world.gen.chunk.ChunkGenerator;
 import net.minecraft.world.gen.feature.PlacedFeature;
 
 public record PlacedFeaturesModifier(RegistryEntryList<PlacedFeature> features) implements Modifier {
-	public static final Codec<PlacedFeaturesModifier> CODEC = PlacedFeature.LIST_CODEC.optionalFieldOf("features", RegistryEntryList.of()).xmap(PlacedFeaturesModifier::new, config -> config.features).codec();
+	public static final MapCodec<PlacedFeaturesModifier> CODEC = PlacedFeature.LIST_CODEC.optionalFieldOf("features", RegistryEntryList.of()).xmap(PlacedFeaturesModifier::new, PlacedFeaturesModifier::features);
 
 	@Override
 	public ModifierType<?> getType() {

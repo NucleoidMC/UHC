@@ -1,6 +1,7 @@
 package com.hugman.uhc.modifier;
 
 import com.mojang.serialization.Codec;
+import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import it.unimi.dsi.fastutil.longs.LongArraySet;
 import it.unimi.dsi.fastutil.longs.LongSet;
@@ -12,24 +13,14 @@ import net.minecraft.server.world.ServerWorld;
 import net.minecraft.structure.rule.RuleTest;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.Nullable;
-import xyz.nucleoid.plasmid.util.BlockTraversal;
+import xyz.nucleoid.plasmid.api.util.BlockTraversal;
 
-public class TraversalBreakModifier implements Modifier {
-	public static final Codec<TraversalBreakModifier> CODEC = RecordCodecBuilder.create(instance -> instance.group(
+public record TraversalBreakModifier(RuleTest predicate, int amount, boolean includeLeaves) implements Modifier {
+	public static final MapCodec<TraversalBreakModifier> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
 			RuleTest.TYPE_CODEC.fieldOf("target").forGetter(module -> module.predicate),
 			Codec.intRange(0, Integer.MAX_VALUE).optionalFieldOf("amount", 128).forGetter(module -> module.amount),
 			Codec.BOOL.optionalFieldOf("include_leaves", false).forGetter(module -> module.includeLeaves)
 	).apply(instance, TraversalBreakModifier::new));
-
-	private final RuleTest predicate;
-	private final int amount;
-	private final boolean includeLeaves;
-
-	private TraversalBreakModifier(RuleTest predicate, int amount, boolean includeLeaves) {
-		this.predicate = predicate;
-		this.amount = amount;
-		this.includeLeaves = includeLeaves;
-	}
 
 	@Override
 	public ModifierType<?> getType() {

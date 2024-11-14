@@ -3,7 +3,6 @@ package com.hugman.uhc.map;
 import com.hugman.uhc.config.UHCConfig;
 import com.hugman.uhc.modifier.ModifierType;
 import com.hugman.uhc.modifier.PlacedFeaturesModifier;
-import com.hugman.uhc.util.ChunkGeneratorSettingsProvider;
 import com.mojang.datafixers.util.Pair;
 import net.minecraft.SharedConstants;
 import net.minecraft.entity.SpawnGroup;
@@ -27,18 +26,17 @@ import net.minecraft.world.biome.SpawnSettings;
 import net.minecraft.world.biome.source.BiomeAccess;
 import net.minecraft.world.biome.source.BiomeSource;
 import net.minecraft.world.chunk.Chunk;
-import net.minecraft.world.gen.GenerationStep;
 import net.minecraft.world.gen.StructureAccessor;
 import net.minecraft.world.gen.chunk.*;
 import net.minecraft.world.gen.chunk.placement.StructurePlacementCalculator;
 import net.minecraft.world.gen.noise.NoiseConfig;
 import net.minecraft.world.gen.structure.Structure;
 import org.jetbrains.annotations.Nullable;
-import xyz.nucleoid.plasmid.game.world.generator.GameChunkGenerator;
+import xyz.nucleoid.fantasy.util.ChunkGeneratorSettingsProvider;
+import xyz.nucleoid.plasmid.api.game.world.generator.GameChunkGenerator;
 
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.Executor;
 import java.util.function.Supplier;
 
 public class ModuledChunkGenerator extends GameChunkGenerator implements ChunkGeneratorSettingsProvider {
@@ -53,17 +51,17 @@ public class ModuledChunkGenerator extends GameChunkGenerator implements ChunkGe
         this.seed = seed;
         this.subGenerator = subGenerator;
         this.settings = settings;
-	}
+    }
 
-	public static ModuledChunkGenerator of(UHCConfig config, long seed) {
+    public static ModuledChunkGenerator of(UHCConfig config, long seed) {
         BiomeSource biomeSource = config.mapConfig().dimension().chunkGenerator().getBiomeSource();
         ChunkGenerator subGenerator = config.mapConfig().dimension().chunkGenerator();
-		ChunkGeneratorSettings settings = null;
-		if (subGenerator instanceof NoiseChunkGenerator generator) {
-			settings = generator.getSettings().value();
-		}
-		return new ModuledChunkGenerator(biomeSource, config, seed, subGenerator, settings);
-	}
+        ChunkGeneratorSettings settings = null;
+        if (subGenerator instanceof NoiseChunkGenerator generator) {
+            settings = generator.getSettings().value();
+        }
+        return new ModuledChunkGenerator(biomeSource, config, seed, subGenerator, settings);
+    }
 
     @Override
     public void generateFeatures(StructureWorldAccess world, Chunk chunk, StructureAccessor structureAccessor) {
@@ -78,8 +76,8 @@ public class ModuledChunkGenerator extends GameChunkGenerator implements ChunkGe
 
         List<PlacedFeaturesModifier> placedFeaturesModifiers = this.config.getModifiers(ModifierType.PLACED_FEATURES);
         int i = 0;
-        for(var modifier : placedFeaturesModifiers) {
-            for(var entry : modifier.features()) {
+        for (var modifier : placedFeaturesModifiers) {
+            for (var entry : modifier.features()) {
                 chunkRandom.setDecoratorSeed(popSeed, i++, 0);
                 Supplier<String> s = () -> entry.getKey().map(Object::toString).orElseGet(entry::toString);
                 world.setCurrentlyGeneratingStructureName(s);
@@ -95,8 +93,8 @@ public class ModuledChunkGenerator extends GameChunkGenerator implements ChunkGe
     /*=================*/
 
     @Override
-    public CompletableFuture<Chunk> populateBiomes(Executor executor, NoiseConfig noiseConfig, Blender blender, StructureAccessor structureAccessor, Chunk chunk) {
-        return this.subGenerator.populateBiomes(executor, noiseConfig, blender, structureAccessor, chunk);
+    public CompletableFuture<Chunk> populateBiomes(NoiseConfig noiseConfig, Blender blender, StructureAccessor structureAccessor, Chunk chunk) {
+        return this.subGenerator.populateBiomes(noiseConfig, blender, structureAccessor, chunk);
     }
 
     @Override
@@ -110,13 +108,13 @@ public class ModuledChunkGenerator extends GameChunkGenerator implements ChunkGe
     }
 
     @Override
-    public CompletableFuture<Chunk> populateNoise(Executor executor, Blender blender, NoiseConfig noiseConfig, StructureAccessor structureAccessor, Chunk chunk) {
-        return this.subGenerator.populateNoise(executor, blender, noiseConfig, structureAccessor, chunk);
+    public CompletableFuture<Chunk> populateNoise(Blender blender, NoiseConfig noiseConfig, StructureAccessor structureAccessor, Chunk chunk) {
+        return this.subGenerator.populateNoise(blender, noiseConfig, structureAccessor, chunk);
     }
 
     @Override
-    public void carve(ChunkRegion chunkRegion, long seed, NoiseConfig noiseConfig, BiomeAccess world, StructureAccessor structureAccessor, Chunk chunk, GenerationStep.Carver carverStep) {
-        this.subGenerator.carve(chunkRegion, seed, noiseConfig, world, structureAccessor, chunk, carverStep);
+    public void carve(ChunkRegion chunkRegion, long seed, NoiseConfig noiseConfig, BiomeAccess world, StructureAccessor structureAccessor, Chunk chunk) {
+        this.subGenerator.carve(chunkRegion, seed, noiseConfig, world, structureAccessor, chunk);
     }
 
     @Override
@@ -166,8 +164,8 @@ public class ModuledChunkGenerator extends GameChunkGenerator implements ChunkGe
     }
 
     @Override
-    public void getDebugHudText(List<String> text, NoiseConfig noiseConfig, BlockPos pos) {
-        this.subGenerator.getDebugHudText(text, noiseConfig, pos);
+    public void appendDebugHudText(List<String> text, NoiseConfig noiseConfig, BlockPos pos) {
+        this.subGenerator.appendDebugHudText(text, noiseConfig, pos);
     }
 
     @Override

@@ -28,17 +28,20 @@ import net.minecraft.world.GameMode;
 import net.minecraft.world.explosion.Explosion;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.jetbrains.annotations.Nullable;
-import xyz.nucleoid.plasmid.game.GameActivity;
-import xyz.nucleoid.plasmid.game.GameCloseReason;
-import xyz.nucleoid.plasmid.game.GameSpace;
-import xyz.nucleoid.plasmid.game.common.GlobalWidgets;
-import xyz.nucleoid.plasmid.game.common.team.*;
-import xyz.nucleoid.plasmid.game.event.GameActivityEvents;
-import xyz.nucleoid.plasmid.game.event.GamePlayerEvents;
-import xyz.nucleoid.plasmid.game.player.PlayerOffer;
-import xyz.nucleoid.plasmid.game.player.PlayerOfferResult;
-import xyz.nucleoid.plasmid.game.player.PlayerSet;
-import xyz.nucleoid.plasmid.game.rule.GameRuleType;
+import xyz.nucleoid.plasmid.api.game.GameActivity;
+import xyz.nucleoid.plasmid.api.game.GameCloseReason;
+import xyz.nucleoid.plasmid.api.game.GameSpace;
+import xyz.nucleoid.plasmid.api.game.common.GlobalWidgets;
+import xyz.nucleoid.plasmid.api.game.common.team.*;
+import xyz.nucleoid.plasmid.api.game.event.GameActivityEvents;
+import xyz.nucleoid.plasmid.api.game.event.GamePlayerEvents;
+import xyz.nucleoid.plasmid.api.game.player.JoinAcceptor;
+import xyz.nucleoid.plasmid.api.game.player.JoinAcceptorResult;
+import xyz.nucleoid.plasmid.api.game.player.JoinIntent;
+import xyz.nucleoid.plasmid.api.game.player.PlayerSet;
+import xyz.nucleoid.plasmid.api.game.rule.GameRuleType;
+import xyz.nucleoid.stimuli.event.DroppedItemsResult;
+import xyz.nucleoid.stimuli.event.EventResult;
 import xyz.nucleoid.stimuli.event.block.BlockBreakEvent;
 import xyz.nucleoid.stimuli.event.block.BlockDropItemsEvent;
 import xyz.nucleoid.stimuli.event.entity.EntityDropItemsEvent;
@@ -142,7 +145,8 @@ public class UHCActive {
 
 			activity.listen(GameActivityEvents.ENABLE, active::enable);
 
-			activity.listen(GamePlayerEvents.OFFER, active::offerPlayer);
+			activity.listen(GamePlayerEvents.OFFER, offer -> offer.intent() == JoinIntent.SPECTATE ? offer.accept() : offer.pass());
+			activity.listen(GamePlayerEvents.ACCEPT, active::acceptPlayer);
 			activity.listen(GamePlayerEvents.LEAVE, active::playerLeave);
 
 			activity.listen(GameActivityEvents.TICK, active::tick);
@@ -278,13 +282,13 @@ public class UHCActive {
 		return participants.get(player);
 	}
 
-	private PlayerOfferResult offerPlayer(PlayerOffer offer) {
-		return offer.accept(this.world, UHCSpawner.getSurfaceBlock(world, 0, 0)).and(() -> {
-			ServerPlayerEntity player = offer.player();
-
-			player.changeGameMode(GameMode.SPECTATOR);
-			player.networkHandler.sendPacket(new WorldBorderInitializeS2CPacket(this.world.getWorldBorder()));
-		});
+	private JoinAcceptorResult acceptPlayer(JoinAcceptor joinAcceptor) {
+		return joinAcceptor
+				.teleport(this.world, UHCSpawner.getSurfaceBlock(world, 0, 0))
+				.thenRunForEach(player ->  {
+					player.changeGameMode(GameMode.SPECTATOR);
+					player.networkHandler.sendPacket(new WorldBorderInitializeS2CPacket(this.world.getWorldBorder()));
+				});
 	}
 
 	private void playerLeave(ServerPlayerEntity player) {
@@ -298,18 +302,18 @@ public class UHCActive {
 		}
 	}
 
-	private ActionResult onPlayerDeath(ServerPlayerEntity player, DamageSource source) {
+	private EventResult onPlayerDeath(ServerPlayerEntity player, DamageSource source) {
 		if (participants.containsKey(player)) {
 			if (!getParticipant(player).isEliminated()) {
 				PlayerSet players = this.gameSpace.getPlayers();
 				players.sendMessage(Text.literal("\n☠ ").append(source.getDeathMessage(player).copy()).append("!\n").formatted(Formatting.DARK_RED));
 				players.playSound(SoundEvents.ENTITY_WITHER_SPAWN);
 				this.eliminateParticipant(player);
-				return ActionResult.FAIL;
+				return EventResult.DENY;
 			}
 		}
 		this.spawnLogic.spawnPlayerAtCenter(player);
-		return ActionResult.FAIL;
+		return EventResult.DENY;
 	}
 
 	private void eliminateParticipant(ServerPlayerEntity player) {
@@ -360,7 +364,7 @@ public class UHCActive {
 				players.sendMessage(Text.literal("\n").append(Text.translatable("text.uhc.none_win").formatted(Formatting.BOLD, Formatting.GOLD)).append("\n"));
 				UHC.LOGGER.warn("There are no teams left! Consider reviewing the minimum amount of players needed to start a game, so that there are at least 2 teams in the game.");
 			} else {
-				GameTeam lastTeam = teamsAlive.get(0);
+				GameTeam lastTeam = teamsAlive.getFirst();
 				PlayerSet teamMembers = teamManager.playersIn(lastTeam.key());
 				if (teamMembers.size() <= 0) {
 					players.sendMessage(Text.literal("\n").append(Text.translatable("text.uhc.none_win").formatted(Formatting.BOLD, Formatting.GOLD)).append("\n"));
@@ -386,19 +390,19 @@ public class UHCActive {
 	// GAME STATES
 	private void setInvulnerable(boolean b) {
 		this.invulnerable = b;
-		this.activity.setRule(GameRuleType.HUNGER, b ? ActionResult.FAIL : ActionResult.SUCCESS);
-		this.activity.setRule(GameRuleType.FALL_DAMAGE, b ? ActionResult.FAIL : ActionResult.SUCCESS);
+		this.activity.setRule(GameRuleType.HUNGER, b ? EventResult.DENY : EventResult.ALLOW);
+		this.activity.setRule(GameRuleType.FALL_DAMAGE, b ? EventResult.DENY : EventResult.ALLOW);
 	}
 
 	private void setPvp(boolean b) {
-		this.activity.setRule(GameRuleType.PVP, b ? ActionResult.SUCCESS : ActionResult.FAIL);
+		this.activity.setRule(GameRuleType.PVP, b ? EventResult.ALLOW : EventResult.DENY);
 	}
 
 	private void setInteractWithWorld(boolean b) {
-		this.activity.setRule(GameRuleType.BREAK_BLOCKS, b ? ActionResult.SUCCESS : ActionResult.FAIL);
-		this.activity.setRule(GameRuleType.PLACE_BLOCKS, b ? ActionResult.SUCCESS : ActionResult.FAIL);
-		this.activity.setRule(GameRuleType.INTERACTION, b ? ActionResult.SUCCESS : ActionResult.FAIL);
-		this.activity.setRule(GameRuleType.CRAFTING, b ? ActionResult.SUCCESS : ActionResult.FAIL);
+		this.activity.setRule(GameRuleType.BREAK_BLOCKS, b ? EventResult.ALLOW : EventResult.DENY);
+		this.activity.setRule(GameRuleType.PLACE_BLOCKS, b ? EventResult.ALLOW : EventResult.DENY);
+		this.activity.setRule(GameRuleType.INTERACTION, b ? EventResult.ALLOW : EventResult.DENY);
+		this.activity.setRule(GameRuleType.CRAFTING, b ? EventResult.ALLOW : EventResult.DENY);
 	}
 
 	private void tpToCages() {
@@ -470,30 +474,31 @@ public class UHCActive {
 	}
 
 	// GENERAL LISTENERS
-	private ActionResult onPlayerDamage(ServerPlayerEntity entity, DamageSource damageSource, float v) {
+	private EventResult onPlayerDamage(ServerPlayerEntity entity, DamageSource damageSource, float v) {
 		if (this.invulnerable) {
-			return ActionResult.FAIL;
+			return EventResult.DENY;
 		} else {
-			return ActionResult.SUCCESS;
+			return EventResult.ALLOW;
 		}
 	}
 
-	private ActionResult onBlockBroken(ServerPlayerEntity playerEntity, ServerWorld world, BlockPos pos) {
+	private EventResult onBlockBroken(ServerPlayerEntity playerEntity, ServerWorld world, BlockPos pos) {
 		for (TraversalBreakModifier piece : this.config.getModifiers(ModifierType.TRAVERSAL_BREAK)) {
 			piece.breakBlock(this.world, playerEntity, pos);
 		}
-		return ActionResult.SUCCESS;
+		return EventResult.DENY;
 	}
 
-	private void onExplosion(Explosion explosion, boolean b) {
-		explosion.getAffectedBlocks().forEach(pos -> {
+	private EventResult onExplosion(Explosion explosion, List<BlockPos> positions) {
+		positions.forEach(pos -> {
 			for (TraversalBreakModifier piece : this.config.getModifiers(ModifierType.TRAVERSAL_BREAK)) {
 				piece.breakBlock(this.world, explosion.getCausingEntity(), pos);
 			}
 		});
+		return EventResult.ALLOW;
 	}
 
-	private TypedActionResult<List<ItemStack>> onMobLoot(LivingEntity livingEntity, List<ItemStack> itemStacks) {
+	private DroppedItemsResult onMobLoot(LivingEntity livingEntity, List<ItemStack> itemStacks) {
 		boolean keepOld = true;
 		List<ItemStack> stacks = new ArrayList<>();
 		for (EntityLootModifier piece : this.config.getModifiers(ModifierType.ENTITY_LOOT)) {
@@ -503,10 +508,10 @@ public class UHCActive {
 			}
 		}
 		if (keepOld) stacks.addAll(itemStacks);
-		return TypedActionResult.pass(stacks);
+		return DroppedItemsResult.pass(stacks);
 	}
 
-	private TypedActionResult<List<ItemStack>> onBlockDrop(@Nullable Entity entity, ServerWorld world, BlockPos pos, BlockState state, List<ItemStack> itemStacks) {
+	private DroppedItemsResult onBlockDrop(@Nullable Entity entity, ServerWorld world, BlockPos pos, BlockState state, List<ItemStack> itemStacks) {
 		boolean keepOld = true;
 		List<ItemStack> stacks = new ArrayList<>();
 		for (BlockLootModifier piece : this.config.getModifiers(ModifierType.BLOCK_LOOT)) {
@@ -517,6 +522,6 @@ public class UHCActive {
 			}
 		}
 		if (keepOld) stacks.addAll(itemStacks);
-		return TypedActionResult.pass(stacks);
+		return DroppedItemsResult.pass(stacks);
 	}
 }

@@ -4,7 +4,7 @@
   "modifiers": [
     {
       "type": "uhc:player_attribute",
-      "attribute": "minecraft:generic.movement_speed",
+      "attribute": "minecraft:movement_speed",
       "value": 0.14
     },
     {

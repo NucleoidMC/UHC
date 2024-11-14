@@ -4,17 +4,23 @@ import com.hugman.uhc.modifier.Modifier;
 import com.hugman.uhc.modifier.ModifierType;
 import com.hugman.uhc.module.Module;
 import com.mojang.serialization.Codec;
+import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.registry.entry.RegistryEntryList;
-import xyz.nucleoid.plasmid.game.common.config.PlayerConfig;
+import xyz.nucleoid.plasmid.api.game.common.config.WaitingLobbyConfig;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public record UHCConfig(PlayerConfig players, int teamSize, UHCMapConfig mapConfig, UHCChapterConfig chapterConfig,
-						RegistryEntryList<Module> modules) {
-	public static final Codec<UHCConfig> CODEC = RecordCodecBuilder.create(instance -> instance.group(
-			PlayerConfig.CODEC.fieldOf("players").forGetter(UHCConfig::players),
+public record UHCConfig(
+		WaitingLobbyConfig players,
+		int teamSize,
+		UHCMapConfig mapConfig,
+		UHCChapterConfig chapterConfig,
+		RegistryEntryList<Module> modules
+) {
+	public static final MapCodec<UHCConfig> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+			WaitingLobbyConfig.CODEC.fieldOf("players").forGetter(UHCConfig::players),
 			Codec.INT.fieldOf("team_size").forGetter(UHCConfig::teamSize),
 			UHCMapConfig.CODEC.fieldOf("map").forGetter(UHCConfig::mapConfig),
 			UHCChapterConfig.CODEC.fieldOf("chapters").forGetter(UHCConfig::chapterConfig),

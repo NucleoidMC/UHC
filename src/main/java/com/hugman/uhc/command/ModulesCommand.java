@@ -19,8 +19,8 @@ import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.MathHelper;
-import xyz.nucleoid.plasmid.game.manager.GameSpaceManager;
-import xyz.nucleoid.plasmid.game.manager.ManagedGameSpace;
+import xyz.nucleoid.plasmid.api.game.GameSpace;
+import xyz.nucleoid.plasmid.api.game.GameSpaceManager;
 
 import java.util.Objects;
 
@@ -35,18 +35,18 @@ public class ModulesCommand {
 	}
 
 	public static boolean isSourceInUHC(ServerCommandSource source) {
-		ManagedGameSpace gameSpace = GameSpaceManager.get().byWorld(source.getWorld());
+		GameSpace gameSpace = GameSpaceManager.get().byWorld(source.getWorld());
 		if (gameSpace != null) {
-			return gameSpace.getMetadata().sourceConfig().config() instanceof UHCConfig;
+			return gameSpace.getMetadata().sourceConfig().value().config() instanceof UHCConfig;
 		}
 		return false;
 	}
 
 	private static int displayModules(CommandContext<ServerCommandSource> context) throws CommandSyntaxException {
 		ServerCommandSource source = context.getSource();
-		RegistryEntryList<Module> moduleEntries = ((UHCConfig) Objects.requireNonNull(GameSpaceManager.get().byWorld(source.getWorld())).getMetadata().sourceConfig().config()).modules();
+		RegistryEntryList<Module> moduleEntries = ((UHCConfig) Objects.requireNonNull(GameSpaceManager.get().byWorld(source.getWorld())).getMetadata().sourceConfig().value().config()).modules();
 		if (moduleEntries.size() != 0) {
-			ScreenHandlerType<?> type = Registries.SCREEN_HANDLER.get(new Identifier("generic_9x" + MathHelper.clamp(1, MathHelper.ceil((float) moduleEntries.size() / 9), 6)));
+			ScreenHandlerType<?> type = Registries.SCREEN_HANDLER.get(Identifier.of("generic_9x" + MathHelper.clamp(1, MathHelper.ceil((float) moduleEntries.size() / 9), 6)));
 			SimpleGui gui = new SimpleGui(type, source.getPlayer(), false);
 			gui.setTitle(Text.translatable("ui.uhc.modules.title"));
 			int i = 0;
@@ -54,7 +54,7 @@ public class ModulesCommand {
 				var module = moduleEntry.value();
 				GuiElementBuilder elementBuilder = new GuiElementBuilder(module.icon())
 						.setName(Text.translatable(module.translation()).formatted(Formatting.BOLD).setStyle(Style.EMPTY.withColor(module.color())))
-						.hideFlags();
+						.hideDefaultTooltip();
 				for (String s : module.getDescriptionLines()) {
 					elementBuilder.addLoreLine(Text.literal("- ").append(Text.translatable(s)).formatted(Formatting.GRAY));
 				}

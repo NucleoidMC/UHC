@@ -1,14 +1,19 @@
 package com.hugman.uhc.modifier;
 
 import com.mojang.serialization.Codec;
+import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.ExperienceOrbEntity;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.loot.LootTable;
 import net.minecraft.loot.LootTables;
 import net.minecraft.loot.context.*;
+import net.minecraft.registry.RegistryKey;
+import net.minecraft.registry.RegistryKeys;
+import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.structure.rule.RuleTest;
 import net.minecraft.util.Identifier;
@@ -17,30 +22,15 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.math.random.Random;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
-public class BlockLootModifier implements Modifier {
-	public static final Codec<BlockLootModifier> CODEC = RecordCodecBuilder.create(instance -> instance.group(
-			Codec.BOOL.optionalFieldOf("replace", true).forGetter(module -> module.replace),
-			RuleTest.TYPE_CODEC.fieldOf("target").forGetter(module -> module.predicate),
-			Identifier.CODEC.optionalFieldOf("loot_table", LootTables.EMPTY).forGetter(module -> module.lootTable),
-			Codec.intRange(0, Integer.MAX_VALUE).optionalFieldOf("experience", 0).forGetter(module -> module.experience)
+public record BlockLootModifier(boolean replace, RuleTest predicate, Optional<RegistryKey<LootTable>> lootTable, int experience) implements Modifier {
+	public static final MapCodec<BlockLootModifier> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+			Codec.BOOL.optionalFieldOf("replace", true).forGetter(BlockLootModifier::replace),
+			RuleTest.TYPE_CODEC.fieldOf("target").forGetter(BlockLootModifier::predicate),
+			RegistryKey.createCodec(RegistryKeys.LOOT_TABLE).optionalFieldOf("loot_table").forGetter(BlockLootModifier::lootTable),
+			Codec.intRange(0, Integer.MAX_VALUE).optionalFieldOf("experience", 0).forGetter(BlockLootModifier::experience)
 	).apply(instance, BlockLootModifier::new));
-
-	private final boolean replace;
-	private final RuleTest predicate;
-	private final Identifier lootTable;
-	private final int experience;
-
-	private BlockLootModifier(boolean replace, RuleTest predicate, Identifier lootTable, int experience) {
-		this.replace = replace;
-		this.predicate = predicate;
-		this.lootTable = lootTable;
-		this.experience = experience;
-	}
 
 	@Override
 	public ModifierType<?> getType() {
@@ -61,17 +51,18 @@ public class BlockLootModifier implements Modifier {
 	}
 
 	public List<ItemStack> getLoots(ServerWorld world, BlockPos pos, @Nullable Entity entity, ItemStack stack) {
-		if (this.lootTable == LootTables.EMPTY) {
+		if (this.lootTable.isEmpty()) {
 			return Collections.emptyList();
 		}
-		LootContextParameterSet lootContext = new LootContextParameterSet.Builder(world)
+
+		LootTable lootTable = world.getServer().getReloadableRegistries().getLootTable(this.lootTable.get());
+		LootWorldContext lootContext = new LootWorldContext.Builder(world)
 				.add(LootContextParameters.ORIGIN, Vec3d.ofCenter(pos))
 				.add(LootContextParameters.TOOL, stack)
 				.add(LootContextParameters.BLOCK_STATE, world.getBlockState(pos))
 				.addOptional(LootContextParameters.BLOCK_ENTITY, world.getBlockEntity(pos))
 				.addOptional(LootContextParameters.THIS_ENTITY, entity)
 				.build(LootContextTypes.BLOCK);
-		LootTable lootTable = world.getServer().getLootManager().getLootTable(this.lootTable);
 		return lootTable.generateLoot(lootContext);
 	}
 

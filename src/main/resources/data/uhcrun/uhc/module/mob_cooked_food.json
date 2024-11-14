@@ -4,12 +4,12 @@
   "modifiers": [
     {
       "type": "uhc:entity_loot",
-      "tag": "uhcrun:mob_food/beef",
+      "entities": "#uhcrun:mob_food/beef",
       "loot_table": "uhcrun:entities/cooked_food/beef"
     },
     {
       "type": "uhc:entity_loot",
-      "tag": "uhcrun:mob_food/fish",
+      "entities": "#uhcrun:mob_food/fish",
       "loot_table": "uhcrun:entities/cooked_food/fish"
     }
   ]

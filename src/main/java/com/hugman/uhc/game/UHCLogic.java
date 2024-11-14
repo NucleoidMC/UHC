@@ -8,7 +8,7 @@ public class UHCLogic {
 
 	public UHCLogic(UHCConfig config, int playerAmount) {
 		this.config = config;
-		this.playerDose = (playerAmount - (float) config.players().minPlayers()) / ((float) config.players().maxPlayers() - (float) config.players().minPlayers());
+		this.playerDose = (playerAmount - (float) config.players().minPlayers()) / ((float) config.players().playerConfig().maxPlayers().orElse(Integer.MAX_VALUE) - (float) config.players().minPlayers());
 	}
 
 	public double getStartMapSize() {

@@ -4,7 +4,7 @@
   "modifiers": [
     {
       "type": "uhc:entity_loot",
-      "entity": "minecraft:creeper",
+      "entities": "minecraft:creeper",
       "loot_table": "uhcrun:entities/tnt"
     }
   ]

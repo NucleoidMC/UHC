@@ -9,7 +9,7 @@ import net.minecraft.registry.RegistryKey;
 
 public class UHCRegistryKeys {
     public static final RegistryKey<Registry<Module>> MODULE = RegistryKey.ofRegistry(UHC.id("module"));
-    public static final RegistryKey<Registry<ModifierType>> MODIFIER_TYPE = RegistryKey.ofRegistry(UHC.id("modifier_type"));
+    public static final RegistryKey<Registry<ModifierType<?>>> MODIFIER_TYPE = RegistryKey.ofRegistry(UHC.id("modifier_type"));
 
     public static void registerDynamics() {
         DynamicRegistries.register(MODULE, Module.CODEC);

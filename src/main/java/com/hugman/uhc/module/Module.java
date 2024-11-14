@@ -19,13 +19,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-public record Module(String translation, Optional<Either<String, List<String>>> description, Item icon, TextColor color,
-					 List<Modifier> modifiers) {
+public record Module(String translation, Optional<Either<String, List<String>>> description, Item icon, TextColor color, List<Modifier> modifiers) {
 	public static final Codec<Module> CODEC = RecordCodecBuilder.create(instance -> instance.group(
 			Codec.STRING.fieldOf("translation").forGetter(Module::translation),
 			Codec.either(Codec.STRING, Codec.STRING.listOf()).optionalFieldOf("description").forGetter(Module::description),
 			Registries.ITEM.getCodec().optionalFieldOf("icon", Items.BARRIER).forGetter(Module::icon),
-			TextColor.CODEC.optionalFieldOf("color", TextColor.parse("#39db7f")).forGetter(Module::color),
+			TextColor.CODEC.optionalFieldOf("color", TextColor.fromRgb(3791743)).forGetter(Module::color),
 			Modifier.TYPE_CODEC.listOf().fieldOf("modifiers").forGetter(Module::modifiers)
 	).apply(instance, Module::new));
 
