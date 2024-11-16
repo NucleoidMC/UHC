@@ -6,12 +6,12 @@
       "entries": [
         {
           "type": "minecraft:item",
-          "name": "minecraft:leather",
+          "name": "minecraft:string",
           "functions": [
             {
               "function": "minecraft:set_count",
               "count": {
-                "min": 0.0,
+                "min": 1.0,
                 "max": 2.0,
                 "type": "minecraft:uniform"
               }

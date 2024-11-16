@@ -7,7 +7,8 @@
     "module.uhcrun.need_for_resources.description.4",
     "module.uhcrun.need_for_resources.description.5",
     "module.uhcrun.need_for_resources.description.6",
-    "module.uhcrun.need_for_resources.description.7"
+    "module.uhcrun.need_for_resources.description.7",
+    "module.uhcrun.need_for_resources.description.8"
   ],
   "icon": "minecraft:cactus",
   "modifiers": [
@@ -73,7 +74,7 @@
         "predicate_type": "minecraft:block_match",
         "block": "minecraft:red_mushroom"
       },
-      "loot_table": "uhc:blocks/mushroom"
+      "loot_table": "uhcrun:blocks/mushroom"
     },
     {
       "type": "uhc:block_loot",
@@ -81,13 +82,19 @@
         "predicate_type": "minecraft:block_match",
         "block": "minecraft:brown_mushroom"
       },
-      "loot_table": "uhc:blocks/mushroom"
+      "loot_table": "uhcrun:blocks/mushroom"
     },
     {
       "type": "uhc:entity_loot",
       "replace": false,
       "entities": "#uhcrun:leather",
       "loot_table": "uhcrun:entities/leather"
+    },
+    {
+      "type": "uhc:entity_loot",
+      "replace": false,
+      "entities": "#uhcrun:string",
+      "loot_table": "uhcrun:entities/string"
     }
   ]
 }
