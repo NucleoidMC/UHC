@@ -24,7 +24,7 @@ public record UHCConfig(
             Codec.INT.fieldOf("team_size").forGetter(UHCConfig::teamSize),
             UHCMapConfig.CODEC.fieldOf("map").forGetter(UHCConfig::mapConfig),
             UHCChapterConfig.CODEC.fieldOf("chapters").forGetter(UHCConfig::chapterConfig),
-            Module.LIST_CODEC.optionalFieldOf("modules", RegistryEntryList.of()).forGetter(UHCConfig::modules)
+            Module.ENTRY_LIST_CODEC.optionalFieldOf("modules", RegistryEntryList.of()).forGetter(UHCConfig::modules)
     ).apply(instance, UHCConfig::new));
 
     public List<Modifier> getModifiers() {

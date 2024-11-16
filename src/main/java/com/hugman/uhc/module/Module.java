@@ -28,9 +28,9 @@ public record Module(String translation, Optional<Either<String, List<String>>> 
             Modifier.TYPE_CODEC.listOf().fieldOf("modifiers").forGetter(Module::modifiers)
     ).apply(instance, Module::new));
 
-    public static final Codec<RegistryEntry<Module>> REGISTRY_CODEC = RegistryElementCodec.of(UHCRegistryKeys.MODULE, CODEC);
-    public static final Codec<RegistryEntryList<Module>> LIST_CODEC = RegistryCodecs.entryList(UHCRegistryKeys.MODULE, CODEC);
-    public static final Codec<List<RegistryEntryList<Module>>> LISTS_CODEC = RegistryCodecs.entryList(UHCRegistryKeys.MODULE, CODEC, true).listOf();
+    public static final Codec<RegistryEntry<Module>> ENTRY_CODEC = RegistryElementCodec.of(UHCRegistryKeys.MODULE, CODEC);
+    public static final Codec<RegistryEntryList<Module>> ENTRY_LIST_CODEC = RegistryCodecs.entryList(UHCRegistryKeys.MODULE, CODEC);
+    public static final Codec<List<RegistryEntryList<Module>>> ENTRY_LISTS_CODEC = RegistryCodecs.entryList(UHCRegistryKeys.MODULE, CODEC, true).listOf();
 
     public List<String> getDescriptionLines() {
         List<String> list = new ArrayList<>();
