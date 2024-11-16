@@ -480,7 +480,7 @@ public class UHCActive {
         if (this.invulnerable) {
             return EventResult.DENY;
         } else {
-            return EventResult.ALLOW;
+            return EventResult.PASS;
         }
     }
 
