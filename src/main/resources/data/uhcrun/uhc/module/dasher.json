@@ -1,5 +1,10 @@
 {
-  "translation": "module.uhcrun.dasher",
+  "name": {
+    "translate": "module.uhcrun.dasher"
+  },
+  "description": {
+    "translate": "module.uhcrun.dasher.description"
+  },
   "icon": "minecraft:iron_boots",
   "modifiers": [
     {

@@ -1,14 +1,35 @@
 {
-  "translation": "module.uhcrun.need_for_resources",
-  "description": [
-    "module.uhcrun.need_for_resources.description.1",
-    "module.uhcrun.need_for_resources.description.2",
-    "module.uhcrun.need_for_resources.description.3",
-    "module.uhcrun.need_for_resources.description.4",
-    "module.uhcrun.need_for_resources.description.5",
-    "module.uhcrun.need_for_resources.description.6",
-    "module.uhcrun.need_for_resources.description.7",
-    "module.uhcrun.need_for_resources.description.8"
+  "name": {
+    "translate": "module.uhcrun.faster_resources"
+  },
+  "description": {
+    "translate": "module.uhcrun.faster_resources.description"
+  },
+  "long_description": [
+    {
+      "translate": "module.uhcrun.faster_resources.description.1"
+    },
+    {
+      "translate": "module.uhcrun.faster_resources.description.2"
+    },
+    {
+      "translate": "module.uhcrun.faster_resources.description.3"
+    },
+    {
+      "translate": "module.uhcrun.faster_resources.description.4"
+    },
+    {
+      "translate": "module.uhcrun.faster_resources.description.5"
+    },
+    {
+      "translate": "module.uhcrun.faster_resources.description.6"
+    },
+    {
+      "translate": "module.uhcrun.faster_resources.description.7"
+    },
+    {
+      "translate": "module.uhcrun.faster_resources.description.8"
+    }
   ],
   "icon": "minecraft:cactus",
   "modifiers": [
@@ -18,7 +39,7 @@
         "predicate_type": "minecraft:tag_match",
         "tag": "minecraft:base_stone_overworld"
       },
-      "loot_table": "uhcrun:blocks/cobblestone"
+      "loot_table": "uhcrun:cobblestone"
     },
     {
       "type": "uhc:block_loot",
@@ -26,7 +47,7 @@
         "predicate_type": "minecraft:tag_match",
         "tag": "minecraft:sand"
       },
-      "loot_table": "uhcrun:blocks/sand"
+      "loot_table": "uhcrun:glass"
     },
     {
       "type": "uhc:block_loot",
@@ -34,7 +55,7 @@
         "predicate_type": "minecraft:block_match",
         "block": "minecraft:gravel"
       },
-      "loot_table": "uhcrun:blocks/gravel"
+      "loot_table": "uhcrun:arrows/normal"
     },
     {
       "type": "uhc:block_loot",
@@ -42,7 +63,7 @@
         "predicate_type": "minecraft:block_match",
         "block": "minecraft:cactus"
       },
-      "loot_table": "uhcrun:blocks/cactus"
+      "loot_table": "uhcrun:oak_planks/some"
     },
     {
       "type": "uhc:block_loot",
@@ -50,7 +71,7 @@
         "predicate_type": "minecraft:block_match",
         "block": "minecraft:kelp"
       },
-      "loot_table": "uhcrun:blocks/kelp"
+      "loot_table": "uhcrun:oak_planks/some"
     },
     {
       "type": "uhc:block_loot",
@@ -58,7 +79,15 @@
         "predicate_type": "minecraft:block_match",
         "block": "minecraft:kelp_plant"
       },
-      "loot_table": "uhcrun:blocks/kelp"
+      "loot_table": "uhcrun:oak_planks/some"
+    },
+    {
+      "type": "uhc:block_loot",
+      "target": {
+        "predicate_type": "minecraft:block_match",
+        "block": "minecraft:bamboo"
+      },
+      "loot_table": "uhcrun:oak_planks/some"
     },
     {
       "type": "uhc:block_loot",
@@ -66,7 +95,7 @@
         "predicate_type": "minecraft:block_match",
         "block": "minecraft:dead_bush"
       },
-      "loot_table": "uhcrun:blocks/dead_bush"
+      "loot_table": "uhcrun:bread/normal"
     },
     {
       "type": "uhc:block_loot",
@@ -74,7 +103,7 @@
         "predicate_type": "minecraft:block_match",
         "block": "minecraft:red_mushroom"
       },
-      "loot_table": "uhcrun:blocks/mushroom"
+      "loot_table": "uhcrun:mushroom_stews"
     },
     {
       "type": "uhc:block_loot",
@@ -82,19 +111,27 @@
         "predicate_type": "minecraft:block_match",
         "block": "minecraft:brown_mushroom"
       },
-      "loot_table": "uhcrun:blocks/mushroom"
+      "loot_table": "uhcrun:mushroom_stews"
     },
     {
       "type": "uhc:entity_loot",
       "replace": false,
       "entities": "#uhcrun:leather",
-      "loot_table": "uhcrun:entities/leather"
+      "loot_table": "uhcrun:leather/normal"
     },
     {
       "type": "uhc:entity_loot",
       "replace": false,
       "entities": "#uhcrun:string",
-      "loot_table": "uhcrun:entities/string"
+      "loot_table": "uhcrun:strings"
+    },
+    {
+      "type": "uhc:block_loot",
+      "target": {
+        "predicate_type": "minecraft:block_match",
+        "block": "minecraft:gravel"
+      },
+      "loot_table": "uhcrun:flint_and_steel"
     }
   ]
 }

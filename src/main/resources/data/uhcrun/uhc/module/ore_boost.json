@@ -1,0 +1,19 @@
+{
+  "name": {
+    "translate": "module.uhcrun.ore_boost"
+  },
+  "description": {
+    "translate": "module.uhcrun.ore_boost.description"
+  },
+  "icon": "minecraft:diamond_ore",
+  "modifiers": [
+    {
+      "type": "uhc:placed_features",
+      "features": [
+        "uhcrun:boosted_ores/lapis",
+        "uhcrun:boosted_ores/gold",
+        "uhcrun:boosted_ores/diamond"
+      ]
+    }
+  ]
+}

@@ -1,5 +1,10 @@
 {
-  "translation": "module.uhcrun.timberman",
+  "name": {
+    "translate": "module.uhcrun.timberman"
+  },
+  "description": {
+    "translate": "module.uhcrun.timberman.description"
+  },
   "icon": "minecraft:golden_axe",
   "modifiers": [
     {
@@ -16,7 +21,7 @@
         "predicate_type": "minecraft:tag_match",
         "tag": "minecraft:logs"
       },
-      "loot_table": "uhcrun:blocks/logs"
+      "loot_table": "uhcrun:oak_planks/normal"
     }
   ]
 }
