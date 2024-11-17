@@ -1,5 +1,5 @@
 {
-  "type": "minecraft:block",
+  "type": "minecraft:entity",
   "pools": [
     {
       "rolls": 1,
@@ -15,19 +15,6 @@
                 "max": 2.0,
                 "type": "minecraft:uniform"
               }
-            }
-          ],
-          "conditions": [
-            {
-              "condition": "minecraft:table_bonus",
-              "enchantment": "minecraft:fortune",
-              "chances": [
-                0.4,
-                0.45,
-                0.5,
-                0.55,
-                0.6
-              ]
             }
           ]
         }

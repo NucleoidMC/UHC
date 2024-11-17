@@ -53,10 +53,15 @@ public class ModulesCommand {
             for (var moduleEntry : moduleEntries) {
                 var module = moduleEntry.value();
                 GuiElementBuilder elementBuilder = new GuiElementBuilder(module.icon())
-                        .setName(Text.translatable(module.translation()).formatted(Formatting.BOLD).setStyle(Style.EMPTY.withColor(module.color())))
+                        .setName(module.name().copy().formatted(Formatting.BOLD).setStyle(Style.EMPTY.withColor(module.color())))
                         .hideDefaultTooltip();
-                for (String s : module.getDescriptionLines()) {
-                    elementBuilder.addLoreLine(Text.literal("- ").append(Text.translatable(s)).formatted(Formatting.GRAY));
+                if(module.longDescription().isPresent()) {
+                    for (Text line : module.longDescription().get()) {
+                        elementBuilder.addLoreLine(Text.literal("- ").append(line).formatted(Formatting.GRAY));
+                    }
+                }
+                else if(module.description().isPresent()){
+                    elementBuilder.addLoreLine(Text.literal("- ").append(module.description().get()).formatted(Formatting.GRAY));
                 }
                 gui.setSlot(i++, elementBuilder);
             }

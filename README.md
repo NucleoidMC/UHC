@@ -1,7 +1,10 @@
 # 🍏 UHC
 
 UHC (abbreviation for Ultra HardCore) is a popular Minecraft survival minigame that can be played alone or with a team.
-This mod also includes UHCRun, a variant of UHC that tweaks the game in many ways to make it 2x faster.
+This mod includes:
+* **UHC**, the classic UHC experience.
+* **UHCRun**, a variant that tweaks the game in many ways to make it 2x faster.
+* **DoubleRunner**, a variant that makes it even faster than UHCRun.
 
 UHC is one of the minigames made for the [Nucleoid Project](https://nucleoid.xyz/), an effort to build an open source ecosystem for server-side Minecraft minigames.
 You may even be interested in playing some of them over on our testing Minecraft server at `nucleoid.xyz`!
@@ -13,7 +16,7 @@ UHC can be installed on a client or a server. As this is a multiplayer minigame 
 
 ⚠ UHC **needs** the following mods to be installed:
 - Plasmid: [GitHub](https://github.com/NucleoidMC/plasmid) / [Modrinth](https://modrinth.com/mod/plasmid)
-- Fabric API: [GitHub](https://github.com/FabricMC/fabric) / [CurseForge](https://www.curseforge.com/minecraft/mc-mods/fabric-api) / [Modrinth](https://modrinth.com/mod/fabric-api)
+- Fabric API: [GitHub](https://github.com/FabricMC/fabric) / [Modrinth](https://modrinth.com/mod/fabric-api) / [CurseForge](https://www.curseforge.com/minecraft/mc-mods/fabric-api)
 
 ## Usage
 
@@ -26,6 +29,7 @@ To configure UHC, or to contribute to the project, visit [the official documenta
 ## Credits
 
 - [Hugman](https://github.com/Hugman76) - Development
+- [Samagames](https://www.samagames.net/) - Original concept of UHCRun & DoubleRunner
 
 ### 🌐 Translations
 | Language       | Translators                           |

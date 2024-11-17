@@ -1,5 +1,10 @@
 {
-  "translation": "module.uhcrun.blasted_ores",
+  "name": {
+    "translate": "module.uhcrun.blasted_ores"
+  },
+  "description": {
+    "translate": "module.uhcrun.blasted_ores.description"
+  },
   "icon": "minecraft:iron_ingot",
   "modifiers": [
     {
@@ -8,7 +13,7 @@
         "predicate_type": "minecraft:tag_match",
         "tag": "minecraft:coal_ores"
       },
-      "loot_table": "uhcrun:blocks/coal_ore",
+      "loot_table": "uhcrun:torches/normal",
       "experience": 4
     },
     {
@@ -17,7 +22,7 @@
         "predicate_type": "minecraft:tag_match",
         "tag": "minecraft:iron_ores"
       },
-      "loot_table": "uhcrun:blocks/iron_ore",
+      "loot_table": "uhcrun:iron_ingots/two",
       "experience": 1
     },
     {
@@ -26,7 +31,7 @@
         "predicate_type": "minecraft:tag_match",
         "tag": "minecraft:copper_ores"
       },
-      "loot_table": "uhcrun:blocks/copper_ore"
+      "loot_table": "uhcrun:cooked_food/beef/some"
     },
     {
       "type": "uhc:block_loot",
@@ -34,7 +39,7 @@
         "predicate_type": "minecraft:tag_match",
         "tag": "minecraft:gold_ores"
       },
-      "loot_table": "uhcrun:blocks/gold_ore",
+      "loot_table": "uhcrun:gold_ingots/two",
       "experience": 2
     },
     {
@@ -43,7 +48,7 @@
         "predicate_type": "minecraft:tag_match",
         "tag": "minecraft:lapis_ores"
       },
-      "loot_table": "uhcrun:blocks/lapis_ore",
+      "loot_table": "uhcrun:enchantment_resources/lapis_and_paper",
       "experience": 6
     },
     {
@@ -68,7 +73,7 @@
         "predicate_type": "minecraft:tag_match",
         "tag": "minecraft:diamond_ores"
       },
-      "loot_table": "uhcrun:blocks/diamond_ore",
+      "loot_table": "uhcrun:diamonds/two",
       "experience": 5
     }
   ]

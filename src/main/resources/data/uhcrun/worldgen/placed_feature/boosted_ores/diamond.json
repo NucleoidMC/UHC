@@ -1,9 +1,9 @@
 {
-  "feature": "uhcrun:ores/gold",
+  "feature": "uhcrun:boosted_ores/diamond",
   "placement": [
     {
       "type": "minecraft:count",
-      "count": 10
+      "count": 9
     },
     {
       "type": "minecraft:in_square"

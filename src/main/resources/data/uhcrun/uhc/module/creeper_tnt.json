@@ -1,11 +1,16 @@
 {
-  "translation": "module.uhcrun.creeper_tnt",
+  "name": {
+    "translate": "module.uhcrun.creeper_tnt"
+  },
+  "description": {
+    "translate": "module.uhcrun.creeper_tnt.description"
+  },
   "icon": "minecraft:tnt",
   "modifiers": [
     {
       "type": "uhc:entity_loot",
       "entities": "minecraft:creeper",
-      "loot_table": "uhcrun:entities/tnt"
+      "loot_table": "uhcrun:tnts/normal"
     }
   ]
 }

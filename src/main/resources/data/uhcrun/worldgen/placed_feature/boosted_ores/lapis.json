@@ -1,9 +1,9 @@
 {
-  "feature": "uhcrun:ores/diamond",
+  "feature": "uhcrun:boosted_ores/lapis",
   "placement": [
     {
       "type": "minecraft:count",
-      "count": 9
+      "count": 12
     },
     {
       "type": "minecraft:in_square"
