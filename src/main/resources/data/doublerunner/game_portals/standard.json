@@ -3,7 +3,7 @@
   "name": {
     "translate": "game.doublerunner"
   },
-  "icon": "minecraft:golden_apple",
+  "icon": "minecraft:enchanted_golden_apple",
   "entries": [
     {
       "type": "plasmid:game",

@@ -1,11 +1,11 @@
 {
   "name": {
-    "translate": "module.uhcrun.blasted_ores_plus"
+    "translate": "module.doublerunner.blasted_ores_plus"
   },
   "description": {
-    "translate": "module.uhcrun.blasted_ores_plus.description"
+    "translate": "module.uhcrun.blasted_ores.description"
   },
-  "icon": "minecraft:iron_ingot",
+  "icon": "minecraft:gold_ingot",
   "modifiers": [
     {
       "type": "uhc:block_loot",

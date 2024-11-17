@@ -1,9 +1,9 @@
 {
   "name": {
-    "translate": "module.doublerunner.guaranteed_gapples"
+    "translate": "module.doublerunner.guaranteed_golden_apples"
   },
   "description": {
-    "translate": "module.doublerunner.guaranteed_gapples.description"
+    "translate": "module.doublerunner.guaranteed_golden_apples.description"
   },
   "icon": "minecraft:golden_apple",
   "modifiers": [

@@ -8,8 +8,6 @@
     "uhcrun:blasted_ores",
     "uhcrun:faster_resources",
     "uhcrun:animal_cooked_food",
-    "uhcrun:mob_cooked_food",
-    "uhcrun:creeper_tnt",
-    "uhcrun:chicken_arrows"
+    "uhcrun:mob_cooked_food"
   ]
 }

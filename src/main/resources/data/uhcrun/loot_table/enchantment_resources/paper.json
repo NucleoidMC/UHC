@@ -6,16 +6,23 @@
       "entries": [
         {
           "type": "minecraft:item",
-          "name": "minecraft:torch",
+          "name": "minecraft:paper",
           "functions": [
             {
               "function": "minecraft:set_count",
-              "count": 8
+              "count": {
+                "type": "minecraft:uniform",
+                "min": 1,
+                "max": 2
+              }
             },
             {
               "function": "minecraft:apply_bonus",
               "enchantment": "minecraft:fortune",
               "formula": "minecraft:ore_drops"
+            },
+            {
+              "function": "minecraft:explosion_decay"
             }
           ]
         }

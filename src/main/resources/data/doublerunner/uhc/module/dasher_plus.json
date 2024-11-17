@@ -10,11 +10,23 @@
     {
       "type": "uhc:player_attribute",
       "attribute": "minecraft:movement_speed",
-      "value": 0.22
+      "id": "doublerunner:dasher_movement",
+      "amount": 0.5,
+      "operation": "add_multiplied_total"
     },
     {
-      "type": "uhc:permanent_effect",
-      "effect": "minecraft:haste"
+      "type": "uhc:player_attribute",
+      "attribute": "minecraft:block_break_speed",
+      "id": "doublerunner:dasher_break_speed",
+      "amount": 0.4,
+      "operation": "add_multiplied_total"
+    },
+    {
+      "type": "uhc:player_attribute",
+      "attribute": "minecraft:safe_fall_distance",
+      "id": "doublerunner:dasher_safe_fall_distance",
+      "amount": 1024,
+      "operation": "add_value"
     }
   ]
 }

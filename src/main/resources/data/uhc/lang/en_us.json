@@ -14,7 +14,7 @@
   "text.uhc.dropping.countdown_bar": "Drop in %s",
   "text.uhc.dropping.countdown_text": "You will be dropped in %s.",
   "text.uhc.last_one_wins": "Last one standing wins!",
-  "text.uhc.modules_enabled": "Modules enabled:",
+  "text.uhc.enabled_modules": "Enabled modules:",
   "text.uhc.no_longer_immune": "You are no longer immune to damages!",
   "text.uhc.none_win": "No one has won!",
   "text.uhc.player_eliminated": "%s has been eliminated!",

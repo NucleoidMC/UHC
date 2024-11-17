@@ -36,6 +36,7 @@ public record UHCConfig(
     }
 
     public <V extends Modifier> List<V> getModifiers(ModifierType<V> type) {
+        //TODO: cache modules so it's quicker to sort by type
         List<V> modifiers = new ArrayList<>();
         for (var moduleEntry : modules) {
             for (Modifier modifier : moduleEntry.value().modifiers()) {
