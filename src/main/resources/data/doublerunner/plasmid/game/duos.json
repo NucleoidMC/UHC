@@ -1,0 +1,44 @@
+{
+  "type": "uhc:standard",
+  "name": {
+    "translate": "game.generic.mode",
+    "with": [
+      {
+        "translate": "game.doublerunner"
+      },
+      {
+        "translate": "mode.duos"
+      }
+    ]
+  },
+  "team_size": 2,
+  "players": {
+    "min": 4,
+    "threshold": 16
+  },
+  "map": {
+    "dimension": {
+      "type": "minecraft:overworld",
+      "generator": {
+        "type": "minecraft:noise",
+        "settings": "minecraft:overworld",
+        "biome_source": {
+          "type": "minecraft:multi_noise",
+          "preset": "minecraft:overworld"
+        }
+      }
+    },
+    "shrinking_speed": 0.6,
+    "start_size": {
+      "min": 200,
+      "max": 8000
+    }
+  },
+  "chapters": {
+    "warmup": {
+      "min": 600,
+      "max": 800
+    }
+  },
+  "modules": "#doublerunner:standard"
+}

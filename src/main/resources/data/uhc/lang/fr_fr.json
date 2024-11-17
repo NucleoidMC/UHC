@@ -11,7 +11,7 @@
   "text.uhc.dropping.countdown_bar": "Chute dans %s",
   "text.uhc.dropping.countdown_text": "Vous serez lâché dans %s.",
   "text.uhc.last_one_wins": "Le dernier debout sera déclaré vainqueur !",
-  "text.uhc.modules_enabled": "Modules activés :",
+  "text.uhc.enabled_modules": "Modules activés :",
   "text.uhc.no_longer_immune": "Vous n'êtes plus immunisé aux dégâts !",
   "text.uhc.none_win": "Personne n'a gagné !",
   "text.uhc.player_eliminated": "%s a été éliminé !",

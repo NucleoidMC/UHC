@@ -1,6 +1,6 @@
 {
   "name": {
-    "translate": "module.uhcrun.faster_resources"
+    "translate": "module.doublerunner.faster_resources_plus"
   },
   "description": {
     "translate": "module.uhcrun.faster_resources.description"
@@ -16,10 +16,10 @@
       "translate": "module_description.uhcrun.gravel_drops_arrows_and_flint_and_steel"
     },
     {
-      "translate": "module_description.uhcrun.sand_drops_glass_bottles"
+      "translate": "module_description.uhcrun.sand_drops_glass"
     },
     {
-      "translate": "module_description.uhcrun.sugar_cane_drop_paper"
+      "translate": "module_description.uhcrun.sugar_cane_drop_enchanting_tables_and_books"
     },
     {
       "translate": "module_description.uhcrun.dead_bushes_drop_bread"
@@ -28,16 +28,22 @@
       "translate": "module_description.uhcrun.mushrooms_drop_stews"
     },
     {
-      "translate": "module_description.uhcrun.animals_and_zombies_drop_leather"
+      "translate": "module_description.uhcrun.animals_and_zombies_drop_books"
     },
     {
-      "translate": "module_description.uhcrun.sheep_drop_strings"
+      "translate": "module_description.uhcrun.sheep_drop_bows"
     },
     {
       "translate": "module_description.uhcrun.chickens_drop_arrows"
     },
     {
       "translate": "module_description.uhcrun.creepers_drop_tnt"
+    },
+    {
+      "translate": "module_description.uhcrun.squids_drop_fishing_rods"
+    },
+    {
+      "translate": "module_description.uhcrun.skeletons_drop_power_bow"
     }
   ],
   "icon": "minecraft:cactus",
@@ -56,7 +62,7 @@
         "predicate_type": "minecraft:tag_match",
         "tag": "minecraft:sand"
       },
-      "loot_table": "uhcrun:glass"
+      "loot_table": "uhcrun:glass_bottles"
     },
     {
       "type": "uhc:block_loot",
@@ -64,7 +70,7 @@
         "predicate_type": "minecraft:block_match",
         "block": "minecraft:gravel"
       },
-      "loot_table": "uhcrun:arrows/normal"
+      "loot_table": "uhcrun:arrows/lot"
     },
     {
       "type": "uhc:block_loot",
@@ -126,13 +132,19 @@
       "type": "uhc:entity_loot",
       "replace": false,
       "entities": "#uhcrun:leather",
-      "loot_table": "uhcrun:leather/normal"
+      "loot_table": "uhcrun:book"
+    },
+    {
+      "type": "uhc:entity_loot",
+      "replace": false,
+      "entities": "#uhcrun:squids",
+      "loot_table": "uhcrun:fishing_rod"
     },
     {
       "type": "uhc:entity_loot",
       "replace": false,
       "entities": "#uhcrun:string",
-      "loot_table": "uhcrun:strings"
+      "loot_table": "uhcrun:bow"
     },
     {
       "type": "uhc:block_loot",
@@ -143,18 +155,23 @@
       "loot_table": "uhcrun:flint_and_steel"
     },
     {
+      "type": "uhc:entity_loot",
+      "replace": false,
+      "entities": "minecraft:chicken",
+      "loot_table": "uhcrun:arrows/bunch"
+    },
+    {
+      "type": "uhc:entity_loot",
+      "entities": "#minecraft:skeletons",
+      "loot_table": "uhcrun:power_bow"
+    },
+    {
       "type": "uhc:block_loot",
       "target": {
         "predicate_type": "minecraft:block_match",
         "block": "minecraft:sugar_cane"
       },
-      "loot_table": "uhcrun:enchantment_resources/paper"
-    },
-    {
-      "type": "uhc:entity_loot",
-      "replace": false,
-      "entities": "minecraft:chicken",
-      "loot_table": "uhcrun:arrows/normal"
+      "loot_table": "uhcrun:enchantment_resources/table_or_books"
     },
     {
       "type": "uhc:entity_loot",

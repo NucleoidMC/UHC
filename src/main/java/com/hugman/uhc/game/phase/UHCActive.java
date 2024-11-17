@@ -14,6 +14,7 @@ import net.minecraft.entity.boss.BossBar;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
+import net.minecraft.network.packet.s2c.play.EntityAttributesS2CPacket;
 import net.minecraft.network.packet.s2c.play.WorldBorderInitializeS2CPacket;
 import net.minecraft.network.packet.s2c.play.WorldBorderInterpolateSizeS2CPacket;
 import net.minecraft.scoreboard.AbstractTeam;
@@ -46,6 +47,7 @@ import xyz.nucleoid.stimuli.event.DroppedItemsResult;
 import xyz.nucleoid.stimuli.event.EventResult;
 import xyz.nucleoid.stimuli.event.block.BlockBreakEvent;
 import xyz.nucleoid.stimuli.event.block.BlockDropItemsEvent;
+import xyz.nucleoid.stimuli.event.entity.EntityDamageEvent;
 import xyz.nucleoid.stimuli.event.entity.EntityDropItemsEvent;
 import xyz.nucleoid.stimuli.event.player.PlayerDamageEvent;
 import xyz.nucleoid.stimuli.event.player.PlayerDeathEvent;
@@ -304,20 +306,6 @@ public class UHCActive {
         }
     }
 
-    private EventResult onPlayerDeath(ServerPlayerEntity player, DamageSource source) {
-        if (participants.containsKey(player)) {
-            if (!getParticipant(player).isEliminated()) {
-                PlayerSet players = this.gameSpace.getPlayers();
-                players.sendMessage(Text.literal("\n☠ ").append(source.getDeathMessage(player).copy()).append("!\n").formatted(Formatting.DARK_RED));
-                players.playSound(SoundEvents.ENTITY_WITHER_SPAWN);
-                this.eliminateParticipant(player);
-                return EventResult.DENY;
-            }
-        }
-        this.spawnLogic.spawnPlayerAtCenter(player);
-        return EventResult.DENY;
-    }
-
     private void eliminateParticipant(ServerPlayerEntity player) {
         ItemScatterer.spawn(player.getWorld(), player.getBlockPos(), player.getInventory());
         player.changeGameMode(GameMode.SPECTATOR);
@@ -345,8 +333,9 @@ public class UHCActive {
 
     public void refreshPlayerAttributes(ServerPlayerEntity player) {
         for (PlayerAttributeModifier piece : this.config.getModifiers(ModifierType.PLAYER_ATTRIBUTE)) {
-            piece.setAttribute(player);
+            piece.refreshAttribute(player);
         }
+        player.networkHandler.sendPacket(new EntityAttributesS2CPacket(player.getId(), player.getAttributes().getTracked()));
     }
 
     public void applyPlayerEffects(ServerPlayerEntity player) {
@@ -393,6 +382,7 @@ public class UHCActive {
     private void setInvulnerable(boolean b) {
         this.invulnerable = b;
         this.activity.setRule(GameRuleType.HUNGER, b ? EventResult.DENY : EventResult.ALLOW);
+        //TODO check modules
         this.activity.setRule(GameRuleType.FALL_DAMAGE, b ? EventResult.DENY : EventResult.ALLOW);
     }
 
@@ -461,7 +451,7 @@ public class UHCActive {
     public void sendModuleListToChat() {
         var moduleEntries = this.config.modules();
         if (moduleEntries.size() > 0) {
-            MutableText text = Text.literal("\n").append(Text.translatable("text.uhc.modules_enabled").formatted(Formatting.GOLD));
+            MutableText text = Text.literal("\n").append(Text.translatable("text.uhc.enabled_modules").formatted(Formatting.GOLD));
             moduleEntries.forEach(moduleEntry -> {
                 var module = moduleEntry.value();
                 Style style = Style.EMPTY;
@@ -484,6 +474,20 @@ public class UHCActive {
         } else {
             return EventResult.PASS;
         }
+    }
+
+    private EventResult onPlayerDeath(ServerPlayerEntity player, DamageSource source) {
+        if (participants.containsKey(player)) {
+            if (!getParticipant(player).isEliminated()) {
+                PlayerSet players = this.gameSpace.getPlayers();
+                players.sendMessage(Text.literal("\n☠ ").append(source.getDeathMessage(player).copy()).append("!\n").formatted(Formatting.DARK_RED));
+                players.playSound(SoundEvents.ENTITY_WITHER_SPAWN);
+                this.eliminateParticipant(player);
+                return EventResult.DENY;
+            }
+        }
+        this.spawnLogic.spawnPlayerAtCenter(player);
+        return EventResult.DENY;
     }
 
     private EventResult onBlockBroken(ServerPlayerEntity playerEntity, ServerWorld world, BlockPos pos) {

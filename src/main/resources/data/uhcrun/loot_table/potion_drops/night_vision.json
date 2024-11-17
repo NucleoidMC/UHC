@@ -6,14 +6,14 @@
       "entries": [
         {
           "type": "minecraft:item",
-          "name": "minecraft:arrow",
+          "name": "minecraft:potion",
           "functions": [
             {
-              "function": "minecraft:set_count",
-              "count": {
-                "min": 14.0,
-                "max": 18.0,
-                "type": "minecraft:uniform"
+              "function": "minecraft:set_components",
+              "components": {
+                "minecraft:potion_contents": {
+                  "potion": "minecraft:night_vision"
+                }
               }
             }
           ]
