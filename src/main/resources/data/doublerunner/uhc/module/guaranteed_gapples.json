@@ -1,0 +1,19 @@
+{
+  "name": {
+    "translate": "module.doublerunner.guaranteed_gapples"
+  },
+  "description": {
+    "translate": "module.doublerunner.guaranteed_gapples.description"
+  },
+  "icon": "minecraft:golden_apple",
+  "modifiers": [
+    {
+      "type": "uhc:block_loot",
+      "target": {
+        "predicate_type": "minecraft:tag_match",
+        "tag": "minecraft:leaves"
+      },
+      "loot_table": "uhcrun:golden_apple"
+    }
+  ]
+}

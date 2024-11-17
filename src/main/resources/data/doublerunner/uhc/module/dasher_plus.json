@@ -1,0 +1,20 @@
+{
+  "name": {
+    "translate": "module.doublerunner.dasher_plus"
+  },
+  "description": {
+    "translate": "module.doublerunner.dasher_plus.description"
+  },
+  "icon": "minecraft:diamond_boots",
+  "modifiers": [
+    {
+      "type": "uhc:player_attribute",
+      "attribute": "minecraft:movement_speed",
+      "value": 0.22
+    },
+    {
+      "type": "uhc:permanent_effect",
+      "effect": "minecraft:haste"
+    }
+  ]
+}
