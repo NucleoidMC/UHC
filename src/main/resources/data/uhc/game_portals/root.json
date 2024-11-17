@@ -12,6 +12,10 @@
     {
       "type": "plasmid:portal",
       "portal": "uhcrun:standard"
+    },
+    {
+      "type": "plasmid:portal",
+      "portal": "doublerunner:standard"
     }
   ]
 }
