@@ -1,5 +1,6 @@
 {
   "type": "uhc:standard",
+  "config": "uhc:standard",
   "name": {
     "translate": "game.generic.mode",
     "with": [
@@ -11,34 +12,9 @@
       }
     ]
   },
-  "team_size": 3,
   "players": {
     "min": 6,
-    "threshold": 24,
-    "max": 100
+    "threshold": 24
   },
-  "map": {
-    "dimension": {
-      "type": "minecraft:overworld",
-      "generator": {
-        "type": "minecraft:noise",
-        "settings": "minecraft:overworld",
-        "biome_source": {
-          "type": "minecraft:multi_noise",
-          "preset": "minecraft:overworld"
-        }
-      }
-    },
-    "shrinking_speed": 0.5,
-    "start_size": {
-      "min": 400,
-      "max": 10000
-    }
-  },
-  "chapters": {
-    "warmup": {
-      "min": 2700,
-      "max": 4200
-    }
-  }
+  "team_size": 3
 }

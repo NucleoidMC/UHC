@@ -1,6 +1,6 @@
 package com.hugman.uhc.map;
 
-import com.hugman.uhc.config.UHCConfig;
+import com.hugman.uhc.config.UHCGameConfig;
 import com.hugman.uhc.modifier.ModifierType;
 import com.hugman.uhc.modifier.PlacedFeaturesModifier;
 import com.mojang.datafixers.util.Pair;
@@ -40,12 +40,12 @@ import java.util.concurrent.CompletableFuture;
 import java.util.function.Supplier;
 
 public class ModuledChunkGenerator extends GameChunkGenerator implements ChunkGeneratorSettingsProvider {
-    private final UHCConfig config;
+    private final UHCGameConfig config;
     private final long seed;
     private final ChunkGenerator subGenerator;
     private final ChunkGeneratorSettings settings;
 
-    public ModuledChunkGenerator(BiomeSource biomeSource, UHCConfig config, long seed, ChunkGenerator subGenerator, ChunkGeneratorSettings settings) {
+    public ModuledChunkGenerator(BiomeSource biomeSource, UHCGameConfig config, long seed, ChunkGenerator subGenerator, ChunkGeneratorSettings settings) {
         super(biomeSource);
         this.config = config;
         this.seed = seed;
@@ -53,9 +53,9 @@ public class ModuledChunkGenerator extends GameChunkGenerator implements ChunkGe
         this.settings = settings;
     }
 
-    public static ModuledChunkGenerator of(UHCConfig config, long seed) {
-        BiomeSource biomeSource = config.mapConfig().dimension().chunkGenerator().getBiomeSource();
-        ChunkGenerator subGenerator = config.mapConfig().dimension().chunkGenerator();
+    public static ModuledChunkGenerator of(UHCGameConfig config, long seed) {
+        BiomeSource biomeSource = config.uhcConfig().value().mapConfig().dimension().chunkGenerator().getBiomeSource();
+        ChunkGenerator subGenerator = config.uhcConfig().value().mapConfig().dimension().chunkGenerator();
         ChunkGeneratorSettings settings = null;
         if (subGenerator instanceof NoiseChunkGenerator generator) {
             settings = generator.getSettings().value();

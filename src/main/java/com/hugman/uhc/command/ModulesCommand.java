@@ -1,6 +1,6 @@
 package com.hugman.uhc.command;
 
-import com.hugman.uhc.config.UHCConfig;
+import com.hugman.uhc.config.UHCGameConfig;
 import com.hugman.uhc.module.Module;
 import com.mojang.brigadier.Command;
 import com.mojang.brigadier.CommandDispatcher;
@@ -37,14 +37,14 @@ public class ModulesCommand {
     public static boolean isSourceInUHC(ServerCommandSource source) {
         GameSpace gameSpace = GameSpaceManager.get().byWorld(source.getWorld());
         if (gameSpace != null) {
-            return gameSpace.getMetadata().sourceConfig().value().config() instanceof UHCConfig;
+            return gameSpace.getMetadata().sourceConfig().value().config() instanceof UHCGameConfig;
         }
         return false;
     }
 
     private static int displayModules(CommandContext<ServerCommandSource> context) throws CommandSyntaxException {
         ServerCommandSource source = context.getSource();
-        RegistryEntryList<Module> moduleEntries = ((UHCConfig) Objects.requireNonNull(GameSpaceManager.get().byWorld(source.getWorld())).getMetadata().sourceConfig().value().config()).modules();
+        RegistryEntryList<Module> moduleEntries = ((UHCGameConfig) Objects.requireNonNull(GameSpaceManager.get().byWorld(source.getWorld())).getMetadata().sourceConfig().value().config()).uhcConfig().value().modules();
         if (moduleEntries.size() != 0) {
             ScreenHandlerType<?> type = Registries.SCREEN_HANDLER.get(Identifier.of("generic_9x" + MathHelper.clamp(1, MathHelper.ceil((float) moduleEntries.size() / 9), 6)));
             SimpleGui gui = new SimpleGui(type, source.getPlayer(), false);

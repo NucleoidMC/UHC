@@ -1,6 +1,6 @@
 package com.hugman.uhc.game.phase;
 
-import com.hugman.uhc.config.UHCConfig;
+import com.hugman.uhc.config.UHCGameConfig;
 import com.hugman.uhc.game.UHCSpawner;
 import com.hugman.uhc.map.UHCMap;
 import net.minecraft.server.world.ServerWorld;
@@ -21,8 +21,13 @@ import xyz.nucleoid.stimuli.event.player.PlayerAttackEntityEvent;
 import xyz.nucleoid.stimuli.event.player.PlayerDamageEvent;
 import xyz.nucleoid.stimuli.event.player.PlayerDeathEvent;
 
-public record UHCWaiting(GameSpace gameSpace, ServerWorld world, UHCConfig config, TeamManager teamManager) {
-    public static GameOpenProcedure open(GameOpenContext<UHCConfig> context) {
+public record UHCWaiting(
+        GameSpace gameSpace,
+        ServerWorld world,
+        UHCGameConfig config,
+        TeamManager teamManager
+) {
+    public static GameOpenProcedure open(GameOpenContext<UHCGameConfig> context) {
         UHCMap map = UHCMap.of(context.config());
 
         return context.openWithWorld(map.createRuntimeWorldConfig(), (activity, world) -> {

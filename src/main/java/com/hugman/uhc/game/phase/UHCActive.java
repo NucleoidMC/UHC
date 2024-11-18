@@ -1,7 +1,7 @@
 package com.hugman.uhc.game.phase;
 
 import com.hugman.uhc.UHC;
-import com.hugman.uhc.config.UHCConfig;
+import com.hugman.uhc.config.UHCGameConfig;
 import com.hugman.uhc.game.*;
 import com.hugman.uhc.modifier.*;
 import com.hugman.uhc.util.TickUtil;
@@ -38,16 +38,12 @@ import xyz.nucleoid.plasmid.api.game.common.GlobalWidgets;
 import xyz.nucleoid.plasmid.api.game.common.team.*;
 import xyz.nucleoid.plasmid.api.game.event.GameActivityEvents;
 import xyz.nucleoid.plasmid.api.game.event.GamePlayerEvents;
-import xyz.nucleoid.plasmid.api.game.player.JoinAcceptor;
-import xyz.nucleoid.plasmid.api.game.player.JoinAcceptorResult;
-import xyz.nucleoid.plasmid.api.game.player.JoinIntent;
-import xyz.nucleoid.plasmid.api.game.player.PlayerSet;
+import xyz.nucleoid.plasmid.api.game.player.*;
 import xyz.nucleoid.plasmid.api.game.rule.GameRuleType;
 import xyz.nucleoid.stimuli.event.DroppedItemsResult;
 import xyz.nucleoid.stimuli.event.EventResult;
 import xyz.nucleoid.stimuli.event.block.BlockBreakEvent;
 import xyz.nucleoid.stimuli.event.block.BlockDropItemsEvent;
-import xyz.nucleoid.stimuli.event.entity.EntityDamageEvent;
 import xyz.nucleoid.stimuli.event.entity.EntityDropItemsEvent;
 import xyz.nucleoid.stimuli.event.player.PlayerDamageEvent;
 import xyz.nucleoid.stimuli.event.player.PlayerDeathEvent;
@@ -60,7 +56,7 @@ public class UHCActive {
     private final GameSpace gameSpace;
     private final ServerWorld world;
     private final GameActivity activity;
-    private final UHCConfig config;
+    private final UHCGameConfig config;
 
     private Object2ObjectMap<ServerPlayerEntity, UHCParticipant> participants;
     private List<GameTeam> teamsAlive;
@@ -84,7 +80,7 @@ public class UHCActive {
     private boolean invulnerable;
     private boolean isFinished = false;
 
-    private UHCActive(GameActivity activity, GameSpace gameSpace, ServerWorld world, UHCConfig config, GlobalWidgets widgets) {
+    private UHCActive(GameActivity activity, GameSpace gameSpace, ServerWorld world, UHCGameConfig config, GlobalWidgets widgets) {
         this.activity = activity;
         this.gameSpace = gameSpace;
         this.world = world;
@@ -135,7 +131,7 @@ public class UHCActive {
         });
     }
 
-    public static void start(GameSpace gameSpace, ServerWorld world, UHCConfig config) {
+    public static void start(GameSpace gameSpace, ServerWorld world, UHCGameConfig config) {
         gameSpace.setActivity(activity -> {
             GlobalWidgets widgets = GlobalWidgets.addTo(activity);
             UHCActive active = new UHCActive(activity, gameSpace, world, config, widgets);
@@ -149,7 +145,7 @@ public class UHCActive {
 
             activity.listen(GameActivityEvents.ENABLE, active::enable);
 
-            activity.listen(GamePlayerEvents.OFFER, offer -> offer.intent() == JoinIntent.SPECTATE ? offer.accept() : offer.pass());
+            activity.listen(GamePlayerEvents.OFFER, JoinOffer::acceptSpectators);
             activity.listen(GamePlayerEvents.ACCEPT, active::acceptPlayer);
             activity.listen(GamePlayerEvents.LEAVE, active::playerLeave);
 
@@ -405,8 +401,8 @@ public class UHCActive {
         for (GameTeam team : teamsAlive) {
             double theta = ((double) index++ / teamsAlive.size()) * 2 * Math.PI;
 
-            int x = MathHelper.floor(Math.cos(theta) * (this.logic.getStartMapSize() / 2 - this.config.mapConfig().spawnOffset()));
-            int z = MathHelper.floor(Math.sin(theta) * (this.logic.getStartMapSize() / 2 - this.config.mapConfig().spawnOffset()));
+            int x = MathHelper.floor(Math.cos(theta) * (this.logic.getStartMapSize() / 2 - this.config.uhcConfig().value().mapConfig().spawnOffset()));
+            int z = MathHelper.floor(Math.sin(theta) * (this.logic.getStartMapSize() / 2 - this.config.uhcConfig().value().mapConfig().spawnOffset()));
 
             this.spawnLogic.summonCage(team, x, z);
             teamManager.playersIn(team.key()).forEach(player -> this.spawnLogic.putParticipantInCage(team, player));
@@ -449,7 +445,7 @@ public class UHCActive {
     }
 
     public void sendModuleListToChat() {
-        var moduleEntries = this.config.modules();
+        var moduleEntries = this.config.uhcConfig().value().modules();
         if (moduleEntries.size() > 0) {
             MutableText text = Text.literal("\n").append(Text.translatable("text.uhc.enabled_modules").formatted(Formatting.GOLD));
             moduleEntries.forEach(moduleEntry -> {
