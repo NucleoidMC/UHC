@@ -1,0 +1,15 @@
+{
+  "sources": [
+    {
+      "type": "minecraft:paletted_permutations",
+      "textures": [
+        "lucky_block:block/lucky_block/side",
+        "lucky_block:block/lucky_block/end"
+      ],
+      "palette_key": "lucky_block:color_palettes/lucky_block",
+      "permutations": {
+        "yellow": "lucky_block:color_palettes/lucky_block/yellow"
+      }
+    }
+  ]
+}

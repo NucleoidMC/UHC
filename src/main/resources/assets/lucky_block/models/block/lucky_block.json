@@ -1,0 +1,7 @@
+{
+  "parent": "minecraft:block/cube_column",
+  "textures": {
+    "side": "lucky_block:block/lucky_block/side_yellow",
+    "end": "lucky_block:block/lucky_block/end_yellow"
+  }
+}

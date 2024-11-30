@@ -23,6 +23,8 @@ dependencies {
     modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
 
     modImplementation "xyz.nucleoid:plasmid:${project.plasmid_version}"
+
+    modImplementation "eu.pb4:polymer-autohost:${project.polymer_version}"
 }
 
 processResources {

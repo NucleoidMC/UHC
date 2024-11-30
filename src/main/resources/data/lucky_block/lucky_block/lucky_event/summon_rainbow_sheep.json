@@ -1,0 +1,7 @@
+{
+  "type": "lucky_block:summon_entity",
+  "data": {
+    "id": "minecraft:sheep",
+    "CustomName": "jeb_"
+  }
+}
