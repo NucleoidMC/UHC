@@ -8,7 +8,10 @@ import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.server.network.ServerPlayerEntity;
 
-public record PermanentEffectModifier(RegistryEntry<StatusEffect> effect, int amplifier) implements Modifier {
+public record PermanentEffectModifier(
+        RegistryEntry<StatusEffect> effect,
+        int amplifier
+) implements Modifier {
     public static final MapCodec<PermanentEffectModifier> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
             StatusEffect.ENTRY_CODEC.fieldOf("effect").forGetter(PermanentEffectModifier::effect),
             Codec.intRange(0, Integer.MAX_VALUE).optionalFieldOf("amplifier", 0).forGetter(PermanentEffectModifier::amplifier)

@@ -1,6 +1,8 @@
 package com.hugman.uhc.command;
 
 import com.hugman.uhc.config.UHCGameConfig;
+import com.hugman.uhc.game.ModuleManager;
+import com.hugman.uhc.game.UHCAttachments;
 import com.hugman.uhc.module.Module;
 import com.mojang.brigadier.Command;
 import com.mojang.brigadier.CommandDispatcher;
@@ -19,6 +21,7 @@ import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.MathHelper;
+import xyz.nucleoid.plasmid.api.game.GameAttachment;
 import xyz.nucleoid.plasmid.api.game.GameSpace;
 import xyz.nucleoid.plasmid.api.game.GameSpaceManager;
 
@@ -44,7 +47,15 @@ public class ModulesCommand {
 
     private static int displayModules(CommandContext<ServerCommandSource> context) throws CommandSyntaxException {
         ServerCommandSource source = context.getSource();
-        RegistryEntryList<Module> moduleEntries = ((UHCGameConfig) Objects.requireNonNull(GameSpaceManager.get().byWorld(source.getWorld())).getMetadata().sourceConfig().value().config()).uhcConfig().value().modules();
+        // TODO: get modules by the current game space instead
+
+        var attachment = Objects.requireNonNull(GameSpaceManager.get().byWorld(source.getWorld())).getAttachment(UHCAttachments.MODULE_MANAGER);
+
+        if(attachment == null) {
+            throw NO_MODULES_ACTIVATED.create();
+        }
+
+        RegistryEntryList<Module> moduleEntries = attachment.modules();
         if (moduleEntries.size() != 0) {
             ScreenHandlerType<?> type = Registries.SCREEN_HANDLER.get(Identifier.of("generic_9x" + MathHelper.clamp(1, MathHelper.ceil((float) moduleEntries.size() / 9), 6)));
             SimpleGui gui = new SimpleGui(type, source.getPlayer(), false);

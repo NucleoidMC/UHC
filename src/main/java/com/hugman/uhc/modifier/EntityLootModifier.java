@@ -20,8 +20,11 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
-public record EntityLootModifier(boolean replace, RegistryEntryList<EntityType<?>> entities,
-                                 Optional<RegistryKey<LootTable>> lootTable) implements Modifier {
+public record EntityLootModifier(
+        boolean replace,
+        RegistryEntryList<EntityType<?>> entities,
+        Optional<RegistryKey<LootTable>> lootTable
+) implements Modifier {
     public static final MapCodec<EntityLootModifier> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
             Codec.BOOL.optionalFieldOf("replace", true).forGetter(EntityLootModifier::replace),
             RegistryCodecs.entryList(RegistryKeys.ENTITY_TYPE).optionalFieldOf("entities", RegistryEntryList.empty()).forGetter(EntityLootModifier::entities),

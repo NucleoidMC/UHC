@@ -1,6 +1,7 @@
 package com.hugman.uhc.map;
 
 import com.hugman.uhc.config.UHCGameConfig;
+import com.hugman.uhc.game.ModuleManager;
 import com.hugman.uhc.modifier.ModifierType;
 import com.hugman.uhc.modifier.PlacedFeaturesModifier;
 import com.mojang.datafixers.util.Pair;
@@ -29,25 +30,28 @@ import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.gen.StructureAccessor;
 import net.minecraft.world.gen.chunk.*;
 import net.minecraft.world.gen.chunk.placement.StructurePlacementCalculator;
+import net.minecraft.world.gen.feature.PlacedFeature;
 import net.minecraft.world.gen.noise.NoiseConfig;
 import net.minecraft.world.gen.structure.Structure;
 import org.jetbrains.annotations.Nullable;
 import xyz.nucleoid.fantasy.util.ChunkGeneratorSettingsProvider;
 import xyz.nucleoid.plasmid.api.game.world.generator.GameChunkGenerator;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
 
 public class ModuledChunkGenerator extends GameChunkGenerator implements ChunkGeneratorSettingsProvider {
-    private final UHCGameConfig config;
+    private final List<PlacedFeature> placedFeatures;
     private final long seed;
     private final ChunkGenerator subGenerator;
     private final ChunkGeneratorSettings settings;
 
-    public ModuledChunkGenerator(BiomeSource biomeSource, UHCGameConfig config, long seed, ChunkGenerator subGenerator, ChunkGeneratorSettings settings) {
+    public ModuledChunkGenerator(BiomeSource biomeSource, List<PlacedFeature> placedFeatures, long seed, ChunkGenerator subGenerator, ChunkGeneratorSettings settings) {
         super(biomeSource);
-        this.config = config;
+        this.placedFeatures = placedFeatures;
         this.seed = seed;
         this.subGenerator = subGenerator;
         this.settings = settings;
@@ -60,7 +64,13 @@ public class ModuledChunkGenerator extends GameChunkGenerator implements ChunkGe
         if (subGenerator instanceof NoiseChunkGenerator generator) {
             settings = generator.getSettings().value();
         }
-        return new ModuledChunkGenerator(biomeSource, config, seed, subGenerator, settings);
+
+        List<PlacedFeature> placedFeatures = ModuleManager.filter(config.uhcConfig().value().modules(), ModifierType.PLACED_FEATURES).stream()
+                .flatMap(modifier -> modifier.features().stream())
+                .map(RegistryEntry::value)
+                .collect(Collectors.toList());
+
+        return new ModuledChunkGenerator(biomeSource, placedFeatures, seed, subGenerator, settings);
     }
 
     @Override
@@ -74,15 +84,11 @@ public class ModuledChunkGenerator extends GameChunkGenerator implements ChunkGe
         ChunkRandom chunkRandom = new ChunkRandom(new Xoroshiro128PlusPlusRandom(this.seed));
         long popSeed = chunkRandom.setPopulationSeed(world.getSeed(), blockPos.getX(), blockPos.getZ());
 
-        List<PlacedFeaturesModifier> placedFeaturesModifiers = this.config.getModifiers(ModifierType.PLACED_FEATURES);
         int i = 0;
-        for (var modifier : placedFeaturesModifiers) {
-            for (var entry : modifier.features()) {
-                chunkRandom.setDecoratorSeed(popSeed, i++, 0);
-                Supplier<String> s = () -> entry.getKey().map(Object::toString).orElseGet(entry::toString);
-                world.setCurrentlyGeneratingStructureName(s);
-                entry.value().generate(world, this, chunkRandom, blockPos);
-            }
+        for (var placedFeature : this.placedFeatures) {
+            chunkRandom.setDecoratorSeed(popSeed, i++, 0);
+            world.setCurrentlyGeneratingStructureName(() -> "custom UHC feature");
+            placedFeature.generate(world, this, chunkRandom, blockPos);
         }
         world.setCurrentlyGeneratingStructureName(null);
         this.subGenerator.generateFeatures(world, chunk, structureAccessor);
