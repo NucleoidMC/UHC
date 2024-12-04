@@ -8,6 +8,7 @@ import net.minecraft.util.Identifier;
 
 public class LuckyEventTypes {
     public static final LuckyEventType<SummonEntityLuckyEvent> SUMMON_ENTITY = register("summon_entity", SummonEntityLuckyEvent.CODEC);
+    public static final LuckyEventType<LootLuckyEvent> LOOT = register("loot", LootLuckyEvent.CODEC);
 
     private static <T extends LuckyEvent> LuckyEventType<T> register(String name, MapCodec<T> codec) {
         return register(LuckyBlockMod.id(name), codec);

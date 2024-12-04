@@ -1,0 +1,71 @@
+{
+  "type": "lucky_block:summon_entity",
+  "data": {
+    "id": "minecraft:zombie",
+    "CustomName": "Bob",
+    "ArmorItems": [
+      {
+        "id": "minecraft:diamond_boots",
+        "count": 1,
+        "components": {
+          "minecraft:enchantments": {
+            "minecraft:protection": 4,
+            "minecraft:unbreaking": 3
+          }
+        }
+      },
+      {
+        "id": "minecraft:diamond_leggings",
+        "count": 1,
+        "components": {
+          "minecraft:enchantments": {
+            "minecraft:protection": 4,
+            "minecraft:unbreaking": 3
+          }
+        }
+      },
+      {
+        "id": "minecraft:diamond_chestplate",
+        "count": 1,
+        "components": {
+          "minecraft:enchantments": {
+            "minecraft:protection": 4,
+            "minecraft:unbreaking": 3
+          }
+        }
+      },
+      {
+        "id": "minecraft:diamond_helmet",
+        "count": 1,
+        "components": {
+          "minecraft:enchantments": {
+            "minecraft:protection": 4,
+            "minecraft:unbreaking": 3
+          }
+        }
+      }
+    ],
+    "HandItems": [
+      {
+        "id": "minecraft:diamond_sword",
+        "count": 1,
+        "components": {
+          "minecraft:enchantments": {
+            "minecraft:sharpness": 5,
+            "minecraft:unbreaking": 3,
+            "minecraft:fire_aspect": 2
+          }
+        }
+      },
+      {
+        "id": "minecraft:shield",
+        "count": 1,
+        "components": {
+          "minecraft:enchantments": {
+            "minecraft:unbreaking": 3
+          }
+        }
+      }
+    ]
+  }
+}

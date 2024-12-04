@@ -2,6 +2,10 @@
   "replace": false,
   "values": [
     "lucky_block:summon_creeper",
-    "lucky_block:summon_rainbow_sheep"
+    "lucky_block:summon_rainbow_sheep",
+    "lucky_block:summon_bob",
+    "lucky_block:summon_one_tnt",
+    "lucky_block:summon_one_wind_charge",
+    "lucky_block:loot_lucky_sword"
   ]
 }

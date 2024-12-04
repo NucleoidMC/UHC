@@ -1,0 +1,4 @@
+{
+  "type": "lucky_block:summon_entity",
+  "data": "{\"id\": \"minecraft:wind_charge\",\"Motion\":[0.0, -0.5, 0.0]}"
+}

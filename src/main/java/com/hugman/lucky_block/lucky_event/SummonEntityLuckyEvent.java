@@ -23,7 +23,7 @@ import org.jetbrains.annotations.Nullable;
  */
 public record SummonEntityLuckyEvent(NbtComponent data) implements LuckyEvent {
     public static final MapCodec<SummonEntityLuckyEvent> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
-            NbtComponent.CODEC.optionalFieldOf("data", NbtComponent.DEFAULT).forGetter(SummonEntityLuckyEvent::data)
+            NbtComponent.CODEC_WITH_ID.optionalFieldOf("data", NbtComponent.DEFAULT).forGetter(SummonEntityLuckyEvent::data)
     ).apply(instance, SummonEntityLuckyEvent::new));
 
     public void trigger(ServerWorld world, PlayerEntity player, BlockPos pos, BlockState state, @Nullable BlockEntity blockEntity) {

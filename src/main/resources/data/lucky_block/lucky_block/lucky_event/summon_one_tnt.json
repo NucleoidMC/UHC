@@ -1,0 +1,4 @@
+{
+  "type": "lucky_block:summon_entity",
+  "data": "{\"id\": \"minecraft:tnt\",\"fuse\": 20,\"Motion\":[0.0, 0.5, 0.0]}"
+}
