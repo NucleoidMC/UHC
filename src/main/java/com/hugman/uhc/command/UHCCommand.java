@@ -9,7 +9,6 @@ import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.brigadier.exceptions.SimpleCommandExceptionType;
-import net.minecraft.command.CommandRegistryAccess;
 import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.server.command.CommandManager;
 import net.minecraft.server.command.ServerCommandSource;
@@ -20,41 +19,45 @@ import xyz.nucleoid.plasmid.api.game.GameSpaceManager;
 import java.util.Objects;
 
 public class UHCCommand {
-    private static final SimpleCommandExceptionType NO_MANAGER_ACTIVATED = new SimpleCommandExceptionType(Text.translatable("command.uhc.modules.no_manager"));
-    private static final SimpleCommandExceptionType NO_MODULES_ACTIVATED = new SimpleCommandExceptionType(Text.translatable("command.uhc.modules.no_modules_activated"));
-    private static final SimpleCommandExceptionType COULD_NOT_ACTIVATE_MODULE = new SimpleCommandExceptionType(Text.translatable("command.uhc.modules.enable.error"));
+    private static final SimpleCommandExceptionType NO_MANAGER_ACTIVATED = new SimpleCommandExceptionType(Text.translatable("command.uhc.modules.no_manager")); //TODO: translate this
+    private static final SimpleCommandExceptionType NO_MODULES_ACTIVATED = new SimpleCommandExceptionType(Text.translatable("command.uhc.modules.no_modules_activated")); //TODO: translate this
+    private static final SimpleCommandExceptionType COULD_NOT_ENABLE_MODULE = new SimpleCommandExceptionType(Text.translatable("command.uhc.modules.enable.error")); //TODO: translate this
+    private static final SimpleCommandExceptionType COULD_NOT_DISABLE_MODULE = new SimpleCommandExceptionType(Text.translatable("command.uhc.modules.disable.error")); //TODO: translate this
 
     private static final String MODULE_ARG = "module";
 
-    public static void register(CommandDispatcher<ServerCommandSource> dispatcher, CommandRegistryAccess registryAccess) {
+    public static void register(CommandDispatcher<ServerCommandSource> dispatcher) {
         dispatcher.register(
                 CommandManager.literal("uhc")
                         .then(CommandManager.literal("create")
-                                .requires(UHCCommand::isSourceNotInUHC)
-                                .executes(context -> 0))
+                                .requires(UHCCommand::isNotUHC)
+                                .executes(UHCCommand::createUHC))
                         .then(CommandManager.literal("modules")
-                                .requires(UHCCommand::isSourceInUHC) //TODO: check if there is a module manager
+                                .requires(UHCCommand::isUHC)
                                 .executes(UHCCommand::displayModules)
                                 .then(CommandManager.literal("enable")
-                                        .then(UHCModuleArgument.argument("module")
-                                        .executes(context -> enableModule(context, UHCModuleArgument.get(context, MODULE_ARG)))))
+                                        .then(UHCModuleArgument.argumentFromDisabled("module")
+                                                .executes(context -> enableModule(context, UHCModuleArgument.get(context, MODULE_ARG)))))
                                 .then(CommandManager.literal("disable")
-                                        .then(UHCModuleArgument.argument("module") //TODO: only suggest enabled modules
-                                        .executes(context -> disableModule(context, UHCModuleArgument.get(context, MODULE_ARG))))))
-
+                                        .then(UHCModuleArgument.argumentFromEnabled("module")
+                                                .executes(context -> disableModule(context, UHCModuleArgument.get(context, MODULE_ARG)))))
+                        )
         );
     }
 
-    public static boolean isSourceInUHC(ServerCommandSource source) {
+    public static boolean isUHC(ServerCommandSource source) {
         GameSpace gameSpace = GameSpaceManager.get().byWorld(source.getWorld());
-        if (gameSpace != null) {
-            return gameSpace.getMetadata().sourceConfig().value().config() instanceof UHCGameConfig;
+        if (gameSpace == null) {
+            return false;
         }
-        return false;
+        if (!(gameSpace.getMetadata().sourceConfig().value().config() instanceof UHCGameConfig)) {
+            return false;
+        }
+        return true;
     }
 
-    public static boolean isSourceNotInUHC(ServerCommandSource source) {
-        return !isSourceInUHC(source);
+    public static boolean isNotUHC(ServerCommandSource source) {
+        return !isUHC(source);
     }
 
     private static int displayModules(CommandContext<ServerCommandSource> context) throws CommandSyntaxException {
@@ -80,10 +83,10 @@ public class UHCCommand {
         }
 
         if (manager.enableModule(module)) {
-            source.sendFeedback(() -> Text.translatable("command.uhc.modules.enable.success", module.value().name()), true);
+            source.sendFeedback(() -> Text.translatable("command.uhc.modules.enable.success", module.value().name()), true); //TODO: translate this
             return Command.SINGLE_SUCCESS;
         } else {
-            throw COULD_NOT_ACTIVATE_MODULE.create();
+            throw COULD_NOT_ENABLE_MODULE.create();
         }
     }
 
@@ -95,10 +98,16 @@ public class UHCCommand {
         }
 
         if (manager.disableModule(module)) {
-            source.sendFeedback(() -> Text.translatable("command.uhc.modules.enable.success", module.value().name()), true);
+            source.sendFeedback(() -> Text.translatable("command.uhc.modules.disable.success", module.value().name()), true); //TODO: translate this
             return Command.SINGLE_SUCCESS;
         } else {
-            throw COULD_NOT_ACTIVATE_MODULE.create();
+            throw COULD_NOT_DISABLE_MODULE.create();
         }
+    }
+
+
+    private static int createUHC(CommandContext<ServerCommandSource> context) {
+        context.getSource().sendFeedback(() -> Text.of("Available soon... :)"), true);
+        return Command.SINGLE_SUCCESS;
     }
 }

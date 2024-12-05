@@ -7,4 +7,10 @@ public interface Modifier {
     Codec<Modifier> TYPE_CODEC = UHCRegistries.MODIFIER_TYPE.getCodec().dispatch(Modifier::getType, ModifierType::codec);
 
     ModifierType<?> getType();
+
+    default void enable() {
+    }
+
+    default void disable() {
+    }
 }

@@ -1,8 +1,6 @@
 package com.hugman.uhc.game;
 
 import com.hugman.uhc.util.TickUtil;
-import it.unimi.dsi.fastutil.objects.Object2ObjectMap;
-import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 import xyz.nucleoid.plasmid.api.game.GameSpace;
@@ -16,12 +14,10 @@ public record UHCSideBar(SidebarWidget sidebarWidget) {
         return new UHCSideBar(widgets.addSidebar(name.copy().formatted(Formatting.BOLD, Formatting.GOLD)));
     }
 
-    public void update(long ticks, int worldSize, Object2ObjectMap<ServerPlayerEntity, UHCParticipant> participantMap) {
+    public void update(long ticks, int worldSize, UHCPlayerManager playerManager) {
         sidebarWidget.set(content -> {
-            long count = participantMap.values().stream().filter(participant -> !participant.isEliminated()).count();
-
             content.add(Text.literal(""));
-            content.add(Text.translatable("text.uhc.players", Text.literal(String.valueOf(count)).formatted(Formatting.GREEN)).formatted(Formatting.WHITE));
+            content.add(Text.translatable("text.uhc.players", Text.literal(String.valueOf(playerManager.aliveParticipantCount())).formatted(Formatting.GREEN)).formatted(Formatting.WHITE));
             //TODO: write kills
             content.add(Text.literal(""));
             content.add(Text.translatable("text.uhc.world", Text.literal(worldSize + "x" + worldSize).formatted(Formatting.GREEN)).formatted(Formatting.WHITE));

@@ -6,6 +6,7 @@ import com.hugman.uhc.module.Module;
 import eu.pb4.sgui.api.elements.GuiElementBuilder;
 import eu.pb4.sgui.api.gui.SimpleGui;
 import net.minecraft.registry.Registries;
+import net.minecraft.registry.RegistryKey;
 import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.registry.entry.RegistryEntryList;
 import net.minecraft.screen.ScreenHandlerType;
@@ -17,6 +18,7 @@ import net.minecraft.util.math.MathHelper;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Stream;
 
 public final class ModuleManager {
@@ -42,6 +44,10 @@ public final class ModuleManager {
         return modifiers;
     }
 
+    public List<RegistryKey<Module>> getKeys() {
+        return modules.stream().map(moduleRegistryEntry -> moduleRegistryEntry.getKey().orElse(null)).filter(Objects::nonNull).toList();
+    }
+
     public <V extends Modifier> List<V> getModifiers(ModifierType<V> type) {
         //TODO: cache modules so it's quicker to sort by type
         return ModuleManager.getModifiers(modules, type);
@@ -52,6 +58,8 @@ public final class ModuleManager {
             return false;
         }
         //TODO: trigger the modifier (they may have something to do when enabled)
+        //TODO: send feedback to all players in game (chat + title)
+
         return modules.add(module);
     }
 
@@ -61,6 +69,7 @@ public final class ModuleManager {
         }
 
         //TODO: trigger the modifier (they may have something to do when disabled)
+        //TODO: send feedback to all players in game (chat + title)
         return modules.remove(module);
     }
 

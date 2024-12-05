@@ -1,6 +1,8 @@
 package com.hugman.uhc.game.phase;
 
 import com.hugman.uhc.config.UHCGameConfig;
+import com.hugman.uhc.game.ModuleManager;
+import com.hugman.uhc.game.UHCAttachments;
 import com.hugman.uhc.game.UHCSpawner;
 import com.hugman.uhc.map.UHCMap;
 import net.minecraft.server.world.ServerWorld;
@@ -28,13 +30,18 @@ public record UHCWaiting(
         TeamManager teamManager
 ) {
     public static GameOpenProcedure open(GameOpenContext<UHCGameConfig> context) {
-        UHCMap map = UHCMap.of(context.config());
+        var config = context.config();
+        var map = UHCMap.of(config);
+        var moduleManager = new ModuleManager(config.uhcConfig().value().modules());
 
         return context.openWithWorld(map.createRuntimeWorldConfig(), (activity, world) -> {
-            GameWaitingLobby.addTo(activity, context.config().players());
+            GameWaitingLobby.addTo(activity, config.players());
             TeamManager teamManager = TeamManager.addTo(activity);
 
-            UHCWaiting waiting = new UHCWaiting(activity.getGameSpace(), world, context.config(), teamManager);
+            var gameSpace = activity.getGameSpace();
+            UHCWaiting waiting = new UHCWaiting(gameSpace, world, config, teamManager);
+
+            gameSpace.setAttachment(UHCAttachments.MODULE_MANAGER, moduleManager);
 
             activity.listen(GamePlayerEvents.OFFER, JoinOffer::accept);
             activity.listen(GamePlayerEvents.ACCEPT, waiting::acceptPlayer);

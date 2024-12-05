@@ -25,7 +25,7 @@ public class UHC implements ModInitializer {
 
         UHCRegistryKeys.registerDynamics();
 
-        CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) -> UHCCommand.register(dispatcher, registryAccess));
+        CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) -> UHCCommand.register(dispatcher));
         GameType.register(UHC.id("standard"), UHCGameConfig.CODEC, UHCWaiting::open);
     }
 
