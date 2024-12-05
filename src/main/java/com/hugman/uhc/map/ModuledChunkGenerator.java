@@ -3,7 +3,6 @@ package com.hugman.uhc.map;
 import com.hugman.uhc.config.UHCGameConfig;
 import com.hugman.uhc.game.ModuleManager;
 import com.hugman.uhc.modifier.ModifierType;
-import com.hugman.uhc.modifier.PlacedFeaturesModifier;
 import com.mojang.datafixers.util.Pair;
 import net.minecraft.SharedConstants;
 import net.minecraft.entity.SpawnGroup;
@@ -37,10 +36,8 @@ import org.jetbrains.annotations.Nullable;
 import xyz.nucleoid.fantasy.util.ChunkGeneratorSettingsProvider;
 import xyz.nucleoid.plasmid.api.game.world.generator.GameChunkGenerator;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
-import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 public class ModuledChunkGenerator extends GameChunkGenerator implements ChunkGeneratorSettingsProvider {
@@ -65,7 +62,7 @@ public class ModuledChunkGenerator extends GameChunkGenerator implements ChunkGe
             settings = generator.getSettings().value();
         }
 
-        List<PlacedFeature> placedFeatures = ModuleManager.filter(config.uhcConfig().value().modules(), ModifierType.PLACED_FEATURES).stream()
+        List<PlacedFeature> placedFeatures = ModuleManager.streamModifiers(config.uhcConfig().value().modules().stream(), ModifierType.PLACED_FEATURES)
                 .flatMap(modifier -> modifier.features().stream())
                 .map(RegistryEntry::value)
                 .collect(Collectors.toList());

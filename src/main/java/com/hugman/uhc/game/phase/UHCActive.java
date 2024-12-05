@@ -449,20 +449,8 @@ public class UHCActive {
     }
 
     public void sendModuleListToChat() {
-        var moduleEntries = this.moduleManager.modules();
-        if (moduleEntries.size() > 0) {
-            MutableText text = Text.literal("\n").append(Text.translatable("text.uhc.enabled_modules").formatted(Formatting.GOLD));
-            moduleEntries.forEach(moduleEntry -> {
-                var module = moduleEntry.value();
-                Style style = Style.EMPTY;
-                if(module.description().isPresent())
-                {
-                    style = style.withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, module.description().get().copy()));
-                }
-                text.append(Text.literal("\n  - ").formatted(Formatting.WHITE)).append(Texts.bracketed(module.name()).setStyle(style.withColor(module.color())));
-            });
-            text.append("\n");
-            this.gameSpace.getPlayers().sendMessage(text);
+        if (!this.moduleManager.isEmpty()) {
+            this.gameSpace.getPlayers().sendMessage(this.moduleManager.buildChatMessage());
             this.gameSpace.getPlayers().playSound(SoundEvents.ENTITY_ITEM_PICKUP);
         }
     }
