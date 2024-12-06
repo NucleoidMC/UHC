@@ -17,7 +17,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import java.util.function.BiConsumer;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 public class UHCPlayerManager {
@@ -92,8 +92,16 @@ public class UHCPlayerManager {
         return (int) participants.values().stream().filter(participant -> !participant.isEliminated()).count();
     }
 
-    public void forEachParticipant(final BiConsumer<ServerPlayerEntity, UHCParticipant> consumer) {
-        participants.forEach(consumer);
+    public void forEachAliveParticipant(final Consumer<ServerPlayerEntity> consumer) {
+        participants.forEach((player, participant) -> {
+            if (!participant.isEliminated()) {
+                consumer.accept(player);
+            }
+        });
+    }
+
+    public void forEachParticipant(final Consumer<ServerPlayerEntity> consumer) {
+        participants.keySet().forEach(consumer);
     }
 
     // TEAMS

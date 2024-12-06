@@ -1,11 +1,13 @@
 package com.hugman.uhc.modifier;
 
+import com.hugman.uhc.game.UHCPlayerManager;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.entity.effect.StatusEffect;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.registry.entry.RegistryEntry;
+import net.minecraft.server.PlayerManager;
 import net.minecraft.server.network.ServerPlayerEntity;
 
 public record PermanentEffectModifier(
@@ -24,5 +26,15 @@ public record PermanentEffectModifier(
 
     public void setEffect(ServerPlayerEntity player) {
         player.addStatusEffect(new StatusEffectInstance(this.effect, -1, this.amplifier, false, false, true));
+    }
+
+    @Override
+    public void enable(UHCPlayerManager playerManager) {
+        playerManager.forEachAliveParticipant(this::setEffect);
+    }
+
+    @Override
+    public void disable(UHCPlayerManager  playerManager) {
+        playerManager.forEachAliveParticipant(player -> player.removeStatusEffect(this.effect));
     }
 }

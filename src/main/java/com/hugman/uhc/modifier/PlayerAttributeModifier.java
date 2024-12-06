@@ -1,11 +1,14 @@
 package com.hugman.uhc.modifier;
 
+import com.hugman.uhc.UHC;
+import com.hugman.uhc.game.UHCPlayerManager;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.entity.attribute.EntityAttribute;
 import net.minecraft.entity.attribute.EntityAttributeInstance;
 import net.minecraft.entity.attribute.EntityAttributeModifier;
 import net.minecraft.registry.entry.RegistryEntry;
+import net.minecraft.server.PlayerManager;
 import net.minecraft.server.network.ServerPlayerEntity;
 
 public record PlayerAttributeModifier(
@@ -28,5 +31,20 @@ public record PlayerAttributeModifier(
             instance.removeModifier(modifier);
             instance.addPersistentModifier(modifier);
         }
+    }
+
+    @Override
+    public void enable(UHCPlayerManager playerManager) {
+        playerManager.forEachAliveParticipant(this::refreshAttribute);
+    }
+
+    @Override
+    public void disable(UHCPlayerManager playerManager) {
+        playerManager.forEachAliveParticipant(player -> {
+            EntityAttributeInstance instance = player.getAttributes().getCustomInstance(this.attribute);
+            if (instance != null) {
+                instance.removeModifier(modifier);
+            }
+        });
     }
 }

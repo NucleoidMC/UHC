@@ -4,6 +4,7 @@ import com.hugman.uhc.command.argument.UHCModuleArgument;
 import com.hugman.uhc.config.UHCGameConfig;
 import com.hugman.uhc.game.UHCAttachments;
 import com.hugman.uhc.module.Module;
+import com.hugman.uhc.module.ModuleEvents;
 import com.mojang.brigadier.Command;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.context.CommandContext;
@@ -15,6 +16,8 @@ import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.text.Text;
 import xyz.nucleoid.plasmid.api.game.GameSpace;
 import xyz.nucleoid.plasmid.api.game.GameSpaceManager;
+import xyz.nucleoid.stimuli.EventInvokers;
+import xyz.nucleoid.stimuli.Stimuli;
 
 import java.util.Objects;
 
@@ -77,12 +80,17 @@ public class UHCCommand {
 
     private static int enableModule(CommandContext<ServerCommandSource> context, RegistryEntry<Module> module) throws CommandSyntaxException {
         ServerCommandSource source = context.getSource();
-        var manager = Objects.requireNonNull(GameSpaceManager.get().byWorld(source.getWorld())).getAttachment(UHCAttachments.MODULE_MANAGER);
+        var space = Objects.requireNonNull(GameSpaceManager.get().byWorld(source.getWorld()));
+        var manager = space.getAttachment(UHCAttachments.MODULE_MANAGER);
         if (manager == null) {
             throw NO_MANAGER_ACTIVATED.create();
         }
 
         if (manager.enableModule(module)) {
+            try (EventInvokers invokers = Stimuli.select().forCommandSource(context.getSource())) {
+                (invokers.get(ModuleEvents.ENABLE)).onEnable(module);
+            }
+
             source.sendFeedback(() -> Text.translatable("command.uhc.modules.enable.success", module.value().name()), true); //TODO: translate this
             return Command.SINGLE_SUCCESS;
         } else {
@@ -98,6 +106,10 @@ public class UHCCommand {
         }
 
         if (manager.disableModule(module)) {
+            try (EventInvokers invokers = Stimuli.select().forCommandSource(context.getSource())) {
+                (invokers.get(ModuleEvents.DISABLE)).onDisable(module);
+            }
+
             source.sendFeedback(() -> Text.translatable("command.uhc.modules.disable.success", module.value().name()), true); //TODO: translate this
             return Command.SINGLE_SUCCESS;
         } else {

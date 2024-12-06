@@ -1,16 +1,19 @@
 package com.hugman.uhc.modifier;
 
+import com.hugman.uhc.game.UHCPlayerManager;
 import com.hugman.uhc.registry.UHCRegistries;
 import com.mojang.serialization.Codec;
+import net.minecraft.server.PlayerManager;
 
 public interface Modifier {
     Codec<Modifier> TYPE_CODEC = UHCRegistries.MODIFIER_TYPE.getCodec().dispatch(Modifier::getType, ModifierType::codec);
 
     ModifierType<?> getType();
 
-    default void enable() {
+    //TODO: make them fire events instead
+    default void enable(UHCPlayerManager playerManager) {
     }
 
-    default void disable() {
+    default void disable(UHCPlayerManager playerManager) {
     }
 }

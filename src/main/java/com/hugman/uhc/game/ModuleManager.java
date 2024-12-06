@@ -1,20 +1,38 @@
 package com.hugman.uhc.game;
 
-import com.hugman.uhc.modifier.Modifier;
-import com.hugman.uhc.modifier.ModifierType;
+import com.hugman.uhc.modifier.*;
 import com.hugman.uhc.module.Module;
+import com.hugman.uhc.module.ModuleEvents;
 import eu.pb4.sgui.api.elements.GuiElementBuilder;
 import eu.pb4.sgui.api.gui.SimpleGui;
+import net.minecraft.block.BlockState;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.item.ItemStack;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.RegistryKey;
 import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.registry.entry.RegistryEntryList;
 import net.minecraft.screen.ScreenHandlerType;
 import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.server.world.ServerWorld;
 import net.minecraft.text.*;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
+import net.minecraft.world.explosion.Explosion;
+import org.jetbrains.annotations.Nullable;
+import xyz.nucleoid.plasmid.api.game.GameActivity;
+import xyz.nucleoid.plasmid.api.game.event.GamePlayerEvents;
+import xyz.nucleoid.stimuli.EventInvokers;
+import xyz.nucleoid.stimuli.Stimuli;
+import xyz.nucleoid.stimuli.event.DroppedItemsResult;
+import xyz.nucleoid.stimuli.event.EventResult;
+import xyz.nucleoid.stimuli.event.block.BlockBreakEvent;
+import xyz.nucleoid.stimuli.event.block.BlockDropItemsEvent;
+import xyz.nucleoid.stimuli.event.entity.EntityDropItemsEvent;
+import xyz.nucleoid.stimuli.event.world.ExplosionDetonatedEvent;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -57,6 +75,7 @@ public final class ModuleManager {
         if (modules.contains(module)) {
             return false;
         }
+
         //TODO: trigger the modifier (they may have something to do when enabled)
         //TODO: send feedback to all players in game (chat + title)
 
@@ -140,6 +159,59 @@ public final class ModuleManager {
                 .filter(modifier -> modifier.getType() == type)
                 .map(modifier -> (V) modifier);
     }
+
+    // LISTENERS
+    public void setupListeners(GameActivity activity) {
+        activity.listen(EntityDropItemsEvent.EVENT, this::onMobLoot);
+        activity.listen(BlockBreakEvent.EVENT, this::onBlockBroken);
+        activity.listen(BlockDropItemsEvent.EVENT, this::onBlockDrop);
+        activity.listen(ExplosionDetonatedEvent.EVENT, this::onExplosion);
+    }
+
+    private EventResult onBlockBroken(ServerPlayerEntity playerEntity, ServerWorld world, BlockPos pos) {
+        for (TraversalBreakModifier piece : this.getModifiers(ModifierType.TRAVERSAL_BREAK)) {
+            piece.breakBlock(world, playerEntity, pos);
+        }
+        return EventResult.ALLOW;
+    }
+
+    private EventResult onExplosion(Explosion explosion, List<BlockPos> positions) {
+        positions.forEach(pos -> {
+            for (TraversalBreakModifier piece : this.getModifiers(ModifierType.TRAVERSAL_BREAK)) {
+                piece.breakBlock(explosion.getWorld(), explosion.getCausingEntity(), pos);
+            }
+        });
+        return EventResult.ALLOW;
+    }
+
+
+    private DroppedItemsResult onMobLoot(LivingEntity livingEntity, List<ItemStack> itemStacks) {
+        boolean keepOld = true;
+        List<ItemStack> stacks = new ArrayList<>();
+        for (EntityLootModifier piece : this.getModifiers(ModifierType.ENTITY_LOOT)) {
+            if (piece.test(livingEntity)) {
+                stacks.addAll(piece.getLoots((ServerWorld) livingEntity.getWorld(), livingEntity));
+                if (piece.shouldReplace()) keepOld = false;
+            }
+        }
+        if (keepOld) stacks.addAll(itemStacks);
+        return DroppedItemsResult.pass(stacks);
+    }
+
+    private DroppedItemsResult onBlockDrop(@Nullable Entity entity, ServerWorld world, BlockPos pos, BlockState state, List<ItemStack> itemStacks) {
+        boolean keepOld = true;
+        List<ItemStack> stacks = new ArrayList<>();
+        for (BlockLootModifier piece : this.getModifiers(ModifierType.BLOCK_LOOT)) {
+            if (piece.test(state, world.getRandom())) {
+                piece.spawnExperience(world, pos);
+                stacks.addAll(piece.getLoots(world, pos, entity, entity instanceof LivingEntity ? ((LivingEntity) entity).getActiveItem() : ItemStack.EMPTY));
+                if (piece.shouldReplace()) keepOld = false;
+            }
+        }
+        if (keepOld) stacks.addAll(itemStacks);
+        return DroppedItemsResult.pass(stacks);
+    }
+
 
     @Override
     public String toString() {

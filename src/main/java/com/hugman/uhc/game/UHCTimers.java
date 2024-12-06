@@ -2,13 +2,13 @@ package com.hugman.uhc.game;
 
 import com.hugman.uhc.config.UHCGameConfig;
 
-public class UHCLogic {
+public class UHCTimers {
     private static final int HIGH_PLAYER_COUNT = 100;
 
     private final UHCGameConfig config;
     private final float playerDose;
 
-    public UHCLogic(UHCGameConfig config, int playerAmount) {
+    public UHCTimers(UHCGameConfig config, int playerAmount) {
         this.config = config;
         this.playerDose = (playerAmount - (float) config.players().minPlayers()) / ((float) Math.max(config.players().minPlayers(), HIGH_PLAYER_COUNT) - (float) config.players().minPlayers());
     }
