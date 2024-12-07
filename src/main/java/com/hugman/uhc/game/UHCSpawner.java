@@ -36,7 +36,7 @@ public class UHCSpawner {
 
     public void spawnPlayerAt(ServerPlayerEntity player, BlockPos pos) {
         ChunkPos chunkPos = new ChunkPos(pos.getX() >> 4, pos.getZ() >> 4);
-        this.world.getChunkManager().addTicket(ChunkTicketType.POST_TELEPORT, chunkPos, 1, player.getId());
+        this.world.getChunkManager().addTicket(ChunkTicketType.PLAYER, chunkPos, 1, chunkPos);
         player.refreshPositionAndAngles(pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, 0.0F, 0.0F);
     }
 
