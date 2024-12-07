@@ -100,10 +100,6 @@ public class UHCPlayerManager {
         });
     }
 
-    public void forEachParticipant(final Consumer<ServerPlayerEntity> consumer) {
-        participants.keySet().forEach(consumer);
-    }
-
     // TEAMS
 
     public PlayerSet teamPlayers(GameTeamKey team) {

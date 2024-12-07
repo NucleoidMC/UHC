@@ -1,8 +1,8 @@
 package com.hugman.uhc.game;
 
+import com.hugman.uhc.UHC;
 import com.hugman.uhc.modifier.*;
 import com.hugman.uhc.module.Module;
-import com.hugman.uhc.module.ModuleEvents;
 import eu.pb4.sgui.api.elements.GuiElementBuilder;
 import eu.pb4.sgui.api.gui.SimpleGui;
 import net.minecraft.block.BlockState;
@@ -24,9 +24,7 @@ import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.explosion.Explosion;
 import org.jetbrains.annotations.Nullable;
 import xyz.nucleoid.plasmid.api.game.GameActivity;
-import xyz.nucleoid.plasmid.api.game.event.GamePlayerEvents;
-import xyz.nucleoid.stimuli.EventInvokers;
-import xyz.nucleoid.stimuli.Stimuli;
+import xyz.nucleoid.plasmid.api.game.GameAttachment;
 import xyz.nucleoid.stimuli.event.DroppedItemsResult;
 import xyz.nucleoid.stimuli.event.EventResult;
 import xyz.nucleoid.stimuli.event.block.BlockBreakEvent;
@@ -37,9 +35,12 @@ import xyz.nucleoid.stimuli.event.world.ExplosionDetonatedEvent;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.function.Consumer;
 import java.util.stream.Stream;
 
 public final class ModuleManager {
+    public static final GameAttachment<ModuleManager> ATTACHMENT = GameAttachment.create(UHC.id("module_manager"));
+
     private final List<RegistryEntry<Module>> modules;
 
     public ModuleManager(List<RegistryEntry<Module>> modules) {
@@ -54,7 +55,7 @@ public final class ModuleManager {
         return modules.isEmpty();
     }
 
-    public List<Modifier> getModifiers() {
+    public List<Modifier> modifiers() {
         List<Modifier> modifiers = new ArrayList<>();
         for (var moduleEntry : modules) {
             modifiers.addAll(moduleEntry.value().modifiers());
@@ -62,13 +63,17 @@ public final class ModuleManager {
         return modifiers;
     }
 
-    public List<RegistryKey<Module>> getKeys() {
+    public List<RegistryKey<Module>> keys() {
         return modules.stream().map(moduleRegistryEntry -> moduleRegistryEntry.getKey().orElse(null)).filter(Objects::nonNull).toList();
     }
 
-    public <V extends Modifier> List<V> getModifiers(ModifierType<V> type) {
+    public void forEach(Consumer<Module> action) {
+        modules.forEach(moduleEntry -> action.accept(moduleEntry.value()));
+    }
+
+    public <V extends Modifier> List<V> modifiers(ModifierType<V> type) {
         //TODO: cache modules so it's quicker to sort by type
-        return ModuleManager.getModifiers(modules, type);
+        return ModuleManager.modifiers(modules, type);
     }
 
     public boolean enableModule(RegistryEntry<Module> module) {
@@ -76,7 +81,6 @@ public final class ModuleManager {
             return false;
         }
 
-        //TODO: trigger the modifier (they may have something to do when enabled)
         //TODO: send feedback to all players in game (chat + title)
 
         return modules.add(module);
@@ -87,7 +91,6 @@ public final class ModuleManager {
             return false;
         }
 
-        //TODO: trigger the modifier (they may have something to do when disabled)
         //TODO: send feedback to all players in game (chat + title)
         return modules.remove(module);
     }
@@ -120,26 +123,12 @@ public final class ModuleManager {
         return gui;
     }
 
-    public MutableText buildChatMessage() {
-        var text = Text.literal("\n").append(Text.translatable("text.uhc.enabled_modules").formatted(Formatting.GOLD));
-        this.modules.forEach(moduleEntry -> {
-            var module = moduleEntry.value();
-            var style = Style.EMPTY;
-            if (module.description().isPresent()) {
-                style = style.withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, module.description().get().copy()));
-            }
-            text.append(Text.literal("\n  - ").formatted(Formatting.WHITE)).append(Texts.bracketed(module.name()).setStyle(style.withColor(module.color())));
-        });
-        text.append("\n");
-        return text;
-    }
-
     /**
      * Filters a registry entry list of modules by type
      *
      * @return A list of modifiers of the specified type
      */
-    public static <V extends Modifier> List<V> getModifiers(List<RegistryEntry<Module>> modules, ModifierType<V> type) {
+    public static <V extends Modifier> List<V> modifiers(List<RegistryEntry<Module>> modules, ModifierType<V> type) {
         List<V> modifiers = new ArrayList<>();
         for (var moduleEntry : modules) {
             for (Modifier modifier : moduleEntry.value().modifiers()) {
@@ -169,7 +158,7 @@ public final class ModuleManager {
     }
 
     private EventResult onBlockBroken(ServerPlayerEntity playerEntity, ServerWorld world, BlockPos pos) {
-        for (TraversalBreakModifier piece : this.getModifiers(ModifierType.TRAVERSAL_BREAK)) {
+        for (TraversalBreakModifier piece : this.modifiers(ModifierType.TRAVERSAL_BREAK)) {
             piece.breakBlock(world, playerEntity, pos);
         }
         return EventResult.ALLOW;
@@ -177,7 +166,7 @@ public final class ModuleManager {
 
     private EventResult onExplosion(Explosion explosion, List<BlockPos> positions) {
         positions.forEach(pos -> {
-            for (TraversalBreakModifier piece : this.getModifiers(ModifierType.TRAVERSAL_BREAK)) {
+            for (TraversalBreakModifier piece : this.modifiers(ModifierType.TRAVERSAL_BREAK)) {
                 piece.breakBlock(explosion.getWorld(), explosion.getCausingEntity(), pos);
             }
         });
@@ -188,7 +177,7 @@ public final class ModuleManager {
     private DroppedItemsResult onMobLoot(LivingEntity livingEntity, List<ItemStack> itemStacks) {
         boolean keepOld = true;
         List<ItemStack> stacks = new ArrayList<>();
-        for (EntityLootModifier piece : this.getModifiers(ModifierType.ENTITY_LOOT)) {
+        for (EntityLootModifier piece : this.modifiers(ModifierType.ENTITY_LOOT)) {
             if (piece.test(livingEntity)) {
                 stacks.addAll(piece.getLoots((ServerWorld) livingEntity.getWorld(), livingEntity));
                 if (piece.shouldReplace()) keepOld = false;
@@ -201,7 +190,7 @@ public final class ModuleManager {
     private DroppedItemsResult onBlockDrop(@Nullable Entity entity, ServerWorld world, BlockPos pos, BlockState state, List<ItemStack> itemStacks) {
         boolean keepOld = true;
         List<ItemStack> stacks = new ArrayList<>();
-        for (BlockLootModifier piece : this.getModifiers(ModifierType.BLOCK_LOOT)) {
+        for (BlockLootModifier piece : this.modifiers(ModifierType.BLOCK_LOOT)) {
             if (piece.test(state, world.getRandom())) {
                 piece.spawnExperience(world, pos);
                 stacks.addAll(piece.getLoots(world, pos, entity, entity instanceof LivingEntity ? ((LivingEntity) entity).getActiveItem() : ItemStack.EMPTY));

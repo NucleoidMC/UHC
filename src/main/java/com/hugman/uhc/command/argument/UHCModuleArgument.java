@@ -1,6 +1,6 @@
 package com.hugman.uhc.command.argument;
 
-import com.hugman.uhc.game.UHCAttachments;
+import com.hugman.uhc.game.ModuleManager;
 import com.hugman.uhc.module.Module;
 import com.hugman.uhc.registry.UHCRegistryKeys;
 import com.mojang.brigadier.builder.RequiredArgumentBuilder;
@@ -23,17 +23,17 @@ import java.util.Locale;
 import java.util.Objects;
 
 public final class UHCModuleArgument {
-    private static final DynamicCommandExceptionType MODULE_NOT_FOUND = new DynamicCommandExceptionType((id) -> Text.stringifiedTranslatable("text.plasmid.game_config.game_not_found", id)); //TODO: change
+    private static final DynamicCommandExceptionType MODULE_NOT_FOUND = new DynamicCommandExceptionType((id) -> Text.stringifiedTranslatable("text.module.not_found", id)); //TODO: change
 
     public static RequiredArgumentBuilder<ServerCommandSource, Identifier> argumentFromEnabled(String name) {
         return CommandManager.argument(name, IdentifierArgumentType.identifier()).suggests((ctx, builder) -> {
             Registry<Module> registry = ctx.getSource().getRegistryManager().getOrThrow(UHCRegistryKeys.MODULE);
             String remaining = builder.getRemaining().toLowerCase(Locale.ROOT);
-            var manager = Objects.requireNonNull(GameSpaceManager.get().byWorld(ctx.getSource().getWorld())).getAttachment(UHCAttachments.MODULE_MANAGER);
+            var manager = Objects.requireNonNull(GameSpaceManager.get().byWorld(ctx.getSource().getWorld())).getAttachment(ModuleManager.ATTACHMENT);
             if (manager == null) {
                 return builder.buildFuture();
             }
-            var enabledKeys = manager.getKeys();
+            var enabledKeys = manager.keys();
             CommandSource.forEachMatching(enabledKeys, remaining, RegistryKey::getValue, (key) -> registry.getOptional(key)
                     .ifPresent((entry) -> builder.suggest(key.getValue().toString(), entry.value().name())));
             return builder.buildFuture();
@@ -44,10 +44,10 @@ public final class UHCModuleArgument {
         return CommandManager.argument(name, IdentifierArgumentType.identifier()).suggests((ctx, builder) -> {
             Registry<Module> registry = ctx.getSource().getRegistryManager().getOrThrow(UHCRegistryKeys.MODULE);
             String remaining = builder.getRemaining().toLowerCase(Locale.ROOT);
-            var manager = Objects.requireNonNull(GameSpaceManager.get().byWorld(ctx.getSource().getWorld())).getAttachment(UHCAttachments.MODULE_MANAGER);
+            var manager = Objects.requireNonNull(GameSpaceManager.get().byWorld(ctx.getSource().getWorld())).getAttachment(ModuleManager.ATTACHMENT);
             var candidates = new ArrayList<>(registry.getKeys());
             if (manager != null) {
-                candidates.removeAll(manager.getKeys());
+                candidates.removeAll(manager.keys());
             }
             CommandSource.forEachMatching(candidates, remaining, RegistryKey::getValue, (key) -> registry.getOptional(key)
                     .ifPresent((entry) -> builder.suggest(key.getValue().toString(), entry.value().name())));

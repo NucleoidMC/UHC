@@ -1,7 +1,7 @@
 package com.hugman.uhc;
 
 import com.google.common.reflect.Reflection;
-import com.hugman.uhc.command.UHCCommand;
+import com.hugman.uhc.command.ModulesCommand;
 import com.hugman.uhc.config.UHCGameConfig;
 import com.hugman.uhc.game.phase.UHCWaiting;
 import com.hugman.uhc.modifier.ModifierType;
@@ -25,7 +25,7 @@ public class UHC implements ModInitializer {
 
         UHCRegistryKeys.registerDynamics();
 
-        CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) -> UHCCommand.register(dispatcher));
+        CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) -> ModulesCommand.register(dispatcher));
         GameType.register(UHC.id("standard"), UHCGameConfig.CODEC, UHCWaiting::open);
     }
 

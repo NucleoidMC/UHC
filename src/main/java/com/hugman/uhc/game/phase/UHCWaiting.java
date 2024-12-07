@@ -2,7 +2,6 @@ package com.hugman.uhc.game.phase;
 
 import com.hugman.uhc.config.UHCGameConfig;
 import com.hugman.uhc.game.ModuleManager;
-import com.hugman.uhc.game.UHCAttachments;
 import com.hugman.uhc.game.UHCSpawner;
 import com.hugman.uhc.map.UHCMap;
 import net.minecraft.server.world.ServerWorld;
@@ -41,7 +40,7 @@ public record UHCWaiting(
             var gameSpace = activity.getGameSpace();
             UHCWaiting waiting = new UHCWaiting(gameSpace, world, config, teamManager);
 
-            gameSpace.setAttachment(UHCAttachments.MODULE_MANAGER, moduleManager);
+            gameSpace.setAttachment(ModuleManager.ATTACHMENT, moduleManager);
 
             activity.listen(GamePlayerEvents.OFFER, JoinOffer::accept);
             activity.listen(GamePlayerEvents.ACCEPT, waiting::acceptPlayer);

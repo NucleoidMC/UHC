@@ -1,5 +1,6 @@
 package com.hugman.uhc.game.phase;
 
+import com.hugman.text.Messenger;
 import com.hugman.uhc.UHC;
 import com.hugman.uhc.config.UHCGameConfig;
 import com.hugman.uhc.game.*;
@@ -56,6 +57,7 @@ public class UHCActive {
     private final UHCBar bar;
     private final UHCSideBar sideBar;
     private final ModuleManager moduleManager;
+    private final Messenger msg;
 
     private long gameStartTick;
     private long startInvulnerableTick;
@@ -71,42 +73,60 @@ public class UHCActive {
     private boolean isFinished = false;
 
     private UHCActive(
+            GameSpace gameSpace,
+            ServerWorld world,
+            GameActivity activity,
+            int spawnOffset,
+            UHCPlayerManager playerManager,
+            UHCTimers timers,
+            UHCSpawner spawnLogic,
+            UHCBar bar,
+            UHCSideBar sideBar,
+            ModuleManager moduleManager,
+            Messenger msg
+    ) {
+        this.gameSpace = gameSpace;
+        this.world = world;
+        this.activity = activity;
+        this.spawnOffset = spawnOffset;
+        this.playerManager = playerManager;
+        this.timers = timers;
+        this.spawnLogic = spawnLogic;
+        this.bar = bar;
+        this.sideBar = sideBar;
+        this.moduleManager = moduleManager;
+        this.msg = msg;
+    }
+
+    private static UHCActive of(
             GameActivity activity,
             GameSpace gameSpace,
             ServerWorld world,
-            UHCGameConfig config,
-            GlobalWidgets widgets,
-            UHCPlayerManager playerManager,
-            ModuleManager moduleManager
+            UHCGameConfig config
     ) {
-        this.activity = activity;
-        this.gameSpace = gameSpace;
-        this.world = world;
-        this.playerManager = playerManager;
-        this.moduleManager = moduleManager;
-
-        this.spawnOffset = config.uhcConfig().value().mapConfig().spawnOffset();
-        this.timers = new UHCTimers(config, this.playerManager.participantCount());
-        this.spawnLogic = new UHCSpawner(this.world);
-        this.bar = UHCBar.create(widgets, this.gameSpace);
-        this.sideBar = UHCSideBar.create(widgets, gameSpace);
+        var moduleManager = gameSpace.getAttachment(ModuleManager.ATTACHMENT);
+        assert moduleManager != null;
+        var playerManager = UHCPlayerManager.of(activity, gameSpace, config);
+        var widgets = GlobalWidgets.addTo(activity);
+        var messenger = new Messenger(gameSpace.getPlayers());
+        return new UHCActive(
+                gameSpace,
+                world,
+                activity,
+                config.uhcConfig().value().mapConfig().spawnOffset(),
+                playerManager,
+                new UHCTimers(config, playerManager.participantCount()),
+                new UHCSpawner(world),
+                UHCBar.create(widgets, gameSpace, messenger),
+                UHCSideBar.create(widgets, gameSpace),
+                moduleManager,
+                messenger
+        );
     }
 
     public static void start(GameSpace gameSpace, ServerWorld world, UHCGameConfig config) {
         gameSpace.setActivity(activity -> {
-            GlobalWidgets widgets = GlobalWidgets.addTo(activity);
-            var moduleManager = gameSpace.getAttachment(UHCAttachments.MODULE_MANAGER);
-            assert moduleManager != null;
-            var playerManager = UHCPlayerManager.of(activity, gameSpace, config);
-            UHCActive active = new UHCActive(
-                    activity,
-                    gameSpace,
-                    world,
-                    config,
-                    widgets,
-                    playerManager,
-                    moduleManager
-            );
+            UHCActive active = UHCActive.of(activity, gameSpace, world, config);
 
             activity.allow(GameRuleType.CRAFTING);
             activity.deny(GameRuleType.PORTALS);
@@ -128,7 +148,7 @@ public class UHCActive {
             activity.listen(PlayerDamageEvent.EVENT, active::onPlayerDamage);
             activity.listen(PlayerDeathEvent.EVENT, active::onPlayerDeath);
 
-            moduleManager.setupListeners(activity);
+            active.moduleManager.setupListeners(activity);
         });
     }
 
@@ -179,21 +199,21 @@ public class UHCActive {
 
         // Start - Cage chapter (@ 80%)
         if (worldTime == this.startInvulnerableTick - (timers.getInCagesTime() * 0.8)) {
-            this.sendModuleListToChat();
+            msg.moduleList(this.moduleManager);
         }
         // Start - Invulnerable chapter
         else if (worldTime == this.startInvulnerableTick) {
             this.dropCages();
-            this.sendInfo("text.uhc.dropped_players");
-            this.sendInfo("text.uhc.world_will_shrink", TickUtil.formatPretty(this.finaleCagesTick - worldTime));
+            msg.info("text.uhc.dropped_players");
+            msg.info("text.uhc.world_will_shrink", TickUtil.formatPretty(this.finaleCagesTick - worldTime));
 
-            this.bar.set("🛡", "text.uhc.vulnerable", this.timers.getInvulnerabilityTime(), this.startWarmupTick, BossBar.Color.YELLOW);
+            this.bar.set(Messenger.SYMBOL_SHIELD, "text.uhc.vulnerable", this.timers.getInvulnerabilityTime(), this.startWarmupTick, BossBar.Color.YELLOW);
         }
 
         // Start - Warmup chapter
         else if (worldTime == this.startWarmupTick) {
             this.setInvulnerable(false);
-            this.sendWarning("🛡", "text.uhc.no_longer_immune");
+            msg.danger(Messenger.SYMBOL_SHIELD, "text.uhc.no_longer_immune");
 
             this.bar.set("text.uhc.tp", this.timers.getWarmupTime(), this.finaleCagesTick, BossBar.Color.BLUE);
         }
@@ -206,7 +226,7 @@ public class UHCActive {
                 player.changeGameMode(GameMode.ADVENTURE);
             });
             this.tpToCages();
-            this.sendInfo("text.uhc.shrinking_when_pvp");
+            msg.info("text.uhc.shrinking_when_pvp");
 
             this.bar.set("text.uhc.dropping", this.timers.getInCagesTime(), this.finaleInvulnerabilityTick, BossBar.Color.PURPLE);
         }
@@ -214,22 +234,22 @@ public class UHCActive {
         // Finale - Invulnerability chapter
         else if (worldTime == this.finaleInvulnerabilityTick) {
             this.dropCages();
-            this.sendInfo("text.uhc.dropped_players");
+            msg.info("text.uhc.dropped_players");
 
-            this.bar.set("🗡", "text.uhc.pvp", this.timers.getInvulnerabilityTime(), this.reducingTick, BossBar.Color.YELLOW);
+            this.bar.set(Messenger.SYMBOL_SWORD, "text.uhc.pvp", this.timers.getInvulnerabilityTime(), this.reducingTick, BossBar.Color.YELLOW);
         }
 
         // Finale - Reducing chapter
         else if (worldTime == this.reducingTick) {
             this.setInvulnerable(false);
-            this.sendWarning("🛡", "text.uhc.no_longer_immune");
+            msg.danger(Messenger.SYMBOL_SHIELD, "text.uhc.no_longer_immune");
 
             this.setPvp(true);
-            this.sendWarning("🗡", "text.uhc.pvp_enabled");
+            msg.danger(Messenger.SYMBOL_SKULL, "text.uhc.pvp_enabled");
 
             world.getWorldBorder().interpolateSize(this.timers.getStartMapSize(), this.timers.getEndMapSize(), this.timers.getShrinkingTime() * 50L);
             this.gameSpace.getPlayers().forEach(player -> player.networkHandler.sendPacket(new WorldBorderInterpolateSizeS2CPacket(world.getWorldBorder())));
-            this.sendWarning("text.uhc.shrinking_start");
+            msg.danger("text.uhc.shrinking_start");
 
             this.bar.set("text.uhc.shrinking_finish", this.timers.getShrinkingTime(), this.deathMatchTick, BossBar.Color.RED);
         }
@@ -239,7 +259,7 @@ public class UHCActive {
             this.bar.setFull(Text.literal("🗡").append(Text.translatable("text.uhc.deathmatchTime")).append("🗡"));
             world.getWorldBorder().setDamagePerBlock(2.5);
             world.getWorldBorder().setSafeZone(0.125);
-            this.sendInfo("🗡", "text.uhc.last_one_wins");
+            msg.info(Messenger.SYMBOL_SWORD, "text.uhc.last_one_wins");
             this.checkForWinner();
         }
     }
@@ -257,9 +277,7 @@ public class UHCActive {
     private void playerLeave(ServerPlayerEntity player) {
         if (playerManager.isParticipant(player)) {
             if (!playerManager.getParticipant(player).isEliminated()) {
-                var players = this.gameSpace.getPlayers();
-                players.sendMessage(Text.literal("\n☠ ").append(Text.translatable("text.uhc.player_eliminated", player.getDisplayName())).append("\n").formatted(Formatting.DARK_RED));
-                players.playSound(SoundEvents.ENTITY_WITHER_SPAWN);
+                msg.elimination(player);
                 this.eliminateParticipant(player);
             }
         }
@@ -291,14 +309,14 @@ public class UHCActive {
     }
 
     public void refreshPlayerAttributes(ServerPlayerEntity player) {
-        for (PlayerAttributeModifier piece : this.moduleManager.getModifiers(ModifierType.PLAYER_ATTRIBUTE)) {
+        for (PlayerAttributeModifier piece : this.moduleManager.modifiers(ModifierType.PLAYER_ATTRIBUTE)) {
             piece.refreshAttribute(player);
         }
         player.networkHandler.sendPacket(new EntityAttributesS2CPacket(player.getId(), player.getAttributes().getTracked()));
     }
 
     public void applyPlayerEffects(ServerPlayerEntity player) {
-        for (PermanentEffectModifier piece : this.moduleManager.getModifiers(ModifierType.PERMANENT_EFFECT)) {
+        for (PermanentEffectModifier piece : this.moduleManager.modifiers(ModifierType.PERMANENT_EFFECT)) {
             piece.setEffect(player);
         }
     }
@@ -384,40 +402,13 @@ public class UHCActive {
         }));
     }
 
-    // MESSAGES
-    private void sendMessage(String symbol, String s, Formatting f, Object... args) {
-        this.gameSpace.getPlayers().sendMessage(Text.literal(symbol).append(Text.translatable(s, args)).formatted(f));
-    }
-
-    public void sendInfo(String symbol, String s, Object... args) {
-        this.sendMessage(symbol + " ", s, Formatting.YELLOW, args);
-    }
-
-    public void sendInfo(String s, Object... args) {
-        this.sendMessage("", s, Formatting.YELLOW, args);
-    }
-
-    private void sendWarning(String symbol, String s, Object... args) {
-        this.sendMessage(symbol + " ", s, Formatting.RED, args);
-    }
-
-    private void sendWarning(String s, Object... args) {
-        this.sendMessage("", s, Formatting.RED, args);
-    }
-
-    public void sendModuleListToChat() {
-        if (!this.moduleManager.isEmpty()) {
-            this.gameSpace.getPlayers().sendMessage(this.moduleManager.buildChatMessage());
-            this.gameSpace.getPlayers().playSound(SoundEvents.ENTITY_ITEM_PICKUP);
-        }
-    }
-
     // GENERAL LISTENERS
     private void enableModule(RegistryEntry<Module> moduleRegistryEntry) {
         Module module = moduleRegistryEntry.value();
         for (Modifier modifier : module.modifiers()) {
             modifier.enable(this.playerManager);
         }
+        msg.moduleAnnouncement("text.module.enabled", moduleRegistryEntry, Formatting.GREEN);
     }
 
     private void disableModule(RegistryEntry<Module> moduleRegistryEntry) {
@@ -425,6 +416,7 @@ public class UHCActive {
         for (Modifier modifier : module.modifiers()) {
             modifier.disable(this.playerManager);
         }
+        msg.moduleAnnouncement("text.module.disabled", moduleRegistryEntry, Formatting.RED);
     }
 
     private EventResult onPlayerDamage(ServerPlayerEntity entity, DamageSource damageSource, float v) {
@@ -438,9 +430,7 @@ public class UHCActive {
     private EventResult onPlayerDeath(ServerPlayerEntity player, DamageSource source) {
         if (playerManager.isParticipant(player)) {
             if (!playerManager.getParticipant(player).isEliminated()) {
-                PlayerSet players = this.gameSpace.getPlayers();
-                players.sendMessage(Text.literal("\n☠ ").append(source.getDeathMessage(player).copy()).append("!\n").formatted(Formatting.DARK_RED));
-                players.playSound(SoundEvents.ENTITY_WITHER_SPAWN);
+                msg.death(source, player);
                 this.eliminateParticipant(player);
                 return EventResult.DENY;
             }
