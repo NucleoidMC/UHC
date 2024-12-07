@@ -1,6 +1,5 @@
 package com.hugman.uhc.module;
 
-import com.hugman.uhc.game.UHCPlayerManager;
 import net.minecraft.registry.entry.RegistryEntry;
 import xyz.nucleoid.stimuli.event.StimulusEvent;
 

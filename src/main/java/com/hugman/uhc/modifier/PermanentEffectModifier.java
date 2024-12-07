@@ -7,7 +7,6 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.entity.effect.StatusEffect;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.registry.entry.RegistryEntry;
-import net.minecraft.server.PlayerManager;
 import net.minecraft.server.network.ServerPlayerEntity;
 
 public record PermanentEffectModifier(
@@ -34,7 +33,7 @@ public record PermanentEffectModifier(
     }
 
     @Override
-    public void disable(UHCPlayerManager  playerManager) {
+    public void disable(UHCPlayerManager playerManager) {
         playerManager.forEachAliveParticipant(player -> player.removeStatusEffect(this.effect));
     }
 }

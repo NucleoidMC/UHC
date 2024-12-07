@@ -34,9 +34,11 @@ public class ModulesCommand {
                         .requires(ModulesCommand::supportsModules)
                         .executes(ModulesCommand::displayModules)
                         .then(CommandManager.literal("enable")
+                                .requires(source -> source.hasPermissionLevel(2))
                                 .then(UHCModuleArgument.argumentFromDisabled("module")
                                         .executes(context -> enableModule(context, UHCModuleArgument.get(context, MODULE_ARG)))))
                         .then(CommandManager.literal("disable")
+                                .requires(source -> source.hasPermissionLevel(2))
                                 .then(UHCModuleArgument.argumentFromEnabled("module")
                                         .executes(context -> disableModule(context, UHCModuleArgument.get(context, MODULE_ARG)))))
         );
