@@ -51,6 +51,62 @@
       "replacement": {
         "id": "minecraft:iron_hoe"
       }
+    },
+    {
+      "type": "uhc:replace_stack",
+      "target": {
+        "id": "minecraft:diamond_pickaxe"
+      },
+      "replacement": {
+        "id": "minecraft:diamond_pickaxe",
+        "components": {
+          "minecraft:enchantments": {
+            "minecraft:efficiency": 3
+          }
+        }
+      }
+    },
+    {
+      "type": "uhc:replace_stack",
+      "target": {
+        "id": "minecraft:diamond_axe"
+      },
+      "replacement": {
+        "id": "minecraft:diamond_axe",
+        "components": {
+          "minecraft:enchantments": {
+            "minecraft:efficiency": 3
+          }
+        }
+      }
+    },
+    {
+      "type": "uhc:replace_stack",
+      "target": {
+        "id": "minecraft:diamond_shovel"
+      },
+      "replacement": {
+        "id": "minecraft:diamond_shovel",
+        "components": {
+          "minecraft:enchantments": {
+            "minecraft:efficiency": 3
+          }
+        }
+      }
+    },
+    {
+      "type": "uhc:replace_stack",
+      "target": {
+        "id": "minecraft:diamond_hoe"
+      },
+      "replacement": {
+        "id": "minecraft:diamond_hoe",
+        "components": {
+          "minecraft:enchantments": {
+            "minecraft:efficiency": 3
+          }
+        }
+      }
     }
   ]
 }

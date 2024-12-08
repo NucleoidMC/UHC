@@ -165,7 +165,7 @@ public final class ModuleManager {
             for (ReplaceStackModifier piece : this.modifiers(ModifierType.REPLACE_STACK)) {
                 int slot = player.getInventory().getSlotWithStack(piece.target());
                 if(slot != -1) {
-                    player.getInventory().setStack(slot, piece.replacement());
+                    player.getInventory().setStack(slot, piece.replacement().copy());
                 }
             }
         });
