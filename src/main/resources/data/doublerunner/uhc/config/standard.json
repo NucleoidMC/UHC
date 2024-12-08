@@ -1,0 +1,24 @@
+{
+  "modules": "#doublerunner:standard",
+  "map": {
+    "dimension": {
+      "type": "minecraft:overworld",
+      "generator": {
+        "type": "minecraft:noise",
+        "settings": "minecraft:overworld",
+        "biome_source": {
+          "type": "minecraft:multi_noise",
+          "preset": "minecraft:overworld"
+        }
+      }
+    },
+    "shrinking_speed": 0.6,
+    "start_size": {
+      "min": 200,
+      "max": 8000
+    }
+  },
+  "chapters": {
+    "warmup": 600
+  }
+}

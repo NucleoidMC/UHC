@@ -17,6 +17,8 @@
   "module.uhcrun.ore_boost.description": "Lapis, gold and diamond ores are more frequent",
   "module.uhcrun.timberman": "Timberman",
   "module.uhcrun.timberman.description": "Trees get cut instantly and drop oak planks",
+  "module.uhcrun.better_tools": "Better Tools",
+  "module.uhcrun.better_tools.description": "Wooden tools are replaced with stone tools",
 
   "module_description.uhcrun.stones_drop_cobblestone": "All stones types drop cobblestone",
   "module_description.uhcrun.gravel_drops_arrows_and_flint_and_steel": "Gravel drop arrows and flint and steel",
@@ -28,7 +30,7 @@
   "module_description.uhcrun.animals_and_zombies_drop_leather": "Most animals and zombies drop leather",
   "module_description.uhcrun.animals_and_zombies_drop_books": "Most animals and zombies drop books",
   "module_description.uhcrun.sheep_drop_strings": "Sheep drop strings",
-  "module_description.uhcrun.sheep_drop_bow": "Sheep drop bows",
+  "module_description.uhcrun.sheep_drop_bow": "Sheep drop a bow",
   "module_description.uhcrun.sugar_cane_drop_paper": "Sugar cane drop paper",
   "module_description.uhcrun.sugar_cane_drop_enchanting_tables_and_books": "Sugar cane drop enchanting tables and books",
   "module_description.uhcrun.chickens_drop_arrows": "Chickens drop arrows",

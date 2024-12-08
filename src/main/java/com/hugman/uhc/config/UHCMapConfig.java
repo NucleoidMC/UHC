@@ -6,8 +6,13 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.world.dimension.DimensionOptions;
 
 
-public record UHCMapConfig(DimensionOptions dimension, DoubleRange startSize, DoubleRange endSize,
-                           double shrinkingSpeed, int spawnOffset) {
+public record UHCMapConfig(
+        DimensionOptions dimension,
+        DoubleRange startSize,
+        DoubleRange endSize,
+        double shrinkingSpeed,
+        int spawnOffset
+) {
     public static final Codec<UHCMapConfig> CODEC = RecordCodecBuilder.create(instance -> instance.group(
             DimensionOptions.CODEC.fieldOf("dimension").forGetter(UHCMapConfig::dimension),
             DoubleRange.CODEC.fieldOf("start_size").forGetter(UHCMapConfig::startSize),
