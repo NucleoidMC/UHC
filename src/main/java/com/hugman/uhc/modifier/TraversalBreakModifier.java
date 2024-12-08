@@ -15,7 +15,11 @@ import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.Nullable;
 import xyz.nucleoid.plasmid.api.util.BlockTraversal;
 
-public record TraversalBreakModifier(RuleTest predicate, int amount, boolean includeLeaves) implements Modifier {
+public record TraversalBreakModifier(
+        RuleTest predicate,
+        int amount,
+        boolean includeLeaves
+) implements Modifier {
     public static final MapCodec<TraversalBreakModifier> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
             RuleTest.TYPE_CODEC.fieldOf("target").forGetter(module -> module.predicate),
             Codec.intRange(0, Integer.MAX_VALUE).optionalFieldOf("amount", 128).forGetter(module -> module.amount),

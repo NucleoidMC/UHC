@@ -13,6 +13,7 @@ public record ModifierType<T extends Modifier>(MapCodec<T> codec) {
     public static final ModifierType<PlayerAttributeModifier> PLAYER_ATTRIBUTE = register("player_attribute", PlayerAttributeModifier.CODEC);
     public static final ModifierType<PermanentEffectModifier> PERMANENT_EFFECT = register("permanent_effect", PermanentEffectModifier.CODEC);
     public static final ModifierType<PlacedFeaturesModifier> PLACED_FEATURES = register("placed_features", PlacedFeaturesModifier.CODEC);
+    public static final ModifierType<ReplaceStackModifier> REPLACE_STACK = register("replace_stack", ReplaceStackModifier.CODEC);
 
     private static <T extends Modifier> ModifierType<T> register(String name, MapCodec<T> codec) {
         return register(UHC.id(name), codec);

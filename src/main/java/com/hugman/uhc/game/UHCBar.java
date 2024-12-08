@@ -1,5 +1,6 @@
 package com.hugman.uhc.game;
 
+import com.hugman.text.Messenger;
 import com.hugman.uhc.util.TickUtil;
 import net.minecraft.entity.boss.BossBar;
 import net.minecraft.server.world.ServerWorld;
@@ -12,7 +13,7 @@ import xyz.nucleoid.plasmid.api.game.common.widget.BossBarWidget;
 
 public class UHCBar {
     private final BossBarWidget widget;
-    private final GameSpace gameSpace;
+    private final Messenger messenger;
     private String symbol;
     private String name;
     private String message;
@@ -21,17 +22,17 @@ public class UHCBar {
     private long totalTicks = 0;
     private boolean canTick = false;
 
-    private UHCBar(BossBarWidget widget, GameSpace gameSpace) {
+    private UHCBar(BossBarWidget widget, Messenger messenger) {
         this.widget = widget;
-        this.gameSpace = gameSpace;
+        this.messenger = messenger;
     }
 
-    public static UHCBar create(GlobalWidgets widgets, GameSpace gameSpace) {
-        return new UHCBar(widgets.addBossBar(gameSpace.getMetadata().sourceConfig().value().name(), BossBar.Color.BLUE, BossBar.Style.PROGRESS), gameSpace);
+    public static UHCBar create(GlobalWidgets widgets, GameSpace gameSpace, Messenger messenger) {
+        return new UHCBar(widgets.addBossBar(gameSpace.getMetadata().sourceConfig().value().name(), BossBar.Color.BLUE, BossBar.Style.PROGRESS), messenger);
     }
 
     public void set(String symbol, String name, long totalTicks, long endTick, BossBar.Color color) {
-        this.symbol = symbol.equals("") ? "" : symbol + " ";
+        this.symbol = symbol;
         this.name = name + ".countdown_bar";
         this.message = name + ".countdown_text";
         this.totalTicks = totalTicks;
@@ -41,11 +42,7 @@ public class UHCBar {
     }
 
     public void set(String name, long totalTicks, long endTick, BossBar.Color color) {
-        this.set("", name, totalTicks, endTick, color);
-    }
-
-    public void setMessage(String message) {
-        this.message = message;
+        this.set(null, name, totalTicks, endTick, color);
     }
 
     public void setFull(Text title) {
@@ -71,7 +68,7 @@ public class UHCBar {
                 sendMessage(seconds);
                 newColor = BossBar.Color.RED;
             }
-            this.widget.setTitle(Text.literal(symbol).append(Text.translatable(name, TickUtil.format(ticks))));
+            this.widget.setTitle(symbol == null ? Text.translatable(name, TickUtil.format(ticks)) : Text.literal(symbol).append(" ").append(Text.translatable(name, TickUtil.format(ticks))));
             this.widget.setStyle(newColor, BossBar.Style.NOTCHED_10);
             this.widget.setProgress((float) seconds / totalSeconds);
         }
@@ -79,11 +76,13 @@ public class UHCBar {
 
     private void sendMessage(long seconds) {
         float pitch = seconds == 0 ? 1.5F : 1.0F;
-        gameSpace.getPlayers().forEach(entity -> {
-            if (this.message != null && seconds != 0) {
-                entity.sendMessage(Text.literal(symbol).append(Text.translatable(this.message, TickUtil.formatPretty(seconds * 20).formatted(Formatting.RED))).formatted(Formatting.GOLD), false);
+        if (this.message != null && seconds != 0) {
+            if (symbol != null) {
+                messenger.info(symbol, message, TickUtil.formatPretty(seconds * 20).formatted(Formatting.RED));
+            } else {
+                messenger.info(message, TickUtil.formatPretty(seconds * 20).formatted(Formatting.RED));
             }
-            entity.playSound(SoundEvents.ENTITY_EXPERIENCE_ORB_PICKUP, 1.0F, pitch);
-        });
+        }
+        messenger.sound(SoundEvents.ENTITY_EXPERIENCE_ORB_PICKUP, 1.0F, pitch);
     }
 }

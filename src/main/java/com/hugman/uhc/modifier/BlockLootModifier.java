@@ -24,8 +24,12 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
-public record BlockLootModifier(boolean replace, RuleTest predicate, Optional<RegistryKey<LootTable>> lootTable,
-                                int experience) implements Modifier {
+public record BlockLootModifier(
+        boolean replace,
+        RuleTest predicate,
+        Optional<RegistryKey<LootTable>> lootTable,
+        int experience
+) implements Modifier {
     public static final MapCodec<BlockLootModifier> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
             Codec.BOOL.optionalFieldOf("replace", true).forGetter(BlockLootModifier::replace),
             RuleTest.TYPE_CODEC.fieldOf("target").forGetter(BlockLootModifier::predicate),

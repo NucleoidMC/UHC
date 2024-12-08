@@ -1,0 +1,56 @@
+{
+  "name": {
+    "translate": "module.uhcrun.better_tools"
+  },
+  "description": {
+    "translate": "module.uhcrun.better_tools.description"
+  },
+  "icon": "minecraft:stone_pickaxe",
+  "modifiers": [
+    {
+      "type": "uhc:replace_stack",
+      "target": {
+        "id": "minecraft:wooden_sword"
+      },
+      "replacement": {
+        "id": "minecraft:stone_sword"
+      }
+    },
+    {
+      "type": "uhc:replace_stack",
+      "target": {
+        "id": "minecraft:wooden_pickaxe"
+      },
+      "replacement": {
+        "id": "minecraft:stone_pickaxe"
+      }
+    },
+    {
+      "type": "uhc:replace_stack",
+      "target": {
+        "id": "minecraft:wooden_axe"
+      },
+      "replacement": {
+        "id": "minecraft:stone_axe"
+      }
+    },
+    {
+      "type": "uhc:replace_stack",
+      "target": {
+        "id": "minecraft:wooden_shovel"
+      },
+      "replacement": {
+        "id": "minecraft:stone_shovel"
+      }
+    },
+    {
+      "type": "uhc:replace_stack",
+      "target": {
+        "id": "minecraft:wooden_hoe"
+      },
+      "replacement": {
+        "id": "minecraft:stone_hoe"
+      }
+    }
+  ]
+}

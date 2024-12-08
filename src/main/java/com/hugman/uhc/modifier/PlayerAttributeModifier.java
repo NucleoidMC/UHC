@@ -1,5 +1,6 @@
 package com.hugman.uhc.modifier;
 
+import com.hugman.uhc.game.UHCPlayerManager;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.entity.attribute.EntityAttribute;
@@ -28,5 +29,20 @@ public record PlayerAttributeModifier(
             instance.removeModifier(modifier);
             instance.addPersistentModifier(modifier);
         }
+    }
+
+    @Override
+    public void enable(UHCPlayerManager playerManager) {
+        playerManager.forEachAliveParticipant(this::refreshAttribute);
+    }
+
+    @Override
+    public void disable(UHCPlayerManager playerManager) {
+        playerManager.forEachAliveParticipant(player -> {
+            EntityAttributeInstance instance = player.getAttributes().getCustomInstance(this.attribute);
+            if (instance != null) {
+                instance.removeModifier(modifier);
+            }
+        });
     }
 }
