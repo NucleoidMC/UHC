@@ -118,4 +118,4 @@ run/
 !gradle-wrapper.jar
 
 # Test game configs
-*plasmid/game/test.json
+*/plasmid/game/test.json
