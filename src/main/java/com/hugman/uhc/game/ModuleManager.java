@@ -26,6 +26,7 @@ import net.minecraft.world.explosion.Explosion;
 import org.jetbrains.annotations.Nullable;
 import xyz.nucleoid.plasmid.api.game.GameActivity;
 import xyz.nucleoid.plasmid.api.game.GameAttachment;
+import xyz.nucleoid.plasmid.api.game.event.GameActivityEvents;
 import xyz.nucleoid.stimuli.event.DroppedItemsResult;
 import xyz.nucleoid.stimuli.event.EventResult;
 import xyz.nucleoid.stimuli.event.block.BlockBreakEvent;
@@ -151,11 +152,23 @@ public final class ModuleManager {
     }
 
     // LISTENERS
-    public void setupListeners(GameActivity activity) {
+    public void setupListeners(GameActivity activity, UHCPlayerManager playerManager) {
         activity.listen(EntityDropItemsEvent.EVENT, this::onMobLoot);
         activity.listen(BlockBreakEvent.EVENT, this::onBlockBroken);
         activity.listen(BlockDropItemsEvent.EVENT, this::onBlockDrop);
         activity.listen(ExplosionDetonatedEvent.EVENT, this::onExplosion);
+        activity.listen(GameActivityEvents.TICK, () -> this.tick(playerManager));
+    }
+
+    private void tick(UHCPlayerManager playerManager) {
+        playerManager.forEachAliveParticipant(player -> {
+            for (ReplaceStackModifier piece : this.modifiers(ModifierType.REPLACE_STACK)) {
+                int slot = player.getInventory().getSlotWithStack(piece.target());
+                if(slot != -1) {
+                    player.getInventory().setStack(slot, piece.replacement());
+                }
+            }
+        });
     }
 
     private EventResult onBlockBroken(ServerPlayerEntity playerEntity, ServerWorld world, BlockPos pos) {

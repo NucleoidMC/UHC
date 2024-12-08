@@ -148,7 +148,7 @@ public class UHCActive {
             activity.listen(PlayerDamageEvent.EVENT, active::onPlayerDamage);
             activity.listen(PlayerDeathEvent.EVENT, active::onPlayerDeath);
 
-            active.moduleManager.setupListeners(activity);
+            active.moduleManager.setupListeners(activity, active.playerManager);
         });
     }
 

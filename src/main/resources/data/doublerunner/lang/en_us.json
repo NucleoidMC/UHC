@@ -11,6 +11,8 @@
   "module.doublerunner.potion_drops": "Potion Drops",
   "module.doublerunner.potion_drops.description": "Some entities drop potions",
   "module.doublerunner.timberman.description": "Trees get cut instantly and drop oak planks",
+  "module.doublerunner.better_tools_plus": "Better Tools+",
+  "module.doublerunner.better_tools_plus.description": "Wooden tools are replaced with iron tools",
 
   "module_description.doublerunner.zombies_drop_strength_potions": "Zombies drops potions of Strength",
   "module_description.doublerunner.spiders_drop_poison_potions": "Spiders drops potions of Poison",
