@@ -1,0 +1,22 @@
+{
+  "game.doublerunner": "DoubleRunner",
+
+  "module.doublerunner.blasted_ores_plus": "Blasted Ores+",
+  "module.doublerunner.dasher_plus": "Dasher+",
+  "module.doublerunner.dasher_plus.description": "Permanent haste and speed, and no fall damage",
+  "module.doublerunner.faster_resources_plus": "Faster Resources+",
+  "module.doublerunner.guaranteed_golden_apples": "Guaranteed Golden Apples",
+  "module.doublerunner.guaranteed_golden_apples.description": "All leaves only drop golden apples",
+  "module.doublerunner.ore_boost_plus": "Ore Boost+",
+  "module.doublerunner.potion_drops": "Potion Drops",
+  "module.doublerunner.potion_drops.description": "Some entities drop potions",
+  "module.doublerunner.timberman.description": "Trees get cut instantly and drop oak planks",
+  "module.doublerunner.better_tools_plus": "Better Tools+",
+  "module.doublerunner.better_tools_plus.description": "Wooden tools are replaced with iron tools and diamond tools are enchanted with Efficiency III",
+
+  "module_description.doublerunner.zombies_drop_strength_potions": "Zombies drops potions of Strength",
+  "module_description.doublerunner.spiders_drop_poison_potions": "Spiders drops potions of Poison",
+  "module_description.doublerunner.sugar_cane_drops_swiftness_potions": "Sugar cane drops potions of Swiftness",
+  "module_description.doublerunner.rabbits_drop_leaping_potions": "Rabbits drops potions of Leaping",
+  "module_description.doublerunner.bats_drop_night_vision_potions": "Bats drops potions of Night Vision"
+}

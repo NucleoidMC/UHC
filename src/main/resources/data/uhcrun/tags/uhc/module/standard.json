@@ -2,14 +2,13 @@
   "replace": false,
   "values": [
     "uhcrun:timberman",
-    "uhcrun:leaves_leave_no_leaves",
+    "uhcrun:guaranteed_apples",
     "uhcrun:dasher",
-    "uhcrun:ore_balance",
+    "uhcrun:ore_boost",
     "uhcrun:blasted_ores",
-    "uhcrun:need_for_resources",
+    "uhcrun:faster_resources",
     "uhcrun:animal_cooked_food",
     "uhcrun:mob_cooked_food",
-    "uhcrun:creeper_tnt",
-    "uhcrun:chicken_arrows"
+    "uhcrun:better_tools"
   ]
 }

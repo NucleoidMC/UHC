@@ -1,0 +1,19 @@
+{
+  "name": {
+    "translate": "module.uhcrun.guaranteed_apples"
+  },
+  "description": {
+    "translate": "module.uhcrun.guaranteed_apples.description"
+  },
+  "icon": "minecraft:apple",
+  "modifiers": [
+    {
+      "type": "uhc:block_loot",
+      "target": {
+        "predicate_type": "minecraft:tag_match",
+        "tag": "minecraft:leaves"
+      },
+      "loot_table": "uhcrun:apple"
+    }
+  ]
+}

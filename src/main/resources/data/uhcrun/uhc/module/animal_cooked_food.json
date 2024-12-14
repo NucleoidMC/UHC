@@ -1,36 +1,41 @@
 {
-  "translation": "module.uhcrun.animal_cooked_food",
+  "name": {
+    "translate": "module.uhcrun.animal_cooked_food"
+  },
+  "description": {
+    "translate": "module.uhcrun.animal_cooked_food.description"
+  },
   "icon": "minecraft:cooked_beef",
   "modifiers": [
     {
       "type": "uhc:entity_loot",
       "entities": "#uhcrun:animal_food/chicken",
-      "loot_table": "uhcrun:entities/cooked_food/chicken"
+      "loot_table": "uhcrun:cooked_food/chicken"
     },
     {
       "type": "uhc:entity_loot",
       "entities": "#uhcrun:animal_food/beef",
-      "loot_table": "uhcrun:entities/cooked_food/beef"
+      "loot_table": "uhcrun:cooked_food/beef/normal"
     },
     {
       "type": "uhc:entity_loot",
       "entities": "#uhcrun:animal_food/porkchop",
-      "loot_table": "uhcrun:entities/cooked_food/porkchop"
+      "loot_table": "uhcrun:cooked_food/porkchop"
     },
     {
       "type": "uhc:entity_loot",
       "entities": "#uhcrun:animal_food/rabbit",
-      "loot_table": "uhcrun:entities/cooked_food/rabbit"
+      "loot_table": "uhcrun:cooked_food/rabbit"
     },
     {
       "type": "uhc:entity_loot",
       "entities": "#uhcrun:animal_food/mutton",
-      "loot_table": "uhcrun:entities/cooked_food/mutton"
+      "loot_table": "uhcrun:cooked_food/mutton"
     },
     {
       "type": "uhc:entity_loot",
       "entities": "#uhcrun:animal_food/fish",
-      "loot_table": "uhcrun:entities/cooked_food/fish"
+      "loot_table": "uhcrun:cooked_food/fish"
     }
   ]
 }

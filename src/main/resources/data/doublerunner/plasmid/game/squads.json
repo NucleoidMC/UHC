@@ -1,0 +1,20 @@
+{
+  "type": "uhc:standard",
+  "config": "doublerunner:standard",
+  "name": {
+    "translate": "game.generic.mode",
+    "with": [
+      {
+        "translate": "game.doublerunner"
+      },
+      {
+        "translate": "mode.squads"
+      }
+    ]
+  },
+  "players": {
+    "min": 8,
+    "threshold": 32
+  },
+  "team_size": 4
+}

@@ -1,69 +1,111 @@
 package com.hugman.uhc.command;
 
-import com.hugman.uhc.config.UHCConfig;
+import com.hugman.uhc.command.argument.UHCModuleArgument;
+import com.hugman.uhc.game.ModuleManager;
 import com.hugman.uhc.module.Module;
+import com.hugman.uhc.module.ModuleEvents;
 import com.mojang.brigadier.Command;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.brigadier.exceptions.SimpleCommandExceptionType;
-import eu.pb4.sgui.api.elements.GuiElementBuilder;
-import eu.pb4.sgui.api.gui.SimpleGui;
-import net.minecraft.registry.Registries;
-import net.minecraft.registry.entry.RegistryEntryList;
-import net.minecraft.screen.ScreenHandlerType;
+import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.server.command.CommandManager;
 import net.minecraft.server.command.ServerCommandSource;
-import net.minecraft.text.Style;
 import net.minecraft.text.Text;
-import net.minecraft.util.Formatting;
-import net.minecraft.util.Identifier;
-import net.minecraft.util.math.MathHelper;
 import xyz.nucleoid.plasmid.api.game.GameSpace;
 import xyz.nucleoid.plasmid.api.game.GameSpaceManager;
+import xyz.nucleoid.stimuli.EventInvokers;
+import xyz.nucleoid.stimuli.Stimuli;
 
 import java.util.Objects;
 
 public class ModulesCommand {
-    public static final SimpleCommandExceptionType NO_MODULES_ACTIVATED = new SimpleCommandExceptionType(Text.translatable("command.uhc.modules.no_modules_activated"));
+    private static final SimpleCommandExceptionType NO_MANAGER_ACTIVATED = new SimpleCommandExceptionType(Text.translatable("command.modules.no_manager"));
+    private static final SimpleCommandExceptionType NO_MODULES_ACTIVATED = new SimpleCommandExceptionType(Text.translatable("command.modules.no_modules_activated"));
+    private static final SimpleCommandExceptionType ALREADY_ENABLED = new SimpleCommandExceptionType(Text.translatable("command.modules.already_enabled"));
+    private static final SimpleCommandExceptionType ALREADY_DISABLED = new SimpleCommandExceptionType(Text.translatable("command.modules.already_disabled"));
+
+    private static final String MODULE_ARG = "module";
 
     public static void register(CommandDispatcher<ServerCommandSource> dispatcher) {
         dispatcher.register(
                 CommandManager.literal("modules")
-                        .requires(ModulesCommand::isSourceInUHC)
-                        .executes(ModulesCommand::displayModules));
+                        .requires(ModulesCommand::supportsModules)
+                        .executes(ModulesCommand::displayModules)
+                        .then(CommandManager.literal("enable")
+                                .requires(source -> source.hasPermissionLevel(2))
+                                .then(UHCModuleArgument.argumentFromDisabled("module")
+                                        .executes(context -> enableModule(context, UHCModuleArgument.get(context, MODULE_ARG)))))
+                        .then(CommandManager.literal("disable")
+                                .requires(source -> source.hasPermissionLevel(2))
+                                .then(UHCModuleArgument.argumentFromEnabled("module")
+                                        .executes(context -> disableModule(context, UHCModuleArgument.get(context, MODULE_ARG)))))
+        );
     }
 
-    public static boolean isSourceInUHC(ServerCommandSource source) {
+    public static boolean supportsModules(ServerCommandSource source) {
         GameSpace gameSpace = GameSpaceManager.get().byWorld(source.getWorld());
-        if (gameSpace != null) {
-            return gameSpace.getMetadata().sourceConfig().value().config() instanceof UHCConfig;
+        if (gameSpace == null) {
+            return false;
         }
-        return false;
+        if (!(gameSpace.getAttachment(ModuleManager.ATTACHMENT) instanceof ModuleManager)) {
+            return false;
+        }
+        return true;
     }
 
     private static int displayModules(CommandContext<ServerCommandSource> context) throws CommandSyntaxException {
         ServerCommandSource source = context.getSource();
-        RegistryEntryList<Module> moduleEntries = ((UHCConfig) Objects.requireNonNull(GameSpaceManager.get().byWorld(source.getWorld())).getMetadata().sourceConfig().value().config()).modules();
-        if (moduleEntries.size() != 0) {
-            ScreenHandlerType<?> type = Registries.SCREEN_HANDLER.get(Identifier.of("generic_9x" + MathHelper.clamp(1, MathHelper.ceil((float) moduleEntries.size() / 9), 6)));
-            SimpleGui gui = new SimpleGui(type, source.getPlayer(), false);
-            gui.setTitle(Text.translatable("ui.uhc.modules.title"));
-            int i = 0;
-            for (var moduleEntry : moduleEntries) {
-                var module = moduleEntry.value();
-                GuiElementBuilder elementBuilder = new GuiElementBuilder(module.icon())
-                        .setName(Text.translatable(module.translation()).formatted(Formatting.BOLD).setStyle(Style.EMPTY.withColor(module.color())))
-                        .hideDefaultTooltip();
-                for (String s : module.getDescriptionLines()) {
-                    elementBuilder.addLoreLine(Text.literal("- ").append(Text.translatable(s)).formatted(Formatting.GRAY));
-                }
-                gui.setSlot(i++, elementBuilder);
-            }
-            gui.open();
+        var manager = Objects.requireNonNull(GameSpaceManager.get().byPlayer(source.getPlayer())).getAttachment(ModuleManager.ATTACHMENT);
+        if (manager == null) {
+            throw NO_MANAGER_ACTIVATED.create();
+        }
+
+        if (!manager.isEmpty()) {
+            manager.buildGui(source.getPlayer()).open();
             return Command.SINGLE_SUCCESS;
         } else {
             throw NO_MODULES_ACTIVATED.create();
+        }
+    }
+
+    private static int enableModule(CommandContext<ServerCommandSource> context, RegistryEntry<Module> module) throws CommandSyntaxException {
+        ServerCommandSource source = context.getSource();
+        var space = Objects.requireNonNull(GameSpaceManager.get().byWorld(source.getWorld()));
+        var manager = space.getAttachment(ModuleManager.ATTACHMENT);
+        if (manager == null) {
+            throw NO_MANAGER_ACTIVATED.create();
+        }
+
+        if (manager.enableModule(module)) {
+            try (EventInvokers invokers = Stimuli.select().forCommandSource(context.getSource())) {
+                (invokers.get(ModuleEvents.ENABLE)).onEnable(module);
+            }
+
+            source.sendFeedback(() -> Text.translatable("command.modules.enable.success", module.value().name()), true);
+            return Command.SINGLE_SUCCESS;
+        } else {
+            throw ALREADY_ENABLED.create();
+        }
+    }
+
+    private static int disableModule(CommandContext<ServerCommandSource> context, RegistryEntry<Module> module) throws CommandSyntaxException {
+        ServerCommandSource source = context.getSource();
+        var manager = Objects.requireNonNull(GameSpaceManager.get().byWorld(source.getWorld())).getAttachment(ModuleManager.ATTACHMENT);
+        if (manager == null) {
+            throw NO_MANAGER_ACTIVATED.create();
+        }
+
+        if (manager.disableModule(module)) {
+            try (EventInvokers invokers = Stimuli.select().forCommandSource(context.getSource())) {
+                (invokers.get(ModuleEvents.DISABLE)).onDisable(module);
+            }
+
+            source.sendFeedback(() -> Text.translatable("command.modules.disable.success", module.value().name()), true);
+            return Command.SINGLE_SUCCESS;
+        } else {
+            throw ALREADY_DISABLED.create();
         }
     }
 }

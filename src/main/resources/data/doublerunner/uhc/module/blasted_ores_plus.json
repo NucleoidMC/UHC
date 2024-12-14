@@ -1,0 +1,80 @@
+{
+  "name": {
+    "translate": "module.doublerunner.blasted_ores_plus"
+  },
+  "description": {
+    "translate": "module.uhcrun.blasted_ores.description"
+  },
+  "icon": "minecraft:gold_ingot",
+  "modifiers": [
+    {
+      "type": "uhc:block_loot",
+      "target": {
+        "predicate_type": "minecraft:tag_match",
+        "tag": "minecraft:coal_ores"
+      },
+      "loot_table": "uhcrun:torches/lot",
+      "experience": 6
+    },
+    {
+      "type": "uhc:block_loot",
+      "target": {
+        "predicate_type": "minecraft:tag_match",
+        "tag": "minecraft:iron_ores"
+      },
+      "loot_table": "uhcrun:iron_ingots/four",
+      "experience": 2
+    },
+    {
+      "type": "uhc:block_loot",
+      "target": {
+        "predicate_type": "minecraft:tag_match",
+        "tag": "minecraft:copper_ores"
+      },
+      "loot_table": "uhcrun:cooked_food/beef/normal"
+    },
+    {
+      "type": "uhc:block_loot",
+      "target": {
+        "predicate_type": "minecraft:tag_match",
+        "tag": "minecraft:gold_ores"
+      },
+      "loot_table": "uhcrun:gold_ingots/four",
+      "experience": 4
+    },
+    {
+      "type": "uhc:block_loot",
+      "target": {
+        "predicate_type": "minecraft:tag_match",
+        "tag": "minecraft:lapis_ores"
+      },
+      "loot_table": "uhcrun:enchantment_resources/lapis_and_paper",
+      "experience": 8
+    },
+    {
+      "type": "uhc:block_loot",
+      "target": {
+        "predicate_type": "minecraft:tag_match",
+        "tag": "minecraft:redstone_ores"
+      },
+      "experience": 12
+    },
+    {
+      "type": "uhc:block_loot",
+      "target": {
+        "predicate_type": "minecraft:tag_match",
+        "tag": "minecraft:emerald_ores"
+      },
+      "experience": 20
+    },
+    {
+      "type": "uhc:block_loot",
+      "target": {
+        "predicate_type": "minecraft:tag_match",
+        "tag": "minecraft:diamond_ores"
+      },
+      "loot_table": "uhcrun:diamonds/four",
+      "experience": 8
+    }
+  ]
+}

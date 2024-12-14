@@ -1,0 +1,61 @@
+{
+  "name": {
+    "translate": "module.doublerunner.potion_drops"
+  },
+  "description": {
+    "translate": "module.doublerunner.potion_drops.description"
+  },
+  "long_description": [
+    {
+      "translate": "module_description.doublerunner.zombies_drop_strength_potions"
+    },
+    {
+      "translate": "module_description.doublerunner.spiders_drop_poison_potions"
+    },
+    {
+      "translate": "module_description.doublerunner.sugar_cane_drops_swiftness_potions"
+    },
+    {
+      "translate": "module_description.doublerunner.rabbits_drop_leaping_potions"
+    },
+    {
+      "translate": "module_description.doublerunner.bats_drop_night_vision_potions"
+    }
+  ],
+  "icon": "minecraft:potion",
+  "modifiers": [
+    {
+      "type": "uhc:entity_loot",
+      "replace": false,
+      "entities": "#minecraft:zombies",
+      "loot_table": "uhcrun:potion_drops/strength"
+    },
+    {
+      "type": "uhc:entity_loot",
+      "replace": false,
+      "entities": "minecraft:rabbit",
+      "loot_table": "uhcrun:potion_drops/leaping"
+    },
+    {
+      "type": "uhc:entity_loot",
+      "replace": false,
+      "entities": "minecraft:bat",
+      "loot_table": "uhcrun:potion_drops/night_vision"
+    },
+    {
+      "type": "uhc:entity_loot",
+      "replace": false,
+      "entities": "#uhcrun:spiders",
+      "loot_table": "uhcrun:potion_drops/poison"
+    },
+    {
+      "type": "uhc:block_loot",
+      "replace": false,
+      "target": {
+        "predicate_type": "minecraft:block_match",
+        "block": "minecraft:sugar_cane"
+      },
+      "loot_table": "uhcrun:potion_drops/swiftness"
+    }
+  ]
+}

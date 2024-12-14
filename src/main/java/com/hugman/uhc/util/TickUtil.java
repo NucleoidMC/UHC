@@ -29,10 +29,6 @@ public final class TickUtil {
         return (int) asHours(t) % 24;
     }
 
-    public static boolean blink(long l, int max, int each) {
-        return l <= max && l % each == 0;
-    }
-
     public static MutableText format(long t) {
         if (getHours(t) > 0) {
             return Text.literal(String.format("%02d:%02d:%02d", getHours(t), getMinutes(t), getSeconds(t)));

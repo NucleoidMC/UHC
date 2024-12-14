@@ -1,0 +1,165 @@
+{
+  "name": {
+    "translate": "module.uhcrun.faster_resources"
+  },
+  "description": {
+    "translate": "module.uhcrun.faster_resources.description"
+  },
+  "long_description": [
+    {
+      "translate": "module_description.uhcrun.stones_drop_cobblestone"
+    },
+    {
+      "translate": "module_description.uhcrun.cactus_kelp_drop_planks"
+    },
+    {
+      "translate": "module_description.uhcrun.gravel_drops_arrows_and_flint_and_steel"
+    },
+    {
+      "translate": "module_description.uhcrun.sand_drops_glass_bottles"
+    },
+    {
+      "translate": "module_description.uhcrun.sugar_cane_drop_paper"
+    },
+    {
+      "translate": "module_description.uhcrun.dead_bushes_drop_bread"
+    },
+    {
+      "translate": "module_description.uhcrun.mushrooms_drop_stews"
+    },
+    {
+      "translate": "module_description.uhcrun.animals_and_zombies_drop_leather"
+    },
+    {
+      "translate": "module_description.uhcrun.sheep_drop_strings"
+    },
+    {
+      "translate": "module_description.uhcrun.chickens_drop_arrows"
+    },
+    {
+      "translate": "module_description.uhcrun.creepers_drop_tnt"
+    }
+  ],
+  "icon": "minecraft:cactus",
+  "modifiers": [
+    {
+      "type": "uhc:block_loot",
+      "target": {
+        "predicate_type": "minecraft:tag_match",
+        "tag": "minecraft:base_stone_overworld"
+      },
+      "loot_table": "uhcrun:cobblestone"
+    },
+    {
+      "type": "uhc:block_loot",
+      "target": {
+        "predicate_type": "minecraft:tag_match",
+        "tag": "minecraft:sand"
+      },
+      "loot_table": "uhcrun:glass"
+    },
+    {
+      "type": "uhc:block_loot",
+      "target": {
+        "predicate_type": "minecraft:block_match",
+        "block": "minecraft:gravel"
+      },
+      "loot_table": "uhcrun:arrows/normal"
+    },
+    {
+      "type": "uhc:block_loot",
+      "target": {
+        "predicate_type": "minecraft:block_match",
+        "block": "minecraft:cactus"
+      },
+      "loot_table": "uhcrun:oak_planks/some"
+    },
+    {
+      "type": "uhc:block_loot",
+      "target": {
+        "predicate_type": "minecraft:block_match",
+        "block": "minecraft:kelp"
+      },
+      "loot_table": "uhcrun:oak_planks/some"
+    },
+    {
+      "type": "uhc:block_loot",
+      "target": {
+        "predicate_type": "minecraft:block_match",
+        "block": "minecraft:kelp_plant"
+      },
+      "loot_table": "uhcrun:oak_planks/some"
+    },
+    {
+      "type": "uhc:block_loot",
+      "target": {
+        "predicate_type": "minecraft:block_match",
+        "block": "minecraft:bamboo"
+      },
+      "loot_table": "uhcrun:oak_planks/some"
+    },
+    {
+      "type": "uhc:block_loot",
+      "target": {
+        "predicate_type": "minecraft:block_match",
+        "block": "minecraft:dead_bush"
+      },
+      "loot_table": "uhcrun:bread/normal"
+    },
+    {
+      "type": "uhc:block_loot",
+      "target": {
+        "predicate_type": "minecraft:block_match",
+        "block": "minecraft:red_mushroom"
+      },
+      "loot_table": "uhcrun:mushroom_stews"
+    },
+    {
+      "type": "uhc:block_loot",
+      "target": {
+        "predicate_type": "minecraft:block_match",
+        "block": "minecraft:brown_mushroom"
+      },
+      "loot_table": "uhcrun:mushroom_stews"
+    },
+    {
+      "type": "uhc:entity_loot",
+      "replace": false,
+      "entities": "#uhcrun:leather",
+      "loot_table": "uhcrun:leather/normal"
+    },
+    {
+      "type": "uhc:entity_loot",
+      "replace": false,
+      "entities": "#uhcrun:string",
+      "loot_table": "uhcrun:strings"
+    },
+    {
+      "type": "uhc:block_loot",
+      "target": {
+        "predicate_type": "minecraft:block_match",
+        "block": "minecraft:gravel"
+      },
+      "loot_table": "uhcrun:flint_and_steel"
+    },
+    {
+      "type": "uhc:block_loot",
+      "target": {
+        "predicate_type": "minecraft:block_match",
+        "block": "minecraft:sugar_cane"
+      },
+      "loot_table": "uhcrun:enchantment_resources/paper"
+    },
+    {
+      "type": "uhc:entity_loot",
+      "replace": false,
+      "entities": "minecraft:chicken",
+      "loot_table": "uhcrun:arrows/normal"
+    },
+    {
+      "type": "uhc:entity_loot",
+      "entities": "minecraft:creeper",
+      "loot_table": "uhcrun:tnts/normal"
+    }
+  ]
+}

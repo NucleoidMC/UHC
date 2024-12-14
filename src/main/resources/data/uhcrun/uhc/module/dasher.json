@@ -1,15 +1,25 @@
 {
-  "translation": "module.uhcrun.dasher",
+  "name": {
+    "translate": "module.uhcrun.dasher"
+  },
+  "description": {
+    "translate": "module.uhcrun.dasher.description"
+  },
   "icon": "minecraft:iron_boots",
   "modifiers": [
-    {
-      "type": "uhc:player_attribute",
-      "attribute": "minecraft:movement_speed",
-      "value": 0.14
-    },
-    {
-      "type": "uhc:permanent_effect",
-      "effect": "minecraft:haste"
-    }
-  ]
+  {
+    "type": "uhc:player_attribute",
+    "attribute": "minecraft:movement_speed",
+    "id": "doublerunner:dasher_movement",
+    "amount": 0.2,
+    "operation": "add_multiplied_total"
+  },
+  {
+    "type": "uhc:player_attribute",
+    "attribute": "minecraft:block_break_speed",
+    "id": "doublerunner:dasher_break_speed",
+    "amount": 0.1,
+    "operation": "add_multiplied_total"
+  }
+]
 }

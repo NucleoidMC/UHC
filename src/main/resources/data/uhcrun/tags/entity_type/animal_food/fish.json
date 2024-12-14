@@ -4,7 +4,7 @@
     "minecraft:cod",
     "minecraft:salmon",
     "minecraft:tropical_fish",
-    "minecraft:squid",
+    "#uhcrun:squids",
     "minecraft:dolphin"
   ]
 }

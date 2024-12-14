@@ -1,0 +1,19 @@
+{
+  "type": "uhc:standard",
+  "config": "doublerunner:standard",
+  "name": {
+    "translate": "game.generic.mode",
+    "with": [
+      {
+        "translate": "game.doublerunner"
+      },
+      {
+        "translate": "mode.solo"
+      }
+    ]
+  },
+  "players": {
+    "min": 2,
+    "threshold": 8
+  }
+}
