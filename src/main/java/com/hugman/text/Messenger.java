@@ -102,7 +102,7 @@ public class Messenger {
     private static Text moduleSnippet(Module module) {
         var style = Style.EMPTY;
         if (module.description().isPresent()) {
-            style = style.withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, module.description().get().copy()));
+            style = style.withHoverEvent(new HoverEvent.ShowText(module.description().get().copy()));
         }
         return Texts.bracketed(module.name()).setStyle(style.withColor(module.color()));
     }
