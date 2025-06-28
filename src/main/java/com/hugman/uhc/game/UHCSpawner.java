@@ -3,6 +3,7 @@ package com.hugman.uhc.game;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.server.world.ChunkTicket;
 import net.minecraft.server.world.ChunkTicketType;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.math.BlockPos;
@@ -36,7 +37,7 @@ public class UHCSpawner {
 
     public void spawnPlayerAt(ServerPlayerEntity player, BlockPos pos) {
         ChunkPos chunkPos = new ChunkPos(pos.getX() >> 4, pos.getZ() >> 4);
-        this.world.getChunkManager().addTicket(ChunkTicketType.PLAYER, chunkPos, 1, chunkPos);
+        this.world.getChunkManager().addTicket(new ChunkTicket(ChunkTicketType.PLAYER_SIMULATION, 1), chunkPos);
         player.refreshPositionAndAngles(pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, 0.0F, 0.0F);
     }
 
