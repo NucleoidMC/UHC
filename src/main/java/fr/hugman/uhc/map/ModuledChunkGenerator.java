@@ -1,12 +1,12 @@
 package fr.hugman.uhc.map;
 
-import fr.hugman.uhc.UHC;
+import com.mojang.datafixers.util.Pair;
 import fr.hugman.uhc.config.UHCGameConfig;
 import fr.hugman.uhc.game.ModuleManager;
 import fr.hugman.uhc.modifier.ModifierType;
-import com.mojang.datafixers.util.Pair;
 import net.minecraft.SharedConstants;
 import net.minecraft.entity.SpawnGroup;
+import net.minecraft.registry.RegistryKeys;
 import net.minecraft.registry.RegistryWrapper;
 import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.registry.entry.RegistryEntryList;
@@ -83,9 +83,11 @@ public class ModuledChunkGenerator extends GameChunkGenerator implements ChunkGe
         long popSeed = chunkRandom.setPopulationSeed(world.getSeed(), blockPos.getX(), blockPos.getZ());
 
         int i = 0;
+        var placedFeatureRegistry = world.getRegistryManager().getOrThrow(RegistryKeys.PLACED_FEATURE);
         for (var placedFeature : this.placedFeatures) {
+            var name = placedFeatureRegistry.getKey(placedFeature).map(Object::toString);
             chunkRandom.setDecoratorSeed(popSeed, i++, 0);
-            world.setCurrentlyGeneratingStructureName(() -> "custom UHC feature");
+            world.setCurrentlyGeneratingStructureName(() -> name.orElse("Custom UHC placed feature"));
             placedFeature.generate(world, this, chunkRandom, blockPos);
         }
         world.setCurrentlyGeneratingStructureName(null);
