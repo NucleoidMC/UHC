@@ -1,0 +1,17 @@
+{
+  "name": {
+    "translate": "module.lucky_block.overworld_lucky_blocks"
+  },
+  "description": {
+    "translate": "module.lucky_block.overworld_lucky_blocks.description"
+  },
+  "icon": "lucky_block:lucky_block",
+  "modifiers": [
+    {
+      "type": "uhc:placed_features",
+      "features": [
+        "lucky_block:overworld_lucky_blocks"
+      ]
+    }
+  ]
+}

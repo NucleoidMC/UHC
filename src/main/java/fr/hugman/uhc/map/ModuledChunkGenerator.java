@@ -1,5 +1,6 @@
 package fr.hugman.uhc.map;
 
+import fr.hugman.uhc.UHC;
 import fr.hugman.uhc.config.UHCGameConfig;
 import fr.hugman.uhc.game.ModuleManager;
 import fr.hugman.uhc.modifier.ModifierType;

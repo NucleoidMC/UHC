@@ -1,0 +1,17 @@
+{
+  "type": "uhc:standard",
+  "config": "lucky_block:doublerunner",
+  "name": {
+    "translate": "game.generic.mode",
+    "with": [
+      {
+        "translate": "game.lucky_doublerunner"
+      },
+      "Test"
+    ]
+  },
+  "players": {
+    "min": 1,
+    "threshold": 8
+  }
+}
