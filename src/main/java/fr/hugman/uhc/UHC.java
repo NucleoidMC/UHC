@@ -1,12 +1,12 @@
 package fr.hugman.uhc;
 
 import com.google.common.reflect.Reflection;
-import fr.hugman.uhc.command.ModulesCommand;
-import fr.hugman.uhc.config.UHCGameConfig;
-import fr.hugman.uhc.game.phase.UHCWaiting;
-import fr.hugman.uhc.modifier.ModifierType;
-import fr.hugman.uhc.module.Module;
-import fr.hugman.uhc.registry.UHCRegistryKeys;
+import fr.hugman.uhc.api.config.UHCGameConfig;
+import fr.hugman.uhc.api.modifier.ModifierType;
+import fr.hugman.uhc.api.module.Module;
+import fr.hugman.uhc.api.registry.UHCRegistryKeys;
+import fr.hugman.uhc.impl.command.ModulesCommand;
+import fr.hugman.uhc.impl.game.phase.UHCWaiting;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.fabricmc.loader.api.FabricLoader;
