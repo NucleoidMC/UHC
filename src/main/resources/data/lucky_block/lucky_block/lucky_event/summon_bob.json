@@ -3,52 +3,45 @@
   "data": {
     "id": "minecraft:zombie",
     "CustomName": "Bob",
-    "ArmorItems": [
-      {
-        "id": "minecraft:diamond_boots",
-        "count": 1,
-        "components": {
-          "minecraft:enchantments": {
-            "minecraft:protection": 4,
-            "minecraft:unbreaking": 3
-          }
-        }
-      },
-      {
-        "id": "minecraft:diamond_leggings",
-        "count": 1,
-        "components": {
-          "minecraft:enchantments": {
-            "minecraft:protection": 4,
-            "minecraft:unbreaking": 3
-          }
-        }
-      },
-      {
-        "id": "minecraft:diamond_chestplate",
-        "count": 1,
-        "components": {
-          "minecraft:enchantments": {
-            "minecraft:protection": 4,
-            "minecraft:unbreaking": 3
-          }
-        }
-      },
-      {
+    "equipment": {
+      "head": {
         "id": "minecraft:diamond_helmet",
-        "count": 1,
         "components": {
           "minecraft:enchantments": {
             "minecraft:protection": 4,
             "minecraft:unbreaking": 3
           }
         }
-      }
-    ],
-    "HandItems": [
-      {
+      },
+      "chest": {
+        "id": "minecraft:diamond_chestplate",
+        "components": {
+          "minecraft:enchantments": {
+            "minecraft:protection": 4,
+            "minecraft:unbreaking": 3
+          }
+        }
+      },
+      "legs": {
+        "id": "minecraft:diamond_leggings",
+        "components": {
+          "minecraft:enchantments": {
+            "minecraft:protection": 4,
+            "minecraft:unbreaking": 3
+          }
+        }
+      },
+      "feet": {
+        "id": "minecraft:diamond_boots",
+        "components": {
+          "minecraft:enchantments": {
+            "minecraft:protection": 4,
+            "minecraft:unbreaking": 3
+          }
+        }
+      },
+      "mainhand": {
         "id": "minecraft:diamond_sword",
-        "count": 1,
         "components": {
           "minecraft:enchantments": {
             "minecraft:sharpness": 5,
@@ -57,15 +50,14 @@
           }
         }
       },
-      {
+      "offhand": {
         "id": "minecraft:shield",
-        "count": 1,
         "components": {
           "minecraft:enchantments": {
             "minecraft:unbreaking": 3
           }
         }
       }
-    ]
+    }
   }
 }
