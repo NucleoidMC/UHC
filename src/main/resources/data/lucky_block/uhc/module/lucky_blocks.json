@@ -10,8 +10,8 @@
     {
       "type": "uhc:placed_features",
       "features": [
-        "lucky_block:mineral_lucky_blocks",
-        "lucky_block:surface_lucky_blocks"
+        "uhc:mineral_lucky_blocks",
+        "uhc:surface_lucky_blocks"
       ]
     }
   ]

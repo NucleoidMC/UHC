@@ -1,7 +1,7 @@
-package fr.hugman.lucky_block.lucky_event;
+package fr.hugman.lucky_block.api.lucky_event;
 
-import fr.hugman.lucky_block.registry.LuckyBlockRegistries;
 import com.mojang.serialization.Codec;
+import fr.hugman.lucky_block.api.registry.LuckyBlockRegistries;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.entity.player.PlayerEntity;

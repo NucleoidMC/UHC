@@ -9,7 +9,8 @@
   "environment": "client",
   "entrypoints": {
     "fabric-datagen": [
-      "fr.hugman.uhc.data.UHCDataGenerator"
+      "fr.hugman.uhc.data.UHCDataGenerator",
+      "fr.hugman.lucky_block.data.LuckyBlockDataGenerator"
     ]
   }
 }

@@ -1,7 +1,7 @@
-package fr.hugman.lucky_block.lucky_event;
+package fr.hugman.lucky_block.api.lucky_event;
 
-import fr.hugman.lucky_block.LuckyBlockMod;
-import fr.hugman.lucky_block.registry.LuckyBlockRegistries;
+import fr.hugman.lucky_block.api.registry.LuckyBlockRegistries;
+import fr.hugman.lucky_block.impl.LuckyBlockMod;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.registry.Registry;
 import net.minecraft.util.Identifier;

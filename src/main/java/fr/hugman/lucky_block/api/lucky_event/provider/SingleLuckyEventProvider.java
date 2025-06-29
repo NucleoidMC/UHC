@@ -1,6 +1,6 @@
-package fr.hugman.lucky_block.lucky_event.provider;
+package fr.hugman.lucky_block.api.lucky_event.provider;
 
-import fr.hugman.lucky_block.lucky_event.LuckyEvent;
+import fr.hugman.lucky_block.api.lucky_event.LuckyEvent;
 import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.util.math.random.Random;
 

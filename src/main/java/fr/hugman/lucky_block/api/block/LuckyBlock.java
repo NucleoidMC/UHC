@@ -1,8 +1,8 @@
-package fr.hugman.lucky_block.block;
+package fr.hugman.lucky_block.api.block;
 
-import fr.hugman.lucky_block.LuckyBlockMod;
-import fr.hugman.lucky_block.lucky_event.LuckyEventTags;
-import fr.hugman.lucky_block.lucky_event.provider.OneOfLuckyEventProvider;
+import fr.hugman.lucky_block.impl.LuckyBlockMod;
+import fr.hugman.lucky_block.api.lucky_event.LuckyEventTags;
+import fr.hugman.lucky_block.api.lucky_event.provider.OneOfLuckyEventProvider;
 import eu.pb4.polymer.blocks.api.BlockModelType;
 import eu.pb4.polymer.blocks.api.PolymerBlockModel;
 import eu.pb4.polymer.blocks.api.PolymerBlockResourceUtils;

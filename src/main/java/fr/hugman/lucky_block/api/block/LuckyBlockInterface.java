@@ -1,4 +1,4 @@
-package fr.hugman.lucky_block.block;
+package fr.hugman.lucky_block.api.block;
 
 import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntity;

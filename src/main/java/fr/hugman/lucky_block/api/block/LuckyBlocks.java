@@ -1,4 +1,4 @@
-package fr.hugman.lucky_block.block;
+package fr.hugman.lucky_block.api.block;
 
 import eu.pb4.polymer.core.api.block.PolymerBlock;
 import eu.pb4.polymer.core.api.item.PolymerBlockItem;
@@ -17,10 +17,6 @@ import java.util.function.Function;
 
 public class LuckyBlocks {
     public static final LuckyBlock LUCKY_BLOCK = luckyBlock(LuckyBlockKeys.LUCKY_BLOCK, AbstractBlock.Settings.copy(Blocks.YELLOW_WOOL));
-
-    public static void register() {
-
-    }
 
     private static <B extends Block & PolymerBlock> B noItem(RegistryKey<Block> key, Function<AbstractBlock.Settings, B> factory, AbstractBlock.Settings blockSettings) {
         B block = factory.apply(blockSettings.registryKey(key));

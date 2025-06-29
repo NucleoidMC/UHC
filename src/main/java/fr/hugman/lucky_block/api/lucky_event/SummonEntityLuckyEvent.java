@@ -1,6 +1,6 @@
-package fr.hugman.lucky_block.lucky_event;
+package fr.hugman.lucky_block.api.lucky_event;
 
-import fr.hugman.lucky_block.LuckyBlockMod;
+import fr.hugman.lucky_block.impl.LuckyBlockMod;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.block.BlockState;

@@ -1,7 +1,7 @@
-package fr.hugman.lucky_block.registry;
+package fr.hugman.lucky_block.api.registry;
 
-import fr.hugman.lucky_block.lucky_event.LuckyEvent;
-import fr.hugman.lucky_block.lucky_event.LuckyEventType;
+import fr.hugman.lucky_block.api.lucky_event.LuckyEvent;
+import fr.hugman.lucky_block.api.lucky_event.LuckyEventType;
 import net.fabricmc.fabric.api.event.registry.DynamicRegistries;
 import net.fabricmc.fabric.api.event.registry.FabricRegistryBuilder;
 import net.minecraft.registry.SimpleRegistry;

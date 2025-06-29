@@ -1,4 +1,4 @@
-package fr.hugman.lucky_block.lucky_event;
+package fr.hugman.lucky_block.api.lucky_event;
 
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;

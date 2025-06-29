@@ -1,0 +1,17 @@
+package fr.hugman.lucky_block.api.world.gen.feature;
+
+import fr.hugman.lucky_block.impl.LuckyBlockMod;
+import fr.hugman.uhc.UHC;
+import net.minecraft.registry.RegistryKey;
+import net.minecraft.registry.RegistryKeys;
+import net.minecraft.world.gen.feature.ConfiguredFeature;
+
+public class LuckyBlockConfiguredFeatures {
+    public static final RegistryKey<ConfiguredFeature<?, ?>> MINERAL_LUCKY_BLOCKS = of("mineral_lucky_blocks");
+    public static final RegistryKey<ConfiguredFeature<?, ?>> SURFACE_LUCKY_BLOCKS = of("surface_lucky_blocks");
+
+    private static RegistryKey<ConfiguredFeature<?, ?>> of(String path) {
+        // Temporary namespace, it will be replaced when Lucky Block becomes a standalone mod
+        return RegistryKey.of(RegistryKeys.CONFIGURED_FEATURE, UHC.id(path));
+    }
+}

@@ -1,8 +1,7 @@
-package fr.hugman.lucky_block.lucky_event.provider;
+package fr.hugman.lucky_block.api.lucky_event.provider;
 
-import fr.hugman.lucky_block.lucky_event.LuckyEvent;
-import fr.hugman.lucky_block.lucky_event.LuckyEventTags;
-import fr.hugman.lucky_block.registry.LuckyBlockRegistryKeys;
+import fr.hugman.lucky_block.api.lucky_event.LuckyEvent;
+import fr.hugman.lucky_block.api.registry.LuckyBlockRegistryKeys;
 import net.minecraft.registry.DynamicRegistryManager;
 import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.registry.entry.RegistryEntryList;

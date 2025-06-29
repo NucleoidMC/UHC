@@ -1,10 +1,10 @@
-package fr.hugman.lucky_block;
+package fr.hugman.lucky_block.impl;
 
 import com.google.common.reflect.Reflection;
-import fr.hugman.lucky_block.block.LuckyBlockInterface;
-import fr.hugman.lucky_block.block.LuckyBlocks;
-import fr.hugman.lucky_block.lucky_event.LuckyEventTypes;
-import fr.hugman.lucky_block.registry.LuckyBlockRegistries;
+import fr.hugman.lucky_block.api.block.LuckyBlockInterface;
+import fr.hugman.lucky_block.api.registry.LuckyBlockRegistries;
+import fr.hugman.lucky_block.api.block.LuckyBlocks;
+import fr.hugman.lucky_block.api.lucky_event.LuckyEventTypes;
 import eu.pb4.polymer.resourcepack.api.PolymerResourcePackUtils;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.event.player.PlayerBlockBreakEvents;
@@ -14,7 +14,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 public class LuckyBlockMod implements ModInitializer {
-    private static final String MOD_ID = "lucky_block";
+    public static final String MOD_ID = "lucky_block";
     public static final Logger LOGGER = LogManager.getLogger();
 
     @Override

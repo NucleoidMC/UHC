@@ -1,6 +1,6 @@
-package fr.hugman.lucky_block.block;
+package fr.hugman.lucky_block.api.block;
 
-import fr.hugman.lucky_block.LuckyBlockMod;
+import fr.hugman.lucky_block.impl.LuckyBlockMod;
 import net.minecraft.block.Block;
 import net.minecraft.registry.RegistryKey;
 import net.minecraft.registry.RegistryKeys;
