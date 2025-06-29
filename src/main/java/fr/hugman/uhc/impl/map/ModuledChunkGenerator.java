@@ -27,6 +27,7 @@ import net.minecraft.world.biome.SpawnSettings;
 import net.minecraft.world.biome.source.BiomeAccess;
 import net.minecraft.world.biome.source.BiomeSource;
 import net.minecraft.world.chunk.Chunk;
+import net.minecraft.world.dimension.DimensionOptions;
 import net.minecraft.world.gen.StructureAccessor;
 import net.minecraft.world.gen.chunk.*;
 import net.minecraft.world.gen.chunk.placement.StructurePlacementCalculator;
@@ -55,9 +56,10 @@ public class ModuledChunkGenerator extends GameChunkGenerator implements ChunkGe
         this.settings = settings;
     }
 
-    public static ModuledChunkGenerator of(UHCGameConfig config, long seed) {
-        BiomeSource biomeSource = config.uhcConfig().value().mapConfig().dimension().chunkGenerator().getBiomeSource();
-        ChunkGenerator subGenerator = config.uhcConfig().value().mapConfig().dimension().chunkGenerator();
+    public static ModuledChunkGenerator of(UHCGameConfig config, long seed, RegistryWrapper.WrapperLookup registries) {
+        var dimension = registries.getOrThrow(RegistryKeys.DIMENSION).getOrThrow(config.uhcConfig().value().mapConfig().dimension()).value();
+        BiomeSource biomeSource = dimension.chunkGenerator().getBiomeSource();
+        ChunkGenerator subGenerator = dimension.chunkGenerator();
         ChunkGeneratorSettings settings = null;
         if (subGenerator instanceof NoiseChunkGenerator generator) {
             settings = generator.getSettings().value();

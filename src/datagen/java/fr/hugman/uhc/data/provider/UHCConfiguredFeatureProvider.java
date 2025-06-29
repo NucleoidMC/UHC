@@ -1,6 +1,6 @@
 package fr.hugman.uhc.data.provider;
 
-import fr.hugman.uhc.impl.world.gen.feature.UHCConfiguredFeatures;
+import fr.hugman.uhc.api.world.gen.feature.UHCConfiguredFeatures;
 import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricDynamicRegistryProvider;
 import net.minecraft.block.Blocks;

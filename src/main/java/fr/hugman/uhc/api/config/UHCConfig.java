@@ -20,4 +20,12 @@ public record UHCConfig(
     ).apply(instance, UHCConfig::new));
 
     public static final Codec<RegistryEntry<UHCConfig>> ENTRY_CODEC = RegistryElementCodec.of(UHCRegistryKeys.UHC_CONFIG, CODEC);
+
+    public static UHCConfig of(UHCMapConfig mapConfig) {
+        return new UHCConfig(
+                mapConfig,
+                UHCTimersConfig.DEFAULT,
+                RegistryEntryList.of()
+        );
+    }
 }

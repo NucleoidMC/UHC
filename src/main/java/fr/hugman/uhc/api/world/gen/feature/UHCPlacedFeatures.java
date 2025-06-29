@@ -1,4 +1,4 @@
-package fr.hugman.uhc.impl.world.gen.feature;
+package fr.hugman.uhc.api.world.gen.feature;
 
 import fr.hugman.uhc.UHC;
 import net.minecraft.registry.RegistryKey;
