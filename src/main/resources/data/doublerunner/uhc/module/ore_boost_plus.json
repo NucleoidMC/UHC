@@ -10,9 +10,9 @@
     {
       "type": "uhc:placed_features",
       "features": [
-        "doublerunner:boosted_ores/lapis",
-        "doublerunner:boosted_ores/gold",
-        "doublerunner:boosted_ores/diamond"
+        "uhc:boosted_ores_2/lapis",
+        "uhc:boosted_ores_2/gold",
+        "uhc:boosted_ores_2/diamond"
       ]
     }
   ]

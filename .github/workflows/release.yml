@@ -24,6 +24,9 @@ jobs:
       - name: Grant execute permission for gradlew
         run: chmod +x ./gradlew
 
+      - name: Generate data files
+        run: ./gradlew clean runDatagen
+
       - name: Build with Gradle
         run: ./gradlew clean build -Pversion=${{ github.event.release.tag_name }}
 

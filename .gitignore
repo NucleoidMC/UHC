@@ -118,3 +118,7 @@ run/
 !gradle-wrapper.jar
 
 /src/main/resources/data/*/plasmid/game/test.json
+
+# Datagen
+
+src/main/generated/

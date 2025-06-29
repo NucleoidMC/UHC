@@ -16,6 +16,7 @@ import org.apache.logging.log4j.Logger;
 import xyz.nucleoid.plasmid.api.game.GameType;
 
 public class UHC implements ModInitializer {
+    public static final String MOD_ID = "uhc";
     public static final Logger LOGGER = LogManager.getLogger();
 
     @Override
@@ -30,7 +31,7 @@ public class UHC implements ModInitializer {
     }
 
     public static Identifier id(String path) {
-        return Identifier.of("uhc", path);
+        return Identifier.of(MOD_ID, path);
     }
 
     public static void debug(String msg) {
