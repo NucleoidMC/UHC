@@ -2,6 +2,7 @@ package fr.hugman.lucky_block.data.provider;
 
 import fr.hugman.lucky_block.api.world.gen.feature.LuckyBlockConfiguredFeatures;
 import fr.hugman.lucky_block.api.world.gen.feature.LuckyBlockPlacedFeatures;
+import fr.hugman.lucky_block.impl.LuckyBlockMod;
 import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricDynamicRegistryProvider;
 import net.minecraft.registry.Registerable;
@@ -26,12 +27,16 @@ public class LuckyBlockPlacedFeatureProvider extends FabricDynamicRegistryProvid
 
     @Override
     protected void configure(RegistryWrapper.WrapperLookup registries, Entries entries) {
-        entries.addAll(registries.getOrThrow(RegistryKeys.PLACED_FEATURE));
+        var registry = registries.getOrThrow(RegistryKeys.PLACED_FEATURE);
+        registry.streamKeys()
+                .filter(registryKey -> registryKey.getValue().getNamespace().equals(LuckyBlockMod.MOD_ID))
+                .map(key -> entries.add(registry, key))
+                .toList();
     }
 
     @Override
     public String getName() {
-        return "Placed Features";
+        return "Placed Features (Lucky)";
     }
 
 

@@ -45,7 +45,7 @@
     {
       "type": "uhc:entity_loot",
       "replace": false,
-      "entities": "#uhcrun:spiders",
+      "entities": "#uhc:spiders",
       "loot_table": "uhc:potion_drops/poison"
     },
     {

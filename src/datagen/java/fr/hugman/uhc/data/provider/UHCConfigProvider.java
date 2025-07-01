@@ -31,7 +31,7 @@ public class UHCConfigProvider extends FabricDynamicRegistryProvider {
     }
 
     public static void register(Registerable<UHCConfig> registerable) {
-        var modules = registerable.getRegistryLookup(UHCRegistryKeys.MODULE);
+        var modules = registerable.getRegistryLookup(UHCRegistryKeys.UHC_MODULE);
 
         registerable.register(UHCConfigs.STANDARD_UHC, new UHCConfig(UHCMapConfig.of(
                 DimensionOptions.OVERWORLD,

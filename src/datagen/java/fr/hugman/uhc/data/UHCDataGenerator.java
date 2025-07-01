@@ -1,5 +1,9 @@
 package fr.hugman.uhc.data;
 
+import fr.hugman.lucky_block.api.registry.LuckyBlockRegistryKeys;
+import fr.hugman.lucky_block.data.provider.LuckyBlockConfiguredFeatureProvider;
+import fr.hugman.lucky_block.data.provider.LuckyBlockEventProvider;
+import fr.hugman.lucky_block.data.provider.LuckyBlockPlacedFeatureProvider;
 import fr.hugman.uhc.UHC;
 import fr.hugman.uhc.api.registry.UHCRegistryKeys;
 import fr.hugman.uhc.data.provider.*;
@@ -20,11 +24,21 @@ public class UHCDataGenerator implements DataGeneratorEntrypoint {
         // - UHC
         pack.addProvider(UHCConfigProvider::new);
         pack.addProvider(UHCGameProvider::new);
+        pack.addProvider(UHCModuleProvider::new);
         pack.addProvider(UHCModuleTagProvider::new);
 
         // - World Generation
         pack.addProvider(UHCConfiguredFeatureProvider::new);
         pack.addProvider(UHCPlacedFeatureProvider::new);
+
+        //TEMP
+
+        // - Lucky Block
+        pack.addProvider(LuckyBlockEventProvider::new);
+
+        // - World Generation
+        pack.addProvider(LuckyBlockConfiguredFeatureProvider::new);
+        pack.addProvider(LuckyBlockPlacedFeatureProvider::new);
     }
 
     @Override
@@ -32,10 +46,20 @@ public class UHCDataGenerator implements DataGeneratorEntrypoint {
         // - UHC
         registryBuilder.addRegistry(GameConfigs.REGISTRY_KEY, UHCGameProvider::register);
         registryBuilder.addRegistry(UHCRegistryKeys.UHC_CONFIG, UHCConfigProvider::register);
+        registryBuilder.addRegistry(UHCRegistryKeys.UHC_MODULE, UHCModuleProvider::register);
 
         // - World Generation
         registryBuilder.addRegistry(RegistryKeys.CONFIGURED_FEATURE, UHCConfiguredFeatureProvider::register);
         registryBuilder.addRegistry(RegistryKeys.PLACED_FEATURE, UHCPlacedFeatureProvider::register);
+
+        //TEMP
+
+        // - Lucky Block
+        registryBuilder.addRegistry(LuckyBlockRegistryKeys.LUCKY_EVENT, LuckyBlockEventProvider::register);
+
+        // - World Generation
+        registryBuilder.addRegistry(RegistryKeys.CONFIGURED_FEATURE, LuckyBlockConfiguredFeatureProvider::register);
+        registryBuilder.addRegistry(RegistryKeys.PLACED_FEATURE, LuckyBlockPlacedFeatureProvider::register);
     }
 
     @Override

@@ -1,7 +1,7 @@
 {
   "replace": false,
   "values": [
-    "#doublerunner:standard",
+    "#uhc:doublerunner",
     "lucky_block:lucky_blocks"
   ]
 }

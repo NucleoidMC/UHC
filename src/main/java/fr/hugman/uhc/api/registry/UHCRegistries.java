@@ -11,7 +11,7 @@ public class UHCRegistries {
     public static final SimpleRegistry<ModifierType<?>> MODIFIER_TYPE = FabricRegistryBuilder.createSimple(UHCRegistryKeys.MODIFIER_TYPE).buildAndRegister();
 
     public static void register() {
-        DynamicRegistries.register(UHCRegistryKeys.MODULE, UHCModule.CODEC);
+        DynamicRegistries.register(UHCRegistryKeys.UHC_MODULE, UHCModule.CODEC);
         DynamicRegistries.register(UHCRegistryKeys.UHC_CONFIG, UHCConfig.CODEC);
     }
 }

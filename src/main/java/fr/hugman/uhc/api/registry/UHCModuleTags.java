@@ -9,6 +9,6 @@ public class UHCModuleTags {
     public static final TagKey<UHCModule> DOUBLERUNNER = of("doublerunner");
 
     private static TagKey<UHCModule> of(String path) {
-        return TagKey.of(UHCRegistryKeys.MODULE, UHC.id(path));
+        return TagKey.of(UHCRegistryKeys.UHC_MODULE, UHC.id(path));
     }
 }

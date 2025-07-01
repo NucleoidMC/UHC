@@ -27,7 +27,7 @@ public final class UHCModuleArgument {
 
     public static RequiredArgumentBuilder<ServerCommandSource, Identifier> argumentFromEnabled(String name) {
         return CommandManager.argument(name, IdentifierArgumentType.identifier()).suggests((ctx, builder) -> {
-            Registry<UHCModule> registry = ctx.getSource().getRegistryManager().getOrThrow(UHCRegistryKeys.MODULE);
+            Registry<UHCModule> registry = ctx.getSource().getRegistryManager().getOrThrow(UHCRegistryKeys.UHC_MODULE);
             String remaining = builder.getRemaining().toLowerCase(Locale.ROOT);
             var manager = Objects.requireNonNull(GameSpaceManager.get().byWorld(ctx.getSource().getWorld())).getAttachment(ModuleManager.ATTACHMENT);
             if (manager == null) {
@@ -42,7 +42,7 @@ public final class UHCModuleArgument {
 
     public static RequiredArgumentBuilder<ServerCommandSource, Identifier> argumentFromDisabled(String name) {
         return CommandManager.argument(name, IdentifierArgumentType.identifier()).suggests((ctx, builder) -> {
-            Registry<UHCModule> registry = ctx.getSource().getRegistryManager().getOrThrow(UHCRegistryKeys.MODULE);
+            Registry<UHCModule> registry = ctx.getSource().getRegistryManager().getOrThrow(UHCRegistryKeys.UHC_MODULE);
             String remaining = builder.getRemaining().toLowerCase(Locale.ROOT);
             var manager = Objects.requireNonNull(GameSpaceManager.get().byWorld(ctx.getSource().getWorld())).getAttachment(ModuleManager.ATTACHMENT);
             var candidates = new ArrayList<>(registry.getKeys());
@@ -56,8 +56,8 @@ public final class UHCModuleArgument {
     }
 
     public static RegistryEntry.Reference<UHCModule> get(CommandContext<ServerCommandSource> context, String name) throws CommandSyntaxException {
-        RegistryKey<UHCModule> key = RegistryKey.of(UHCRegistryKeys.MODULE, IdentifierArgumentType.getIdentifier(context, name));
-        Registry<UHCModule> registry = context.getSource().getRegistryManager().getOrThrow(UHCRegistryKeys.MODULE);
+        RegistryKey<UHCModule> key = RegistryKey.of(UHCRegistryKeys.UHC_MODULE, IdentifierArgumentType.getIdentifier(context, name));
+        Registry<UHCModule> registry = context.getSource().getRegistryManager().getOrThrow(UHCRegistryKeys.UHC_MODULE);
         return registry.getOptional(key).orElseThrow(() -> MODULE_NOT_FOUND.create(key.getValue()));
     }
 }

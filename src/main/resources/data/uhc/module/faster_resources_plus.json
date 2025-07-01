@@ -131,19 +131,19 @@
     {
       "type": "uhc:entity_loot",
       "replace": false,
-      "entities": "#uhcrun:leather",
+      "entities": "#uhc:leather",
       "loot_table": "uhc:book"
     },
     {
       "type": "uhc:entity_loot",
       "replace": false,
-      "entities": "#uhcrun:squids",
+      "entities": "#uhc:squids",
       "loot_table": "uhc:fishing_rod"
     },
     {
       "type": "uhc:entity_loot",
       "replace": false,
-      "entities": "#uhcrun:string",
+      "entities": "#uhc:string",
       "loot_table": "uhc:bow"
     },
     {

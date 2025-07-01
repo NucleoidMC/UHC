@@ -42,8 +42,8 @@ public class UHCGameProvider extends FabricDynamicRegistryProvider {
         final var configs = registerable.getRegistryLookup(UHCRegistryKeys.UHC_CONFIG);
 
         var uhc = configs.getOrThrow(UHCConfigs.STANDARD_UHC);
-        var uhcRun = configs.getOrThrow(UHCConfigs.STANDARD_UHC);
-        var doublerunner = configs.getOrThrow(UHCConfigs.STANDARD_UHC);
+        var uhcRun = configs.getOrThrow(UHCConfigs.STANDARD_UHCRUN);
+        var doublerunner = configs.getOrThrow(UHCConfigs.STANDARD_DOUBLERUNNER);
         for (TeamSize teamSize : TeamSize.values()) {
             registerable.register(UHCGameConfigs.of("uhc/" + teamSize.name), createUHC(uhc, teamSize));
             registerable.register(UHCGameConfigs.of("uhcrun/" + teamSize.name), createUHC(uhcRun, teamSize));
@@ -54,7 +54,7 @@ public class UHCGameProvider extends FabricDynamicRegistryProvider {
     private static GameConfig<?> createUHC(RegistryEntry<UHCConfig> config, TeamSize teamSize) {
         return new GameConfig<>(
                 UHCGameTypes.STANDARD,
-                Text.translatable("game.generic.mode", Text.translatable("game.uhc"), Text.translatable("mode." + teamSize.name)),
+                Text.translatable("game.generic.mode", Text.translatable("game." + config.getKey().get().getValue().getPath()), Text.translatable("mode." + teamSize.name)),
                 null, null, new ItemStack(Items.GRASS_BLOCK), CustomValuesConfig.empty(),
                 new UHCGameConfig(
                         new WaitingLobbyConfig(new PlayerLimiterConfig(), teamSize.minPlayers, teamSize.thresholdPlayers, WaitingLobbyConfig.Countdown.DEFAULT),

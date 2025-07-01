@@ -31,6 +31,13 @@ public record EntityLootModifier(
             RegistryKey.createCodec(RegistryKeys.LOOT_TABLE).optionalFieldOf("loot_table").forGetter(EntityLootModifier::lootTable)
     ).apply(instance, EntityLootModifier::new));
 
+    public EntityLootModifier(
+            RegistryEntryList<EntityType<?>> entities,
+            RegistryKey<LootTable> lootTable
+    ) {
+        this(true, entities, Optional.of(lootTable));
+    }
+
     @Override
     public ModifierType<?> getType() {
         return ModifierType.ENTITY_LOOT;

@@ -4,6 +4,7 @@ import fr.hugman.lucky_block.api.lucky_event.LuckyEvent;
 import fr.hugman.lucky_block.api.lucky_event.LuckyEvents;
 import fr.hugman.lucky_block.api.lucky_event.SummonEntityLuckyEvent;
 import fr.hugman.lucky_block.api.registry.LuckyBlockRegistryKeys;
+import fr.hugman.lucky_block.impl.LuckyBlockMod;
 import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricDynamicRegistryProvider;
 import net.minecraft.component.type.NbtComponent;
@@ -21,18 +22,21 @@ public class LuckyBlockEventProvider extends FabricDynamicRegistryProvider {
 
     @Override
     protected void configure(RegistryWrapper.WrapperLookup registries, Entries entries) {
-        entries.addAll(registries.getOrThrow(LuckyBlockRegistryKeys.LUCKY_EVENT));
+        var registry = registries.getOrThrow(LuckyBlockRegistryKeys.LUCKY_EVENT);
+        registry.streamKeys()
+                .filter(registryKey -> registryKey.getValue().getNamespace().equals(LuckyBlockMod.MOD_ID))
+                .map(key -> entries.add(registry, key))
+                .toList();
     }
 
     @Override
     public String getName() {
-        return "Lucky Events";
+        return "Lucky Events (Lucky)";
     }
 
 
     public static void register(Registerable<LuckyEvent> registerable) {
-        //FIXME:
-        //registerable.register(LuckyEvents.SUMMON_BOB, new SummonEntityLuckyEvent(bobData()));
+        registerable.register(LuckyEvents.SUMMON_BOB, new SummonEntityLuckyEvent(bobData()));
     }
 
     private static NbtComponent bobData() {

@@ -35,7 +35,7 @@ public record UHCModule(
             Modifier.TYPE_CODEC.listOf().fieldOf("modifiers").forGetter(UHCModule::modifiers)
     ).apply(instance, UHCModule::new));
 
-    public static final Codec<RegistryEntry<UHCModule>> ENTRY_CODEC = RegistryElementCodec.of(UHCRegistryKeys.MODULE, CODEC);
-    public static final Codec<RegistryEntryList<UHCModule>> ENTRY_LIST_CODEC = RegistryCodecs.entryList(UHCRegistryKeys.MODULE, CODEC);
+    public static final Codec<RegistryEntry<UHCModule>> ENTRY_CODEC = RegistryElementCodec.of(UHCRegistryKeys.UHC_MODULE, CODEC);
+    public static final Codec<RegistryEntryList<UHCModule>> ENTRY_LIST_CODEC = RegistryCodecs.entryList(UHCRegistryKeys.UHC_MODULE, CODEC);
 
 }

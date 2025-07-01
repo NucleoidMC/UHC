@@ -125,13 +125,13 @@
     {
       "type": "uhc:entity_loot",
       "replace": false,
-      "entities": "#uhcrun:leather",
+      "entities": "#uhc:leather",
       "loot_table": "uhc:leather/normal"
     },
     {
       "type": "uhc:entity_loot",
       "replace": false,
-      "entities": "#uhcrun:string",
+      "entities": "#uhc:string",
       "loot_table": "uhc:strings"
     },
     {

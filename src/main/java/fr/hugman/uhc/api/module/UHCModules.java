@@ -26,6 +26,6 @@ public class UHCModules {
     public static final RegistryKey<UHCModule> BETTER_TOOLS_PLUS = of("better_tools_plus");
 
     public static RegistryKey<UHCModule> of(String path) {
-        return RegistryKey.of(UHCRegistryKeys.MODULE, UHC.id(path));
+        return RegistryKey.of(UHCRegistryKeys.UHC_MODULE, UHC.id(path));
     }
 }
