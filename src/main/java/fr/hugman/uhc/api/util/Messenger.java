@@ -1,7 +1,7 @@
 package fr.hugman.uhc.api.util;
 
 import fr.hugman.uhc.impl.game.ModuleManager;
-import fr.hugman.uhc.api.module.Module;
+import fr.hugman.uhc.api.module.UHCModule;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.server.network.ServerPlayerEntity;
@@ -60,7 +60,7 @@ public class Messenger {
         players.playSound(SoundEvents.ENTITY_WITHER_SPAWN);
     }
 
-    public void moduleAnnouncement(String message, RegistryEntry<Module> module, Formatting formatting) {
+    public void moduleAnnouncement(String message, RegistryEntry<UHCModule> module, Formatting formatting) {
         players.sendMessage(buildModuleAnnouncement(message, module, formatting));
     }
 
@@ -87,7 +87,7 @@ public class Messenger {
         return Text.literal("\n").append(SYMBOL_SKULL).append(" ").append(Text.translatable("text.uhc.player_eliminated", player.getDisplayName())).append("\n").formatted(Formatting.DARK_RED);
     }
 
-    private static Text buildModuleAnnouncement(String message, RegistryEntry<Module> module, Formatting formatting) {
+    private static Text buildModuleAnnouncement(String message, RegistryEntry<UHCModule> module, Formatting formatting) {
         return Text.literal("\n\n").append(SYMBOL_MODULE).append(" ").append(Text.translatable(message, moduleSnippet(module.value())).formatted(formatting)).append("\n\n");
     }
 
@@ -99,7 +99,7 @@ public class Messenger {
     }
 
 
-    private static Text moduleSnippet(Module module) {
+    private static Text moduleSnippet(UHCModule module) {
         var style = Style.EMPTY;
         if (module.description().isPresent()) {
             style = style.withHoverEvent(new HoverEvent.ShowText(module.description().get().copy()));

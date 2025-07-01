@@ -1,0 +1,21 @@
+{
+  "name": {
+    "translate": "module.uhcrun.mob_cooked_food"
+  },
+  "description": {
+    "translate": "module.uhcrun.mob_cooked_food.description"
+  },
+  "icon": "minecraft:cooked_beef",
+  "modifiers": [
+    {
+      "type": "uhc:entity_loot",
+      "entities": "#uhcrun:mob_food/beef",
+      "loot_table": "uhc:cooked_food/beef/normal"
+    },
+    {
+      "type": "uhc:entity_loot",
+      "entities": "#uhcrun:mob_food/fish",
+      "loot_table": "uhc:cooked_food/fish"
+    }
+  ]
+}

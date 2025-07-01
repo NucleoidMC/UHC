@@ -3,9 +3,8 @@ package fr.hugman.uhc;
 import com.google.common.reflect.Reflection;
 import fr.hugman.uhc.api.config.UHCGameConfig;
 import fr.hugman.uhc.api.modifier.ModifierType;
-import fr.hugman.uhc.api.module.Module;
+import fr.hugman.uhc.api.module.UHCModule;
 import fr.hugman.uhc.api.registry.UHCRegistries;
-import fr.hugman.uhc.api.registry.UHCRegistryKeys;
 import fr.hugman.uhc.impl.command.ModulesCommand;
 import fr.hugman.uhc.impl.game.phase.UHCWaiting;
 import net.fabricmc.api.ModInitializer;
@@ -22,7 +21,7 @@ public class UHC implements ModInitializer {
 
     @Override
     public void onInitialize() {
-        Reflection.initialize(Module.class);
+        Reflection.initialize(UHCModule.class);
         Reflection.initialize(ModifierType.class);
 
         UHCRegistries.register();

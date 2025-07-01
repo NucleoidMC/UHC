@@ -5,8 +5,8 @@ import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.brigadier.exceptions.SimpleCommandExceptionType;
-import fr.hugman.uhc.api.module.Module;
-import fr.hugman.uhc.api.module.ModuleEvents;
+import fr.hugman.uhc.api.module.UHCModule;
+import fr.hugman.uhc.api.module.UHCModuleEvents;
 import fr.hugman.uhc.impl.command.argument.UHCModuleArgument;
 import fr.hugman.uhc.impl.game.ModuleManager;
 import net.minecraft.registry.entry.RegistryEntry;
@@ -70,7 +70,7 @@ public class ModulesCommand {
         }
     }
 
-    private static int enableModule(CommandContext<ServerCommandSource> context, RegistryEntry<Module> module) throws CommandSyntaxException {
+    private static int enableModule(CommandContext<ServerCommandSource> context, RegistryEntry<UHCModule> module) throws CommandSyntaxException {
         ServerCommandSource source = context.getSource();
         var space = Objects.requireNonNull(GameSpaceManager.get().byWorld(source.getWorld()));
         var manager = space.getAttachment(ModuleManager.ATTACHMENT);
@@ -80,7 +80,7 @@ public class ModulesCommand {
 
         if (manager.enableModule(module)) {
             try (EventInvokers invokers = Stimuli.select().forCommandSource(context.getSource())) {
-                (invokers.get(ModuleEvents.ENABLE)).onEnable(module);
+                (invokers.get(UHCModuleEvents.ENABLE)).onEnable(module);
             }
 
             source.sendFeedback(() -> Text.translatable("command.modules.enable.success", module.value().name()), true);
@@ -90,7 +90,7 @@ public class ModulesCommand {
         }
     }
 
-    private static int disableModule(CommandContext<ServerCommandSource> context, RegistryEntry<Module> module) throws CommandSyntaxException {
+    private static int disableModule(CommandContext<ServerCommandSource> context, RegistryEntry<UHCModule> module) throws CommandSyntaxException {
         ServerCommandSource source = context.getSource();
         var manager = Objects.requireNonNull(GameSpaceManager.get().byWorld(source.getWorld())).getAttachment(ModuleManager.ATTACHMENT);
         if (manager == null) {
@@ -99,7 +99,7 @@ public class ModulesCommand {
 
         if (manager.disableModule(module)) {
             try (EventInvokers invokers = Stimuli.select().forCommandSource(context.getSource())) {
-                (invokers.get(ModuleEvents.DISABLE)).onDisable(module);
+                (invokers.get(UHCModuleEvents.DISABLE)).onDisable(module);
             }
 
             source.sendFeedback(() -> Text.translatable("command.modules.disable.success", module.value().name()), true);

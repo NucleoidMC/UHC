@@ -11,7 +11,6 @@ public class LuckyBlockConfiguredFeatures {
     public static final RegistryKey<ConfiguredFeature<?, ?>> SURFACE_LUCKY_BLOCKS = of("surface_lucky_blocks");
 
     private static RegistryKey<ConfiguredFeature<?, ?>> of(String path) {
-        // Temporary namespace, it will be replaced when Lucky Block becomes a standalone mod
-        return RegistryKey.of(RegistryKeys.CONFIGURED_FEATURE, UHC.id(path));
+        return RegistryKey.of(RegistryKeys.CONFIGURED_FEATURE, LuckyBlockMod.id(path));
     }
 }

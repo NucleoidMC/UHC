@@ -7,15 +7,15 @@
   "entries": [
     {
       "type": "plasmid:portal",
-      "portal": "uhc:standard"
+      "portal": "uhc:uhc"
     },
     {
       "type": "plasmid:portal",
-      "portal": "uhcrun:standard"
+      "portal": "uhc:uhcrun"
     },
     {
       "type": "plasmid:portal",
-      "portal": "doublerunner:standard"
+      "portal": "uhc:doublerunner"
     }
   ]
 }

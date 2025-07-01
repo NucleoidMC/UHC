@@ -4,7 +4,7 @@ import eu.pb4.sgui.api.elements.GuiElementBuilder;
 import eu.pb4.sgui.api.gui.SimpleGui;
 import fr.hugman.uhc.UHC;
 import fr.hugman.uhc.api.modifier.*;
-import fr.hugman.uhc.api.module.Module;
+import fr.hugman.uhc.api.module.UHCModule;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
@@ -43,13 +43,13 @@ import java.util.stream.Stream;
 public final class ModuleManager {
     public static final GameAttachment<ModuleManager> ATTACHMENT = GameAttachment.create(UHC.id("module_manager"));
 
-    private final List<RegistryEntry<Module>> modules;
+    private final List<RegistryEntry<UHCModule>> modules;
 
-    public ModuleManager(List<RegistryEntry<Module>> modules) {
+    public ModuleManager(List<RegistryEntry<UHCModule>> modules) {
         this.modules = new ArrayList<>(modules);
     }
 
-    public ModuleManager(RegistryEntryList<Module> modules) {
+    public ModuleManager(RegistryEntryList<UHCModule> modules) {
         this(modules.stream().toList());
     }
 
@@ -65,11 +65,11 @@ public final class ModuleManager {
         return modifiers;
     }
 
-    public List<RegistryKey<Module>> keys() {
+    public List<RegistryKey<UHCModule>> keys() {
         return modules.stream().map(moduleRegistryEntry -> moduleRegistryEntry.getKey().orElse(null)).filter(Objects::nonNull).toList();
     }
 
-    public void forEach(Consumer<Module> action) {
+    public void forEach(Consumer<UHCModule> action) {
         modules.forEach(moduleEntry -> action.accept(moduleEntry.value()));
     }
 
@@ -78,7 +78,7 @@ public final class ModuleManager {
         return ModuleManager.modifiers(modules, type);
     }
 
-    public boolean enableModule(RegistryEntry<Module> module) {
+    public boolean enableModule(RegistryEntry<UHCModule> module) {
         if (modules.contains(module)) {
             return false;
         }
@@ -88,7 +88,7 @@ public final class ModuleManager {
         return modules.add(module);
     }
 
-    public boolean disableModule(RegistryEntry<Module> module) {
+    public boolean disableModule(RegistryEntry<UHCModule> module) {
         if (!modules.contains(module)) {
             return false;
         }
@@ -130,7 +130,7 @@ public final class ModuleManager {
      *
      * @return A list of modifiers of the specified type
      */
-    public static <V extends Modifier> List<V> modifiers(List<RegistryEntry<Module>> modules, ModifierType<V> type) {
+    public static <V extends Modifier> List<V> modifiers(List<RegistryEntry<UHCModule>> modules, ModifierType<V> type) {
         List<V> modifiers = new ArrayList<>();
         for (var moduleEntry : modules) {
             for (Modifier modifier : moduleEntry.value().modifiers()) {
@@ -143,7 +143,7 @@ public final class ModuleManager {
     }
 
 
-    public static <V extends Modifier> Stream<V> streamModifiers(Stream<RegistryEntry<Module>> modules, ModifierType<V> type) {
+    public static <V extends Modifier> Stream<V> streamModifiers(Stream<RegistryEntry<UHCModule>> modules, ModifierType<V> type) {
         return modules
                 .map(RegistryEntry::value)
                 .flatMap(module -> module.modifiers().stream())

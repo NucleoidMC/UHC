@@ -6,8 +6,8 @@ import fr.hugman.uhc.api.modifier.Modifier;
 import fr.hugman.uhc.api.modifier.ModifierType;
 import fr.hugman.uhc.api.modifier.PermanentEffectModifier;
 import fr.hugman.uhc.api.modifier.PlayerAttributeModifier;
-import fr.hugman.uhc.api.module.Module;
-import fr.hugman.uhc.api.module.ModuleEvents;
+import fr.hugman.uhc.api.module.UHCModule;
+import fr.hugman.uhc.api.module.UHCModuleEvents;
 import fr.hugman.uhc.api.util.Messenger;
 import fr.hugman.uhc.api.util.TickUtil;
 import fr.hugman.uhc.impl.game.*;
@@ -142,8 +142,8 @@ public class UHCActive {
             activity.listen(GamePlayerEvents.LEAVE, active::playerLeave);
 
             activity.listen(GameActivityEvents.TICK, active::tick);
-            activity.listen(ModuleEvents.ENABLE, active::enableModule);
-            activity.listen(ModuleEvents.DISABLE, active::disableModule);
+            activity.listen(UHCModuleEvents.ENABLE, active::enableModule);
+            activity.listen(UHCModuleEvents.DISABLE, active::disableModule);
 
             activity.listen(PlayerDamageEvent.EVENT, active::onPlayerDamage);
             activity.listen(PlayerDeathEvent.EVENT, active::onPlayerDeath);
@@ -403,16 +403,16 @@ public class UHCActive {
     }
 
     // GENERAL LISTENERS
-    private void enableModule(RegistryEntry<Module> moduleRegistryEntry) {
-        Module module = moduleRegistryEntry.value();
+    private void enableModule(RegistryEntry<UHCModule> moduleRegistryEntry) {
+        UHCModule module = moduleRegistryEntry.value();
         for (Modifier modifier : module.modifiers()) {
             modifier.enable(this.playerManager);
         }
         msg.moduleAnnouncement("text.module.enabled", moduleRegistryEntry, Formatting.GREEN);
     }
 
-    private void disableModule(RegistryEntry<Module> moduleRegistryEntry) {
-        Module module = moduleRegistryEntry.value();
+    private void disableModule(RegistryEntry<UHCModule> moduleRegistryEntry) {
+        UHCModule module = moduleRegistryEntry.value();
         for (Modifier modifier : module.modifiers()) {
             modifier.disable(this.playerManager);
         }

@@ -40,7 +40,6 @@ public class LuckyBlockPlacedFeatureProvider extends FabricDynamicRegistryProvid
 
         var fullRangePlacement = HeightRangePlacementModifier.uniform(YOffset.aboveBottom(0), YOffset.belowTop(0));
 
-        // For UHC
         of(registerable, LuckyBlockPlacedFeatures.MINERAL_LUCKY_BLOCKS, configured.getOrThrow(LuckyBlockConfiguredFeatures.MINERAL_LUCKY_BLOCKS), modifiersWithCount(64, fullRangePlacement));
         of(registerable, LuckyBlockPlacedFeatures.SURFACE_LUCKY_BLOCKS, configured.getOrThrow(LuckyBlockConfiguredFeatures.SURFACE_LUCKY_BLOCKS), List.of(SquarePlacementModifier.of(), HeightmapPlacementModifier.of(Heightmap.Type.WORLD_SURFACE_WG)));
     }

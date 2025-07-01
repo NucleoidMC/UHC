@@ -18,6 +18,8 @@ public record UHCTimersConfig(
             Codec.DOUBLE.optionalFieldOf("deathmatch", DEFAULT.deathmatch()).forGetter(UHCTimersConfig::deathmatch)
     ).apply(instance, UHCTimersConfig::new));
 
-
+    public UHCTimersConfig withWarmup(double warmup) {
+        return new UHCTimersConfig(this.cages, this.invulnerability, warmup, this.deathmatch);
+    }
 }
 

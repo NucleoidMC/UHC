@@ -1,0 +1,27 @@
+{
+  "name": {
+    "translate": "module.uhcrun.timberman"
+  },
+  "description": {
+    "translate": "module.uhcrun.timberman.description"
+  },
+  "icon": "minecraft:golden_axe",
+  "modifiers": [
+    {
+      "type": "uhc:traversal_break",
+      "target": {
+        "predicate_type": "minecraft:tag_match",
+        "tag": "minecraft:logs"
+      },
+      "include_leaves": true
+    },
+    {
+      "type": "uhc:block_loot",
+      "target": {
+        "predicate_type": "minecraft:tag_match",
+        "tag": "minecraft:logs"
+      },
+      "loot_table": "uhc:oak_planks/normal"
+    }
+  ]
+}
