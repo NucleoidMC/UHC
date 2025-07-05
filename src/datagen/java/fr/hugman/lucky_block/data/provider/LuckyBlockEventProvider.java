@@ -1,5 +1,7 @@
 package fr.hugman.lucky_block.data.provider;
 
+import fr.hugman.lucky_block.api.loot.LuckyBlockLootTables;
+import fr.hugman.lucky_block.api.lucky_event.LootLuckyEvent;
 import fr.hugman.lucky_block.api.lucky_event.LuckyEvent;
 import fr.hugman.lucky_block.api.lucky_event.LuckyEvents;
 import fr.hugman.lucky_block.api.lucky_event.SummonEntityLuckyEvent;
@@ -8,8 +10,10 @@ import fr.hugman.lucky_block.impl.LuckyBlockMod;
 import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricDynamicRegistryProvider;
 import net.minecraft.component.type.NbtComponent;
+import net.minecraft.entity.EntityType;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.registry.Registerable;
+import net.minecraft.registry.Registries;
 import net.minecraft.registry.RegistryKeys;
 import net.minecraft.registry.RegistryWrapper;
 
@@ -36,7 +40,25 @@ public class LuckyBlockEventProvider extends FabricDynamicRegistryProvider {
 
 
     public static void register(Registerable<LuckyEvent> registerable) {
-        registerable.register(LuckyEvents.SUMMON_BOB, new SummonEntityLuckyEvent(bobData()));
+        // Summon Entities
+        registerable.register(LuckyEvents.SUMMON_CREEPER, new SummonEntityLuckyEvent(mobData(EntityType.CREEPER)));
+        registerable.register(LuckyEvents.SUMMON_RAINBOW_SHEEP, new SummonEntityLuckyEvent(mobData(EntityType.SHEEP, "_jeb")));
+
+        // Loots
+        registerable.register(LuckyEvents.LOOT_LUCKY_SWORD, new LootLuckyEvent(LuckyBlockLootTables.LUCKY_SWORD));
+    }
+
+    private static NbtComponent mobData(EntityType<?> entityType) {
+        var compound = new NbtCompound();
+        compound.putString("id", Registries.ENTITY_TYPE.getId(entityType).toString());
+        return NbtComponent.of(compound);
+    }
+
+    private static NbtComponent mobData(EntityType<?> entityType, String name) {
+        var compound = new NbtCompound();
+        compound.putString("id", Registries.ENTITY_TYPE.getId(entityType).toString());
+        compound.putString("CustomName", name);
+        return NbtComponent.of(compound);
     }
 
     private static NbtComponent bobData() {
