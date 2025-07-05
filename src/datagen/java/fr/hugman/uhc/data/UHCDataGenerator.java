@@ -3,6 +3,7 @@ package fr.hugman.uhc.data;
 import fr.hugman.lucky_block.api.registry.LuckyBlockRegistryKeys;
 import fr.hugman.lucky_block.data.provider.LuckyBlockConfiguredFeatureProvider;
 import fr.hugman.lucky_block.data.provider.LuckyBlockEventProvider;
+import fr.hugman.lucky_block.data.provider.LuckyBlockLootTableProvider;
 import fr.hugman.lucky_block.data.provider.LuckyBlockPlacedFeatureProvider;
 import fr.hugman.uhc.UHC;
 import fr.hugman.uhc.api.registry.UHCRegistryKeys;
@@ -11,7 +12,6 @@ import net.fabricmc.fabric.api.datagen.v1.DataGeneratorEntrypoint;
 import net.fabricmc.fabric.api.datagen.v1.FabricDataGenerator;
 import net.minecraft.registry.RegistryBuilder;
 import net.minecraft.registry.RegistryKeys;
-import net.minecraft.world.dimension.DimensionOptions;
 import org.jetbrains.annotations.Nullable;
 import xyz.nucleoid.plasmid.api.game.config.GameConfigs;
 
@@ -39,6 +39,9 @@ public class UHCDataGenerator implements DataGeneratorEntrypoint {
         // - World Generation
         pack.addProvider(LuckyBlockConfiguredFeatureProvider::new);
         pack.addProvider(LuckyBlockPlacedFeatureProvider::new);
+
+        // - Loot Tables
+        pack.addProvider(LuckyBlockLootTableProvider::new);
     }
 
     @Override
