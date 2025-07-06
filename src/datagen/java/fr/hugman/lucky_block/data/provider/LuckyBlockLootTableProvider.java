@@ -2,6 +2,7 @@ package fr.hugman.lucky_block.data.provider;
 
 import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
 import net.fabricmc.fabric.api.datagen.v1.provider.SimpleFabricLootTableProvider;
+import net.minecraft.item.DyeItem;
 import net.minecraft.item.Items;
 import net.minecraft.loot.LootPool;
 import net.minecraft.loot.LootTable;
@@ -12,11 +13,12 @@ import net.minecraft.loot.function.SetNameLootFunction;
 import net.minecraft.registry.RegistryKey;
 import net.minecraft.registry.RegistryWrapper;
 import net.minecraft.text.Text;
+import net.minecraft.util.DyeColor;
 
 import java.util.concurrent.CompletableFuture;
 import java.util.function.BiConsumer;
 
-import static fr.hugman.lucky_block.api.loot.LuckyBlockLootTables.LUCKY_SWORD;
+import static fr.hugman.lucky_block.api.loot.LuckyBlockLootTables.*;
 
 public class LuckyBlockLootTableProvider extends SimpleFabricLootTableProvider {
     public LuckyBlockLootTableProvider(FabricDataOutput output, CompletableFuture<RegistryWrapper.WrapperLookup> registryLookup) {
@@ -34,5 +36,22 @@ public class LuckyBlockLootTableProvider extends SimpleFabricLootTableProvider {
                         .apply(SetNameLootFunction.builder(Text.of("Lucky Sword"), SetNameLootFunction.Target.CUSTOM_NAME)))
                 )
         );
+        consumer.accept(LUCKY_BOW, LootTable.builder().pool(
+                LootPool.builder().with(ItemEntry.builder(Items.BOW)
+                        .apply(EnchantRandomlyLootFunction.create())
+                        .apply(SetNameLootFunction.builder(Text.of("Lucky Bow"), SetNameLootFunction.Target.CUSTOM_NAME)))
+                )
+        );
+        var allDyes = LootTable.builder();
+        for(DyeColor color : DyeColor.values()) {
+            allDyes.pool(LootPool.builder().with(ItemEntry.builder(DyeItem.byColor(color))).build());
+        }
+        consumer.accept(ALL_DYES, allDyes);
+        consumer.accept(END_GAME_ITEM, LootTable.builder().pool(LootPool.builder()
+                        .with(ItemEntry.builder(Items.NETHER_STAR))
+                        .with(ItemEntry.builder(Items.BEACON))
+                        .with(ItemEntry.builder(Items.DRAGON_EGG))
+                        .with(ItemEntry.builder(Items.CONDUIT))
+                .build()));
     }
 }

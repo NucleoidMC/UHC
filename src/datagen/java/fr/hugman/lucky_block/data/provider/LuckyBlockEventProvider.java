@@ -1,10 +1,8 @@
 package fr.hugman.lucky_block.data.provider;
 
 import fr.hugman.lucky_block.api.loot.LuckyBlockLootTables;
-import fr.hugman.lucky_block.api.lucky_event.LootLuckyEvent;
-import fr.hugman.lucky_block.api.lucky_event.LuckyEvent;
-import fr.hugman.lucky_block.api.lucky_event.LuckyEvents;
-import fr.hugman.lucky_block.api.lucky_event.SummonEntityLuckyEvent;
+import fr.hugman.lucky_block.api.lucky_event.*;
+import fr.hugman.lucky_block.api.lucky_event.selector.AllOfSelectorLuckyEvent;
 import fr.hugman.lucky_block.api.registry.LuckyBlockRegistryKeys;
 import fr.hugman.lucky_block.impl.LuckyBlockMod;
 import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
@@ -14,7 +12,6 @@ import net.minecraft.entity.EntityType;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.registry.Registerable;
 import net.minecraft.registry.Registries;
-import net.minecraft.registry.RegistryKeys;
 import net.minecraft.registry.RegistryWrapper;
 
 import java.util.concurrent.CompletableFuture;
@@ -40,12 +37,23 @@ public class LuckyBlockEventProvider extends FabricDynamicRegistryProvider {
 
 
     public static void register(Registerable<LuckyEvent> registerable) {
+        var events = registerable.getRegistryLookup(LuckyBlockRegistryKeys.LUCKY_EVENT);
+
         // Summon Entities
         registerable.register(LuckyEvents.SUMMON_CREEPER, new SummonEntityLuckyEvent(mobData(EntityType.CREEPER)));
         registerable.register(LuckyEvents.SUMMON_RAINBOW_SHEEP, new SummonEntityLuckyEvent(mobData(EntityType.SHEEP, "_jeb")));
+        registerable.register(LuckyEvents.SUMMON_GHAST, new SummonEntityLuckyEvent(mobData(EntityType.GHAST)));
+        registerable.register(LuckyEvents.SUMMON_HAPPY_GHAST, new SummonEntityLuckyEvent(mobData(EntityType.HAPPY_GHAST)));
 
         // Loots
         registerable.register(LuckyEvents.LOOT_LUCKY_SWORD, new LootLuckyEvent(LuckyBlockLootTables.LUCKY_SWORD));
+        registerable.register(LuckyEvents.LOOT_LUCKY_BOW, new LootLuckyEvent(LuckyBlockLootTables.LUCKY_BOW));
+        registerable.register(LuckyEvents.LOOT_ALL_DYES, new LootLuckyEvent(LuckyBlockLootTables.ALL_DYES));
+        registerable.register(LuckyEvents.LOOT_END_GAME_ITEM, new LootLuckyEvent(LuckyBlockLootTables.END_GAME_ITEM));
+        registerable.register(LuckyEvents.LOOT_SADDLE, new LootLuckyEvent(LuckyBlockLootTables.SADDLE));
+
+        // Pools
+        registerable.register(LuckyEvents.POOL_NORMAL, new AllOfSelectorLuckyEvent(events.getOrThrow(LuckyEventTags.NORMAL)));
     }
 
     private static NbtComponent mobData(EntityType<?> entityType) {

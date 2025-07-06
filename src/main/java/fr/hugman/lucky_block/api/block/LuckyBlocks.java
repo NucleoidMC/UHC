@@ -2,6 +2,8 @@ package fr.hugman.lucky_block.api.block;
 
 import eu.pb4.polymer.core.api.block.PolymerBlock;
 import eu.pb4.polymer.core.api.item.PolymerBlockItem;
+import fr.hugman.lucky_block.api.lucky_event.LuckyEvent;
+import fr.hugman.lucky_block.api.lucky_event.LuckyEvents;
 import net.minecraft.block.AbstractBlock;
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
@@ -16,7 +18,7 @@ import net.minecraft.registry.RegistryKeys;
 import java.util.function.Function;
 
 public class LuckyBlocks {
-    public static final LuckyBlock LUCKY_BLOCK = luckyBlock(LuckyBlockKeys.LUCKY_BLOCK, AbstractBlock.Settings.copy(Blocks.YELLOW_WOOL));
+    public static final LuckyBlock LUCKY_BLOCK = luckyBlock(LuckyBlockKeys.LUCKY_BLOCK, LuckyEvents.POOL_NORMAL, AbstractBlock.Settings.copy(Blocks.YELLOW_WOOL));
 
     private static <B extends Block & PolymerBlock> B noItem(RegistryKey<Block> key, Function<AbstractBlock.Settings, B> factory, AbstractBlock.Settings blockSettings) {
         B block = factory.apply(blockSettings.registryKey(key));
@@ -30,7 +32,7 @@ public class LuckyBlocks {
         return block;
     }
 
-    private static LuckyBlock luckyBlock(RegistryKey<Block> key, AbstractBlock.Settings settings) {
-        return of(key, LuckyBlock::new, settings, new Item.Settings().component(DataComponentTypes.CONTAINER, ContainerComponent.DEFAULT));
+    private static LuckyBlock luckyBlock(RegistryKey<Block> key, RegistryKey<LuckyEvent> event, AbstractBlock.Settings settings) {
+        return of(key, s -> new LuckyBlock(s, event), settings, new Item.Settings().component(DataComponentTypes.CONTAINER, ContainerComponent.DEFAULT));
     }
 }
