@@ -52,6 +52,7 @@ public class UHCModuleProvider extends FabricDynamicRegistryProvider {
                 new EntityLootModifier(entities.getOrThrow(UHCEntityTags.DROPS_RABBIT_FOOD), UHCLootTables.COOKED_RABBIT),
                 new EntityLootModifier(entities.getOrThrow(UHCEntityTags.DROPS_FISH_FOOD), UHCLootTables.COOKED_FISH)
         );
+        //TODO: other modules
     }
 
     public static void register(
