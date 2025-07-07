@@ -1,49 +1,49 @@
 {
   "name": {
-    "translate": "module.doublerunner.faster_resources_plus"
+    "translate": "module.uhc.faster_resources_plus"
   },
   "description": {
-    "translate": "module.uhcrun.faster_resources.description"
+    "translate": "module.uhc.faster_resources.description"
   },
   "long_description": [
     {
-      "translate": "module_description.uhcrun.stones_drop_cobblestone"
+      "translate": "module.uhc.faster_resources.description.stones_drop_cobblestone"
     },
     {
-      "translate": "module_description.uhcrun.cactus_kelp_drop_planks"
+      "translate": "module.uhc.faster_resources.description.cactus_kelp_drop_planks"
     },
     {
-      "translate": "module_description.uhcrun.gravel_drops_arrows_and_flint_and_steel"
+      "translate": "module.uhc.faster_resources.description.gravel_drops_arrows_and_flint_and_steel"
     },
     {
-      "translate": "module_description.uhcrun.sand_drops_glass"
+      "translate": "module.uhc.faster_resources.description.sand_drops_glass"
     },
     {
-      "translate": "module_description.uhcrun.sugar_cane_drop_enchanting_tables_and_books"
+      "translate": "module.uhc.faster_resources.description.sugar_cane_drop_enchanting_tables_and_books"
     },
     {
-      "translate": "module_description.uhcrun.dead_bushes_drop_bread"
+      "translate": "module.uhc.faster_resources.description.dead_bushes_drop_bread"
     },
     {
-      "translate": "module_description.uhcrun.mushrooms_drop_stews"
+      "translate": "module.uhc.faster_resources.description.mushrooms_drop_stews"
     },
     {
-      "translate": "module_description.uhcrun.animals_and_zombies_drop_books"
+      "translate": "module.uhc.faster_resources.description.animals_and_zombies_drop_books"
     },
     {
-      "translate": "module_description.uhcrun.sheep_drop_bow"
+      "translate": "module.uhc.faster_resources.description.sheep_drop_bow"
     },
     {
-      "translate": "module_description.uhcrun.chickens_drop_arrows"
+      "translate": "module.uhc.faster_resources.description.chickens_drop_arrows"
     },
     {
-      "translate": "module_description.uhcrun.creepers_drop_tnt"
+      "translate": "module.uhc.faster_resources.description.creepers_drop_tnt"
     },
     {
-      "translate": "module_description.uhcrun.squids_drop_fishing_rods"
+      "translate": "module.uhc.faster_resources.description.squids_drop_fishing_rods"
     },
     {
-      "translate": "module_description.uhcrun.skeletons_drop_power_bow"
+      "translate": "module.uhc.faster_resources.description.skeletons_drop_power_bow"
     }
   ],
   "icon": "minecraft:cactus",

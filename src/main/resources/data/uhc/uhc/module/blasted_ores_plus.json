@@ -1,9 +1,9 @@
 {
   "name": {
-    "translate": "module.doublerunner.blasted_ores_plus"
+    "translate": "module.uhc.blasted_ores_plus"
   },
   "description": {
-    "translate": "module.uhcrun.blasted_ores.description"
+    "translate": "module.uhc.blasted_ores.description"
   },
   "icon": "minecraft:gold_ingot",
   "modifiers": [

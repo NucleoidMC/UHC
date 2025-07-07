@@ -1,9 +1,9 @@
 {
   "name": {
-    "translate": "module.uhcrun.blasted_ores"
+    "translate": "module.uhc.blasted_ores"
   },
   "description": {
-    "translate": "module.uhcrun.blasted_ores.description"
+    "translate": "module.uhc.blasted_ores.description"
   },
   "icon": "minecraft:iron_ingot",
   "modifiers": [

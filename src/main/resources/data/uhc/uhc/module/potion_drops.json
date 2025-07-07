@@ -1,25 +1,25 @@
 {
   "name": {
-    "translate": "module.doublerunner.potion_drops"
+    "translate": "module.uhc.potion_drops"
   },
   "description": {
-    "translate": "module.doublerunner.potion_drops.description"
+    "translate": "module.uhc.potion_drops.description"
   },
   "long_description": [
     {
-      "translate": "module_description.doublerunner.zombies_drop_strength_potions"
+      "translate": "module.uhc.potion_drops.description.zombies_drop_strength_potions"
     },
     {
-      "translate": "module_description.doublerunner.spiders_drop_poison_potions"
+      "translate": "module.uhc.potion_drops.description.spiders_drop_poison_potions"
     },
     {
-      "translate": "module_description.doublerunner.sugar_cane_drops_swiftness_potions"
+      "translate": "module.uhc.potion_drops.description.sugar_cane_drops_swiftness_potions"
     },
     {
-      "translate": "module_description.doublerunner.rabbits_drop_leaping_potions"
+      "translate": "module.uhc.potion_drops.description.rabbits_drop_leaping_potions"
     },
     {
-      "translate": "module_description.doublerunner.bats_drop_night_vision_potions"
+      "translate": "module.uhc.potion_drops.description.bats_drop_night_vision_potions"
     }
   ],
   "icon": "minecraft:potion",

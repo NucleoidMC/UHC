@@ -1,9 +1,9 @@
 {
   "name": {
-    "translate": "module.uhcrun.guaranteed_apples"
+    "translate": "module.uhc.guaranteed_apples"
   },
   "description": {
-    "translate": "module.uhcrun.guaranteed_apples.description"
+    "translate": "module.uhc.guaranteed_apples.description"
   },
   "icon": "minecraft:apple",
   "modifiers": [

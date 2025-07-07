@@ -1,9 +1,9 @@
 {
   "name": {
-    "translate": "module.uhcrun.timberman"
+    "translate": "module.uhc.timberman"
   },
   "description": {
-    "translate": "module.uhcrun.timberman.description"
+    "translate": "module.uhc.timberman.description"
   },
   "icon": "minecraft:golden_axe",
   "modifiers": [

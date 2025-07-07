@@ -3,7 +3,7 @@ package fr.hugman.lucky_block.api.block;
 import eu.pb4.polymer.core.api.block.PolymerBlock;
 import eu.pb4.polymer.core.api.item.PolymerBlockItem;
 import fr.hugman.lucky_block.api.lucky_event.LuckyEvent;
-import fr.hugman.lucky_block.api.lucky_event.LuckyEvents;
+import fr.hugman.lucky_block.api.lucky_event.LuckyPoolEvents;
 import net.minecraft.block.AbstractBlock;
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
@@ -22,7 +22,7 @@ import java.util.function.Function;
  * @since 1.0.0
  */
 public class LuckyBlocks {
-    public static final LuckyBlock LUCKY_BLOCK = luckyBlock(LuckyBlockKeys.LUCKY_BLOCK, LuckyEvents.POOL_NORMAL, AbstractBlock.Settings.copy(Blocks.YELLOW_WOOL));
+    public static final LuckyBlock LUCKY_BLOCK = luckyBlock(LuckyBlockKeys.LUCKY_BLOCK, LuckyPoolEvents.NORMAL, AbstractBlock.Settings.copy(Blocks.YELLOW_WOOL));
 
     private static <B extends Block & PolymerBlock> B noItem(RegistryKey<Block> key, Function<AbstractBlock.Settings, B> factory, AbstractBlock.Settings blockSettings) {
         B block = factory.apply(blockSettings.registryKey(key));

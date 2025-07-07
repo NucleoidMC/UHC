@@ -6,6 +6,10 @@ import fr.hugman.uhc.api.module.UHCModule;
 import fr.hugman.uhc.api.registry.UHCRegistryKeys;
 import net.minecraft.registry.RegistryKey;
 
+/**
+ * @author Hugman
+ * @since 1.0.0
+ */
 public class LuckyBlockUHCModules {
     public static final RegistryKey<UHCModule> LUCKY_BLOCKS = of("lucky_blocks");
 

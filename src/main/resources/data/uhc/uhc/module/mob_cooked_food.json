@@ -1,9 +1,9 @@
 {
   "name": {
-    "translate": "module.uhcrun.mob_cooked_food"
+    "translate": "module.uhc.mob_cooked_food"
   },
   "description": {
-    "translate": "module.uhcrun.mob_cooked_food.description"
+    "translate": "module.uhc.mob_cooked_food.description"
   },
   "icon": "minecraft:cooked_beef",
   "modifiers": [

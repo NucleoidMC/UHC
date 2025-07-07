@@ -5,6 +5,10 @@ import fr.hugman.uhc.api.config.UHCConfig;
 import fr.hugman.uhc.api.registry.UHCRegistryKeys;
 import net.minecraft.registry.RegistryKey;
 
+/**
+ * @author Hugman
+ * @since 1.0.0
+ */
 public class LuckyBlockUHCConfigs {
     public static final RegistryKey<UHCConfig> LUCKY_UHC = of("lucky_uhc");
     public static final RegistryKey<UHCConfig> LUCKY_UHCRUN = of("lucky_uhcrun");

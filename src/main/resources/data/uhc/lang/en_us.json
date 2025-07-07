@@ -2,6 +2,8 @@
   "game.generic.mode": "%s - %s",
 
   "game.uhc": "UHC",
+  "game.uhcrun": "UHCRun",
+  "game.doublerunner": "DoubleRunner",
 
   "mode.solo": "Solo",
   "mode.duos": "Duos",
@@ -54,5 +56,64 @@
   "command.modules.already_enabled": "The %s module is already enabled!",
   "command.modules.already_disabled": "The %s module is already disabled!",
   "command.modules.enable.success": "The %s module has been successfully enabled.",
-  "command.modules.disable.success": "The %s module has been successfully disabled."
+  "command.modules.disable.success": "The %s module has been successfully disabled.",
+
+  "module.uhc.dasher": "Dasher",
+  "module.uhc.dasher_plus": "Dasher+",
+  "module.uhc.dasher.description": "Permanent haste and speed",
+  "module.uhc.dasher_plus.description": "Permanent haste and speed, and no fall damage",
+  "module.uhc.better_tools": "Better Tools",
+  "module.uhc.better_tools_plus": "Better Tools+",
+  "module.uhc.better_tools.description": "Wooden tools are replaced with stone tools",
+  "module.uhc.better_tools_plus.description": "Wooden tools are replaced with iron tools and diamond tools are enchanted with Efficiency III",
+
+  "module.uhc.blasted_ores": "Blasted Ores",
+  "module.uhc.blasted_ores_plus": "Blasted Ores+",
+  "module.uhc.blasted_ores.description": "All ores get automatically smelt, doubled and bring more experience",
+
+  "module.uhc.ore_boost": "Ore Boost",
+  "module.uhc.ore_boost_plus": "Ore Boost+",
+  "module.uhc.ore_boost.description": "Lapis, gold and diamond ores are more frequent",
+
+  "module.uhc.timberman": "Timberman",
+  "module.uhc.timberman.description": "Trees get cut instantly and drop oak planks",
+
+  "module.uhc.guaranteed_apples": "Guaranteed Apples",
+  "module.uhc.guaranteed_apples.description": "All leaves only drop apples",
+  "module.uhc.guaranteed_golden_apples": "Guaranteed Golden Apples",
+  "module.uhc.guaranteed_golden_apples.description": "All leaves only drop golden apples",
+
+  "module.uhc.animal_cooked_food": "Animal Cooked Food",
+  "module.uhc.animal_cooked_food.description": "Many animals drop cooked food in larger quantities",
+  "module.uhc.mob_cooked_food": "Mob Cooked Food",
+  "module.uhc.mob_cooked_food.description": "Many mobs drop cooked food in larger quantities",
+
+  "module.uhc.faster_resources": "Need for Resources",
+  "module.uhc.faster_resources_plus": "Need for Resources+",
+  "module.uhc.faster_resources.description": "Tweaks lots of drops to ease gathering essential resources",
+  "module.uhc.faster_resources.description.stones_drop_cobblestone": "All stones types drop cobblestone",
+  "module.uhc.faster_resources.description.gravel_drops_arrows_and_flint_and_steel": "Gravel drop arrows and flint and steel",
+  "module.uhc.faster_resources.description.sand_drops_glass": "Sand drops glass",
+  "module.uhc.faster_resources.description.sand_drops_glass_bottles": "Sand drops glass bottles",
+  "module.uhc.faster_resources.description.cactus_kelp_drop_planks": "Cactus and kelp drop planks",
+  "module.uhc.faster_resources.description.dead_bushes_drop_bread": "Dead bushes drop bread",
+  "module.uhc.faster_resources.description.mushrooms_drop_stews": "Mushrooms drop stews",
+  "module.uhc.faster_resources.description.animals_and_zombies_drop_leather": "Most animals and zombies drop leather",
+  "module.uhc.faster_resources.description.animals_and_zombies_drop_books": "Most animals and zombies drop books",
+  "module.uhc.faster_resources.description.sheep_drop_strings": "Sheep drop strings",
+  "module.uhc.faster_resources.description.sheep_drop_bow": "Sheep drop a bow",
+  "module.uhc.faster_resources.description.sugar_cane_drop_paper": "Sugar cane drop paper",
+  "module.uhc.faster_resources.description.sugar_cane_drop_enchanting_tables_and_books": "Sugar cane drop enchanting tables and books",
+  "module.uhc.faster_resources.description.chickens_drop_arrows": "Chickens drop arrows",
+  "module.uhc.faster_resources.description.creepers_drop_tnt": "Creepers drop TNT",
+  "module.uhc.faster_resources.description.squids_drop_fishing_rods": "Squids drop fishing rods",
+  "module.uhc.faster_resources.description.skeletons_drop_power_bow": "Skeletons drop Power-enchanted bows",
+
+  "module.uhc.potion_drops": "Potion Drops",
+  "module.uhc.potion_drops.description": "Some entities drop potions",
+  "module.uhc.potion_drops.description.zombies_drop_strength_potions": "Zombies drops potions of Strength",
+  "module.uhc.potion_drops.description.spiders_drop_poison_potions": "Spiders drops potions of Poison",
+  "module.uhc.potion_drops.description.sugar_cane_drops_swiftness_potions": "Sugar cane drops potions of Swiftness",
+  "module.uhc.potion_drops.description.rabbits_drop_leaping_potions": "Rabbits drops potions of Leaping",
+  "module.uhc.potion_drops.description.bats_drop_night_vision_potions": "Bats drops potions of Night Vision"
 }

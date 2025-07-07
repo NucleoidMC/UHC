@@ -5,10 +5,7 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import fr.hugman.uhc.api.util.DoubleRange;
 import net.minecraft.registry.RegistryKey;
 import net.minecraft.registry.RegistryKeys;
-import net.minecraft.registry.entry.RegistryElementCodec;
-import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.world.dimension.DimensionOptions;
-
 
 public record UHCMapConfig(
         RegistryKey<DimensionOptions> dimension,

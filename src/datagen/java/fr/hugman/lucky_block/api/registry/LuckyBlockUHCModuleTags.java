@@ -6,6 +6,10 @@ import fr.hugman.uhc.api.module.UHCModule;
 import fr.hugman.uhc.api.registry.UHCRegistryKeys;
 import net.minecraft.registry.tag.TagKey;
 
+/**
+ * @author Hugman
+ * @since 1.0.0
+ */
 public class LuckyBlockUHCModuleTags {
     public static final TagKey<UHCModule> UHCRUN = of("uhcrun");
     public static final TagKey<UHCModule> DOUBLERUNNER = of("doublerunner");

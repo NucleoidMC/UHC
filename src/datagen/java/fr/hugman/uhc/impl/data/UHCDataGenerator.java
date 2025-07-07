@@ -1,11 +1,9 @@
 package fr.hugman.uhc.impl.data;
 
-import fr.hugman.lucky_block.api.data.provider.*;
-import fr.hugman.lucky_block.api.data.provider.LuckyBlockUHCModuleProvider;
-import fr.hugman.lucky_block.api.data.provider.LuckyBlockUHCModuleTagProvider;
+import fr.hugman.lucky_block.api.datagen.provider.*;
 import fr.hugman.lucky_block.api.registry.LuckyBlockRegistryKeys;
 import fr.hugman.uhc.UHC;
-import fr.hugman.uhc.api.data.provider.*;
+import fr.hugman.uhc.api.datagen.provider.*;
 import fr.hugman.uhc.api.registry.UHCRegistryKeys;
 import net.fabricmc.fabric.api.datagen.v1.DataGeneratorEntrypoint;
 import net.fabricmc.fabric.api.datagen.v1.FabricDataGenerator;
@@ -34,6 +32,7 @@ public class UHCDataGenerator implements DataGeneratorEntrypoint {
 
         // - Lucky Block
         pack.addProvider(LuckyBlockEventProvider::new);
+        pack.addProvider(LuckyBlockPoolEventProvider::new);
 
         // - UHC
         pack.addProvider(LuckyBlockUHCConfigProvider::new);
