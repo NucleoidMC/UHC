@@ -2,7 +2,7 @@ package fr.hugman.lucky_block.data.provider;
 
 import fr.hugman.lucky_block.api.loot.LuckyBlockLootTables;
 import fr.hugman.lucky_block.api.lucky_event.*;
-import fr.hugman.lucky_block.api.lucky_event.selector.AllOfSelectorLuckyEvent;
+import fr.hugman.lucky_block.api.lucky_event.selector.LuckSelectorLuckyEvent;
 import fr.hugman.lucky_block.api.registry.LuckyBlockRegistryKeys;
 import fr.hugman.lucky_block.impl.LuckyBlockMod;
 import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
@@ -53,7 +53,12 @@ public class LuckyBlockEventProvider extends FabricDynamicRegistryProvider {
         registerable.register(LuckyEvents.LOOT_SADDLE, new LootLuckyEvent(LuckyBlockLootTables.SADDLE));
 
         // Pools
-        registerable.register(LuckyEvents.POOL_NORMAL, new AllOfSelectorLuckyEvent(events.getOrThrow(LuckyEventTags.NORMAL)));
+        registerable.register(LuckyEvents.POOL_NORMAL, LuckSelectorLuckyEvent.builder(events)
+                .oneOf(0, LuckyEventTags.UNLUCKY)
+                .oneOf(5, LuckyEventTags.NORMAL)
+                .oneOf(10, LuckyEventTags.LUCKY)
+                .build()
+        );
     }
 
     private static NbtComponent mobData(EntityType<?> entityType) {

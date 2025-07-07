@@ -15,7 +15,9 @@ import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.Nullable;
 
 /**
- * Lucky event, triggers something in the world.
+ * Lucky event, triggers something in the world at a fixed position by a player.
+ *
+ * <p>Usually triggered by a player breaking a lucky block, but can be used in other contexts as well.
  *
  * @author Hugman
  * @since 1.0.0
