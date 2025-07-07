@@ -72,7 +72,6 @@ public class LuckyBlockGameProvider extends FabricDynamicRegistryProvider {
     }
 
     private enum TeamSize {
-        TEST("test", 1, 1, 1),
         SOLO("solo", 1, 2, 8),
         DUOS("duos", 2, 4, 16),
         TRIOS("trios", 3, 6, 24),
