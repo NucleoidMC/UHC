@@ -13,7 +13,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 
 /**
- * TODO
+ * Helper class for events that purely trigger other events.
  *
  * @author Hugman
  * @since 1.0.0

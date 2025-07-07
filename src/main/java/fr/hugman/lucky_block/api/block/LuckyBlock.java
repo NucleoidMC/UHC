@@ -17,6 +17,10 @@ import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.Nullable;
 import xyz.nucleoid.packettweaker.PacketContext;
 
+/**
+ * @author Hugman
+ * @since 1.0.0
+ */
 public class LuckyBlock extends Block implements PolymerTexturedBlock, LuckyBlockInterface {
     private final BlockState model;
     private final RegistryKey<LuckyEvent> event;

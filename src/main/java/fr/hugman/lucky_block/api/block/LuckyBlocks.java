@@ -17,6 +17,10 @@ import net.minecraft.registry.RegistryKeys;
 
 import java.util.function.Function;
 
+/**
+ * @author Hugman
+ * @since 1.0.0
+ */
 public class LuckyBlocks {
     public static final LuckyBlock LUCKY_BLOCK = luckyBlock(LuckyBlockKeys.LUCKY_BLOCK, LuckyEvents.POOL_NORMAL, AbstractBlock.Settings.copy(Blocks.YELLOW_WOOL));
 

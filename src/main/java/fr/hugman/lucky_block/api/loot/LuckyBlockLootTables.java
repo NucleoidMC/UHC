@@ -5,6 +5,10 @@ import net.minecraft.loot.LootTable;
 import net.minecraft.registry.RegistryKey;
 import net.minecraft.registry.RegistryKeys;
 
+/**
+ * @author Hugman
+ * @since 1.0.0
+ */
 public class LuckyBlockLootTables {
     public static final RegistryKey<LootTable> LUCKY_SWORD = of("lucky_sword");
     public static final RegistryKey<LootTable> LUCKY_BOW = of("lucky_bow");

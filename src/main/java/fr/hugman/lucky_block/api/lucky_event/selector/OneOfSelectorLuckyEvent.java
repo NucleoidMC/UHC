@@ -6,19 +6,13 @@ import fr.hugman.lucky_block.api.lucky_event.LuckyEvent;
 import fr.hugman.lucky_block.api.lucky_event.LuckyEventType;
 import fr.hugman.lucky_block.api.lucky_event.LuckyEventTypes;
 import fr.hugman.lucky_block.api.registry.LuckyBlockRegistryKeys;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.entity.BlockEntity;
-import net.minecraft.entity.player.PlayerEntity;
+import fr.hugman.lucky_block.api.registry.RegistryEntryListBuilder;
 import net.minecraft.registry.DynamicRegistryManager;
-import net.minecraft.registry.Registry;
+import net.minecraft.registry.RegistryEntryLookup;
 import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.registry.entry.RegistryEntryList;
-import net.minecraft.registry.tag.TagKey;
-import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.dynamic.Codecs;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.random.Random;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.Collections;
 import java.util.List;
@@ -34,14 +28,6 @@ public record OneOfSelectorLuckyEvent(RegistryEntryList<LuckyEvent> events) impl
             Codecs.nonEmptyEntryList(LuckyEvent.LIST_CODEC).fieldOf("events").forGetter(OneOfSelectorLuckyEvent::events)
     ).apply(instance, OneOfSelectorLuckyEvent::new));
 
-    public static OneOfSelectorLuckyEvent of(Registry<LuckyEvent> registry, TagKey<LuckyEvent> tag) {
-        return new OneOfSelectorLuckyEvent(registry.getOrThrow(tag));
-    }
-
-    public static OneOfSelectorLuckyEvent oneOf(DynamicRegistryManager registryLookup, TagKey<LuckyEvent> tag) {
-        return of(registryLookup.getOrThrow(LuckyBlockRegistryKeys.LUCKY_EVENT), tag);
-    }
-
     @Override
     public List<RegistryEntry<LuckyEvent>> get(Random random, float luck) {
         return events.getRandom(random).map(Collections::singletonList).orElse(Collections.emptyList());
@@ -50,5 +36,22 @@ public record OneOfSelectorLuckyEvent(RegistryEntryList<LuckyEvent> events) impl
     @Override
     public LuckyEventType<?> getType() {
         return LuckyEventTypes.ONE_OF_SELECTOR;
+    }
+
+    public static Builder builder() {
+        return new Builder();
+    }
+
+    public static class Builder extends RegistryEntryListBuilder<Builder, LuckyEvent> {
+        private Builder() {}
+
+        @Override
+        protected Builder getThis() {
+            return this;
+        }
+
+        public OneOfSelectorLuckyEvent build() {
+            return new OneOfSelectorLuckyEvent(RegistryEntryList.of(entries.build()));
+        }
     }
 }

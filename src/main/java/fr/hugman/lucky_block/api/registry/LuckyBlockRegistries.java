@@ -6,6 +6,10 @@ import net.fabricmc.fabric.api.event.registry.DynamicRegistries;
 import net.fabricmc.fabric.api.event.registry.FabricRegistryBuilder;
 import net.minecraft.registry.SimpleRegistry;
 
+/**
+ * @author Hugman
+ * @since 1.0.0
+ */
 public class LuckyBlockRegistries {
     public static final SimpleRegistry<LuckyEventType<?>> LUCKY_EVENT_TYPE = FabricRegistryBuilder.createSimple(LuckyBlockRegistryKeys.LUCKY_EVENT_TYPE).buildAndRegister();
 

@@ -6,6 +6,10 @@ import net.minecraft.registry.RegistryKey;
 import net.minecraft.registry.RegistryKeys;
 import net.minecraft.world.gen.feature.ConfiguredFeature;
 
+/**
+ * @author Hugman
+ * @since 1.0.0
+ */
 public class LuckyBlockConfiguredFeatures {
     public static final RegistryKey<ConfiguredFeature<?, ?>> MINERAL_LUCKY_BLOCKS = of("mineral_lucky_blocks");
     public static final RegistryKey<ConfiguredFeature<?, ?>> SURFACE_LUCKY_BLOCKS = of("surface_lucky_blocks");

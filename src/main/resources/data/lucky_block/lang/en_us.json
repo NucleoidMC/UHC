@@ -1,3 +1,10 @@
 {
-  "block.lucky_block.lucky_block": "Lucky Block"
+  "block.lucky_block.lucky_block": "Lucky Block",
+
+  "game.lucky_uhc": "Lucky UHC",
+  "game.lucky_uhcrun": "Lucky UHCRun",
+  "game.lucky_doublerunner": "Lucky DoubleRunner",
+
+  "module.lucky_block.lucky_blocks": "Lucky Blocks",
+  "module.lucky_block.lucky_blocks.description": "Lucky Blocks spawn in the world. Break one for a surprise!"
 }
