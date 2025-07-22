@@ -58,7 +58,7 @@ public class LuckyBlockPlacedFeatureProvider extends FabricDynamicRegistryProvid
                 modifiersWithCount(64, fullRangePlacement)
         );
         of(registerable, LuckyBlockPlacedFeatures.SURFACE_LUCKY_BLOCKS, configured.getOrThrow(LuckyBlockConfiguredFeatures.SURFACE_LUCKY_BLOCKS),
-                CountPlacementModifier.of(UniformIntProvider.create(0, 1)),
+                CountPlacementModifier.of(UniformIntProvider.create(0, 2)),
                 SquarePlacementModifier.of(),
                 SurfaceWaterDepthFilterPlacementModifier.of(0),
                 PlacedFeatures.OCEAN_FLOOR_HEIGHTMAP,

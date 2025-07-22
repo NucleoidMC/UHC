@@ -24,6 +24,14 @@ import java.util.function.Function;
 public class LuckyBlocks {
     public static final LuckyBlock LUCKY_BLOCK = luckyBlock(LuckyBlockKeys.LUCKY_BLOCK, LuckyPoolEvents.NORMAL, AbstractBlock.Settings.copy(Blocks.YELLOW_WOOL));
 
+    public static final LuckyBlock SUPER_LUCKY_BLOCK = luckyBlock(LuckyBlockKeys.SUPER_LUCKY_BLOCK, LuckyPoolEvents.LUCKY, AbstractBlock.Settings.copy(Blocks.LIME_WOOL));
+    public static final LuckyBlock VERY_LUCKY_BLOCK = luckyBlock(LuckyBlockKeys.VERY_LUCKY_BLOCK, LuckyPoolEvents.VERY_LUCKY, AbstractBlock.Settings.copy(Blocks.LIGHT_BLUE_WOOL));
+    public static final LuckyBlock UNLUCKY_BLOCK = luckyBlock(LuckyBlockKeys.UNLUCKY_BLOCK, LuckyPoolEvents.UNLUCKY, AbstractBlock.Settings.copy(Blocks.RED_WOOL));
+    public static final LuckyBlock VERY_UNLUCKY_BLOCK = luckyBlock(LuckyBlockKeys.VERY_UNLUCKY_BLOCK, LuckyPoolEvents.VERY_UNLUCKY, AbstractBlock.Settings.copy(Blocks.PURPLE_WOOL));
+
+    public static final LuckyBlock DOUBLE_LUCKY_BLOCK = luckyBlock(LuckyBlockKeys.DOUBLE_LUCKY_BLOCK, LuckyPoolEvents.DOUBLE, AbstractBlock.Settings.copy(LUCKY_BLOCK));
+    public static final LuckyBlock TRIPLE_LUCKY_BLOCK = luckyBlock(LuckyBlockKeys.TRIPLE_LUCKY_BLOCK, LuckyPoolEvents.TRIPLE, AbstractBlock.Settings.copy(LUCKY_BLOCK));
+
     private static <B extends Block & PolymerBlock> B noItem(RegistryKey<Block> key, Function<AbstractBlock.Settings, B> factory, AbstractBlock.Settings blockSettings) {
         B block = factory.apply(blockSettings.registryKey(key));
         return Registry.register(Registries.BLOCK, key, block);
@@ -37,6 +45,6 @@ public class LuckyBlocks {
     }
 
     private static LuckyBlock luckyBlock(RegistryKey<Block> key, RegistryKey<LuckyEvent> event, AbstractBlock.Settings settings) {
-        return of(key, s -> new LuckyBlock(s, event), settings, new Item.Settings().component(DataComponentTypes.CONTAINER, ContainerComponent.DEFAULT));
+        return of(key, s -> new LuckyBlock(s, event, key), settings, new Item.Settings().component(DataComponentTypes.CONTAINER, ContainerComponent.DEFAULT));
     }
 }

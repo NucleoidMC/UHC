@@ -4,11 +4,17 @@
       "type": "minecraft:paletted_permutations",
       "textures": [
         "lucky_block:block/lucky_block/side",
+        "lucky_block:block/lucky_block/side_double",
+        "lucky_block:block/lucky_block/side_triple",
         "lucky_block:block/lucky_block/end"
       ],
       "palette_key": "lucky_block:color_palettes/lucky_block",
       "permutations": {
-        "yellow": "lucky_block:color_palettes/lucky_block/yellow"
+        "yellow": "lucky_block:color_palettes/lucky_block/yellow",
+        "red": "lucky_block:color_palettes/lucky_block/red",
+        "green": "lucky_block:color_palettes/lucky_block/green",
+        "diamond": "lucky_block:color_palettes/lucky_block/diamond",
+        "purple": "lucky_block:color_palettes/lucky_block/purple"
       }
     }
   ]

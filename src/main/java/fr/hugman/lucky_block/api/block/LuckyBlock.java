@@ -13,6 +13,7 @@ import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.registry.RegistryKey;
 import net.minecraft.server.world.ServerWorld;
+import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.Nullable;
 import xyz.nucleoid.packettweaker.PacketContext;
@@ -25,10 +26,10 @@ public class LuckyBlock extends Block implements PolymerTexturedBlock, LuckyBloc
     private final BlockState model;
     private final RegistryKey<LuckyEvent> event;
 
-    public LuckyBlock(Settings settings, RegistryKey<LuckyEvent> event) {
+    public LuckyBlock(Settings settings, RegistryKey<LuckyEvent> event, RegistryKey<Block> key) {
         super(settings);
 
-        this.model = PolymerBlockResourceUtils.requestBlock(BlockModelType.FULL_BLOCK, PolymerBlockModel.of(LuckyBlockMod.id("block/lucky_block")));
+        this.model = PolymerBlockResourceUtils.requestBlock(BlockModelType.FULL_BLOCK, PolymerBlockModel.of(key.getValue().withPrefixedPath("block/")));
         this.event = event;
     }
 

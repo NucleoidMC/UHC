@@ -1,6 +1,14 @@
 {
   "block.lucky_block.lucky_block": "Lucky Block",
 
+  "block.lucky_block.super_lucky_block": "Super Lucky Block",
+  "block.lucky_block.very_lucky_block": "Very Lucky Block",
+  "block.lucky_block.unlucky_block": "Unlucky Block",
+  "block.lucky_block.very_unlucky_block": "Very Unlucky Block",
+
+  "block.lucky_block.double_lucky_block": "Double Lucky Block",
+  "block.lucky_block.triple_lucky_block": "Triple Lucky Block",
+
   "game.lucky_uhc": "Lucky UHC",
   "game.lucky_uhcrun": "Lucky UHCRun",
   "game.lucky_doublerunner": "Lucky DoubleRunner",
