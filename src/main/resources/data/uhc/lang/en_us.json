@@ -44,6 +44,8 @@
   "text.uhc.world": "World: %s",
   "text.uhc.world_will_shrink": "You will get teleported in %s. The world will then start shrinking and PvP will get enabled.",
 
+  "text.uhc.modules": "Modules",
+  "text.uhc.modules.no_modules_activated": "This game has no modules activated!",
   "ui.uhc.modules.title": "Active Modules",
   "command.uhc.modules.no_modules_activated": "This game has no modules activated!",
 

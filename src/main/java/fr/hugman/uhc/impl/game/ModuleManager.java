@@ -1,8 +1,9 @@
 package fr.hugman.uhc.impl.game;
 
 import eu.pb4.sgui.api.elements.GuiElementBuilder;
-import eu.pb4.sgui.api.gui.SimpleGui;
+import eu.pb4.sgui.api.gui.GuiInterface;
 import fr.hugman.uhc.UHC;
+import fr.hugman.uhc.api.gui.PreviousableGui;
 import fr.hugman.uhc.api.modifier.*;
 import fr.hugman.uhc.api.module.UHCModule;
 import net.minecraft.block.BlockState;
@@ -103,9 +104,9 @@ public final class ModuleManager {
      * @param player The player to build the GUI for
      * @return The GUI
      */
-    public SimpleGui buildGui(ServerPlayerEntity player) {
+    public GuiInterface buildGui(ServerPlayerEntity player) {
         ScreenHandlerType<?> type = Registries.SCREEN_HANDLER.get(Identifier.of("generic_9x" + MathHelper.clamp(1, MathHelper.ceil((float) modules.size() / 9), 6)));
-        SimpleGui gui = new SimpleGui(type, player, false);
+        PreviousableGui gui = new PreviousableGui(type, player, false);
         gui.setTitle(Text.translatable("ui.uhc.modules.title"));
         int i = 0;
         for (var moduleEntry : modules) {

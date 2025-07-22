@@ -3,7 +3,9 @@ package fr.hugman.uhc.impl.game.phase;
 import fr.hugman.uhc.api.config.UHCGameConfig;
 import fr.hugman.uhc.impl.game.ModuleManager;
 import fr.hugman.uhc.impl.game.UHCSpawner;
+import fr.hugman.uhc.impl.game.ui.element.ModulesUiElement;
 import fr.hugman.uhc.impl.map.UHCMap;
+import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.world.GameMode;
 import xyz.nucleoid.plasmid.api.game.GameOpenContext;
@@ -12,8 +14,10 @@ import xyz.nucleoid.plasmid.api.game.GameResult;
 import xyz.nucleoid.plasmid.api.game.GameSpace;
 import xyz.nucleoid.plasmid.api.game.common.GameWaitingLobby;
 import xyz.nucleoid.plasmid.api.game.common.team.TeamManager;
+import xyz.nucleoid.plasmid.api.game.common.ui.WaitingLobbyUiLayout;
 import xyz.nucleoid.plasmid.api.game.event.GameActivityEvents;
 import xyz.nucleoid.plasmid.api.game.event.GamePlayerEvents;
+import xyz.nucleoid.plasmid.api.game.event.GameWaitingLobbyEvents;
 import xyz.nucleoid.plasmid.api.game.player.JoinAcceptor;
 import xyz.nucleoid.plasmid.api.game.player.JoinAcceptorResult;
 import xyz.nucleoid.plasmid.api.game.player.JoinOffer;
@@ -49,6 +53,7 @@ public record UHCWaiting(
             activity.listen(PlayerDeathEvent.EVENT, (player, source) -> EventResult.DENY);
             activity.listen(PlayerDamageEvent.EVENT, (player, source, amount) -> EventResult.DENY);
             activity.listen(PlayerAttackEntityEvent.EVENT, (attacker, hand, attacked, hitResult) -> EventResult.DENY);
+            activity.listen(GameWaitingLobbyEvents.BUILD_UI_LAYOUT, waiting::onBuildUiLayout);
         });
     }
 
@@ -56,6 +61,10 @@ public record UHCWaiting(
         return joinAcceptor
                 .teleport(this.world, UHCSpawner.getSurfaceBlock(world, 0, 0))
                 .thenRunForEach(player -> player.changeGameMode(GameMode.ADVENTURE));
+    }
+
+    private void onBuildUiLayout(WaitingLobbyUiLayout layout, ServerPlayerEntity player) {
+        layout.addLeading(new ModulesUiElement(player));
     }
 
     private GameResult requestStart() {
