@@ -45,6 +45,7 @@ public class UHCModuleProvider extends FabricDynamicRegistryProvider {
     }
 
     public static void register(Registerable<UHCModule> registerable) {
+        final var items = registerable.getRegistryLookup(RegistryKeys.ITEM);
         final var entities = registerable.getRegistryLookup(RegistryKeys.ENTITY_TYPE);
         final var enchantments = registerable.getRegistryLookup(RegistryKeys.ENCHANTMENT);
         final var placedFeatures = registerable.getRegistryLookup(RegistryKeys.PLACED_FEATURE);
@@ -57,21 +58,21 @@ public class UHCModuleProvider extends FabricDynamicRegistryProvider {
                 new EntityLootModifier(entities.getOrThrow(UHCEntityTags.DROPS_RABBIT_FOOD), UHCLootTables.COOKED_RABBIT),
                 new EntityLootModifier(entities.getOrThrow(UHCEntityTags.DROPS_FISH_FOOD), UHCLootTables.COOKED_FISH));
         register(registerable, UHCModules.BETTER_TOOLS, Items.STONE_PICKAXE,
-                new ReplaceStackModifier(Items.WOODEN_SWORD, Items.STONE_SWORD),
-                new ReplaceStackModifier(Items.WOODEN_PICKAXE, Items.STONE_PICKAXE),
-                new ReplaceStackModifier(Items.WOODEN_AXE, Items.STONE_AXE),
-                new ReplaceStackModifier(Items.WOODEN_SHOVEL, Items.STONE_SHOVEL),
-                new ReplaceStackModifier(Items.WOODEN_HOE, Items.STONE_HOE));
+                ReplaceStackModifier.of(items, Items.STONE_SWORD, Items.WOODEN_SWORD),
+                ReplaceStackModifier.of(items, Items.STONE_PICKAXE, Items.WOODEN_PICKAXE),
+                ReplaceStackModifier.of(items, Items.STONE_AXE, Items.WOODEN_AXE),
+                ReplaceStackModifier.of(items, Items.STONE_SHOVEL, Items.WOODEN_SHOVEL),
+                ReplaceStackModifier.of(items, Items.STONE_HOE, Items.WOODEN_HOE));
         register(registerable, UHCModules.BETTER_TOOLS_PLUS, Items.IRON_PICKAXE,
-                new ReplaceStackModifier(Items.STONE_SWORD, Items.IRON_SWORD),
-                new ReplaceStackModifier(Items.STONE_PICKAXE, Items.IRON_PICKAXE),
-                new ReplaceStackModifier(Items.STONE_AXE, Items.IRON_AXE),
-                new ReplaceStackModifier(Items.STONE_SHOVEL, Items.IRON_SHOVEL),
-                new ReplaceStackModifier(Items.STONE_HOE, Items.IRON_HOE),
-                new ReplaceStackModifier(Items.DIAMOND_PICKAXE, ItemStackBuilder.of(Items.DIAMOND_PICKAXE).addEnchantment(enchantments.getOrThrow(Enchantments.EFFICIENCY), 3).build()),
-                new ReplaceStackModifier(Items.DIAMOND_AXE, ItemStackBuilder.of(Items.DIAMOND_AXE).addEnchantment(enchantments.getOrThrow(Enchantments.EFFICIENCY), 3).build()),
-                new ReplaceStackModifier(Items.DIAMOND_SHOVEL, ItemStackBuilder.of(Items.DIAMOND_SHOVEL).addEnchantment(enchantments.getOrThrow(Enchantments.EFFICIENCY), 3).build()),
-                new ReplaceStackModifier(Items.DIAMOND_HOE, ItemStackBuilder.of(Items.DIAMOND_HOE).addEnchantment(enchantments.getOrThrow(Enchantments.EFFICIENCY), 3).build()));
+                ReplaceStackModifier.of(items, Items.IRON_SWORD, Items.STONE_SWORD, Items.WOODEN_SWORD),
+                ReplaceStackModifier.of(items, Items.IRON_PICKAXE, Items.STONE_PICKAXE, Items.WOODEN_PICKAXE),
+                ReplaceStackModifier.of(items, Items.IRON_AXE, Items.STONE_AXE, Items.WOODEN_AXE),
+                ReplaceStackModifier.of(items, Items.IRON_SHOVEL, Items.STONE_SHOVEL, Items.WOODEN_SHOVEL),
+                ReplaceStackModifier.of(items, Items.IRON_HOE, Items.STONE_HOE, Items.WOODEN_HOE),
+                ReplaceStackModifier.ofEnchant(items, ItemStackBuilder.of(Items.DIAMOND_PICKAXE).addEnchantment(enchantments.getOrThrow(Enchantments.EFFICIENCY), 3).build()),
+                ReplaceStackModifier.ofEnchant(items, ItemStackBuilder.of(Items.DIAMOND_AXE).addEnchantment(enchantments.getOrThrow(Enchantments.EFFICIENCY), 3).build()),
+                ReplaceStackModifier.ofEnchant(items, ItemStackBuilder.of(Items.DIAMOND_SHOVEL).addEnchantment(enchantments.getOrThrow(Enchantments.EFFICIENCY), 3).build()),
+                ReplaceStackModifier.ofEnchant(items, ItemStackBuilder.of(Items.DIAMOND_HOE).addEnchantment(enchantments.getOrThrow(Enchantments.EFFICIENCY), 3).build()));
         register(registerable, UHCModules.DASHER, Items.IRON_BOOTS,
                 new PlayerAttributeModifier(EntityAttributes.MOVEMENT_SPEED, new EntityAttributeModifier(UHC.id("dasher/movement_speed"), 0.2, EntityAttributeModifier.Operation.ADD_MULTIPLIED_TOTAL)),
                 new PlayerAttributeModifier(EntityAttributes.BLOCK_BREAK_SPEED, new EntityAttributeModifier(UHC.id("dasher/block_break_speed"), 0.1, EntityAttributeModifier.Operation.ADD_MULTIPLIED_TOTAL)));

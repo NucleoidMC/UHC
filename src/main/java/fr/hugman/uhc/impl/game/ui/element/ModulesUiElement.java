@@ -13,7 +13,7 @@ import xyz.nucleoid.plasmid.api.game.common.ui.WaitingLobbyUiElement;
 import java.util.Objects;
 
 public class ModulesUiElement implements WaitingLobbyUiElement {
-    private ServerPlayerEntity player;
+    private final ServerPlayerEntity player;
 
     public ModulesUiElement(ServerPlayerEntity player) {
         this.player = player;

@@ -164,9 +164,12 @@ public final class ModuleManager {
     private void tick(UHCPlayerManager playerManager) {
         playerManager.forEachAlive(player -> {
             for (ReplaceStackModifier piece : this.modifiers(ModifierType.REPLACE_STACK)) {
-                int slot = player.getInventory().getSlotWithStack(piece.target());
-                if (slot != -1) {
-                    player.getInventory().setStack(slot, piece.replacement().copy());
+                var inv = player.getInventory();
+                for(int i = 0; i < inv.size(); i++) {
+                    ItemStack stack = inv.getStack(i);
+                    if (piece.predicate().test(stack)) {
+                        inv.setStack(i, piece.stack().copy());
+                    }
                 }
             }
         });
