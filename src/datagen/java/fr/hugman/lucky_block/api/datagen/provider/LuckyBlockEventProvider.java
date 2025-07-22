@@ -50,7 +50,7 @@ public class LuckyBlockEventProvider extends FabricDynamicRegistryProvider {
         // Summon Entities
         registerable.register(LuckyEvents.SUMMON_TAMED_CAT, SummonEntityLuckyEvent.builder(EntityType.CAT).tamed().build());
         registerable.register(LuckyEvents.SUMMON_TAMED_WOLF, SummonEntityLuckyEvent.builder(EntityType.WOLF).tamed().build());
-        registerable.register(LuckyEvents.SUMMON_RAINBOW_SHEEP, SummonEntityLuckyEvent.builder(EntityType.SHEEP).name("_jeb").build());
+        registerable.register(LuckyEvents.SUMMON_RAINBOW_SHEEP, SummonEntityLuckyEvent.builder(EntityType.SHEEP).name("jeb_").build());
         registerable.register(LuckyEvents.SUMMON_HAPPY_GHAST, OneOfSelectorLuckyEvent.builder()
                 .add(summonHappyGhast(Items.WHITE_HARNESS))
                 .add(summonHappyGhast(Items.ORANGE_HARNESS))

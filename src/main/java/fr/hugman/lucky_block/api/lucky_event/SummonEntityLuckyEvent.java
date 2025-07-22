@@ -1,9 +1,9 @@
 package fr.hugman.lucky_block.api.lucky_event;
 
 import com.mojang.serialization.Codec;
-import fr.hugman.lucky_block.impl.LuckyBlockMod;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import fr.hugman.lucky_block.impl.LuckyBlockMod;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.component.type.NbtComponent;
@@ -11,6 +11,7 @@ import net.minecraft.entity.EntityType;
 import net.minecraft.entity.SpawnReason;
 import net.minecraft.entity.mob.Angerable;
 import net.minecraft.entity.mob.MobEntity;
+import net.minecraft.entity.passive.TameableEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.registry.Registries;
@@ -53,14 +54,17 @@ public record SummonEntityLuckyEvent(
             return;
         }
 
+        if (this.tamed && entity instanceof TameableEntity tameable) {
+            tameable.setTamedBy(player);
+        }
         if (entity instanceof MobEntity mob) {
             mob.initialize(world, world.getLocalDifficulty(pos), SpawnReason.MOB_SUMMONED, null);
-            if(this.shouldTarget) {
+            if (this.shouldTarget) {
                 mob.setTarget(player);
             }
         }
         if (entity instanceof Angerable angerable) {
-            if(this.shouldTarget) {
+            if (this.shouldTarget) {
                 angerable.setTarget(player);
             }
         }
