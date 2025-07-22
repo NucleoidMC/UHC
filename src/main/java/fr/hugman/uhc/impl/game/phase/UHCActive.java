@@ -115,7 +115,7 @@ public class UHCActive {
                 activity,
                 config.uhcConfig().value().mapConfig().spawnOffset(),
                 playerManager,
-                new UHCTimers(config, playerManager.participantCount()),
+                new UHCTimers(config, playerManager.count()),
                 new UHCSpawner(world),
                 UHCBar.create(widgets, gameSpace, messenger),
                 UHCSideBar.create(widgets, gameSpace),
@@ -173,7 +173,7 @@ public class UHCActive {
         this.gameCloseTick = this.gameEndTick + 600;
 
         // Start - Cage chapter
-        this.playerManager.forEachAliveParticipant(player -> {
+        this.playerManager.forEachAlive(player -> {
             this.resetPlayer(player);
             this.refreshPlayerAttributes(player);
             player.changeGameMode(GameMode.ADVENTURE);
@@ -220,7 +220,7 @@ public class UHCActive {
 
         // Finale - Cages chapter
         else if (worldTime == this.finaleCagesTick) {
-            this.playerManager.forEachAliveParticipant(player -> {
+            this.playerManager.forEachAlive(player -> {
                 this.clearPlayer(player);
                 this.refreshPlayerAttributes(player);
                 player.changeGameMode(GameMode.ADVENTURE);
@@ -275,8 +275,8 @@ public class UHCActive {
     }
 
     private void playerLeave(ServerPlayerEntity player) {
-        if (playerManager.isParticipant(player)) {
-            if (!playerManager.getParticipant(player).isEliminated()) {
+        if (playerManager.contains(player)) {
+            if (!playerManager.get(player).isEliminated()) {
                 msg.elimination(player);
                 this.eliminateParticipant(player);
             }
@@ -288,7 +288,7 @@ public class UHCActive {
         player.changeGameMode(GameMode.SPECTATOR);
         this.resetPlayer(player);
         this.spawnLogic.spawnPlayerAtCenter(player);
-        playerManager.getParticipant(player).eliminate();
+        playerManager.get(player).eliminate();
         this.checkForWinner();
     }
 
@@ -327,8 +327,8 @@ public class UHCActive {
         // Remove empty teams
         this.playerManager.refreshAliveTeams();
         // Only one team is left, so they win
-        if (this.playerManager.aliveTeamCount() <= 1) {
-            if (this.playerManager.noTeamsAlive()) {
+        if (this.playerManager.aliveTeamsCount() <= 1) {
+            if (this.playerManager.allTeamsEmpty()) {
                 players.sendMessage(Text.literal("\n").append(Text.translatable("text.uhc.none_win").formatted(Formatting.BOLD, Formatting.GOLD)).append("\n"));
                 UHC.LOGGER.warn("There are no teams left! Consider reviewing the minimum amount of players needed to start a game, so that there are at least 2 teams in the game.");
             } else {
@@ -380,7 +380,7 @@ public class UHCActive {
 
         int index = 0;
         for (GameTeam team : this.playerManager.aliveTeams()) {
-            double theta = ((double) index++ / this.playerManager.aliveTeamCount()) * 2 * Math.PI;
+            double theta = ((double) index++ / this.playerManager.aliveTeamsCount()) * 2 * Math.PI;
 
             int x = MathHelper.floor(Math.cos(theta) * (this.timers.getStartMapSize() / 2 - this.spawnOffset));
             int z = MathHelper.floor(Math.sin(theta) * (this.timers.getStartMapSize() / 2 - this.spawnOffset));
@@ -394,7 +394,7 @@ public class UHCActive {
         this.spawnLogic.clearCages();
         this.setInteractWithWorld(true);
 
-        this.playerManager.forEachAliveParticipant((player -> {
+        this.playerManager.forEachAlive((player -> {
             player.changeGameMode(GameMode.SURVIVAL);
             this.refreshPlayerAttributes(player);
             this.clearPlayer(player);
@@ -428,8 +428,8 @@ public class UHCActive {
     }
 
     private EventResult onPlayerDeath(ServerPlayerEntity player, DamageSource source) {
-        if (playerManager.isParticipant(player)) {
-            if (!playerManager.getParticipant(player).isEliminated()) {
+        if (playerManager.contains(player)) {
+            if (!playerManager.get(player).isEliminated()) {
                 msg.death(source, player);
                 this.eliminateParticipant(player);
                 return EventResult.DENY;

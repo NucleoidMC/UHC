@@ -33,12 +33,12 @@ public record PlayerAttributeModifier(
 
     @Override
     public void enable(UHCPlayerManager playerManager) {
-        playerManager.forEachAliveParticipant(this::refreshAttribute);
+        playerManager.forEachAlive(this::refreshAttribute);
     }
 
     @Override
     public void disable(UHCPlayerManager playerManager) {
-        playerManager.forEachAliveParticipant(player -> {
+        playerManager.forEachAlive(player -> {
             EntityAttributeInstance instance = player.getAttributes().getCustomInstance(this.attribute);
             if (instance != null) {
                 instance.removeModifier(modifier);

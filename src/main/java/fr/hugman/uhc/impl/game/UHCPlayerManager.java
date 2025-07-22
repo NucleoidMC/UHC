@@ -1,5 +1,6 @@
 package fr.hugman.uhc.impl.game;
 
+import fr.hugman.uhc.UHC;
 import fr.hugman.uhc.api.config.UHCGameConfig;
 import it.unimi.dsi.fastutil.objects.Object2ObjectMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
@@ -12,6 +13,7 @@ import xyz.nucleoid.plasmid.api.game.GameActivity;
 import xyz.nucleoid.plasmid.api.game.GameSpace;
 import xyz.nucleoid.plasmid.api.game.common.team.*;
 import xyz.nucleoid.plasmid.api.game.player.PlayerSet;
+import xyz.nucleoid.plasmid.api.util.PlayerRef;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -21,18 +23,26 @@ import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 public class UHCPlayerManager {
-    private final Object2ObjectMap<ServerPlayerEntity, UHCParticipant> participants;
+    private final GameActivity activity;
+    private final Object2ObjectMap<PlayerRef, UHCParticipant> participants;
     private final TeamManager teamManager;
     private final List<GameTeam> aliveTeams;
 
-    public UHCPlayerManager(Object2ObjectMap<ServerPlayerEntity, UHCParticipant> participants, TeamManager teamManager, List<GameTeam> aliveTeams) {
+    public UHCPlayerManager(
+            GameActivity activity,
+            Object2ObjectMap<PlayerRef, UHCParticipant> participants,
+            TeamManager teamManager,
+            List<GameTeam> aliveTeams
+    )
+    {
+        this.activity = activity;
         this.participants = participants;
         this.teamManager = teamManager;
         this.aliveTeams = aliveTeams;
     }
 
     public static UHCPlayerManager of(GameActivity activity, GameSpace gameSpace, UHCGameConfig config) {
-        Object2ObjectMap<ServerPlayerEntity, UHCParticipant> participants = new Object2ObjectOpenHashMap<>();
+        Object2ObjectMap<PlayerRef, UHCParticipant> participants = new Object2ObjectOpenHashMap<>();
         TeamManager teamManager = TeamManager.addTo(activity);
         List<GameTeam> teamsAlive = new ArrayList<>();
 
@@ -61,13 +71,13 @@ public class UHCPlayerManager {
             allocator.add(playerEntity, null);
         }
         allocator.allocate((team, player) -> {
-            participants.put(player, new UHCParticipant());
+            participants.put(PlayerRef.of(player), new UHCParticipant());
             teamManager.addPlayerTo(player, team.key());
         });
 
         TeamChat.addTo(activity, teamManager);
 
-        return new UHCPlayerManager(participants, teamManager, teamsAlive);
+        return new UHCPlayerManager(activity, participants, teamManager, teamsAlive);
     }
 
     public void clear() {
@@ -76,26 +86,32 @@ public class UHCPlayerManager {
 
     // PARTICIPANTS
 
-    public UHCParticipant getParticipant(ServerPlayerEntity player) {
-        return participants.get(player);
+    public UHCParticipant get(ServerPlayerEntity player) {
+        return participants.get(PlayerRef.of(player));
     }
 
-    public boolean isParticipant(ServerPlayerEntity player) {
-        return participants.containsKey(player);
+    public boolean contains(ServerPlayerEntity player) {
+        return participants.containsKey(PlayerRef.of(player));
     }
 
-    public int participantCount() {
+    public int count() {
         return participants.size();
     }
 
-    public int aliveParticipantCount() {
+    public int aliveCount() {
         return (int) participants.values().stream().filter(participant -> !participant.isEliminated()).count();
     }
 
-    public void forEachAliveParticipant(final Consumer<ServerPlayerEntity> consumer) {
-        participants.forEach((player, participant) -> {
+    public void forEachAlive(final Consumer<ServerPlayerEntity> consumer) {
+        participants.forEach((ref, participant) -> {
             if (!participant.isEliminated()) {
-                consumer.accept(player);
+                var player = this.activity.getGameSpace().getPlayers().getEntity(ref.id());
+                if (player != null) {
+                    consumer.accept(player);
+                }
+                else {
+                    UHC.LOGGER.warn("UHC data for player {} could not be found", ref.id());
+                }
             }
         });
     }
@@ -106,16 +122,26 @@ public class UHCPlayerManager {
         return teamManager.playersIn(team);
     }
 
-    public int aliveTeamCount() {
+    public int aliveTeamsCount() {
         return aliveTeams.size();
     }
 
-    public boolean noTeamsAlive() {
+    public boolean allTeamsEmpty() {
         return aliveTeams.isEmpty();
     }
 
+    /**
+     * Removes teams from the aliveTeams list if all their players are eliminated.
+     */
     public void refreshAliveTeams() {
-        aliveTeams.removeIf(team -> teamManager.playersIn(team.key()).stream().allMatch(playerEntity -> getParticipant(playerEntity).isEliminated()));
+        aliveTeams.removeIf(team -> teamManager.playersIn(team.key()).stream().allMatch(playerEntity -> {
+            var participant = get(playerEntity);
+            if(participant == null) {
+                UHC.LOGGER.warn("UHC data for player {} could not be found (considering them eliminated)", playerEntity.getName().getString());
+                return true;
+            }
+            return participant.isEliminated();
+        }));
     }
 
     public GameTeam getLastTeam() {

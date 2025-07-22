@@ -29,11 +29,11 @@ public record PermanentEffectModifier(
 
     @Override
     public void enable(UHCPlayerManager playerManager) {
-        playerManager.forEachAliveParticipant(this::setEffect);
+        playerManager.forEachAlive(this::setEffect);
     }
 
     @Override
     public void disable(UHCPlayerManager playerManager) {
-        playerManager.forEachAliveParticipant(player -> player.removeStatusEffect(this.effect));
+        playerManager.forEachAlive(player -> player.removeStatusEffect(this.effect));
     }
 }
