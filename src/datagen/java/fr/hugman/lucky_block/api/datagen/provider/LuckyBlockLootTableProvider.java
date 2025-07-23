@@ -10,6 +10,8 @@ import net.minecraft.loot.context.LootContextTypes;
 import net.minecraft.loot.entry.ItemEntry;
 import net.minecraft.loot.function.EnchantRandomlyLootFunction;
 import net.minecraft.loot.function.SetNameLootFunction;
+import net.minecraft.loot.provider.number.ConstantLootNumberProvider;
+import net.minecraft.loot.provider.number.UniformLootNumberProvider;
 import net.minecraft.registry.RegistryKey;
 import net.minecraft.registry.RegistryWrapper;
 import net.minecraft.text.Text;
@@ -55,6 +57,29 @@ public class LuckyBlockLootTableProvider extends SimpleFabricLootTableProvider {
                 .with(ItemEntry.builder(Items.DRAGON_EGG))
                 .with(ItemEntry.builder(Items.CONDUIT))
                 .build()));
-        consumer.accept(SADDLE, LootTable.builder().pool(LootPool.builder().with(ItemEntry.builder(Items.SADDLE))));
+        consumer.accept(ELYTRA, LootTable.builder().pool(LootPool.builder().with(ItemEntry.builder(Items.ELYTRA))));
+        consumer.accept(BUCKETS, LootTable.builder().pool(LootPool.builder()
+                .rolls(UniformLootNumberProvider.create(1, 20))
+                .with(ItemEntry.builder(Items.MILK_BUCKET))
+                .with(ItemEntry.builder(Items.LAVA_BUCKET))
+                .with(ItemEntry.builder(Items.WATER_BUCKET))
+                .with(ItemEntry.builder(Items.POWDER_SNOW_BUCKET))
+        ));
+        consumer.accept(FISH_BUCKET, LootTable.builder().pool(LootPool.builder()
+                .with(ItemEntry.builder(Items.PUFFERFISH_BUCKET))
+                .with(ItemEntry.builder(Items.SALMON_BUCKET))
+                .with(ItemEntry.builder(Items.COD_BUCKET))
+                .with(ItemEntry.builder(Items.TROPICAL_FISH_BUCKET))
+                .with(ItemEntry.builder(Items.AXOLOTL_BUCKET))
+                .with(ItemEntry.builder(Items.TADPOLE_BUCKET))
+        ));
+        consumer.accept(ROTTEN_FLESH, LootTable.builder().pool(LootPool.builder()
+                .with(ItemEntry.builder(Items.PUFFERFISH_BUCKET))
+                .with(ItemEntry.builder(Items.SALMON_BUCKET))
+                .with(ItemEntry.builder(Items.COD_BUCKET))
+                .with(ItemEntry.builder(Items.TROPICAL_FISH_BUCKET))
+                .with(ItemEntry.builder(Items.AXOLOTL_BUCKET))
+                .with(ItemEntry.builder(Items.TADPOLE_BUCKET))
+        ));
     }
 }

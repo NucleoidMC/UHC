@@ -9,6 +9,13 @@ import net.minecraft.registry.RegistryKey;
  * @since 1.0.0
  */
 public class LuckyEvents {
+    // Set Block
+    public static final RegistryKey<LuckyEvent> SET_BEDROCK = of("set_bedrock");
+    public static final RegistryKey<LuckyEvent> SET_BEDROCK_WORLD_PILLAR = of("set_bedrock_world_pillar");
+    public static final RegistryKey<LuckyEvent> SET_RANDOM_LUCKY_BLOCK = of("set_random_lucky_block");
+    public static final RegistryKey<LuckyEvent> SET_ORE_BLOCK = of("set_ore_block");
+    public static final RegistryKey<LuckyEvent> SET_WOOL_PILLAR = of("set_wool_pillar");
+
     // Summon Entities
     public static final RegistryKey<LuckyEvent> SUMMON_TAMED_WOLF = of("summon_tamed_wolf");
     public static final RegistryKey<LuckyEvent> SUMMON_TAMED_CAT = of("summon_tamed_cat");
@@ -21,7 +28,10 @@ public class LuckyEvents {
     public static final RegistryKey<LuckyEvent> SUMMON_GHAST = of("summon_ghast");
     public static final RegistryKey<LuckyEvent> SUMMON_WARDEN = of("summon_warden");
     public static final RegistryKey<LuckyEvent> SUMMON_WITHER = of("summon_wither");
+    public static final RegistryKey<LuckyEvent> SUMMON_SLIME = of("summon_slime");
     public static final RegistryKey<LuckyEvent> SUMMON_WITCH = of("summon_witch");
+    public static final RegistryKey<LuckyEvent> SUMMON_GIANT = of("summon_giant");
+    public static final RegistryKey<LuckyEvent> SUMMON_CHARGED_CREEPER = of("summon_charged_creeper");
 
     public static final RegistryKey<LuckyEvent> SUMMON_ONE_TNT = of("summon_one_tnt");
     public static final RegistryKey<LuckyEvent> SUMMON_ONE_WIND_CHARGE = of("summon_one_wind_charge");
@@ -29,9 +39,12 @@ public class LuckyEvents {
     // Loots
     public static final RegistryKey<LuckyEvent> LOOT_LUCKY_SWORD = of("loot_lucky_sword");
     public static final RegistryKey<LuckyEvent> LOOT_LUCKY_BOW = of("loot_lucky_bow");
+    public static final RegistryKey<LuckyEvent> LOOT_ROTTEN_FLESH = of("loot_rotten_flesh");
     public static final RegistryKey<LuckyEvent> LOOT_ALL_DYES = of("loot_all_dyes");
     public static final RegistryKey<LuckyEvent> LOOT_END_GAME_ITEM = of("loot_end_game_item");
-    public static final RegistryKey<LuckyEvent> LOOT_SADDLE = of("loot_saddle");
+    public static final RegistryKey<LuckyEvent> LOOT_ELYTRA = of("loot_elytra");
+    public static final RegistryKey<LuckyEvent> LOOT_BUCKETS = of("loot_buckets");
+    public static final RegistryKey<LuckyEvent> LOOT_FISH_BUCKET = of("loot_fish_bucket");
 
     private static RegistryKey<LuckyEvent> of(String path) {
         return RegistryKey.of(LuckyBlockRegistryKeys.LUCKY_EVENT, LuckyBlockMod.id(path));

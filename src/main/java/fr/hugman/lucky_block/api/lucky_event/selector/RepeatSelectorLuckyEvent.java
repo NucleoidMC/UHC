@@ -34,6 +34,14 @@ public record RepeatSelectorLuckyEvent(
             LuckyEvent.ENTRY_CODEC.fieldOf("event").forGetter(RepeatSelectorLuckyEvent::event)
     ).apply(instance, RepeatSelectorLuckyEvent::new));
 
+    public RepeatSelectorLuckyEvent(int count, RegistryEntry<LuckyEvent> event) {
+        this(ConstantIntProvider.create(count), event);
+    }
+
+    public RepeatSelectorLuckyEvent(int count, LuckyEvent event) {
+        this(count, RegistryEntry.of(event));
+    }
+
     @Override
     public List<RegistryEntry<LuckyEvent>> get(Random random, float luck) {
         var events = ImmutableList.<RegistryEntry<LuckyEvent>>builder();

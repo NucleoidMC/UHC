@@ -44,5 +44,6 @@ public class LuckyBlock extends Block implements PolymerTexturedBlock, LuckyBloc
                 .getOrThrow(LuckyBlockRegistryKeys.LUCKY_EVENT)
                 .getOrThrow(this.event).value()
                 .trigger(world, player, pos, state, blockEntity);
+        //TODO: add particles and sounds
     }
 }

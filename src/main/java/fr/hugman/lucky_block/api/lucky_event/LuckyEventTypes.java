@@ -17,8 +17,11 @@ import net.minecraft.util.Identifier;
  * @since 1.0.0
  */
 public class LuckyEventTypes {
+    public static final LuckyEventType<SetBlockLuckyEvent> SET_BLOCK = register("set_block", SetBlockLuckyEvent.CODEC);
     public static final LuckyEventType<SummonEntityLuckyEvent> SUMMON_ENTITY = register("summon_entity", SummonEntityLuckyEvent.CODEC);
     public static final LuckyEventType<LootLuckyEvent> LOOT = register("loot", LootLuckyEvent.CODEC);
+
+    public static final LuckyEventType<PillarLuckyEvent> WORLD_PILLAR = register("world_pillar", PillarLuckyEvent.CODEC);
 
     // SELECTORS
     public static final LuckyEventType<OneOfSelectorLuckyEvent> ONE_OF_SELECTOR = register("selector/one_of", OneOfSelectorLuckyEvent.CODEC);

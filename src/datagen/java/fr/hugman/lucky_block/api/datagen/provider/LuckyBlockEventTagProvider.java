@@ -24,7 +24,8 @@ public class LuckyBlockEventTagProvider extends FabricTagProvider<LuckyEvent> {
     protected void configure(RegistryWrapper.WrapperLookup wrapperLookup) {
         builder(VERY_UNLUCKY).add(
                         SUMMON_WITHER,
-                        SUMMON_WARDEN
+                        SUMMON_WARDEN,
+                        SUMMON_CHARGED_CREEPER
                 )
                 .addOptional(SUMMON_BOB);
 
@@ -32,7 +33,10 @@ public class LuckyBlockEventTagProvider extends FabricTagProvider<LuckyEvent> {
                 SUMMON_CREEPER,
                 SUMMON_GHAST,
                 SUMMON_WITCH,
-                SUMMON_ANGRY_WOLF
+                SUMMON_SLIME,
+                SUMMON_ANGRY_WOLF,
+                SET_BEDROCK_WORLD_PILLAR,
+                LOOT_ROTTEN_FLESH
         )
                 .addOptional(SUMMON_ONE_WIND_CHARGE)
                 .addOptional(SUMMON_ONE_TNT);
@@ -40,7 +44,12 @@ public class LuckyBlockEventTagProvider extends FabricTagProvider<LuckyEvent> {
         builder(NORMAL).add(
                 SUMMON_RAINBOW_SHEEP,
                 LOOT_ALL_DYES,
-                LOOT_SADDLE
+                SET_BEDROCK,
+                SET_RANDOM_LUCKY_BLOCK,
+                SET_WOOL_PILLAR,
+                SUMMON_GIANT,
+                LOOT_BUCKETS,
+                LOOT_FISH_BUCKET
         );
 
         builder(LUCKY).add(
@@ -52,7 +61,9 @@ public class LuckyBlockEventTagProvider extends FabricTagProvider<LuckyEvent> {
         );
 
         builder(VERY_LUCKY).add(
-                LOOT_END_GAME_ITEM
+                LOOT_END_GAME_ITEM,
+                SET_ORE_BLOCK,
+                LOOT_ELYTRA
         );
     }
 }
