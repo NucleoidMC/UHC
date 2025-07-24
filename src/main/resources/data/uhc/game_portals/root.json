@@ -1,21 +1,21 @@
 {
-  "type": "nucleoid_extras:styled/advanced_menu",
+  "type": "nucleoid_extras:styled/handmade_menu",
   "name": {
     "translate": "game.uhc"
   },
   "icon": "minecraft:golden_apple",
-  "entries": [
-    {
+  "entries": {
+    "2:2": {
       "type": "plasmid:portal",
       "portal": "uhc:uhc"
     },
-    {
+    "4:2": {
       "type": "plasmid:portal",
       "portal": "uhc:uhcrun"
     },
-    {
+    "6:2": {
       "type": "plasmid:portal",
       "portal": "uhc:doublerunner"
     }
-  ]
+  }
 }

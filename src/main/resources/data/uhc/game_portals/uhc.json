@@ -1,11 +1,11 @@
 {
-  "type": "nucleoid_extras:styled/advanced_menu",
+  "type": "nucleoid_extras:styled/handmade_menu",
   "name": {
     "translate": "game.uhc"
   },
   "icon": "minecraft:apple",
-  "entries": [
-    {
+  "entries": {
+    "1:2":{
       "type": "plasmid:game",
       "icon": "minecraft:red_candle",
       "game": "uhc:uhc/solo",
@@ -13,7 +13,7 @@
         "translate": "mode.solo"
       }
     },
-    {
+    "3:2":{
       "type": "plasmid:game",
       "icon": "minecraft:lime_candle",
       "game": "uhc:uhc/duos",
@@ -21,7 +21,7 @@
         "translate": "mode.duos"
       }
     },
-    {
+    "5:2":{
       "type": "plasmid:game",
       "icon": "minecraft:pink_candle",
       "game": "uhc:uhc/trios",
@@ -29,7 +29,7 @@
         "translate": "mode.trios"
       }
     },
-    {
+    "7:2":{
       "type": "plasmid:game",
       "icon": "minecraft:blue_candle",
       "game": "uhc:uhc/squads",
@@ -37,5 +37,5 @@
         "translate": "mode.squads"
       }
     }
-  ]
+  }
 }
