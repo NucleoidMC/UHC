@@ -21,8 +21,8 @@ import java.util.List;
 public interface SelectorLuckyEvent extends LuckyEvent {
     List<RegistryEntry<LuckyEvent>> get(Random random, float luck);
 
-    default void trigger(ServerWorld world, PlayerEntity player, BlockPos pos, BlockState state, @Nullable BlockEntity blockEntity) {
-        float luck = player.getLuck();
+    default void trigger(ServerWorld world, @Nullable PlayerEntity player, BlockPos pos, BlockState state, @Nullable BlockEntity blockEntity) {
+        float luck = player == null ? 0.0F : player.getLuck();
         for (RegistryEntry<LuckyEvent> event : get(world.random, luck)) {
             event.value().trigger(world, player, pos, state, blockEntity);
         }

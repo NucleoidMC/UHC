@@ -19,6 +19,7 @@ import net.minecraft.registry.Registries;
 import net.minecraft.registry.RegistryEntryLookup;
 import net.minecraft.registry.RegistryWrapper;
 import net.minecraft.util.collection.Pool;
+import net.minecraft.world.gen.YOffset;
 import net.minecraft.world.gen.stateprovider.WeightedBlockStateProvider;
 
 import java.util.concurrent.CompletableFuture;
@@ -28,12 +29,6 @@ import java.util.concurrent.CompletableFuture;
  * @since 1.0.0
  */
 public class LuckyBlockEventProvider extends FabricDynamicRegistryProvider {
-    private static final int[] LUCK_DISTRIBUTION = {3, 15, 10, 15, 3};
-    private static final int[] LUCKY_LUCK_DISTRIBUTION = {1, 3, 10, 20, 5};
-    private static final int[] VERY_LUCKY_LUCK_DISTRIBUTION = {1, 5, 15, 20};
-    private static final int[] UNLUCKY_LUCK_DISTRIBUTION = {5, 20, 10, 3, 1};
-    private static final int[] VERY_UNLUCKY_LUCK_DISTRIBUTION = {20, 15, 5, 3};
-
     public LuckyBlockEventProvider(FabricDataOutput output, CompletableFuture<RegistryWrapper.WrapperLookup> registriesFuture) {
         super(output, registriesFuture);
     }
@@ -67,13 +62,14 @@ public class LuckyBlockEventProvider extends FabricDynamicRegistryProvider {
                 LuckyBlocks.TRIPLE_LUCKY_BLOCK
         ));
         registerable.register(LuckyEvents.SET_ORE_BLOCK, new SetBlockLuckyEvent(
-                Blocks.COAL_ORE,
-                Blocks.IRON_ORE,
-                Blocks.GOLD_ORE,
-                Blocks.REDSTONE_ORE,
-                Blocks.LAPIS_ORE,
-                Blocks.DIAMOND_ORE,
-                Blocks.EMERALD_ORE
+                Blocks.COAL_BLOCK,
+                Blocks.COPPER_BLOCK,
+                Blocks.IRON_BLOCK,
+                Blocks.GOLD_BLOCK,
+                Blocks.REDSTONE_BLOCK,
+                Blocks.LAPIS_BLOCK,
+                Blocks.DIAMOND_BLOCK,
+                Blocks.EMERALD_BLOCK
         ));
 
         // Pillars
@@ -95,7 +91,7 @@ public class LuckyBlockEventProvider extends FabricDynamicRegistryProvider {
                 .add(Blocks.GREEN_WOOL.getDefaultState())
                 .add(Blocks.RED_WOOL.getDefaultState())
                 .add(Blocks.BLACK_WOOL.getDefaultState())
-        ), true, true));
+        )));
 
         // Summon Entities
         registerable.register(LuckyEvents.SUMMON_TAMED_CAT, SummonEntityLuckyEvent.builder(EntityType.CAT).tamed().build());
@@ -151,48 +147,9 @@ public class LuckyBlockEventProvider extends FabricDynamicRegistryProvider {
         registerable.register(LuckyEvents.LOOT_BUCKETS, new LootLuckyEvent(LuckyBlockLootTables.BUCKETS));
         registerable.register(LuckyEvents.LOOT_FISH_BUCKET, new LootLuckyEvent(LuckyBlockLootTables.FISH_BUCKET));
         registerable.register(LuckyEvents.LOOT_ROTTEN_FLESH, new LootLuckyEvent(LuckyBlockLootTables.ROTTEN_FLESH));
-
-        // Pools
-        registerable.register(LuckyPoolEvents.NORMAL, WeightedListSelectorLuckyEvent.builder(events)
-                .add(LUCK_DISTRIBUTION[0], 0, LuckyEventTags.VERY_UNLUCKY)
-                .add(LUCK_DISTRIBUTION[1], 2, LuckyEventTags.UNLUCKY)
-                .add(LUCK_DISTRIBUTION[2], 5, LuckyEventTags.NORMAL)
-                .add(LUCK_DISTRIBUTION[3], 7, LuckyEventTags.LUCKY)
-                .add(LUCK_DISTRIBUTION[4], 12, LuckyEventTags.VERY_LUCKY)
-                .build()
-        );
-        registerable.register(LuckyPoolEvents.LUCKY, WeightedListSelectorLuckyEvent.builder(events)
-                .add(LUCKY_LUCK_DISTRIBUTION[0], 0, LuckyEventTags.VERY_UNLUCKY)
-                .add(LUCKY_LUCK_DISTRIBUTION[1], 2, LuckyEventTags.UNLUCKY)
-                .add(LUCKY_LUCK_DISTRIBUTION[2], 5, LuckyEventTags.NORMAL)
-                .add(LUCKY_LUCK_DISTRIBUTION[3], 7, LuckyEventTags.LUCKY)
-                .add(LUCKY_LUCK_DISTRIBUTION[4], 12, LuckyEventTags.VERY_LUCKY)
-                .build()
-        );
-        registerable.register(LuckyPoolEvents.VERY_LUCKY, WeightedListSelectorLuckyEvent.builder(events)
-                .add(VERY_LUCKY_LUCK_DISTRIBUTION[0], 2, LuckyEventTags.UNLUCKY)
-                .add(VERY_LUCKY_LUCK_DISTRIBUTION[1], 5, LuckyEventTags.NORMAL)
-                .add(VERY_LUCKY_LUCK_DISTRIBUTION[2], 7, LuckyEventTags.LUCKY)
-                .add(VERY_LUCKY_LUCK_DISTRIBUTION[3], 12, LuckyEventTags.VERY_LUCKY)
-                .build()
-        );
-        registerable.register(LuckyPoolEvents.UNLUCKY, WeightedListSelectorLuckyEvent.builder(events)
-                .add(UNLUCKY_LUCK_DISTRIBUTION[0], 0, LuckyEventTags.VERY_UNLUCKY)
-                .add(UNLUCKY_LUCK_DISTRIBUTION[1], 2, LuckyEventTags.UNLUCKY)
-                .add(UNLUCKY_LUCK_DISTRIBUTION[2], 5, LuckyEventTags.NORMAL)
-                .add(UNLUCKY_LUCK_DISTRIBUTION[3], 7, LuckyEventTags.LUCKY)
-                .add(UNLUCKY_LUCK_DISTRIBUTION[4], 12, LuckyEventTags.VERY_LUCKY)
-                .build()
-        );
-        registerable.register(LuckyPoolEvents.VERY_UNLUCKY, WeightedListSelectorLuckyEvent.builder(events)
-                .add(VERY_UNLUCKY_LUCK_DISTRIBUTION[0], 0, LuckyEventTags.VERY_UNLUCKY)
-                .add(VERY_UNLUCKY_LUCK_DISTRIBUTION[1], 2, LuckyEventTags.UNLUCKY)
-                .add(VERY_UNLUCKY_LUCK_DISTRIBUTION[2], 5, LuckyEventTags.NORMAL)
-                .add(VERY_UNLUCKY_LUCK_DISTRIBUTION[3], 7, LuckyEventTags.LUCKY)
-                .build()
-        );
-        registerable.register(LuckyPoolEvents.DOUBLE, RepeatSelectorLuckyEvent.builder().count(2).add(events.getOrThrow(LuckyPoolEvents.NORMAL)).build());
-        registerable.register(LuckyPoolEvents.TRIPLE, RepeatSelectorLuckyEvent.builder().count(3).add(events.getOrThrow(LuckyPoolEvents.NORMAL)).build());
+        registerable.register(LuckyEvents.LOOT_EGGS, new LootLuckyEvent(LuckyBlockLootTables.EGGS));
+        registerable.register(LuckyEvents.LOOT_POTATOES, new LootLuckyEvent(LuckyBlockLootTables.POTATOES));
+        registerable.register(LuckyEvents.LOOT_PUMPKINS, new LootLuckyEvent(LuckyBlockLootTables.PUMPKINS));
     }
 
     private static SummonEntityLuckyEvent summonHappyGhast(Item harness) {
@@ -204,16 +161,6 @@ public class LuckyBlockEventProvider extends FabricDynamicRegistryProvider {
         compound.put("equipment", equipment);
         return SummonEntityLuckyEvent.builder(EntityType.HAPPY_GHAST)
                 .data(compound)
-                .build();
-    }
-
-    private static SelectorLuckyEvent basicPool(int[] distribution, RegistryEntryLookup<LuckyEvent> lookup) {
-        return WeightedListSelectorLuckyEvent.builder(lookup)
-                .add(distribution[0], 0, LuckyEventTags.VERY_UNLUCKY)
-                .add(distribution[1], 2, LuckyEventTags.UNLUCKY)
-                .add(distribution[2], 5, LuckyEventTags.NORMAL)
-                .add(distribution[3], 7, LuckyEventTags.LUCKY)
-                .add(distribution[4], 12, LuckyEventTags.VERY_LUCKY)
                 .build();
     }
 }

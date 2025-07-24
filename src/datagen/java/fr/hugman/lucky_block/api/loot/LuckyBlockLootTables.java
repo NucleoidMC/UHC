@@ -18,6 +18,9 @@ public class LuckyBlockLootTables {
     public static final RegistryKey<LootTable> BUCKETS = of("buckets");
     public static final RegistryKey<LootTable> FISH_BUCKET = of("fish_bucket");
     public static final RegistryKey<LootTable> ROTTEN_FLESH = of("rotten_flesh");
+    public static final RegistryKey<LootTable> EGGS = of("eggs");
+    public static final RegistryKey<LootTable> POTATOES = of("potatoes");
+    public static final RegistryKey<LootTable> PUMPKINS = of("pumpkins");
 
     private static RegistryKey<LootTable> of(String path) {
         return RegistryKey.of(RegistryKeys.LOOT_TABLE, LuckyBlockMod.id(path));

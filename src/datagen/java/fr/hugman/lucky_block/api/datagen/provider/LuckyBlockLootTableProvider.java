@@ -74,12 +74,24 @@ public class LuckyBlockLootTableProvider extends SimpleFabricLootTableProvider {
                 .with(ItemEntry.builder(Items.TADPOLE_BUCKET))
         ));
         consumer.accept(ROTTEN_FLESH, LootTable.builder().pool(LootPool.builder()
-                .with(ItemEntry.builder(Items.PUFFERFISH_BUCKET))
-                .with(ItemEntry.builder(Items.SALMON_BUCKET))
-                .with(ItemEntry.builder(Items.COD_BUCKET))
-                .with(ItemEntry.builder(Items.TROPICAL_FISH_BUCKET))
-                .with(ItemEntry.builder(Items.AXOLOTL_BUCKET))
-                .with(ItemEntry.builder(Items.TADPOLE_BUCKET))
+                .with(ItemEntry.builder(Items.ROTTEN_FLESH))
+        ));
+        consumer.accept(EGGS, LootTable.builder().pool(LootPool.builder()
+                .rolls(UniformLootNumberProvider.create(1, 20))
+                .with(ItemEntry.builder(Items.EGG))
+                .with(ItemEntry.builder(Items.BROWN_EGG))
+                .with(ItemEntry.builder(Items.BLUE_EGG))
+        ));
+        consumer.accept(POTATOES, LootTable.builder().pool(LootPool.builder()
+                .rolls(UniformLootNumberProvider.create(1, 20))
+                .with(ItemEntry.builder(Items.POTATO))
+                .with(ItemEntry.builder(Items.POISONOUS_POTATO))
+                .with(ItemEntry.builder(Items.BAKED_POTATO))
+        ));
+        consumer.accept(PUMPKINS, LootTable.builder().pool(LootPool.builder()
+                .rolls(UniformLootNumberProvider.create(1, 20))
+                .with(ItemEntry.builder(Items.PUMPKIN))
+                .with(ItemEntry.builder(Items.CARVED_PUMPKIN))
         ));
     }
 }

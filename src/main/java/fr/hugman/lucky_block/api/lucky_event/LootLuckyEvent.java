@@ -32,15 +32,16 @@ public record LootLuckyEvent(RegistryKey<LootTable> lootTable) implements LuckyE
             RegistryKey.createCodec(RegistryKeys.LOOT_TABLE).fieldOf("loot_table").forGetter(LootLuckyEvent::lootTable)
     ).apply(instance, LootLuckyEvent::new));
 
-    public void trigger(ServerWorld world, PlayerEntity player, BlockPos pos, BlockState state, @Nullable BlockEntity blockEntity) {
-        getLoots(world, pos, player, player.getMainHandStack()).forEach((stack) -> Block.dropStack(world, pos, stack));
+    public void trigger(ServerWorld world, @Nullable PlayerEntity player, BlockPos pos, BlockState state, @Nullable BlockEntity blockEntity) {
+        var heldStack = player != null ? player.getMainHandStack() : ItemStack.EMPTY;
+        getLoots(world, pos, player, heldStack).forEach((stack) -> Block.dropStack(world, pos, stack));
     }
 
-    public List<ItemStack> getLoots(ServerWorld world, BlockPos pos, @Nullable Entity entity, ItemStack stack) {
+    public List<ItemStack> getLoots(ServerWorld world, BlockPos pos, @Nullable Entity entity, ItemStack heldStack) {
         return world.getServer().getReloadableRegistries().getLootTable(this.lootTable)
                 .generateLoot(new LootWorldContext.Builder(world)
                         .add(LootContextParameters.ORIGIN, Vec3d.ofCenter(pos))
-                        .add(LootContextParameters.TOOL, stack)
+                        .add(LootContextParameters.TOOL, heldStack)
                         .add(LootContextParameters.BLOCK_STATE, world.getBlockState(pos))
                         .addOptional(LootContextParameters.BLOCK_ENTITY, world.getBlockEntity(pos))
                         .addOptional(LootContextParameters.THIS_ENTITY, entity)

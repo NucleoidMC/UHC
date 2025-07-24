@@ -48,7 +48,7 @@ public record SetBlockLuckyEvent(
     }
 
     public void trigger(ServerWorld world, PlayerEntity player, BlockPos pos, BlockState state, @Nullable BlockEntity blockEntity) {
-        world.setBlockState(pos.add(offset), state);
+        world.setBlockState(pos.add(offset), stateProvider.get(world.getRandom(), pos), Block.NOTIFY_ALL);
     }
 
     @Override

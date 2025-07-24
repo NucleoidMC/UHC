@@ -30,5 +30,5 @@ public interface LuckyEvent {
 
     LuckyEventType<?> getType();
 
-    void trigger(ServerWorld world, PlayerEntity player, BlockPos pos, BlockState state, @Nullable BlockEntity blockEntity);
+    void trigger(ServerWorld world, @Nullable PlayerEntity player, BlockPos pos, BlockState state, @Nullable BlockEntity blockEntity);
 }

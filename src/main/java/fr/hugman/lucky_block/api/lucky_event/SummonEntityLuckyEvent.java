@@ -44,7 +44,7 @@ public record SummonEntityLuckyEvent(
         this(withType(new NbtCompound(), entityType), DEFAULT_SHOUlD_TARGET, DEFAULT_TAMED);
     }
 
-    public void trigger(ServerWorld world, PlayerEntity player, BlockPos pos, BlockState state, @Nullable BlockEntity blockEntity) {
+    public void trigger(ServerWorld world, @Nullable PlayerEntity player, BlockPos pos, BlockState state, @Nullable BlockEntity blockEntity) {
         var entity = EntityType.loadEntityWithPassengers(this.data.copyNbt(), world, SpawnReason.MOB_SUMMONED, e -> {
             e.refreshPositionAndAngles(pos, e.getRandom().nextFloat() * 360.0F, 0.0F);
             return e;
@@ -54,19 +54,17 @@ public record SummonEntityLuckyEvent(
             return;
         }
 
-        if (this.tamed && entity instanceof TameableEntity tameable) {
+        if (this.tamed && entity instanceof TameableEntity tameable && player != null) {
             tameable.setTamedBy(player);
         }
         if (entity instanceof MobEntity mob) {
             mob.initialize(world, world.getLocalDifficulty(pos), SpawnReason.MOB_SUMMONED, null);
-            if (this.shouldTarget) {
+            if (this.shouldTarget  && player != null) {
                 mob.setTarget(player);
             }
         }
-        if (entity instanceof Angerable angerable) {
-            if (this.shouldTarget) {
-                angerable.setTarget(player);
-            }
+        if (entity instanceof Angerable angerable && this.shouldTarget && player != null) {
+            angerable.setTarget(player);
         }
         if (!world.spawnNewEntityAndPassengers(entity)) {
             LuckyBlockMod.LOGGER.error("Failed to spawn entity: {}", entity);

@@ -43,13 +43,15 @@ public class LuckyBlockEventTagProvider extends FabricTagProvider<LuckyEvent> {
 
         builder(NORMAL).add(
                 SUMMON_RAINBOW_SHEEP,
-                LOOT_ALL_DYES,
                 SET_BEDROCK,
-                SET_RANDOM_LUCKY_BLOCK,
                 SET_WOOL_PILLAR,
                 SUMMON_GIANT,
+                LOOT_ALL_DYES,
                 LOOT_BUCKETS,
-                LOOT_FISH_BUCKET
+                LOOT_FISH_BUCKET,
+                LOOT_EGGS,
+                LOOT_PUMPKINS,
+                LOOT_POTATOES
         );
 
         builder(LUCKY).add(
@@ -57,7 +59,8 @@ public class LuckyBlockEventTagProvider extends FabricTagProvider<LuckyEvent> {
                 SUMMON_TAMED_WOLF,
                 SUMMON_TAMED_CAT,
                 LOOT_LUCKY_SWORD,
-                LOOT_LUCKY_BOW
+                LOOT_LUCKY_BOW,
+                SET_RANDOM_LUCKY_BLOCK
         );
 
         builder(VERY_LUCKY).add(

@@ -45,6 +45,9 @@ public class LuckyEvents {
     public static final RegistryKey<LuckyEvent> LOOT_ELYTRA = of("loot_elytra");
     public static final RegistryKey<LuckyEvent> LOOT_BUCKETS = of("loot_buckets");
     public static final RegistryKey<LuckyEvent> LOOT_FISH_BUCKET = of("loot_fish_bucket");
+    public static final RegistryKey<LuckyEvent> LOOT_EGGS = of("loot_eggs");
+    public static final RegistryKey<LuckyEvent> LOOT_POTATOES = of("loot_potatoes");
+    public static final RegistryKey<LuckyEvent> LOOT_PUMPKINS = of("loot_pumpkins");
 
     private static RegistryKey<LuckyEvent> of(String path) {
         return RegistryKey.of(LuckyBlockRegistryKeys.LUCKY_EVENT, LuckyBlockMod.id(path));

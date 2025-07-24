@@ -35,7 +35,7 @@ public class LuckyBlockMod implements ModInitializer {
         }
         PlayerBlockBreakEvents.AFTER.register((world, playerEntity, blockPos, blockState, blockEntity) -> {
             if(blockState.getBlock() instanceof LuckyBlockInterface lucky && world instanceof ServerWorld serverWorld) {
-                lucky.onLuckyBlockBreak(serverWorld, playerEntity, blockPos, blockState, blockEntity);
+                lucky.onLuckyBlockTrigger(serverWorld, playerEntity, blockPos, blockState, blockEntity);
             }
         });
     }

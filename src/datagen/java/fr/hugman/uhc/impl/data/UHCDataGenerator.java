@@ -66,6 +66,7 @@ public class UHCDataGenerator implements DataGeneratorEntrypoint {
 
         // - Lucky Block
         registryBuilder.addRegistry(LuckyBlockRegistryKeys.LUCKY_EVENT, LuckyBlockEventProvider::register);
+        registryBuilder.addRegistry(LuckyBlockRegistryKeys.LUCKY_EVENT, LuckyBlockPoolEventProvider::register);
 
         // - UHC
         registryBuilder.addRegistry(GameConfigs.REGISTRY_KEY, LuckyBlockGameProvider::register);

@@ -12,5 +12,5 @@ import org.jetbrains.annotations.Nullable;
  * @since 1.0.0
  */
 public interface LuckyBlockInterface {
-    void onLuckyBlockBreak(ServerWorld world, PlayerEntity player, BlockPos pos, BlockState state, @Nullable BlockEntity blockEntity);
+    void onLuckyBlockTrigger(ServerWorld world, @Nullable PlayerEntity player, BlockPos pos, BlockState state, @Nullable BlockEntity blockEntity);
 }
