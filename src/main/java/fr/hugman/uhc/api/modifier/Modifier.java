@@ -9,7 +9,6 @@ public interface Modifier {
 
     ModifierType<?> getType();
 
-    //TODO: make them fire events instead
     default void enable(UHCPlayerManager playerManager) {
     }
 

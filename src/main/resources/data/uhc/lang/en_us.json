@@ -126,5 +126,6 @@
   "ui.uhc.click_to_remove": "Click to Remove",
   "ui.uhc.click_to_edit": "Click to Edit",
   "ui.uhc.launch": "Launch",
-  "ui.uhc.select_team_size.title": "Select a team size"
+  "ui.uhc.select_team_size.title": "Select a team size",
+  "text.uhc.kills": "Kills"
 }

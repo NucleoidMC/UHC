@@ -33,6 +33,7 @@ import xyz.nucleoid.plasmid.api.game.GameSpace;
 import xyz.nucleoid.plasmid.api.game.common.GlobalWidgets;
 import xyz.nucleoid.plasmid.api.game.common.team.GameTeam;
 import xyz.nucleoid.plasmid.api.game.event.GameActivityEvents;
+import xyz.nucleoid.plasmid.api.game.event.GameEventListeners;
 import xyz.nucleoid.plasmid.api.game.event.GamePlayerEvents;
 import xyz.nucleoid.plasmid.api.game.player.JoinAcceptor;
 import xyz.nucleoid.plasmid.api.game.player.JoinAcceptorResult;
@@ -436,6 +437,9 @@ public class UHCActive {
             }
         }
         this.spawnLogic.spawnPlayerAtCenter(player);
+        if(source.getAttacker() instanceof ServerPlayerEntity attacker && this.playerManager.get(attacker) instanceof UHCParticipant participant) {
+            participant.addKill();
+        }
         return EventResult.DENY;
     }
 }

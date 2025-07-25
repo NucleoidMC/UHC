@@ -2,7 +2,6 @@ package fr.hugman.uhc.api.gui;
 
 import eu.pb4.sgui.api.elements.GuiElementBuilder;
 import fr.hugman.uhc.api.config.UHCConfig;
-import fr.hugman.uhc.api.game.UHCGameTeamSize;
 import fr.hugman.uhc.api.gui.creator.UHCModulesGui;
 import fr.hugman.uhc.api.module.UHCModule;
 import fr.hugman.uhc.api.registry.UHCRegistryKeys;
@@ -19,6 +18,7 @@ import net.minecraft.util.Formatting;
 import java.util.ArrayList;
 import java.util.stream.Collectors;
 
+//TODO: custom icons
 public class UHCConfigGuiElements {
     public static GuiElementBuilder back(ServerPlayerEntity player, Runnable runnable) {
         return new GuiElementBuilder(Items.STRUCTURE_VOID)
@@ -93,11 +93,16 @@ public class UHCConfigGuiElements {
         return element;
     }
 
-    public static GuiElementBuilder modules(ServerPlayerEntity player, UHCConfig config, boolean editable) {
-        var element = new GuiElementBuilder()
+    public static GuiElementBuilder modules(ServerPlayerEntity player) {
+        return new GuiElementBuilder()
                 .setItem(Items.KNOWLEDGE_BOOK)
                 .hideDefaultTooltip()
                 .noDefaults()
+                .setName(Text.translatable("text.uhc.modules"));
+    }
+
+    public static GuiElementBuilder modules(ServerPlayerEntity player, UHCConfig config, boolean editable) {
+        var element = modules(player)
                 .setName(Text.translatable("text.uhc.modules").append(" ").append(
                         Text.literal("(").append(String.valueOf(config.modules().size())).append(Text.literal(")"))
                 ));

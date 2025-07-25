@@ -86,9 +86,6 @@ public final class ModuleManager {
         if (modules.contains(module)) {
             return false;
         }
-
-        //TODO: send feedback to all players in game (chat + title)
-
         return modules.add(module);
     }
 
@@ -96,8 +93,6 @@ public final class ModuleManager {
         if (!modules.contains(module)) {
             return false;
         }
-
-        //TODO: send feedback to all players in game (chat + title)
         return modules.remove(module);
     }
 

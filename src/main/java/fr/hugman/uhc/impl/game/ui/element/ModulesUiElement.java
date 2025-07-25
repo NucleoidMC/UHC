@@ -1,9 +1,8 @@
 package fr.hugman.uhc.impl.game.ui.element;
 
-import eu.pb4.sgui.api.elements.GuiElementBuilder;
 import eu.pb4.sgui.api.elements.GuiElementInterface;
+import fr.hugman.uhc.api.gui.UHCConfigGuiElements;
 import fr.hugman.uhc.impl.game.ModuleManager;
-import net.minecraft.item.Items;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
@@ -21,9 +20,7 @@ public class ModulesUiElement implements WaitingLobbyUiElement {
 
     @Override
     public GuiElementInterface createMainElement() {
-        //TODO: custom icon
-        return new GuiElementBuilder(Items.KNOWLEDGE_BOOK)
-                .setItemName(Text.translatable("text.uhc.modules"))
+        return UHCConfigGuiElements.modules(player)
                 .setCallback((index, type, action, gui) -> {
                     if (!WaitingLobbyUiElement.isClick(type, gui)) {
                         return;
