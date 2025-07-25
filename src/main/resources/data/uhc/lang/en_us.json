@@ -49,7 +49,8 @@
   "text.uhc.modules.no_modules_activated": "This game has no active modules!",
   "text.uhc.module.enabled": "The %s module has been enabled!",
   "text.uhc.module.disabled": "The %s module has been disabled!",
-  "text.uhc.module.not_found": "Module with id \"%s\", not found!",
+  "text.uhc.module.not_found": "Module with id \"%s\" not found",
+  "text.uhc.config.not_found": "UHC configuration with id \"%s\" not found",
 
   "text.uhc.timers": "Timers",
   "text.uhc.map": "Map",
