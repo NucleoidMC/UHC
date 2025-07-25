@@ -29,4 +29,9 @@ public record UHCMapConfig(
     public static UHCMapConfig of(RegistryKey<DimensionOptions> dimension, DoubleRange startSize, double shrinkingSpeed) {
         return new UHCMapConfig(dimension, startSize, DEFAULT_END_SIZE, shrinkingSpeed, DEFAULT_SPAWN_OFFSET);
     }
+
+    @Override
+    public UHCMapConfig clone() {
+        return new UHCMapConfig(dimension, startSize, endSize, shrinkingSpeed, spawnOffset);
+    }
 }

@@ -1,4 +1,4 @@
-package fr.hugman.uhc.impl.command.argument;
+package fr.hugman.uhc.api.command.argument;
 
 import com.mojang.brigadier.builder.RequiredArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
@@ -23,7 +23,7 @@ import java.util.Locale;
 import java.util.Objects;
 
 public final class UHCModuleArgument {
-    private static final DynamicCommandExceptionType MODULE_NOT_FOUND = new DynamicCommandExceptionType((id) -> Text.stringifiedTranslatable("text.module.not_found", id)); //TODO: change
+    private static final DynamicCommandExceptionType MODULE_NOT_FOUND = new DynamicCommandExceptionType((id) -> Text.stringifiedTranslatable("text.uhc.module.not_found", id));
 
     public static RequiredArgumentBuilder<ServerCommandSource, Identifier> argumentFromEnabled(String name) {
         return CommandManager.argument(name, IdentifierArgumentType.identifier()).suggests((ctx, builder) -> {

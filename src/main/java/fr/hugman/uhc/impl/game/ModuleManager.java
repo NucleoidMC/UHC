@@ -1,9 +1,10 @@
 package fr.hugman.uhc.impl.game;
 
-import eu.pb4.sgui.api.elements.GuiElementBuilder;
+import eu.pb4.sgui.api.GuiHelpers;
 import eu.pb4.sgui.api.gui.GuiInterface;
 import fr.hugman.uhc.UHC;
 import fr.hugman.uhc.api.gui.PreviousableGui;
+import fr.hugman.uhc.api.gui.creator.UHCModulesGui;
 import fr.hugman.uhc.api.modifier.*;
 import fr.hugman.uhc.api.module.UHCModule;
 import net.minecraft.block.BlockState;
@@ -17,9 +18,7 @@ import net.minecraft.registry.entry.RegistryEntryList;
 import net.minecraft.screen.ScreenHandlerType;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
-import net.minecraft.text.Style;
 import net.minecraft.text.Text;
-import net.minecraft.util.Formatting;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
@@ -56,6 +55,10 @@ public final class ModuleManager {
 
     public boolean isEmpty() {
         return modules.isEmpty();
+    }
+
+    public List<RegistryEntry<UHCModule>> modules() {
+        return modules;
     }
 
     public List<Modifier> modifiers() {
@@ -105,24 +108,9 @@ public final class ModuleManager {
      * @return The GUI
      */
     public GuiInterface buildGui(ServerPlayerEntity player) {
-        ScreenHandlerType<?> type = Registries.SCREEN_HANDLER.get(Identifier.of("generic_9x" + MathHelper.clamp(1, MathHelper.ceil((float) modules.size() / 9), 6)));
-        PreviousableGui gui = new PreviousableGui(type, player, false);
+        boolean isInGui = GuiHelpers.getCurrentGui(player) != null;
+        UHCModulesGui gui = new UHCModulesGui(player, MathHelper.clamp(1, MathHelper.ceil((float) modules.size() / 9) + (isInGui ? 1 : 0), 6), modules);
         gui.setTitle(Text.translatable("ui.uhc.modules.title"));
-        int i = 0;
-        for (var moduleEntry : modules) {
-            var module = moduleEntry.value();
-            GuiElementBuilder elementBuilder = new GuiElementBuilder(module.icon())
-                    .setName(module.name().copy().formatted(Formatting.BOLD).setStyle(Style.EMPTY.withColor(module.color())))
-                    .hideDefaultTooltip();
-            if (module.longDescription().isPresent()) {
-                for (Text line : module.longDescription().get()) {
-                    elementBuilder.addLoreLine(Text.literal("- ").append(line).formatted(Formatting.GRAY));
-                }
-            } else if (module.description().isPresent()) {
-                elementBuilder.addLoreLine(Text.literal("- ").append(module.description().get()).formatted(Formatting.GRAY));
-            }
-            gui.setSlot(i++, elementBuilder);
-        }
         return gui;
     }
 
@@ -165,7 +153,7 @@ public final class ModuleManager {
         playerManager.forEachAlive(player -> {
             for (ReplaceStackModifier piece : this.modifiers(ModifierType.REPLACE_STACK)) {
                 var inv = player.getInventory();
-                for(int i = 0; i < inv.size(); i++) {
+                for (int i = 0; i < inv.size(); i++) {
                     ItemStack stack = inv.getStack(i);
                     if (piece.predicate().test(stack)) {
                         inv.setStack(i, piece.stack().copy());

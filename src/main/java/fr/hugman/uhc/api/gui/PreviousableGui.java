@@ -9,7 +9,7 @@ import org.jetbrains.annotations.Nullable;
 
 public class PreviousableGui extends SimpleGui {
     @Nullable
-    private final GuiInterface previousUi;
+    protected final GuiInterface previousUi;
 
     public PreviousableGui(ScreenHandlerType<?> type, ServerPlayerEntity player, boolean manipulatePlayerSlots) {
         super(type, player, manipulatePlayerSlots);
@@ -17,15 +17,16 @@ public class PreviousableGui extends SimpleGui {
     }
 
     @Override
-    public void onTick() {
-        super.onTick();
-    }
-
-    @Override
     public void onClose() {
         super.onClose();
         if (this.previousUi != null) {
             this.previousUi.open();
+        }
+    }
+
+    protected void addBackButton() {
+        if (previousUi != null) {
+            setSlot(0, UHCConfigGuiElements.back(player, this::close));
         }
     }
 }

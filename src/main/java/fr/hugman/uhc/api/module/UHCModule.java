@@ -2,6 +2,7 @@ package fr.hugman.uhc.api.module;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import eu.pb4.sgui.api.elements.GuiElementBuilder;
 import fr.hugman.uhc.api.modifier.Modifier;
 import fr.hugman.uhc.api.registry.UHCRegistryKeys;
 import net.minecraft.item.ItemConvertible;
@@ -12,8 +13,10 @@ import net.minecraft.registry.RegistryKey;
 import net.minecraft.registry.entry.RegistryElementCodec;
 import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.registry.entry.RegistryEntryList;
+import net.minecraft.text.Style;
 import net.minecraft.text.Text;
 import net.minecraft.text.TextColor;
+import net.minecraft.util.Formatting;
 import net.minecraft.util.Util;
 import xyz.nucleoid.codecs.MoreCodecs;
 import xyz.nucleoid.plasmid.api.util.PlasmidCodecs;
@@ -47,6 +50,28 @@ public record UHCModule(
         return new Builder();
     }
 
+    /**
+     * Creates a {@link GuiElementBuilder} for this module, displaying its icon, name, and description.
+     */
+    public GuiElementBuilder getElement() {
+        GuiElementBuilder element = new GuiElementBuilder(icon)
+                .setName(name.copy().formatted(Formatting.BOLD).setStyle(Style.EMPTY.withColor(color)))
+                .hideDefaultTooltip();
+        return element;
+    }
+
+    public void addDescriptionToElement(GuiElementBuilder element) {
+        if (longDescription.isPresent()) {
+            element.addLoreLine(Text.literal(""));
+            for (Text line : longDescription.get()) {
+                element.addLoreLine(Text.literal("- ").append(line));
+            }
+        } else if (description.isPresent()) {
+            element.addLoreLine(Text.literal(""));
+            element.addLoreLine(Text.literal("- ").append(description.get()));
+        }
+    }
+
     public static class Builder {
         private Optional<Text> name;
         private Optional<Text> description = Optional.empty();
@@ -62,6 +87,9 @@ public record UHCModule(
             return this;
         }
 
+        /**
+         * Sets a standard name of the module using its registry key.
+         */
         public Builder nameFrom(RegistryKey<?> key) {
             return name(Text.translatable(Util.createTranslationKey("module", key.getValue())));
         }
@@ -71,6 +99,9 @@ public record UHCModule(
             return this;
         }
 
+        /**
+         * Sets a standard description of the module using its registry key.
+         */
         public Builder descriptionFrom(RegistryKey<?> key) {
             return description(Text.translatable(Util.createTranslationKey("module", key.getValue()) + ".description"));
         }

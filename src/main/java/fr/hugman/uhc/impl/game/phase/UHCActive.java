@@ -408,7 +408,7 @@ public class UHCActive {
         for (Modifier modifier : module.modifiers()) {
             modifier.enable(this.playerManager);
         }
-        msg.moduleAnnouncement("text.module.enabled", moduleRegistryEntry, Formatting.GREEN);
+        msg.moduleAnnouncement("text.uhc.module.enabled", moduleRegistryEntry, Formatting.GREEN);
     }
 
     private void disableModule(RegistryEntry<UHCModule> moduleRegistryEntry) {
@@ -416,7 +416,7 @@ public class UHCActive {
         for (Modifier modifier : module.modifiers()) {
             modifier.disable(this.playerManager);
         }
-        msg.moduleAnnouncement("text.module.disabled", moduleRegistryEntry, Formatting.RED);
+        msg.moduleAnnouncement("text.uhc.module.disabled", moduleRegistryEntry, Formatting.RED);
     }
 
     private EventResult onPlayerDamage(ServerPlayerEntity entity, DamageSource damageSource, float v) {

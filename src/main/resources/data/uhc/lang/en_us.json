@@ -4,6 +4,7 @@
   "game.uhc": "UHC",
   "game.uhcrun": "UHCRun",
   "game.doublerunner": "DoubleRunner",
+  "game.custom_uhc": "Custom UHC",
 
   "mode.solo": "Solo",
   "mode.duos": "Duos",
@@ -45,20 +46,20 @@
   "text.uhc.world_will_shrink": "You will get teleported in %s. The world will then start shrinking and PvP will get enabled.",
 
   "text.uhc.modules": "Modules",
-  "text.uhc.modules.no_modules_activated": "This game has no modules activated!",
-  "ui.uhc.modules.title": "Active Modules",
-  "command.uhc.modules.no_modules_activated": "This game has no modules activated!",
+  "text.uhc.modules.no_modules_activated": "This game has no active modules!",
+  "text.uhc.module.enabled": "The %s module has been enabled!",
+  "text.uhc.module.disabled": "The %s module has been disabled!",
+  "text.uhc.module.not_found": "Module with id \"%s\", not found!",
 
-  "text.module.enabled": "The %s module has been enabled!",
-  "text.module.disabled": "The %s module has been disabled!",
-  "text.module.not_found": "Module with id \"%s\", not found!",
+  "text.uhc.timers": "Timers",
+  "text.uhc.map": "Map",
 
   "command.modules.no_manager": "The module manager is not available! (please contact the developer)",
   "command.modules.no_modules_activated": "There are not active modules!",
   "command.modules.already_enabled": "The %s module is already enabled!",
   "command.modules.already_disabled": "The %s module is already disabled!",
-  "command.modules.enable.success": "The %s module has been successfully enabled.",
-  "command.modules.disable.success": "The %s module has been successfully disabled.",
+  "command.modules.enable.success": "The %s module has been enabled",
+  "command.modules.disable.success": "The %s module has been disabled",
 
   "module.uhc.dasher": "Dasher",
   "module.uhc.dasher_plus": "Dasher+",
@@ -117,5 +118,13 @@
   "module.uhc.potion_drops.description.spiders_drop_poison_potions": "Spiders drops potions of Poison",
   "module.uhc.potion_drops.description.sugar_cane_drops_swiftness_potions": "Sugar cane drops potions of Swiftness",
   "module.uhc.potion_drops.description.rabbits_drop_leaping_potions": "Rabbits drops potions of Leaping",
-  "module.uhc.potion_drops.description.bats_drop_night_vision_potions": "Bats drops potions of Night Vision"
+  "module.uhc.potion_drops.description.bats_drop_night_vision_potions": "Bats drops potions of Night Vision",
+
+  "ui.uhc.modules.title": "Active Modules",
+  "ui.uhc.create_uhc.title": "Create UHC",
+  "ui.uhc.click_to_add": "Click to Add",
+  "ui.uhc.click_to_remove": "Click to Remove",
+  "ui.uhc.click_to_edit": "Click to Edit",
+  "ui.uhc.launch": "Launch",
+  "ui.uhc.select_team_size.title": "Select a team size"
 }

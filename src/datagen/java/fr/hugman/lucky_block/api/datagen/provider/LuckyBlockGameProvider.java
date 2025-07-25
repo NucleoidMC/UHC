@@ -5,6 +5,7 @@ import fr.hugman.lucky_block.api.config.LuckyBlockUHCConfigs;
 import fr.hugman.lucky_block.impl.LuckyBlockMod;
 import fr.hugman.uhc.api.config.UHCConfig;
 import fr.hugman.uhc.api.config.UHCGameConfig;
+import fr.hugman.uhc.api.game.UHCGameTeamSize;
 import fr.hugman.uhc.api.game.UHCGameTypes;
 import fr.hugman.uhc.api.registry.UHCRegistryKeys;
 import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
@@ -53,42 +54,23 @@ public class LuckyBlockGameProvider extends FabricDynamicRegistryProvider {
         var uhc = configs.getOrThrow(LuckyBlockUHCConfigs.LUCKY_UHC);
         var uhcRun = configs.getOrThrow(LuckyBlockUHCConfigs.LUCKY_UHCRUN);
         var doublerunner = configs.getOrThrow(LuckyBlockUHCConfigs.LUCKY_DOUBLERUNNER);
-        for (TeamSize teamSize : TeamSize.values()) {
-            registerable.register(LuckyBlockGameConfigs.of("lucky_uhc/" + teamSize.name), createUHC(uhc, teamSize));
-            registerable.register(LuckyBlockGameConfigs.of("lucky_uhcrun/" + teamSize.name), createUHC(uhcRun, teamSize));
-            registerable.register(LuckyBlockGameConfigs.of("lucky_doublerunner/" + teamSize.name), createUHC(doublerunner, teamSize));
+        for (UHCGameTeamSize teamSize : UHCGameTeamSize.values()) {
+            registerable.register(LuckyBlockGameConfigs.of("lucky_uhc/" + teamSize.getName()), createUHC(uhc, teamSize));
+            registerable.register(LuckyBlockGameConfigs.of("lucky_uhcrun/" + teamSize.getName()), createUHC(uhcRun, teamSize));
+            registerable.register(LuckyBlockGameConfigs.of("lucky_doublerunner/" + teamSize.getName()), createUHC(doublerunner, teamSize));
         }
     }
 
-    private static GameConfig<?> createUHC(RegistryEntry<UHCConfig> config, TeamSize teamSize) {
+    private static GameConfig<?> createUHC(RegistryEntry<UHCConfig> config, UHCGameTeamSize teamSize) {
         return new GameConfig<>(
                 UHCGameTypes.STANDARD,
-                Text.translatable("game.generic.mode", Text.translatable("game." + config.getKey().get().getValue().getPath()), Text.translatable("mode." + teamSize.name)),
+                Text.translatable("game.generic.mode", Text.translatable("game." + config.getKey().get().getValue().getPath()), Text.translatable("mode." + teamSize.getName())),
                 null, null, new ItemStack(Items.GRASS_BLOCK), CustomValuesConfig.empty(),
                 new UHCGameConfig(
-                        new WaitingLobbyConfig(new PlayerLimiterConfig(), teamSize.minPlayers, teamSize.thresholdPlayers, WaitingLobbyConfig.Countdown.DEFAULT),
-                        teamSize.teamsize,
+                        new WaitingLobbyConfig(new PlayerLimiterConfig(), teamSize.getMinPlayers(), teamSize.getThresholdPlayers(), WaitingLobbyConfig.Countdown.DEFAULT),
+                        teamSize.getTeamsize(),
                         config
                 )
         );
-    }
-
-    private enum TeamSize {
-        SOLO("solo", 1, 2, 8),
-        DUOS("duos", 2, 4, 16),
-        TRIOS("trios", 3, 6, 24),
-        SQUADS("squads", 4, 8, 32);
-
-        private final String name;
-        private final int teamsize;
-        private final int minPlayers;
-        private final int thresholdPlayers;
-
-        TeamSize(String name, int teamsize, int minPlayers, int thresholdPlayers) {
-            this.name = name;
-            this.teamsize = teamsize;
-            this.minPlayers = minPlayers;
-            this.thresholdPlayers = thresholdPlayers;
-        }
     }
 }

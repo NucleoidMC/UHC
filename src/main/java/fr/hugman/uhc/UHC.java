@@ -1,11 +1,14 @@
 package fr.hugman.uhc;
 
 import com.google.common.reflect.Reflection;
+import fr.hugman.uhc.api.command.UHCArgumentTypes;
 import fr.hugman.uhc.api.config.UHCGameConfig;
+import fr.hugman.uhc.api.game.UHCGameTypes;
 import fr.hugman.uhc.api.modifier.ModifierType;
 import fr.hugman.uhc.api.module.UHCModule;
 import fr.hugman.uhc.api.registry.UHCRegistries;
 import fr.hugman.uhc.impl.command.ModulesCommand;
+import fr.hugman.uhc.impl.command.UHCCommand;
 import fr.hugman.uhc.impl.game.phase.UHCWaiting;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
@@ -23,11 +26,16 @@ public class UHC implements ModInitializer {
     public void onInitialize() {
         Reflection.initialize(UHCModule.class);
         Reflection.initialize(ModifierType.class);
+        Reflection.initialize(UHCArgumentTypes.class);
 
         UHCRegistries.register();
 
-        CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) -> ModulesCommand.register(dispatcher));
-        GameType.register(UHC.id("standard"), UHCGameConfig.CODEC, UHCWaiting::open);
+        CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) -> {
+            UHCCommand.register(dispatcher, registryAccess);
+            ModulesCommand.register(dispatcher);
+        });
+
+        Reflection.initialize(UHCGameTypes.class);
     }
 
     public static Identifier id(String path) {

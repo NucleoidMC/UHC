@@ -21,5 +21,10 @@ public record UHCTimersConfig(
     public UHCTimersConfig withWarmup(double warmup) {
         return new UHCTimersConfig(this.cages, this.invulnerability, warmup, this.deathmatch);
     }
+
+    @Override
+    public UHCTimersConfig clone() {
+        return new UHCTimersConfig(cages, invulnerability, warmup, deathmatch);
+    }
 }
 

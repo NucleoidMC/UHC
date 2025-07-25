@@ -23,19 +23,19 @@ public class UHCTimers {
     }
 
     public long getInCagesTime() {
-        return (long) (config.uhcConfig().value().chapterConfig().cages() * 20L);
+        return (long) (config.uhcConfig().value().timersConfig().cages() * 20L);
     }
 
     public long getInvulnerabilityTime() {
-        return (long) (config.uhcConfig().value().chapterConfig().invulnerability() * 20L);
+        return (long) (config.uhcConfig().value().timersConfig().invulnerability() * 20L);
     }
 
     public long getWarmupTime() {
-        return (long) (config.uhcConfig().value().chapterConfig().warmup() * 20L);
+        return (long) (config.uhcConfig().value().timersConfig().warmup() * 20L);
     }
 
     public long getDeathmatchTime() {
-        return (long) (config.uhcConfig().value().chapterConfig().deathmatch() * 20L);
+        return (long) (config.uhcConfig().value().timersConfig().deathmatch() * 20L);
     }
 
     public long getShrinkingTime() {
