@@ -1,7 +1,7 @@
 package fr.hugman.uhc.impl.data;
 
-import fr.hugman.lucky_block.api.datagen.provider.*;
-import fr.hugman.lucky_block.api.registry.LuckyBlockRegistryKeys;
+import fr.hugman.ultimate_lucky_block.api.datagen.provider.*;
+import fr.hugman.ultimate_lucky_block.api.registry.ULBRegistryKeys;
 import fr.hugman.uhc.UHC;
 import fr.hugman.uhc.api.datagen.provider.*;
 import fr.hugman.uhc.api.registry.UHCRegistryKeys;
@@ -28,27 +28,27 @@ public class UHCDataGenerator implements DataGeneratorEntrypoint {
         pack.addProvider(UHCPlacedFeatureProvider::new);
 
         //TEMP
-        pack.addProvider(LuckyBlockModelProvider::new);
+        pack.addProvider(ULBModelProvider::new);
 
         // - Lucky Block
-        pack.addProvider(LuckyBlockEventProvider::new);
-        pack.addProvider(LuckyBlockPoolEventProvider::new);
+        pack.addProvider(ULBEventProvider::new);
+        pack.addProvider(ULBPoolEventProvider::new);
 
         // - UHC
-        pack.addProvider(LuckyBlockUHCConfigProvider::new);
-        pack.addProvider(LuckyBlockGameProvider::new);
-        pack.addProvider(LuckyBlockUHCModuleProvider::new);
-        pack.addProvider(LuckyBlockUHCModuleTagProvider::new);
+        pack.addProvider(ULBUHCConfigProvider::new);
+        pack.addProvider(ULBGameProvider::new);
+        pack.addProvider(ULBUHCModuleProvider::new);
+        pack.addProvider(ULBUHCModuleTagProvider::new);
 
         // - Tags
-        pack.addProvider(LuckyBlockEventTagProvider::new);
+        pack.addProvider(ULBEventTagProvider::new);
 
         // - World Generation
-        pack.addProvider(LuckyBlockConfiguredFeatureProvider::new);
-        pack.addProvider(LuckyBlockPlacedFeatureProvider::new);
+        pack.addProvider(ULBConfiguredFeatureProvider::new);
+        pack.addProvider(ULBPlacedFeatureProvider::new);
 
         // - Loot Tables
-        pack.addProvider(LuckyBlockLootTableProvider::new);
+        pack.addProvider(ULBLootTableProvider::new);
     }
 
     @Override
@@ -65,17 +65,17 @@ public class UHCDataGenerator implements DataGeneratorEntrypoint {
         //TEMP
 
         // - Lucky Block
-        registryBuilder.addRegistry(LuckyBlockRegistryKeys.LUCKY_EVENT, LuckyBlockEventProvider::register);
-        registryBuilder.addRegistry(LuckyBlockRegistryKeys.LUCKY_EVENT, LuckyBlockPoolEventProvider::register);
+        registryBuilder.addRegistry(ULBRegistryKeys.LUCKY_EVENT, ULBEventProvider::register);
+        registryBuilder.addRegistry(ULBRegistryKeys.LUCKY_EVENT, ULBPoolEventProvider::register);
 
         // - UHC
-        registryBuilder.addRegistry(GameConfigs.REGISTRY_KEY, LuckyBlockGameProvider::register);
-        registryBuilder.addRegistry(UHCRegistryKeys.UHC_CONFIG, LuckyBlockUHCConfigProvider::register);
-        registryBuilder.addRegistry(UHCRegistryKeys.UHC_MODULE, LuckyBlockUHCModuleProvider::register);
+        registryBuilder.addRegistry(GameConfigs.REGISTRY_KEY, ULBGameProvider::register);
+        registryBuilder.addRegistry(UHCRegistryKeys.UHC_CONFIG, ULBUHCConfigProvider::register);
+        registryBuilder.addRegistry(UHCRegistryKeys.UHC_MODULE, ULBUHCModuleProvider::register);
 
         // - World Generation
-        registryBuilder.addRegistry(RegistryKeys.CONFIGURED_FEATURE, LuckyBlockConfiguredFeatureProvider::register);
-        registryBuilder.addRegistry(RegistryKeys.PLACED_FEATURE, LuckyBlockPlacedFeatureProvider::register);
+        registryBuilder.addRegistry(RegistryKeys.CONFIGURED_FEATURE, ULBConfiguredFeatureProvider::register);
+        registryBuilder.addRegistry(RegistryKeys.PLACED_FEATURE, ULBPlacedFeatureProvider::register);
     }
 
     @Override
