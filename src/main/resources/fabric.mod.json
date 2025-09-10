@@ -17,8 +17,7 @@
   "environment": "*",
   "entrypoints": {
     "main": [
-      "fr.hugman.uhc.UHC",
-      "fr.hugman.ultimate_lucky_block.impl.UltimateLuckyBlock"
+      "fr.hugman.uhc.UHC"
     ]
   },
   "depends": {
