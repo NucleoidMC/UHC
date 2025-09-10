@@ -24,11 +24,30 @@ jobs:
       - name: Grant execute permission for gradlew
         run: chmod +x ./gradlew
 
+      - name: Read mod version from Gradle
+        id: read_version
+        uses: christian-draeger/read-properties@1.0.1
+        with:
+          path: './gradle.properties'
+          property: 'mod_version'
+
       - name: Generate data files
         run: ./gradlew clean runDatagen
 
       - name: Build with Gradle
-        run: ./gradlew clean build -Pversion=${{ github.event.release.tag_name }}
+        run: ./gradlew build -Pversion=${{ github.event.release.tag_name }}
+
+      - name: Publish with Gradle
+        run: ./gradlew publish
+        env:
+          MAVEN_URL: ${{ secrets.MAVEN_URL }}
+          MAVEN_USERNAME: ${{ secrets.MAVEN_USERNAME }}
+          MAVEN_PASSWORD: ${{ secrets.MAVEN_PASSWORD }}
+          GITHUB_ACTIONS: true
+          SNAPSHOT: false
+          MINOR_VERSION: ${{ github.event.release.tag_name }}
+          MODRINTH: ${{ secrets.MODRINTH_KEY }}
+          CHANGELOG: ${{ github.event.release.body }}
 
       - name: Publish mod to GitHub, CurseForge and Modrinth
         id: publish
