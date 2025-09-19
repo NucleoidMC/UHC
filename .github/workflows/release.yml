@@ -43,11 +43,6 @@ jobs:
           MAVEN_URL: ${{ secrets.MAVEN_URL }}
           MAVEN_USERNAME: ${{ secrets.MAVEN_USERNAME }}
           MAVEN_PASSWORD: ${{ secrets.MAVEN_PASSWORD }}
-          GITHUB_ACTIONS: true
-          SNAPSHOT: false
-          MINOR_VERSION: ${{ github.event.release.tag_name }}
-          MODRINTH: ${{ secrets.MODRINTH_KEY }}
-          CHANGELOG: ${{ github.event.release.body }}
 
       - name: Publish mod to GitHub, CurseForge and Modrinth
         id: publish

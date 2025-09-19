@@ -7,8 +7,14 @@ sourceCompatibility = JavaVersion.VERSION_21
 targetCompatibility = JavaVersion.VERSION_21
 
 archivesBaseName = project.archives_base_name
-version = project.mod_version
 group = project.maven_group
+
+def env = System.getenv()
+
+version = project.mod_version
+if(env.COMMIT_HASH != null) {
+    version += "-${env.COMMIT_HASH}"
+}
 
 repositories {
     maven { url = "https://maven.nucleoid.xyz/" }
@@ -63,8 +69,6 @@ jar {
         rename { "${it}_${project.archivesBaseName}" }
     }
 }
-
-def env = System.getenv()
 
 publishing {
     publications {

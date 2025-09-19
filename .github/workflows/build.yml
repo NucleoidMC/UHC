@@ -44,16 +44,17 @@ jobs:
         id: get_commit
         run: echo "commit_hash=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
 
+      - name: Build with Gradle
+        run: ./gradlew build
+        env:
+          COMMIT_HASH: ${{ steps.get_commit.outputs.commit_hash }}
+
       - name: Build and publish with Gradle
-        run: ./gradlew build publish
+        run: ./gradlew publish
         env:
           MAVEN_URL: ${{ secrets.MAVEN_SNAPSHOTS_URL }}
           MAVEN_USERNAME: ${{ secrets.MAVEN_USERNAME }}
           MAVEN_PASSWORD: ${{ secrets.MAVEN_PASSWORD }}
-          GITHUB_ACTIONS: true
-          SNAPSHOT: true
-          MINOR_VERSION: ${{ steps.read_version.outputs.value }}+${{ steps.get_commit.outputs.commit_hash }}
-          BUILD_NUMBER: ${{ steps.read_version.outputs.value }}+${{ steps.get_commit.outputs.commit_hash }}
 
       - uses: actions/upload-artifact@v4
         with:
