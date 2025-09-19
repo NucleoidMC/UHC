@@ -40,6 +40,10 @@ jobs:
       - name: Generate data files
         run: ./gradlew runDatagen
 
+      - name: Get commit hash
+        id: get_commit
+        run: echo "commit_hash=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
+
       - name: Build and publish with Gradle
         run: ./gradlew build publish
         env:
@@ -48,8 +52,8 @@ jobs:
           MAVEN_PASSWORD: ${{ secrets.MAVEN_PASSWORD }}
           GITHUB_ACTIONS: true
           SNAPSHOT: true
-          MINOR_VERSION: ${{ steps.read_version.outputs.value }}
-          BUILD_NUMBER: ${{ steps.read_version.outputs.value }}
+          MINOR_VERSION: ${{ steps.read_version.outputs.value }}+${{ steps.get_commit.outputs.commit_hash }}
+          BUILD_NUMBER: ${{ steps.read_version.outputs.value }}+${{ steps.get_commit.outputs.commit_hash }}
 
       - uses: actions/upload-artifact@v4
         with:
