@@ -1,6 +1,6 @@
 package fr.hugman.uhc.api.config;
 
-import fr.hugman.uhc.UHC;
+import fr.hugman.uhc.impl.UHC;
 import fr.hugman.uhc.api.registry.UHCRegistryKeys;
 import net.minecraft.registry.RegistryKey;
 

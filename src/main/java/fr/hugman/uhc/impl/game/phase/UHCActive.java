@@ -1,6 +1,6 @@
 package fr.hugman.uhc.impl.game.phase;
 
-import fr.hugman.uhc.UHC;
+import fr.hugman.uhc.impl.UHC;
 import fr.hugman.uhc.api.config.UHCGameConfig;
 import fr.hugman.uhc.api.modifier.Modifier;
 import fr.hugman.uhc.api.modifier.ModifierType;
@@ -33,7 +33,6 @@ import xyz.nucleoid.plasmid.api.game.GameSpace;
 import xyz.nucleoid.plasmid.api.game.common.GlobalWidgets;
 import xyz.nucleoid.plasmid.api.game.common.team.GameTeam;
 import xyz.nucleoid.plasmid.api.game.event.GameActivityEvents;
-import xyz.nucleoid.plasmid.api.game.event.GameEventListeners;
 import xyz.nucleoid.plasmid.api.game.event.GamePlayerEvents;
 import xyz.nucleoid.plasmid.api.game.player.JoinAcceptor;
 import xyz.nucleoid.plasmid.api.game.player.JoinAcceptorResult;

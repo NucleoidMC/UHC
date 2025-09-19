@@ -1,6 +1,6 @@
 package fr.hugman.uhc.api.registry;
 
-import fr.hugman.uhc.UHC;
+import fr.hugman.uhc.impl.UHC;
 import fr.hugman.uhc.api.module.UHCModule;
 import fr.hugman.uhc.api.config.UHCConfig;
 import fr.hugman.uhc.api.modifier.ModifierType;

@@ -1,6 +1,6 @@
 package fr.hugman.uhc.api.config;
 
-import fr.hugman.uhc.UHC;
+import fr.hugman.uhc.impl.UHC;
 import net.minecraft.registry.RegistryKey;
 import xyz.nucleoid.plasmid.api.game.config.GameConfig;
 import xyz.nucleoid.plasmid.api.game.config.GameConfigs;

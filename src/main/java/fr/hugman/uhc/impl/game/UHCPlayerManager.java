@@ -1,6 +1,6 @@
 package fr.hugman.uhc.impl.game;
 
-import fr.hugman.uhc.UHC;
+import fr.hugman.uhc.impl.UHC;
 import fr.hugman.uhc.api.config.UHCGameConfig;
 import it.unimi.dsi.fastutil.objects.Object2ObjectMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;

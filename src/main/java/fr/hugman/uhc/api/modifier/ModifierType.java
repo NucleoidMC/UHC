@@ -1,7 +1,7 @@
 package fr.hugman.uhc.api.modifier;
 
 import com.mojang.serialization.MapCodec;
-import fr.hugman.uhc.UHC;
+import fr.hugman.uhc.impl.UHC;
 import fr.hugman.uhc.api.registry.UHCRegistries;
 import net.minecraft.registry.Registry;
 import net.minecraft.util.Identifier;

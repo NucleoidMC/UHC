@@ -1,6 +1,6 @@
 package fr.hugman.uhc.api.datagen.provider;
 
-import fr.hugman.uhc.UHC;
+import fr.hugman.uhc.impl.UHC;
 import fr.hugman.uhc.api.loot.UHCLootTables;
 import fr.hugman.uhc.api.modifier.*;
 import fr.hugman.uhc.api.module.UHCModule;

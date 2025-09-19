@@ -1,4 +1,4 @@
-package fr.hugman.uhc;
+package fr.hugman.uhc.impl;
 
 import com.google.common.reflect.Reflection;
 import fr.hugman.uhc.api.game.UHCGameTypes;
