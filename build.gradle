@@ -13,7 +13,7 @@ def env = System.getenv()
 
 version = project.mod_version
 if(env.COMMIT_HASH != null) {
-    version += "-${env.COMMIT_HASH}"
+    version += "+${env.COMMIT_HASH}"
 }
 
 repositories {
@@ -32,10 +32,10 @@ dependencies {
 }
 
 processResources {
-    inputs.property "version", project.version
+    inputs.property "version", version
 
     filesMatching("fabric.mod.json") {
-        expand "version": project.version
+        expand "version": version
     }
 }
 
