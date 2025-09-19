@@ -50,6 +50,14 @@ java {
     withSourcesJar()
 }
 
+tasks.named('sourcesJar') {
+    if (project.sourceSets.findByName('datagen')) {
+        from sourceSets['datagen'].allSource.matching {
+            exclude 'fabric.mod.json'
+        }
+    }
+}
+
 jar {
     from("LICENSE") {
         rename { "${it}_${project.archivesBaseName}" }
