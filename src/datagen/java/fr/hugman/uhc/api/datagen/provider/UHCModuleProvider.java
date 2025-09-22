@@ -102,7 +102,7 @@ public class UHCModuleProvider extends FabricDynamicRegistryProvider {
             ItemConvertible icon,
             Modifier... modifiers
     ) {
-        register(registerable, key, b -> b.icon(icon).modifiers(modifiers));
+        registerable.register(key, UHCModules.create(key, icon, modifiers));
     }
 
     public static void register(
@@ -111,18 +111,6 @@ public class UHCModuleProvider extends FabricDynamicRegistryProvider {
             Function<UHCModule.Builder, UHCModule.Builder> builderFunction,
             String... longDescriptionStrings
     ) {
-        var translationKey = Util.createTranslationKey("module", key.getValue());
-        var builder = UHCModule.builder()
-                .nameFrom(key)
-                .descriptionFrom(key);
-
-        if (longDescriptionStrings.length > 0) {
-            builder.longDescription(Arrays.stream(longDescriptionStrings)
-                    .map(s -> Text.translatable(translationKey + ".description." + s))
-                    .collect(Collectors.toUnmodifiableList())
-            );
-        }
-
-        registerable.register(key, builderFunction.apply(builder).build());
+        registerable.register(key, UHCModules.create(key, builderFunction, longDescriptionStrings));
     }
 }

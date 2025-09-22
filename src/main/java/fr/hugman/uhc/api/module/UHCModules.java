@@ -1,8 +1,17 @@
 package fr.hugman.uhc.api.module;
 
+import fr.hugman.uhc.api.modifier.Modifier;
 import fr.hugman.uhc.impl.UHC;
 import fr.hugman.uhc.api.registry.UHCRegistryKeys;
+import net.minecraft.item.ItemConvertible;
+import net.minecraft.registry.Registerable;
 import net.minecraft.registry.RegistryKey;
+import net.minecraft.text.Text;
+import net.minecraft.util.Util;
+
+import java.util.Arrays;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 public class UHCModules {
     // UHCRun
@@ -27,5 +36,33 @@ public class UHCModules {
 
     public static RegistryKey<UHCModule> of(String path) {
         return RegistryKey.of(UHCRegistryKeys.UHC_MODULE, UHC.id(path));
+    }
+
+    public static UHCModule create(
+            RegistryKey<UHCModule> key,
+            ItemConvertible icon,
+            Modifier... modifiers
+    ) {
+        return create(key, b -> b.icon(icon).modifiers(modifiers));
+    }
+
+    public static UHCModule create(
+            RegistryKey<UHCModule> key,
+            Function<UHCModule.Builder, UHCModule.Builder> builderFunction,
+            String... longDescriptionStrings
+    ) {
+        var translationKey = Util.createTranslationKey("module", key.getValue());
+        var builder = UHCModule.builder()
+                .nameFrom(key)
+                .descriptionFrom(key);
+
+        if (longDescriptionStrings.length > 0) {
+            builder.longDescription(Arrays.stream(longDescriptionStrings)
+                    .map(s -> Text.translatable(translationKey + ".description." + s))
+                    .collect(Collectors.toUnmodifiableList())
+            );
+        }
+
+        return builderFunction.apply(builder).build();
     }
 }

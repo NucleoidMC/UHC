@@ -46,22 +46,9 @@ public class UHCGameProvider extends FabricDynamicRegistryProvider {
         var uhcRun = configs.getOrThrow(UHCConfigs.STANDARD_UHCRUN);
         var doublerunner = configs.getOrThrow(UHCConfigs.STANDARD_DOUBLERUNNER);
         for (UHCGameTeamSize teamSize : UHCGameTeamSize.values()) {
-            registerable.register(UHCGameConfigs.of("uhc/" + teamSize.getName()), createUHC(uhc, teamSize));
-            registerable.register(UHCGameConfigs.of("uhcrun/" + teamSize.getName()), createUHC(uhcRun, teamSize));
-            registerable.register(UHCGameConfigs.of("doublerunner/" + teamSize.getName()), createUHC(doublerunner, teamSize));
+            registerable.register(UHCGameConfigs.of("uhc/" + teamSize.getName()), UHCGameConfigs.create(uhc, teamSize));
+            registerable.register(UHCGameConfigs.of("uhcrun/" + teamSize.getName()), UHCGameConfigs.create(uhcRun, teamSize));
+            registerable.register(UHCGameConfigs.of("doublerunner/" + teamSize.getName()), UHCGameConfigs.create(doublerunner, teamSize));
         }
-    }
-
-    private static GameConfig<?> createUHC(RegistryEntry<UHCConfig> config, UHCGameTeamSize teamSize) {
-        return new GameConfig<>(
-                UHCGameTypes.STANDARD,
-                Text.translatable("game.generic.mode", Text.translatable("game." + config.getKey().get().getValue().getPath()), Text.translatable("mode." + teamSize.getName())),
-                null, null, new ItemStack(Items.GRASS_BLOCK), CustomValuesConfig.empty(),
-                new UHCGameConfig(
-                        new WaitingLobbyConfig(new PlayerLimiterConfig(), teamSize.getMinPlayers(), teamSize.getThresholdPlayers(), WaitingLobbyConfig.Countdown.DEFAULT),
-                        teamSize.getTeamsize(),
-                        config
-                )
-        );
     }
 }

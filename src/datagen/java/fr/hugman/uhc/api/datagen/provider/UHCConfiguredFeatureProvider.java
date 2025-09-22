@@ -49,7 +49,6 @@ public class UHCConfiguredFeatureProvider extends FabricDynamicRegistryProvider 
         ), 7));
     }
 
-
     private static <FC extends FeatureConfig, F extends Feature<FC>> void of(Registerable<ConfiguredFeature<?, ?>> registry, RegistryKey<ConfiguredFeature<?, ?>> key, F feature, FC config) {
         ConfiguredFeatures.register(registry, key, feature, config);
     }
