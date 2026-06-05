@@ -1,6 +1,6 @@
 package fr.hugman.uhc.api.module;
 
-import net.minecraft.registry.entry.RegistryEntry;
+import net.minecraft.core.Holder;
 import xyz.nucleoid.stimuli.event.StimulusEvent;
 
 public class UHCModuleEvents {
@@ -24,10 +24,10 @@ public class UHCModuleEvents {
     });
 
     public interface Enable {
-        void onEnable(RegistryEntry<UHCModule> moduleEntry);
+        void onEnable(Holder<UHCModule> moduleEntry);
     }
 
     public interface Disable {
-        void onDisable(RegistryEntry<UHCModule> moduleEntry);
+        void onDisable(Holder<UHCModule> moduleEntry);
     }
 }

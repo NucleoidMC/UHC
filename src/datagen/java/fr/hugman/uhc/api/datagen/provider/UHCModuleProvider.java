@@ -10,18 +10,16 @@ import fr.hugman.uhc.api.registry.UHCRegistryKeys;
 import fr.hugman.uhc.api.world.gen.feature.UHCPlacedFeatures;
 import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricDynamicRegistryProvider;
-import net.minecraft.enchantment.Enchantments;
-import net.minecraft.entity.attribute.EntityAttributeModifier;
-import net.minecraft.entity.attribute.EntityAttributes;
-import net.minecraft.item.ItemConvertible;
-import net.minecraft.item.Items;
-import net.minecraft.registry.Registerable;
-import net.minecraft.registry.RegistryKey;
-import net.minecraft.registry.RegistryKeys;
-import net.minecraft.registry.RegistryWrapper;
-import net.minecraft.registry.entry.RegistryEntryList;
-import net.minecraft.text.Text;
-import net.minecraft.util.Util;
+import net.minecraft.core.HolderLookup;
+import net.minecraft.core.HolderSet;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.data.worldgen.BootstrapContext;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.world.entity.ai.attributes.AttributeModifier;
+import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.item.enchantment.Enchantments;
+import net.minecraft.world.level.ItemLike;
 import xyz.nucleoid.plasmid.api.util.ItemStackBuilder;
 
 import java.util.Arrays;
@@ -30,13 +28,13 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 public class UHCModuleProvider extends FabricDynamicRegistryProvider {
-    public UHCModuleProvider(FabricDataOutput output, CompletableFuture<RegistryWrapper.WrapperLookup> registriesFuture) {
+    public UHCModuleProvider(FabricDataOutput output, CompletableFuture<HolderLookup.Provider> registriesFuture) {
         super(output, registriesFuture);
     }
 
     @Override
-    protected void configure(RegistryWrapper.WrapperLookup registries, Entries entries) {
-        entries.addAll(registries.getOrThrow(UHCRegistryKeys.UHC_MODULE));
+    protected void configure(HolderLookup.Provider registries, Entries entries) {
+        entries.addAll(registries.lookupOrThrow(UHCRegistryKeys.UHC_MODULE));
     }
 
     @Override
@@ -44,11 +42,11 @@ public class UHCModuleProvider extends FabricDynamicRegistryProvider {
         return "UHC Modules";
     }
 
-    public static void register(Registerable<UHCModule> registerable) {
-        final var items = registerable.getRegistryLookup(RegistryKeys.ITEM);
-        final var entities = registerable.getRegistryLookup(RegistryKeys.ENTITY_TYPE);
-        final var enchantments = registerable.getRegistryLookup(RegistryKeys.ENCHANTMENT);
-        final var placedFeatures = registerable.getRegistryLookup(RegistryKeys.PLACED_FEATURE);
+    public static void register(BootstrapContext<UHCModule> registerable) {
+        final var items = registerable.lookup(Registries.ITEM);
+        final var entities = registerable.lookup(Registries.ENTITY_TYPE);
+        final var enchantments = registerable.lookup(Registries.ENCHANTMENT);
+        final var placedFeatures = registerable.lookup(Registries.PLACED_FEATURE);
 
         register(registerable, UHCModules.ANIMAL_COOKED_FOOD, Items.COOKED_BEEF,
                 new EntityLootModifier(entities.getOrThrow(UHCEntityTags.DROPS_CHICKEN_FOOD), UHCLootTables.COOKED_CHICKEN),
@@ -74,20 +72,20 @@ public class UHCModuleProvider extends FabricDynamicRegistryProvider {
                 ReplaceStackModifier.ofEnchant(items, ItemStackBuilder.of(Items.DIAMOND_SHOVEL).addEnchantment(enchantments.getOrThrow(Enchantments.EFFICIENCY), 3).build()),
                 ReplaceStackModifier.ofEnchant(items, ItemStackBuilder.of(Items.DIAMOND_HOE).addEnchantment(enchantments.getOrThrow(Enchantments.EFFICIENCY), 3).build()));
         register(registerable, UHCModules.DASHER, Items.IRON_BOOTS,
-                new PlayerAttributeModifier(EntityAttributes.MOVEMENT_SPEED, new EntityAttributeModifier(UHC.id("dasher/movement_speed"), 0.2, EntityAttributeModifier.Operation.ADD_MULTIPLIED_TOTAL)),
-                new PlayerAttributeModifier(EntityAttributes.BLOCK_BREAK_SPEED, new EntityAttributeModifier(UHC.id("dasher/block_break_speed"), 0.1, EntityAttributeModifier.Operation.ADD_MULTIPLIED_TOTAL)));
+                new PlayerAttributeModifier(Attributes.MOVEMENT_SPEED, new AttributeModifier(UHC.id("dasher/movement_speed"), 0.2, AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL)),
+                new PlayerAttributeModifier(Attributes.BLOCK_BREAK_SPEED, new AttributeModifier(UHC.id("dasher/block_break_speed"), 0.1, AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL)));
         register(registerable, UHCModules.DASHER_PLUS, Items.DIAMOND_BOOTS,
-                new PlayerAttributeModifier(EntityAttributes.MOVEMENT_SPEED, new EntityAttributeModifier(UHC.id("dasher_plus/movement_speed"), 0.5, EntityAttributeModifier.Operation.ADD_MULTIPLIED_TOTAL)),
-                new PlayerAttributeModifier(EntityAttributes.BLOCK_BREAK_SPEED, new EntityAttributeModifier(UHC.id("dasher_plus/block_break_speed"), 0.4, EntityAttributeModifier.Operation.ADD_MULTIPLIED_TOTAL)),
-                new PlayerAttributeModifier(EntityAttributes.SAFE_FALL_DISTANCE, new EntityAttributeModifier(UHC.id("dasher_plus/safe_fall_distance"), 1024, EntityAttributeModifier.Operation.ADD_VALUE)));
+                new PlayerAttributeModifier(Attributes.MOVEMENT_SPEED, new AttributeModifier(UHC.id("dasher_plus/movement_speed"), 0.5, AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL)),
+                new PlayerAttributeModifier(Attributes.BLOCK_BREAK_SPEED, new AttributeModifier(UHC.id("dasher_plus/block_break_speed"), 0.4, AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL)),
+                new PlayerAttributeModifier(Attributes.SAFE_FALL_DISTANCE, new AttributeModifier(UHC.id("dasher_plus/safe_fall_distance"), 1024, AttributeModifier.Operation.ADD_VALUE)));
         register(registerable, UHCModules.ORE_BOOST, Items.DIAMOND_ORE,
-                new PlacedFeaturesModifier(RegistryEntryList.of(
+                new PlacedFeaturesModifier(HolderSet.direct(
                         placedFeatures.getOrThrow(UHCPlacedFeatures.BOOSTED_LAPIS_1),
                         placedFeatures.getOrThrow(UHCPlacedFeatures.BOOSTED_GOLD_1),
                         placedFeatures.getOrThrow(UHCPlacedFeatures.BOOSTED_DIAMOND_1)
                 )));
         register(registerable, UHCModules.ORE_BOOST_PLUS, b -> b.icon(Items.DIAMOND_ORE).modifiers(
-                        new PlacedFeaturesModifier(RegistryEntryList.of(
+                        new PlacedFeaturesModifier(HolderSet.direct(
                                 placedFeatures.getOrThrow(UHCPlacedFeatures.BOOSTED_LAPIS_2),
                                 placedFeatures.getOrThrow(UHCPlacedFeatures.BOOSTED_GOLD_2),
                                 placedFeatures.getOrThrow(UHCPlacedFeatures.BOOSTED_DIAMOND_2)
@@ -97,17 +95,17 @@ public class UHCModuleProvider extends FabricDynamicRegistryProvider {
     }
 
     public static void register(
-            Registerable<UHCModule> registerable,
-            RegistryKey<UHCModule> key,
-            ItemConvertible icon,
+            BootstrapContext<UHCModule> registerable,
+            ResourceKey<UHCModule> key,
+            ItemLike icon,
             Modifier... modifiers
     ) {
         registerable.register(key, UHCModules.create(key, icon, modifiers));
     }
 
     public static void register(
-            Registerable<UHCModule> registerable,
-            RegistryKey<UHCModule> key,
+            BootstrapContext<UHCModule> registerable,
+            ResourceKey<UHCModule> key,
             Function<UHCModule.Builder, UHCModule.Builder> builderFunction,
             String... longDescriptionStrings
     ) {

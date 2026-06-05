@@ -4,29 +4,32 @@ import fr.hugman.uhc.api.world.gen.feature.UHCConfiguredFeatures;
 import fr.hugman.uhc.api.world.gen.feature.UHCPlacedFeatures;
 import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricDynamicRegistryProvider;
-import net.minecraft.registry.Registerable;
-import net.minecraft.registry.RegistryKey;
-import net.minecraft.registry.RegistryKeys;
-import net.minecraft.registry.RegistryWrapper;
-import net.minecraft.registry.entry.RegistryEntry;
-import net.minecraft.world.gen.YOffset;
-import net.minecraft.world.gen.feature.ConfiguredFeature;
-import net.minecraft.world.gen.feature.PlacedFeature;
-import net.minecraft.world.gen.feature.PlacedFeatures;
-import net.minecraft.world.gen.placementmodifier.*;
-
+import net.minecraft.core.Holder;
+import net.minecraft.core.HolderLookup;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.data.worldgen.BootstrapContext;
+import net.minecraft.data.worldgen.placement.PlacementUtils;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.world.level.levelgen.VerticalAnchor;
+import net.minecraft.world.level.levelgen.feature.ConfiguredFeature;
+import net.minecraft.world.level.levelgen.placement.CountPlacement;
+import net.minecraft.world.level.levelgen.placement.HeightRangePlacement;
+import net.minecraft.world.level.levelgen.placement.InSquarePlacement;
+import net.minecraft.world.level.levelgen.placement.PlacedFeature;
+import net.minecraft.world.level.levelgen.placement.PlacementModifier;
+import net.minecraft.world.level.levelgen.placement.RarityFilter;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
 // WARNING: NEVER PUT BIOME MODIFIERS, THEY ARE NOT SUPPORTED IN UHC
 public class UHCPlacedFeatureProvider extends FabricDynamicRegistryProvider {
-    public UHCPlacedFeatureProvider(FabricDataOutput output, CompletableFuture<RegistryWrapper.WrapperLookup> registriesFuture) {
+    public UHCPlacedFeatureProvider(FabricDataOutput output, CompletableFuture<HolderLookup.Provider> registriesFuture) {
         super(output, registriesFuture);
     }
 
     @Override
-    protected void configure(RegistryWrapper.WrapperLookup registries, Entries entries) {
-        entries.addAll(registries.getOrThrow(RegistryKeys.PLACED_FEATURE));
+    protected void configure(HolderLookup.Provider registries, Entries entries) {
+        entries.addAll(registries.lookupOrThrow(Registries.PLACED_FEATURE));
     }
 
     @Override
@@ -35,10 +38,10 @@ public class UHCPlacedFeatureProvider extends FabricDynamicRegistryProvider {
     }
 
 
-    public static void register(Registerable<PlacedFeature> registerable) {
-        final var configured = registerable.getRegistryLookup(RegistryKeys.CONFIGURED_FEATURE);
+    public static void register(BootstrapContext<PlacedFeature> registerable) {
+        final var configured = registerable.lookup(Registries.CONFIGURED_FEATURE);
 
-        var fullRangePlacement = HeightRangePlacementModifier.uniform(YOffset.aboveBottom(0), YOffset.belowTop(0));
+        var fullRangePlacement = HeightRangePlacement.uniform(VerticalAnchor.aboveBottom(0), VerticalAnchor.belowTop(0));
 
         // Boosted Ores
         var lapis = configured.getOrThrow(UHCConfiguredFeatures.BOOSTED_LAPIS);
@@ -55,32 +58,32 @@ public class UHCPlacedFeatureProvider extends FabricDynamicRegistryProvider {
     }
 
     public static void of(
-            Registerable<PlacedFeature> featureRegisterable,
-            RegistryKey<PlacedFeature> key,
-            RegistryEntry<ConfiguredFeature<?, ?>> feature,
+            BootstrapContext<PlacedFeature> featureRegisterable,
+            ResourceKey<PlacedFeature> key,
+            Holder<ConfiguredFeature<?, ?>> feature,
             List<PlacementModifier> modifiers
     ) {
-        PlacedFeatures.register(featureRegisterable, key, feature, modifiers);
+        PlacementUtils.register(featureRegisterable, key, feature, modifiers);
     }
 
     public static void of(
-            Registerable<PlacedFeature> featureRegisterable,
-            RegistryKey<PlacedFeature> key,
-            RegistryEntry<ConfiguredFeature<?, ?>> feature,
+            BootstrapContext<PlacedFeature> featureRegisterable,
+            ResourceKey<PlacedFeature> key,
+            Holder<ConfiguredFeature<?, ?>> feature,
             PlacementModifier... modifiers
     ) {
-        PlacedFeatures.register(featureRegisterable, key, feature, modifiers);
+        PlacementUtils.register(featureRegisterable, key, feature, modifiers);
     }
 
     private static List<PlacementModifier> modifiersWithCount(int count, PlacementModifier heightModifier) {
-        return modifiers(CountPlacementModifier.of(count), heightModifier);
+        return modifiers(CountPlacement.of(count), heightModifier);
     }
 
     private static List<PlacementModifier> modifiersWithRarity(int chance, PlacementModifier heightModifier) {
-        return modifiers(RarityFilterPlacementModifier.of(chance), heightModifier);
+        return modifiers(RarityFilter.onAverageOnceEvery(chance), heightModifier);
     }
 
     private static List<PlacementModifier> modifiers(PlacementModifier countModifier, PlacementModifier heightModifier) {
-        return List.of(countModifier, SquarePlacementModifier.of(), heightModifier);
+        return List.of(countModifier, InSquarePlacement.spread(), heightModifier);
     }
 }

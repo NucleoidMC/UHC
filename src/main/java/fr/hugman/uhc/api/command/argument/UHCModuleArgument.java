@@ -7,57 +7,57 @@ import com.mojang.brigadier.exceptions.DynamicCommandExceptionType;
 import fr.hugman.uhc.api.module.UHCModule;
 import fr.hugman.uhc.api.registry.UHCRegistryKeys;
 import fr.hugman.uhc.impl.game.ModuleManager;
-import net.minecraft.command.CommandSource;
-import net.minecraft.command.argument.IdentifierArgumentType;
-import net.minecraft.registry.Registry;
-import net.minecraft.registry.RegistryKey;
-import net.minecraft.registry.entry.RegistryEntry;
-import net.minecraft.server.command.CommandManager;
-import net.minecraft.server.command.ServerCommandSource;
-import net.minecraft.text.Text;
-import net.minecraft.util.Identifier;
 import xyz.nucleoid.plasmid.api.game.GameSpaceManager;
 
 import java.util.ArrayList;
 import java.util.Locale;
 import java.util.Objects;
+import net.minecraft.commands.CommandSourceStack;
+import net.minecraft.commands.Commands;
+import net.minecraft.commands.SharedSuggestionProvider;
+import net.minecraft.commands.arguments.ResourceLocationArgument;
+import net.minecraft.core.Holder;
+import net.minecraft.core.Registry;
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.ResourceLocation;
 
 public final class UHCModuleArgument {
-    private static final DynamicCommandExceptionType MODULE_NOT_FOUND = new DynamicCommandExceptionType((id) -> Text.stringifiedTranslatable("text.uhc.module.not_found", id));
+    private static final DynamicCommandExceptionType MODULE_NOT_FOUND = new DynamicCommandExceptionType((id) -> Component.translatableEscape("text.uhc.module.not_found", id));
 
-    public static RequiredArgumentBuilder<ServerCommandSource, Identifier> argumentFromEnabled(String name) {
-        return CommandManager.argument(name, IdentifierArgumentType.identifier()).suggests((ctx, builder) -> {
-            Registry<UHCModule> registry = ctx.getSource().getRegistryManager().getOrThrow(UHCRegistryKeys.UHC_MODULE);
+    public static RequiredArgumentBuilder<CommandSourceStack, ResourceLocation> argumentFromEnabled(String name) {
+        return Commands.argument(name, ResourceLocationArgument.id()).suggests((ctx, builder) -> {
+            Registry<UHCModule> registry = ctx.getSource().registryAccess().lookupOrThrow(UHCRegistryKeys.UHC_MODULE);
             String remaining = builder.getRemaining().toLowerCase(Locale.ROOT);
-            var manager = Objects.requireNonNull(GameSpaceManager.get().byWorld(ctx.getSource().getWorld())).getAttachment(ModuleManager.ATTACHMENT);
+            var manager = Objects.requireNonNull(GameSpaceManager.get().byWorld(ctx.getSource().getLevel())).getAttachment(ModuleManager.ATTACHMENT);
             if (manager == null) {
                 return builder.buildFuture();
             }
             var enabledKeys = manager.keys();
-            CommandSource.forEachMatching(enabledKeys, remaining, RegistryKey::getValue, (key) -> registry.getOptional(key)
-                    .ifPresent((entry) -> builder.suggest(key.getValue().toString(), entry.value().name())));
+            SharedSuggestionProvider.filterResources(enabledKeys, remaining, ResourceKey::location, (key) -> registry.get(key)
+                    .ifPresent((entry) -> builder.suggest(key.location().toString(), entry.value().name())));
             return builder.buildFuture();
         });
     }
 
-    public static RequiredArgumentBuilder<ServerCommandSource, Identifier> argumentFromDisabled(String name) {
-        return CommandManager.argument(name, IdentifierArgumentType.identifier()).suggests((ctx, builder) -> {
-            Registry<UHCModule> registry = ctx.getSource().getRegistryManager().getOrThrow(UHCRegistryKeys.UHC_MODULE);
+    public static RequiredArgumentBuilder<CommandSourceStack, ResourceLocation> argumentFromDisabled(String name) {
+        return Commands.argument(name, ResourceLocationArgument.id()).suggests((ctx, builder) -> {
+            Registry<UHCModule> registry = ctx.getSource().registryAccess().lookupOrThrow(UHCRegistryKeys.UHC_MODULE);
             String remaining = builder.getRemaining().toLowerCase(Locale.ROOT);
-            var manager = Objects.requireNonNull(GameSpaceManager.get().byWorld(ctx.getSource().getWorld())).getAttachment(ModuleManager.ATTACHMENT);
-            var candidates = new ArrayList<>(registry.getKeys());
+            var manager = Objects.requireNonNull(GameSpaceManager.get().byWorld(ctx.getSource().getLevel())).getAttachment(ModuleManager.ATTACHMENT);
+            var candidates = new ArrayList<>(registry.registryKeySet());
             if (manager != null) {
                 candidates.removeAll(manager.keys());
             }
-            CommandSource.forEachMatching(candidates, remaining, RegistryKey::getValue, (key) -> registry.getOptional(key)
-                    .ifPresent((entry) -> builder.suggest(key.getValue().toString(), entry.value().name())));
+            SharedSuggestionProvider.filterResources(candidates, remaining, ResourceKey::location, (key) -> registry.get(key)
+                    .ifPresent((entry) -> builder.suggest(key.location().toString(), entry.value().name())));
             return builder.buildFuture();
         });
     }
 
-    public static RegistryEntry.Reference<UHCModule> get(CommandContext<ServerCommandSource> context, String name) throws CommandSyntaxException {
-        RegistryKey<UHCModule> key = RegistryKey.of(UHCRegistryKeys.UHC_MODULE, IdentifierArgumentType.getIdentifier(context, name));
-        Registry<UHCModule> registry = context.getSource().getRegistryManager().getOrThrow(UHCRegistryKeys.UHC_MODULE);
-        return registry.getOptional(key).orElseThrow(() -> MODULE_NOT_FOUND.create(key.getValue()));
+    public static Holder.Reference<UHCModule> get(CommandContext<CommandSourceStack> context, String name) throws CommandSyntaxException {
+        ResourceKey<UHCModule> key = ResourceKey.create(UHCRegistryKeys.UHC_MODULE, ResourceLocationArgument.getId(context, name));
+        Registry<UHCModule> registry = context.getSource().registryAccess().lookupOrThrow(UHCRegistryKeys.UHC_MODULE);
+        return registry.get(key).orElseThrow(() -> MODULE_NOT_FOUND.create(key.location()));
     }
 }

@@ -8,13 +8,13 @@ import fr.hugman.uhc.api.game.UHCGameTypes;
 import fr.hugman.uhc.api.gui.PreviousableGui;
 import fr.hugman.uhc.api.gui.UHCConfigGuiElements;
 import net.fabricmc.loader.api.FabricLoader;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
-import net.minecraft.registry.Registries;
-import net.minecraft.registry.entry.RegistryEntry;
-import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.text.Text;
-import net.minecraft.util.Identifier;
+import net.minecraft.core.Holder;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import xyz.nucleoid.plasmid.api.game.common.config.PlayerLimiterConfig;
 import xyz.nucleoid.plasmid.api.game.common.config.WaitingLobbyConfig;
 import xyz.nucleoid.plasmid.api.game.config.CustomValuesConfig;
@@ -26,8 +26,8 @@ public class CreateUHCGui extends PreviousableGui {
 
     private final UHCConfig config;
 
-    public CreateUHCGui(ServerPlayerEntity player, UHCConfig config) {
-        super(Registries.SCREEN_HANDLER.get(Identifier.of("generic_9x" + HEIGHT)), player, false);
+    public CreateUHCGui(ServerPlayer player, UHCConfig config) {
+        super(BuiltInRegistries.MENU.getValue(ResourceLocation.parse("generic_9x" + HEIGHT)), player, false);
         this.config = config;
     }
 
@@ -40,7 +40,7 @@ public class CreateUHCGui extends PreviousableGui {
     private void displayMainPage() {
         int middleRow = (HEIGHT - 1) * 9 / 2;
         clearSlots();
-        setTitle(Text.translatable("ui.uhc.create_uhc.title"));
+        setTitle(Component.translatable("ui.uhc.create_uhc.title"));
         addBackButton();
         setSlot(8, UHCConfigGuiElements.launch()
                 .setCallback((index, type, action, gui) -> {
@@ -53,7 +53,7 @@ public class CreateUHCGui extends PreviousableGui {
     }
 
     private void displaySelectTeamSizePage() {
-        setTitle(Text.translatable("ui.uhc.select_team_size.title"));
+        setTitle(Component.translatable("ui.uhc.select_team_size.title"));
         clearSlots();
         setSlot(0, UHCConfigGuiElements.back(player, this::displayMainPage));
         setSlot(9 + 1, createTeamSizeElement(UHCGameTeamSize.SOLO));
@@ -71,14 +71,14 @@ public class CreateUHCGui extends PreviousableGui {
                 .hideDefaultTooltip()
                 .setCallback((index, type, action, gui) -> player.getServer().execute(() -> {
                     UHCConfigGuiElements.playClickSound(player);
-                    var gamePortal = new NewGamePortalBackend(RegistryEntry.of(new GameConfig<>(
+                    var gamePortal = new NewGamePortalBackend(Holder.direct(new GameConfig<>(
                             UHCGameTypes.STANDARD,
-                            Text.translatable("game.generic.mode", Text.translatable("game.custom_uhc"), Text.translatable("mode." + teamSize.getName())),
+                            Component.translatable("game.generic.mode", Component.translatable("game.custom_uhc"), Component.translatable("mode." + teamSize.getName())),
                             null, null, new ItemStack(Items.APPLE), CustomValuesConfig.empty(),
                             new UHCGameConfig(
                                     new WaitingLobbyConfig(new PlayerLimiterConfig(), teamSize.getMinPlayers(), teamSize.getThresholdPlayers(), WaitingLobbyConfig.Countdown.DEFAULT),
                                     teamSize.getTeamsize(),
-                                    RegistryEntry.of(config)
+                                    Holder.direct(config)
                             )
                     )));
                     gamePortal.applyTo(player, false);
@@ -87,16 +87,16 @@ public class CreateUHCGui extends PreviousableGui {
 
     private GuiElementBuilder createTestingElement() {
         return new GuiElementBuilder(Items.NAUTILUS_SHELL)
-                .setName(Text.literal("DEBUG TEST"))
+                .setName(Component.literal("DEBUG TEST"))
                 .hideDefaultTooltip()
                 .setCallback((index, type, action, gui) -> player.getServer().execute(() -> {
                     UHCConfigGuiElements.playClickSound(player);
-                    var gamePortal = new NewGamePortalBackend(RegistryEntry.of(new GameConfig<>(
+                    var gamePortal = new NewGamePortalBackend(Holder.direct(new GameConfig<>(
                             UHCGameTypes.STANDARD,
-                            Text.translatable("game.generic.mode", Text.translatable("game.custom_uhc"), Text.literal("DEBUG TEST")),
+                            Component.translatable("game.generic.mode", Component.translatable("game.custom_uhc"), Component.literal("DEBUG TEST")),
                             null, null, new ItemStack(Items.APPLE), CustomValuesConfig.empty(),
                             new UHCGameConfig(
-                                    new WaitingLobbyConfig(new PlayerLimiterConfig(), 1, 1, WaitingLobbyConfig.Countdown.DEFAULT), 1, RegistryEntry.of(config)
+                                    new WaitingLobbyConfig(new PlayerLimiterConfig(), 1, 1, WaitingLobbyConfig.Countdown.DEFAULT), 1, Holder.direct(config)
                             )
                     )));
                     gamePortal.applyTo(player, false);

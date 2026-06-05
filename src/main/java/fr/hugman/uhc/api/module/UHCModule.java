@@ -5,19 +5,6 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import eu.pb4.sgui.api.elements.GuiElementBuilder;
 import fr.hugman.uhc.api.modifier.Modifier;
 import fr.hugman.uhc.api.registry.UHCRegistryKeys;
-import net.minecraft.item.ItemConvertible;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
-import net.minecraft.registry.RegistryCodecs;
-import net.minecraft.registry.RegistryKey;
-import net.minecraft.registry.entry.RegistryElementCodec;
-import net.minecraft.registry.entry.RegistryEntry;
-import net.minecraft.registry.entry.RegistryEntryList;
-import net.minecraft.text.Style;
-import net.minecraft.text.Text;
-import net.minecraft.text.TextColor;
-import net.minecraft.util.Formatting;
-import net.minecraft.util.Util;
 import xyz.nucleoid.codecs.MoreCodecs;
 import xyz.nucleoid.plasmid.api.util.PlasmidCodecs;
 
@@ -25,11 +12,24 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import net.minecraft.ChatFormatting;
+import net.minecraft.Util;
+import net.minecraft.core.Holder;
+import net.minecraft.core.HolderSet;
+import net.minecraft.core.RegistryCodecs;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.Style;
+import net.minecraft.network.chat.TextColor;
+import net.minecraft.resources.RegistryFileCodec;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.level.ItemLike;
 
 public record UHCModule(
-        Text name,
-        Optional<Text> description,
-        Optional<List<Text>> longDescription,
+        Component name,
+        Optional<Component> description,
+        Optional<List<Component>> longDescription,
         ItemStack icon,
         TextColor color,
         List<Modifier> modifiers
@@ -43,8 +43,8 @@ public record UHCModule(
             Modifier.TYPE_CODEC.listOf().fieldOf("modifiers").forGetter(UHCModule::modifiers)
     ).apply(instance, UHCModule::new));
 
-    public static final Codec<RegistryEntry<UHCModule>> ENTRY_CODEC = RegistryElementCodec.of(UHCRegistryKeys.UHC_MODULE, CODEC);
-    public static final Codec<RegistryEntryList<UHCModule>> ENTRY_LIST_CODEC = RegistryCodecs.entryList(UHCRegistryKeys.UHC_MODULE, CODEC);
+    public static final Codec<Holder<UHCModule>> ENTRY_CODEC = RegistryFileCodec.create(UHCRegistryKeys.UHC_MODULE, CODEC);
+    public static final Codec<HolderSet<UHCModule>> ENTRY_LIST_CODEC = RegistryCodecs.homogeneousList(UHCRegistryKeys.UHC_MODULE, CODEC);
 
     public static Builder builder() {
         return new Builder();
@@ -55,34 +55,34 @@ public record UHCModule(
      */
     public GuiElementBuilder getElement() {
         GuiElementBuilder element = new GuiElementBuilder(icon)
-                .setName(name.copy().formatted(Formatting.BOLD).setStyle(Style.EMPTY.withColor(color)))
+                .setName(name.copy().withStyle(ChatFormatting.BOLD).setStyle(Style.EMPTY.withColor(color)))
                 .hideDefaultTooltip();
         return element;
     }
 
     public void addDescriptionToElement(GuiElementBuilder element) {
         if (longDescription.isPresent()) {
-            element.addLoreLine(Text.literal(""));
-            for (Text line : longDescription.get()) {
-                element.addLoreLine(Text.literal("- ").append(line));
+            element.addLoreLine(Component.literal(""));
+            for (Component line : longDescription.get()) {
+                element.addLoreLine(Component.literal("- ").append(line));
             }
         } else if (description.isPresent()) {
-            element.addLoreLine(Text.literal(""));
-            element.addLoreLine(Text.literal("- ").append(description.get()));
+            element.addLoreLine(Component.literal(""));
+            element.addLoreLine(Component.literal("- ").append(description.get()));
         }
     }
 
     public static class Builder {
-        private Optional<Text> name;
-        private Optional<Text> description = Optional.empty();
-        private Optional<List<Text>> longDescription = Optional.empty();
+        private Optional<Component> name;
+        private Optional<Component> description = Optional.empty();
+        private Optional<List<Component>> longDescription = Optional.empty();
         private ItemStack icon = new ItemStack(Items.BARRIER);
         private TextColor color = TextColor.fromRgb(3791743);
         private List<Modifier> modifiers = List.of();
 
         private Builder() {}
 
-        public Builder name(Text name) {
+        public Builder name(Component name) {
             this.name = Optional.of(name);
             return this;
         }
@@ -90,11 +90,11 @@ public record UHCModule(
         /**
          * Sets a standard name of the module using its registry key.
          */
-        public Builder nameFrom(RegistryKey<?> key) {
-            return name(Text.translatable(Util.createTranslationKey("module", key.getValue())));
+        public Builder nameFrom(ResourceKey<?> key) {
+            return name(Component.translatable(Util.makeDescriptionId("module", key.location())));
         }
 
-        public Builder description(Text description) {
+        public Builder description(Component description) {
             this.description = Optional.of(description);
             return this;
         }
@@ -102,16 +102,16 @@ public record UHCModule(
         /**
          * Sets a standard description of the module using its registry key.
          */
-        public Builder descriptionFrom(RegistryKey<?> key) {
-            return description(Text.translatable(Util.createTranslationKey("module", key.getValue()) + ".description"));
+        public Builder descriptionFrom(ResourceKey<?> key) {
+            return description(Component.translatable(Util.makeDescriptionId("module", key.location()) + ".description"));
         }
 
-        public Builder longDescription(List<Text> longDescription) {
+        public Builder longDescription(List<Component> longDescription) {
             this.longDescription = Optional.of(longDescription);
             return this;
         }
 
-        public Builder longDescription(Text... longDescription) {
+        public Builder longDescription(Component... longDescription) {
             return longDescription(List.of(longDescription));
         }
 
@@ -120,7 +120,7 @@ public record UHCModule(
             return this;
         }
 
-        public Builder icon(ItemConvertible icon) {
+        public Builder icon(ItemLike icon) {
             this.icon = new ItemStack(icon);
             return this;
         }
@@ -140,23 +140,23 @@ public record UHCModule(
             return this;
         }
 
-        public Builder applyDisplay(RegistryKey<?> key) {
-            var translationKey = Util.createTranslationKey("module", key.getValue());
+        public Builder applyDisplay(ResourceKey<?> key) {
+            var translationKey = Util.makeDescriptionId("module", key.location());
             if (name.isEmpty()) {
-                name(Text.translatable(translationKey));
+                name(Component.translatable(translationKey));
             }
             if (description.isEmpty()) {
-                description(Text.translatable(translationKey + ".description"));
+                description(Component.translatable(translationKey + ".description"));
             }
             return this;
         }
 
-        public Builder applyDisplay(RegistryKey<?> key, String... longDescriptionStrings) {
-            var translationKey = Util.createTranslationKey("module", key.getValue());
+        public Builder applyDisplay(ResourceKey<?> key, String... longDescriptionStrings) {
+            var translationKey = Util.makeDescriptionId("module", key.location());
             applyDisplay(key);
             if (longDescription.isEmpty() || longDescription.get().isEmpty()) {
                 longDescription(longDescription.orElse(Arrays.stream(longDescriptionStrings)
-                        .map(s -> Text.translatable(translationKey + ".description." + s))
+                        .map(s -> Component.translatable(translationKey + ".description." + s))
                         .collect(Collectors.toUnmodifiableList())));
             }
 

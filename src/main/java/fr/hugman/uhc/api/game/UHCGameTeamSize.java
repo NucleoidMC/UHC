@@ -1,9 +1,9 @@
 package fr.hugman.uhc.api.game;
 
 import eu.pb4.sgui.api.elements.GuiElementBuilder;
-import net.minecraft.item.Item;
-import net.minecraft.item.Items;
-import net.minecraft.text.Text;
+import net.minecraft.network.chat.Component;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.Items;
 
 public enum UHCGameTeamSize {
     SOLO("solo", Items.RED_CANDLE, 1, 2, 8),
@@ -42,6 +42,6 @@ public enum UHCGameTeamSize {
     }
 
     public GuiElementBuilder createElement() {
-        return new GuiElementBuilder(this.item).setName(Text.translatable("mode." + name));
+        return new GuiElementBuilder(this.item).setName(Component.translatable("mode." + name));
     }
 }

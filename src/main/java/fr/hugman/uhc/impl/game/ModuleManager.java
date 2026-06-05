@@ -6,19 +6,6 @@ import fr.hugman.uhc.impl.UHC;
 import fr.hugman.uhc.api.gui.creator.UHCModulesGui;
 import fr.hugman.uhc.api.modifier.*;
 import fr.hugman.uhc.api.module.UHCModule;
-import net.minecraft.block.BlockState;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.registry.RegistryKey;
-import net.minecraft.registry.entry.RegistryEntry;
-import net.minecraft.registry.entry.RegistryEntryList;
-import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.server.world.ServerWorld;
-import net.minecraft.text.Text;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.MathHelper;
-import net.minecraft.world.explosion.Explosion;
 import org.jetbrains.annotations.Nullable;
 import xyz.nucleoid.plasmid.api.game.GameActivity;
 import xyz.nucleoid.plasmid.api.game.GameAttachment;
@@ -35,17 +22,30 @@ import java.util.List;
 import java.util.Objects;
 import java.util.function.Consumer;
 import java.util.stream.Stream;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Holder;
+import net.minecraft.core.HolderSet;
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.util.Mth;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Explosion;
+import net.minecraft.world.level.block.state.BlockState;
 
 public final class ModuleManager {
     public static final GameAttachment<ModuleManager> ATTACHMENT = GameAttachment.create(UHC.id("module_manager"));
 
-    private final List<RegistryEntry<UHCModule>> modules;
+    private final List<Holder<UHCModule>> modules;
 
-    public ModuleManager(List<RegistryEntry<UHCModule>> modules) {
+    public ModuleManager(List<Holder<UHCModule>> modules) {
         this.modules = new ArrayList<>(modules);
     }
 
-    public ModuleManager(RegistryEntryList<UHCModule> modules) {
+    public ModuleManager(HolderSet<UHCModule> modules) {
         this(modules.stream().toList());
     }
 
@@ -53,7 +53,7 @@ public final class ModuleManager {
         return modules.isEmpty();
     }
 
-    public List<RegistryEntry<UHCModule>> modules() {
+    public List<Holder<UHCModule>> modules() {
         return modules;
     }
 
@@ -65,8 +65,8 @@ public final class ModuleManager {
         return modifiers;
     }
 
-    public List<RegistryKey<UHCModule>> keys() {
-        return modules.stream().map(moduleRegistryEntry -> moduleRegistryEntry.getKey().orElse(null)).filter(Objects::nonNull).toList();
+    public List<ResourceKey<UHCModule>> keys() {
+        return modules.stream().map(moduleRegistryEntry -> moduleRegistryEntry.unwrapKey().orElse(null)).filter(Objects::nonNull).toList();
     }
 
     public void forEach(Consumer<UHCModule> action) {
@@ -78,14 +78,14 @@ public final class ModuleManager {
         return ModuleManager.modifiers(modules, type);
     }
 
-    public boolean enableModule(RegistryEntry<UHCModule> module) {
+    public boolean enableModule(Holder<UHCModule> module) {
         if (modules.contains(module)) {
             return false;
         }
         return modules.add(module);
     }
 
-    public boolean disableModule(RegistryEntry<UHCModule> module) {
+    public boolean disableModule(Holder<UHCModule> module) {
         if (!modules.contains(module)) {
             return false;
         }
@@ -98,10 +98,10 @@ public final class ModuleManager {
      * @param player The player to build the GUI for
      * @return The GUI
      */
-    public GuiInterface buildGui(ServerPlayerEntity player) {
+    public GuiInterface buildGui(ServerPlayer player) {
         boolean isInGui = GuiHelpers.getCurrentGui(player) != null;
-        UHCModulesGui gui = new UHCModulesGui(player, MathHelper.clamp(1, MathHelper.ceil((float) modules.size() / 9) + (isInGui ? 1 : 0), 6), modules);
-        gui.setTitle(Text.translatable("ui.uhc.modules.title"));
+        UHCModulesGui gui = new UHCModulesGui(player, Mth.clamp(1, Mth.ceil((float) modules.size() / 9) + (isInGui ? 1 : 0), 6), modules);
+        gui.setTitle(Component.translatable("ui.uhc.modules.title"));
         return gui;
     }
 
@@ -110,7 +110,7 @@ public final class ModuleManager {
      *
      * @return A list of modifiers of the specified type
      */
-    public static <V extends Modifier> List<V> modifiers(List<RegistryEntry<UHCModule>> modules, ModifierType<V> type) {
+    public static <V extends Modifier> List<V> modifiers(List<Holder<UHCModule>> modules, ModifierType<V> type) {
         List<V> modifiers = new ArrayList<>();
         for (var moduleEntry : modules) {
             for (Modifier modifier : moduleEntry.value().modifiers()) {
@@ -123,9 +123,9 @@ public final class ModuleManager {
     }
 
 
-    public static <V extends Modifier> Stream<V> streamModifiers(Stream<RegistryEntry<UHCModule>> modules, ModifierType<V> type) {
+    public static <V extends Modifier> Stream<V> streamModifiers(Stream<Holder<UHCModule>> modules, ModifierType<V> type) {
         return modules
-                .map(RegistryEntry::value)
+                .map(Holder::value)
                 .flatMap(module -> module.modifiers().stream())
                 .filter(modifier -> modifier.getType() == type)
                 .map(modifier -> (V) modifier);
@@ -144,17 +144,17 @@ public final class ModuleManager {
         playerManager.forEachAlive(player -> {
             for (ReplaceStackModifier piece : this.modifiers(ModifierType.REPLACE_STACK)) {
                 var inv = player.getInventory();
-                for (int i = 0; i < inv.size(); i++) {
-                    ItemStack stack = inv.getStack(i);
+                for (int i = 0; i < inv.getContainerSize(); i++) {
+                    ItemStack stack = inv.getItem(i);
                     if (piece.predicate().test(stack)) {
-                        inv.setStack(i, piece.stack().copy());
+                        inv.setItem(i, piece.stack().copy());
                     }
                 }
             }
         });
     }
 
-    private EventResult onBlockBroken(ServerPlayerEntity playerEntity, ServerWorld world, BlockPos pos) {
+    private EventResult onBlockBroken(ServerPlayer playerEntity, ServerLevel world, BlockPos pos) {
         for (TraversalBreakModifier piece : this.modifiers(ModifierType.TRAVERSAL_BREAK)) {
             piece.breakBlock(world, playerEntity, pos);
         }
@@ -164,7 +164,7 @@ public final class ModuleManager {
     private EventResult onExplosion(Explosion explosion, List<BlockPos> positions) {
         positions.forEach(pos -> {
             for (TraversalBreakModifier piece : this.modifiers(ModifierType.TRAVERSAL_BREAK)) {
-                piece.breakBlock(explosion.getWorld(), explosion.getCausingEntity(), pos);
+                piece.breakBlock(explosion.level(), explosion.getIndirectSourceEntity(), pos);
             }
         });
         return EventResult.ALLOW;
@@ -176,7 +176,7 @@ public final class ModuleManager {
         List<ItemStack> stacks = new ArrayList<>();
         for (EntityLootModifier piece : this.modifiers(ModifierType.ENTITY_LOOT)) {
             if (piece.test(livingEntity)) {
-                stacks.addAll(piece.getLoots((ServerWorld) livingEntity.getWorld(), livingEntity));
+                stacks.addAll(piece.getLoots((ServerLevel) livingEntity.level(), livingEntity));
                 if (piece.shouldReplace()) keepOld = false;
             }
         }
@@ -184,13 +184,13 @@ public final class ModuleManager {
         return DroppedItemsResult.pass(stacks);
     }
 
-    private DroppedItemsResult onBlockDrop(@Nullable Entity entity, ServerWorld world, BlockPos pos, BlockState state, List<ItemStack> itemStacks) {
+    private DroppedItemsResult onBlockDrop(@Nullable Entity entity, ServerLevel world, BlockPos pos, BlockState state, List<ItemStack> itemStacks) {
         boolean keepOld = true;
         List<ItemStack> stacks = new ArrayList<>();
         for (BlockLootModifier piece : this.modifiers(ModifierType.BLOCK_LOOT)) {
             if (piece.test(state, world.getRandom())) {
                 piece.spawnExperience(world, pos);
-                stacks.addAll(piece.getLoots(world, pos, entity, entity instanceof LivingEntity ? ((LivingEntity) entity).getActiveItem() : ItemStack.EMPTY));
+                stacks.addAll(piece.getLoots(world, pos, entity, entity instanceof LivingEntity ? ((LivingEntity) entity).getUseItem() : ItemStack.EMPTY));
                 if (piece.shouldReplace()) keepOld = false;
             }
         }

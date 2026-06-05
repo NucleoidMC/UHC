@@ -4,17 +4,17 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import fr.hugman.uhc.impl.game.UHCPlayerManager;
-import net.minecraft.entity.effect.StatusEffect;
-import net.minecraft.entity.effect.StatusEffectInstance;
-import net.minecraft.registry.entry.RegistryEntry;
-import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.core.Holder;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.effect.MobEffect;
+import net.minecraft.world.effect.MobEffectInstance;
 
 public record PermanentEffectModifier(
-        RegistryEntry<StatusEffect> effect,
+        Holder<MobEffect> effect,
         int amplifier
 ) implements Modifier {
     public static final MapCodec<PermanentEffectModifier> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
-            StatusEffect.ENTRY_CODEC.fieldOf("effect").forGetter(PermanentEffectModifier::effect),
+            MobEffect.CODEC.fieldOf("effect").forGetter(PermanentEffectModifier::effect),
             Codec.intRange(0, Integer.MAX_VALUE).optionalFieldOf("amplifier", 0).forGetter(PermanentEffectModifier::amplifier)
     ).apply(instance, PermanentEffectModifier::new));
 
@@ -23,8 +23,8 @@ public record PermanentEffectModifier(
         return ModifierType.PERMANENT_EFFECT;
     }
 
-    public void setEffect(ServerPlayerEntity player) {
-        player.addStatusEffect(new StatusEffectInstance(this.effect, -1, this.amplifier, false, false, true));
+    public void setEffect(ServerPlayer player) {
+        player.addEffect(new MobEffectInstance(this.effect, -1, this.amplifier, false, false, true));
     }
 
     @Override
@@ -34,6 +34,6 @@ public record PermanentEffectModifier(
 
     @Override
     public void disable(UHCPlayerManager playerManager) {
-        playerManager.forEachAlive(player -> player.removeStatusEffect(this.effect));
+        playerManager.forEachAlive(player -> player.removeEffect(this.effect));
     }
 }

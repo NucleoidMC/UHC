@@ -1,9 +1,9 @@
 package fr.hugman.uhc.api.registry;
 
 import fr.hugman.uhc.impl.UHC;
-import net.minecraft.entity.EntityType;
-import net.minecraft.registry.RegistryKeys;
-import net.minecraft.registry.tag.TagKey;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.tags.TagKey;
+import net.minecraft.world.entity.EntityType;
 
 public class UHCEntityTags {
     public static final TagKey<EntityType<?>> DROPS_CHICKEN_FOOD = of("animal_food/chicken");
@@ -14,6 +14,6 @@ public class UHCEntityTags {
     public static final TagKey<EntityType<?>> DROPS_FISH_FOOD = of("animal_food/fish");
 
     private static TagKey<EntityType<?>> of(String path) {
-        return TagKey.of(RegistryKeys.ENTITY_TYPE, UHC.id(path));
+        return TagKey.create(Registries.ENTITY_TYPE, UHC.id(path));
     }
 }

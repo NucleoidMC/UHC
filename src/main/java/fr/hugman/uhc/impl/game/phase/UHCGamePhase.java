@@ -1,12 +1,12 @@
 package fr.hugman.uhc.impl.game.phase;
 
-import net.minecraft.util.StringIdentifiable;
+import net.minecraft.util.StringRepresentable;
 
-public enum UHCGamePhase implements StringIdentifiable {
+public enum UHCGamePhase implements StringRepresentable {
     WARMUP("warmup"),
     FIGHT("fight");
 
-    public static final StringIdentifiable.EnumCodec<UHCGamePhase> CODEC = StringIdentifiable.createCodec(UHCGamePhase::values);
+    public static final StringRepresentable.EnumCodec<UHCGamePhase> CODEC = StringRepresentable.fromEnum(UHCGamePhase::values);
     private final String id;
 
     UHCGamePhase(final String id) {
@@ -18,11 +18,11 @@ public enum UHCGamePhase implements StringIdentifiable {
     }
 
     public static UHCGamePhase getFromId(String id) {
-        return CODEC.byId(id);
+        return CODEC.byName(id);
     }
 
     @Override
-    public String asString() {
+    public String getSerializedName() {
         return this.id;
     }
 }

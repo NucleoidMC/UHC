@@ -4,10 +4,6 @@ import fr.hugman.uhc.impl.UHC;
 import fr.hugman.uhc.api.config.UHCGameConfig;
 import it.unimi.dsi.fastutil.objects.Object2ObjectMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
-import net.minecraft.scoreboard.AbstractTeam;
-import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.text.Text;
-import net.minecraft.util.DyeColor;
 import org.apache.commons.lang3.RandomStringUtils;
 import xyz.nucleoid.plasmid.api.game.GameActivity;
 import xyz.nucleoid.plasmid.api.game.GameSpace;
@@ -21,6 +17,10 @@ import java.util.Collections;
 import java.util.List;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
+import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.item.DyeColor;
+import net.minecraft.world.scores.Team;
 
 public class UHCPlayerManager {
     private final GameActivity activity;
@@ -56,8 +56,8 @@ public class UHCPlayerManager {
             GameTeam team = new GameTeam(new GameTeamKey(RandomStringUtils.randomAlphabetic(16)),
                     GameTeamConfig.builder()
                             .setFriendlyFire(false)
-                            .setCollision(AbstractTeam.CollisionRule.PUSH_OTHER_TEAMS)
-                            .setName(Text.literal("UHC Team")) //TODO: Add correct team name
+                            .setCollision(Team.CollisionRule.PUSH_OTHER_TEAMS)
+                            .setName(Component.literal("UHC Team")) //TODO: Add correct team name
                             .setColors(GameTeamConfig.Colors.from(teamColors.get(i)))
                             .build());
 
@@ -66,8 +66,8 @@ public class UHCPlayerManager {
         }
 
 
-        TeamAllocator<GameTeam, ServerPlayerEntity> allocator = new TeamAllocator<>(teamsAlive);
-        for (ServerPlayerEntity playerEntity : gameSpace.getPlayers()) {
+        TeamAllocator<GameTeam, ServerPlayer> allocator = new TeamAllocator<>(teamsAlive);
+        for (ServerPlayer playerEntity : gameSpace.getPlayers()) {
             allocator.add(playerEntity, null);
         }
         allocator.allocate((team, player) -> {
@@ -86,11 +86,11 @@ public class UHCPlayerManager {
 
     // PARTICIPANTS
 
-    public UHCParticipant get(ServerPlayerEntity player) {
+    public UHCParticipant get(ServerPlayer player) {
         return participants.get(PlayerRef.of(player));
     }
 
-    public boolean contains(ServerPlayerEntity player) {
+    public boolean contains(ServerPlayer player) {
         return participants.containsKey(PlayerRef.of(player));
     }
 
@@ -102,7 +102,7 @@ public class UHCPlayerManager {
         return (int) participants.values().stream().filter(participant -> !participant.isEliminated()).count();
     }
 
-    public void forEachAlive(final Consumer<ServerPlayerEntity> consumer) {
+    public void forEachAlive(final Consumer<ServerPlayer> consumer) {
         participants.forEach((ref, participant) -> {
             if (!participant.isEliminated()) {
                 var player = this.activity.getGameSpace().getPlayers().getEntity(ref.id());

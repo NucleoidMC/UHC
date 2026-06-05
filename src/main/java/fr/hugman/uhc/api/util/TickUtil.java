@@ -1,8 +1,8 @@
 package fr.hugman.uhc.api.util;
 
 
-import net.minecraft.text.MutableText;
-import net.minecraft.text.Text;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
 
 public final class TickUtil {
     public static long asSeconds(long t) {
@@ -29,16 +29,16 @@ public final class TickUtil {
         return (int) asHours(t) % 24;
     }
 
-    public static MutableText format(long t) {
+    public static MutableComponent format(long t) {
         if (getHours(t) > 0) {
-            return Text.literal(String.format("%02d:%02d:%02d", getHours(t), getMinutes(t), getSeconds(t)));
+            return Component.literal(String.format("%02d:%02d:%02d", getHours(t), getMinutes(t), getSeconds(t)));
         } else {
-            return Text.literal(String.format("%02d:%02d", getMinutes(t), getSeconds(t)));
+            return Component.literal(String.format("%02d:%02d", getMinutes(t), getSeconds(t)));
         }
     }
 
-    public static MutableText formatPretty(long t) {
-        MutableText text = Text.literal("");
+    public static MutableComponent formatPretty(long t) {
+        MutableComponent text = Component.literal("");
         long hours = getHours(t);
         long minutes = getMinutes(t);
         long seconds = getSeconds(t);
@@ -46,29 +46,29 @@ public final class TickUtil {
         boolean textBefore = false;
         if (hours > 0) {
             if (hours == 1) {
-                text.append(Text.translatable("text.uhc.time.hour"));
+                text.append(Component.translatable("text.uhc.time.hour"));
             } else {
-                text.append(Text.translatable("text.uhc.time.hours", hours));
+                text.append(Component.translatable("text.uhc.time.hours", hours));
             }
             textBefore = true;
         }
         if (minutes > 0) {
             if (textBefore)
-                text.append(Text.literal(" ")).append(Text.translatable("text.uhc.and")).append(Text.literal(" "));
+                text.append(Component.literal(" ")).append(Component.translatable("text.uhc.and")).append(Component.literal(" "));
             if (minutes == 1) {
-                text.append(Text.translatable("text.uhc.time.minute"));
+                text.append(Component.translatable("text.uhc.time.minute"));
             } else {
-                text.append(Text.translatable("text.uhc.time.minutes", minutes));
+                text.append(Component.translatable("text.uhc.time.minutes", minutes));
             }
             textBefore = true;
         }
         if (seconds > 0) {
             if (textBefore)
-                text.append(Text.literal(" ")).append(Text.translatable("text.uhc.and")).append(Text.literal(" "));
+                text.append(Component.literal(" ")).append(Component.translatable("text.uhc.and")).append(Component.literal(" "));
             if (seconds == 1) {
-                text.append(Text.translatable("text.uhc.time.second"));
+                text.append(Component.translatable("text.uhc.time.second"));
             } else {
-                text.append(Text.translatable("text.uhc.time.seconds", seconds));
+                text.append(Component.translatable("text.uhc.time.seconds", seconds));
             }
         }
 

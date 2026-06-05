@@ -4,13 +4,13 @@ import eu.pb4.sgui.api.SlotHolder;
 import eu.pb4.sgui.api.elements.GuiElement;
 import eu.pb4.sgui.api.elements.GuiElementBuilder;
 import fr.hugman.uhc.api.gui.UHCConfigGuiElements;
-import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.util.math.MathHelper;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Function;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.util.Mth;
 
 public class ListGuiWidget<Object> extends GuiWidget {
     private final List<Object> list;
@@ -22,7 +22,7 @@ public class ListGuiWidget<Object> extends GuiWidget {
 
     public ListGuiWidget(
             SlotHolder gui,
-            ServerPlayerEntity player,
+            ServerPlayer player,
             List<Object> list,
             Function<Object, GuiElementBuilder> elementBuilderProvider,
             int startingRow,
@@ -78,7 +78,7 @@ public class ListGuiWidget<Object> extends GuiWidget {
 
         boolean hasNextPage = (page + 1) * maxModulesPerPage < list.size();
         boolean hasPreviousPage = page > 0;
-        int middleRow = startingRow * 9 + (MathHelper.floor(height / 2.0f) * 9);
+        int middleRow = startingRow * 9 + (Mth.floor(height / 2.0f) * 9);
         if (hasPreviousPage) {
             gui.setSlot(middleRow, UHCConfigGuiElements.previousPage(player).setCallback((index, type, action, gui) -> {
                 UHCConfigGuiElements.playClickSound(player);

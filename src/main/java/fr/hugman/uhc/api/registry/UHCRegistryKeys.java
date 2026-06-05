@@ -1,14 +1,14 @@
 package fr.hugman.uhc.api.registry;
 
 import fr.hugman.uhc.impl.UHC;
+import net.minecraft.core.Registry;
+import net.minecraft.resources.ResourceKey;
 import fr.hugman.uhc.api.module.UHCModule;
 import fr.hugman.uhc.api.config.UHCConfig;
 import fr.hugman.uhc.api.modifier.ModifierType;
-import net.minecraft.registry.Registry;
-import net.minecraft.registry.RegistryKey;
 
 public class UHCRegistryKeys {
-    public static final RegistryKey<Registry<UHCModule>> UHC_MODULE = RegistryKey.ofRegistry(UHC.id("module"));
-    public static final RegistryKey<Registry<ModifierType<?>>> MODIFIER_TYPE = RegistryKey.ofRegistry(UHC.id("modifier_type"));
-    public static final RegistryKey<Registry<UHCConfig>> UHC_CONFIG = RegistryKey.ofRegistry(UHC.id("config"));
+    public static final ResourceKey<Registry<UHCModule>> UHC_MODULE = ResourceKey.createRegistryKey(UHC.id("module"));
+    public static final ResourceKey<Registry<ModifierType<?>>> MODIFIER_TYPE = ResourceKey.createRegistryKey(UHC.id("modifier_type"));
+    public static final ResourceKey<Registry<UHCConfig>> UHC_CONFIG = ResourceKey.createRegistryKey(UHC.id("config"));
 }

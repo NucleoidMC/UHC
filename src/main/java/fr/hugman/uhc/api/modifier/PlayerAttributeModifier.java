@@ -3,19 +3,19 @@ package fr.hugman.uhc.api.modifier;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import fr.hugman.uhc.impl.game.UHCPlayerManager;
-import net.minecraft.entity.attribute.EntityAttribute;
-import net.minecraft.entity.attribute.EntityAttributeInstance;
-import net.minecraft.entity.attribute.EntityAttributeModifier;
-import net.minecraft.registry.entry.RegistryEntry;
-import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.core.Holder;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.ai.attributes.Attribute;
+import net.minecraft.world.entity.ai.attributes.AttributeInstance;
+import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 
 public record PlayerAttributeModifier(
-        RegistryEntry<EntityAttribute> attribute,
-        EntityAttributeModifier modifier
+        Holder<Attribute> attribute,
+        AttributeModifier modifier
 ) implements Modifier {
     public static final MapCodec<PlayerAttributeModifier> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
-            EntityAttribute.CODEC.fieldOf("attribute").forGetter(PlayerAttributeModifier::attribute),
-            EntityAttributeModifier.MAP_CODEC.forGetter(PlayerAttributeModifier::modifier)
+            Attribute.CODEC.fieldOf("attribute").forGetter(PlayerAttributeModifier::attribute),
+            AttributeModifier.MAP_CODEC.forGetter(PlayerAttributeModifier::modifier)
     ).apply(instance, PlayerAttributeModifier::new));
 
     @Override
@@ -23,11 +23,11 @@ public record PlayerAttributeModifier(
         return ModifierType.PLAYER_ATTRIBUTE;
     }
 
-    public void refreshAttribute(ServerPlayerEntity player) {
-        EntityAttributeInstance instance = player.getAttributes().getCustomInstance(this.attribute);
+    public void refreshAttribute(ServerPlayer player) {
+        AttributeInstance instance = player.getAttributes().getInstance(this.attribute);
         if (instance != null) {
             instance.removeModifier(modifier);
-            instance.addPersistentModifier(modifier);
+            instance.addPermanentModifier(modifier);
         }
     }
 
@@ -39,7 +39,7 @@ public record PlayerAttributeModifier(
     @Override
     public void disable(UHCPlayerManager playerManager) {
         playerManager.forEachAlive(player -> {
-            EntityAttributeInstance instance = player.getAttributes().getCustomInstance(this.attribute);
+            AttributeInstance instance = player.getAttributes().getInstance(this.attribute);
             if (instance != null) {
                 instance.removeModifier(modifier);
             }

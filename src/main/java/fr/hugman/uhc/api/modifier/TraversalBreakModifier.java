@@ -5,13 +5,13 @@ import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import it.unimi.dsi.fastutil.longs.LongArraySet;
 import it.unimi.dsi.fastutil.longs.LongSet;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.LeavesBlock;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.registry.tag.BlockTags;
-import net.minecraft.server.world.ServerWorld;
-import net.minecraft.structure.rule.RuleTest;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.core.BlockPos;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.tags.BlockTags;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.level.block.LeavesBlock;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.levelgen.structure.templatesystem.RuleTest;
 import org.jetbrains.annotations.Nullable;
 import xyz.nucleoid.plasmid.api.util.BlockTraversal;
 
@@ -21,7 +21,7 @@ public record TraversalBreakModifier(
         boolean includeLeaves
 ) implements Modifier {
     public static final MapCodec<TraversalBreakModifier> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
-            RuleTest.TYPE_CODEC.fieldOf("target").forGetter(module -> module.predicate),
+            RuleTest.CODEC.fieldOf("target").forGetter(module -> module.predicate),
             Codec.intRange(0, Integer.MAX_VALUE).optionalFieldOf("amount", 128).forGetter(module -> module.amount),
             Codec.BOOL.optionalFieldOf("include_leaves", false).forGetter(module -> module.includeLeaves)
     ).apply(instance, TraversalBreakModifier::new));
@@ -31,7 +31,7 @@ public record TraversalBreakModifier(
         return ModifierType.TRAVERSAL_BREAK;
     }
 
-    public void breakBlock(ServerWorld world, @Nullable LivingEntity entity, BlockPos origin) {
+    public void breakBlock(ServerLevel world, @Nullable LivingEntity entity, BlockPos origin) {
         BlockState state = world.getBlockState(origin);
         var originLong = origin.asLong();
 
@@ -62,7 +62,7 @@ public record TraversalBreakModifier(
 
                 posLongSet.add(originLong);
                 for (var posLong : posLongSet) {
-                    BlockPos pos = BlockPos.fromLong(posLong);
+                    BlockPos pos = BlockPos.of(posLong);
                     leavesTraversal.accept(pos, (nextPos, fromPos, depth) -> {
                         var nextPosLong = nextPos.asLong();
                         if (depth > this.amount) {
@@ -76,9 +76,9 @@ public record TraversalBreakModifier(
                         }
                         BlockState fromState = world.getBlockState(fromPos);
                         BlockState nextState = world.getBlockState(nextPos);
-                        if (nextState.contains(LeavesBlock.DISTANCE) && nextState.isIn(BlockTags.LEAVES)) {
-                            var currentDistance = fromState.contains(LeavesBlock.DISTANCE) ? fromState.get(LeavesBlock.DISTANCE) : 0;
-                            if (nextState.get(LeavesBlock.DISTANCE) > currentDistance) {
+                        if (nextState.hasProperty(LeavesBlock.DISTANCE) && nextState.is(BlockTags.LEAVES)) {
+                            var currentDistance = fromState.hasProperty(LeavesBlock.DISTANCE) ? fromState.getValue(LeavesBlock.DISTANCE) : 0;
+                            if (nextState.getValue(LeavesBlock.DISTANCE) > currentDistance) {
                                 leavesLongSet.add(nextPos.asLong());
                                 return BlockTraversal.Result.CONTINUE;
                             }
@@ -89,7 +89,7 @@ public record TraversalBreakModifier(
                 }
                 posLongSet.remove(originLong);
             }
-            posLongSet.forEach(value -> world.breakBlock(BlockPos.fromLong(value), true, entity));
+            posLongSet.forEach(value -> world.destroyBlock(BlockPos.of(value), true, entity));
         }
     }
 }

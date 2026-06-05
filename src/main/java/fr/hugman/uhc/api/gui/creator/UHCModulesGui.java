@@ -4,32 +4,30 @@ import fr.hugman.uhc.api.gui.PreviousableGui;
 import fr.hugman.uhc.api.gui.widget.ListGuiWidget;
 import fr.hugman.uhc.api.module.UHCModule;
 import fr.hugman.uhc.api.util.Messenger;
-import net.minecraft.client.gui.hud.MessageIndicator;
-import net.minecraft.registry.Registries;
-import net.minecraft.registry.entry.RegistryEntry;
-import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.text.Text;
-import net.minecraft.util.Formatting;
-import net.minecraft.util.Identifier;
-import net.minecraft.util.packrat.Symbol;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 import java.util.function.Consumer;
+import net.minecraft.ChatFormatting;
+import net.minecraft.core.Holder;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerPlayer;
 
 public class UHCModulesGui extends PreviousableGui {
     private final int height;
 
     private final boolean editable;
-    private final List<RegistryEntry<UHCModule>> selectedModules;
-    private final @Nullable List<RegistryEntry<UHCModule>> otherModules;
-    private final @Nullable Consumer<List<RegistryEntry<UHCModule>>> closeCallback;
+    private final List<Holder<UHCModule>> selectedModules;
+    private final @Nullable List<Holder<UHCModule>> otherModules;
+    private final @Nullable Consumer<List<Holder<UHCModule>>> closeCallback;
 
-    private ListGuiWidget<RegistryEntry<UHCModule>> selectedModulesWidget;
-    private @Nullable ListGuiWidget<RegistryEntry<UHCModule>> otherModulesWidget;
+    private ListGuiWidget<Holder<UHCModule>> selectedModulesWidget;
+    private @Nullable ListGuiWidget<Holder<UHCModule>> otherModulesWidget;
 
-    private UHCModulesGui(ServerPlayerEntity player, int height, boolean editable, List<RegistryEntry<UHCModule>> selectedModules, List<RegistryEntry<UHCModule>> otherModules, @Nullable Consumer<List<RegistryEntry<UHCModule>>> closeCallback) {
-        super(Registries.SCREEN_HANDLER.get(Identifier.of("generic_9x" + height)), player, editable);
+    private UHCModulesGui(ServerPlayer player, int height, boolean editable, List<Holder<UHCModule>> selectedModules, List<Holder<UHCModule>> otherModules, @Nullable Consumer<List<Holder<UHCModule>>> closeCallback) {
+        super(BuiltInRegistries.MENU.getValue(ResourceLocation.parse("generic_9x" + height)), player, editable);
         this.height = height;
         this.editable = editable;
         this.closeCallback = closeCallback;
@@ -37,11 +35,11 @@ public class UHCModulesGui extends PreviousableGui {
         this.otherModules = otherModules;
     }
 
-    public UHCModulesGui(ServerPlayerEntity player, int height, List<RegistryEntry<UHCModule>> modules) {
+    public UHCModulesGui(ServerPlayer player, int height, List<Holder<UHCModule>> modules) {
         this(player, height, false, modules, null, null);
     }
 
-    public UHCModulesGui(ServerPlayerEntity player, int height, List<RegistryEntry<UHCModule>> selectedModules, List<RegistryEntry<UHCModule>> otherModules, @Nullable Consumer<List<RegistryEntry<UHCModule>>> closeCallback) {
+    public UHCModulesGui(ServerPlayer player, int height, List<Holder<UHCModule>> selectedModules, List<Holder<UHCModule>> otherModules, @Nullable Consumer<List<Holder<UHCModule>>> closeCallback) {
         this(player, height, true, selectedModules, otherModules, closeCallback);
     }
 
@@ -66,7 +64,7 @@ public class UHCModulesGui extends PreviousableGui {
         selectedModulesWidget = new ListGuiWidget<>(this, player, selectedModules,
                 (moduleEntry) -> {
                     var builder = moduleEntry.value().getElement();
-                    if(editable) builder.addLoreLine(Text.translatable("ui.uhc.click_to_remove").formatted(Formatting.GRAY));
+                    if(editable) builder.addLoreLine(Component.translatable("ui.uhc.click_to_remove").withStyle(ChatFormatting.GRAY));
                     moduleEntry.value().addDescriptionToElement(builder);
                     return builder;
                 },
@@ -84,7 +82,7 @@ public class UHCModulesGui extends PreviousableGui {
             otherModulesWidget = new ListGuiWidget<>(this, player, otherModules,
                     (moduleEntry) -> {
                         var builder = moduleEntry.value().getElement();
-                        builder.addLoreLine(Text.translatable("ui.uhc.click_to_add").formatted(Formatting.GRAY));
+                        builder.addLoreLine(Component.translatable("ui.uhc.click_to_add").withStyle(ChatFormatting.GRAY));
                         moduleEntry.value().addDescriptionToElement(builder);
                         return builder;
                     },

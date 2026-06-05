@@ -9,20 +9,19 @@ import fr.hugman.uhc.api.registry.UHCRegistryKeys;
 import fr.hugman.uhc.api.util.DoubleRange;
 import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricDynamicRegistryProvider;
-import net.minecraft.registry.Registerable;
-import net.minecraft.registry.RegistryWrapper;
-import net.minecraft.world.dimension.DimensionOptions;
-
+import net.minecraft.core.HolderLookup;
+import net.minecraft.data.worldgen.BootstrapContext;
+import net.minecraft.world.level.dimension.LevelStem;
 import java.util.concurrent.CompletableFuture;
 
 public class UHCConfigProvider extends FabricDynamicRegistryProvider {
-    public UHCConfigProvider(FabricDataOutput output, CompletableFuture<RegistryWrapper.WrapperLookup> registriesFuture) {
+    public UHCConfigProvider(FabricDataOutput output, CompletableFuture<HolderLookup.Provider> registriesFuture) {
         super(output, registriesFuture);
     }
 
     @Override
-    protected void configure(RegistryWrapper.WrapperLookup registries, Entries entries) {
-        entries.addAll(registries.getOrThrow(UHCRegistryKeys.UHC_CONFIG));
+    protected void configure(HolderLookup.Provider registries, Entries entries) {
+        entries.addAll(registries.lookupOrThrow(UHCRegistryKeys.UHC_CONFIG));
     }
 
     @Override
@@ -30,21 +29,21 @@ public class UHCConfigProvider extends FabricDynamicRegistryProvider {
         return "UHC Configs";
     }
 
-    public static void register(Registerable<UHCConfig> registerable) {
-        var modules = registerable.getRegistryLookup(UHCRegistryKeys.UHC_MODULE);
+    public static void register(BootstrapContext<UHCConfig> registerable) {
+        var modules = registerable.lookup(UHCRegistryKeys.UHC_MODULE);
 
         registerable.register(UHCConfigs.STANDARD_UHC, new UHCConfig(UHCMapConfig.of(
-                DimensionOptions.OVERWORLD,
+                LevelStem.OVERWORLD,
                 new DoubleRange(400, 10000),
                 0.5D
         )));
         registerable.register(UHCConfigs.STANDARD_UHCRUN, new UHCConfig(UHCMapConfig.of(
-                DimensionOptions.OVERWORLD,
+                LevelStem.OVERWORLD,
                 new DoubleRange(200, 8000),
                 0.6D
         ), UHCTimersConfig.DEFAULT.withWarmup(1200), modules.getOrThrow(UHCModuleTags.UHCRUN)));
         registerable.register(UHCConfigs.STANDARD_DOUBLERUNNER, new UHCConfig(UHCMapConfig.of(
-                DimensionOptions.OVERWORLD,
+                LevelStem.OVERWORLD,
                 new DoubleRange(200, 8000),
                 0.75D
         ), UHCTimersConfig.DEFAULT.withWarmup(600), modules.getOrThrow(UHCModuleTags.DOUBLERUNNER)));

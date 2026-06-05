@@ -5,9 +5,9 @@ import fr.hugman.uhc.impl.game.ModuleManager;
 import fr.hugman.uhc.impl.game.UHCSpawner;
 import fr.hugman.uhc.impl.game.ui.element.ModulesUiElement;
 import fr.hugman.uhc.impl.map.UHCMap;
-import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.server.world.ServerWorld;
-import net.minecraft.world.GameMode;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.level.GameType;
 import xyz.nucleoid.plasmid.api.game.GameOpenContext;
 import xyz.nucleoid.plasmid.api.game.GameOpenProcedure;
 import xyz.nucleoid.plasmid.api.game.GameResult;
@@ -28,13 +28,13 @@ import xyz.nucleoid.stimuli.event.player.PlayerDeathEvent;
 
 public record UHCWaiting(
         GameSpace gameSpace,
-        ServerWorld world,
+        ServerLevel world,
         UHCGameConfig config,
         TeamManager teamManager
 ) {
     public static GameOpenProcedure open(GameOpenContext<UHCGameConfig> context) {
         var config = context.config();
-        var registries = context.server().getRegistryManager();
+        var registries = context.server().registryAccess();
         var map = UHCMap.of(config, registries);
         var moduleManager = new ModuleManager(config.uhcConfig().value().modules());
 
@@ -60,10 +60,10 @@ public record UHCWaiting(
     private JoinAcceptorResult acceptPlayer(JoinAcceptor joinAcceptor) {
         return joinAcceptor
                 .teleport(this.world, UHCSpawner.getSurfaceBlock(world, 0, 0))
-                .thenRunForEach(player -> player.changeGameMode(GameMode.ADVENTURE));
+                .thenRunForEach(player -> player.setGameMode(GameType.ADVENTURE));
     }
 
-    private void onBuildUiLayout(WaitingLobbyUiLayout layout, ServerPlayerEntity player) {
+    private void onBuildUiLayout(WaitingLobbyUiLayout layout, ServerPlayer player) {
         layout.addLeading(new ModulesUiElement(player));
     }
 

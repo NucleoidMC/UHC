@@ -10,7 +10,7 @@ import fr.hugman.uhc.impl.command.UHCCommand;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.fabricmc.loader.api.FabricLoader;
-import net.minecraft.util.Identifier;
+import net.minecraft.resources.ResourceLocation;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -33,8 +33,8 @@ public class UHC implements ModInitializer {
         Reflection.initialize(UHCGameTypes.class);
     }
 
-    public static Identifier id(String path) {
-        return Identifier.of(MOD_ID, path);
+    public static ResourceLocation id(String path) {
+        return ResourceLocation.fromNamespaceAndPath(MOD_ID, path);
     }
 
     public static void debug(String msg) {

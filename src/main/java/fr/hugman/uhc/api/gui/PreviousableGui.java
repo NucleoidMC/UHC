@@ -3,15 +3,15 @@ package fr.hugman.uhc.api.gui;
 import eu.pb4.sgui.api.GuiHelpers;
 import eu.pb4.sgui.api.gui.GuiInterface;
 import eu.pb4.sgui.api.gui.SimpleGui;
-import net.minecraft.screen.ScreenHandlerType;
-import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.inventory.MenuType;
 import org.jetbrains.annotations.Nullable;
 
 public class PreviousableGui extends SimpleGui {
     @Nullable
     protected final GuiInterface previousUi;
 
-    public PreviousableGui(ScreenHandlerType<?> type, ServerPlayerEntity player, boolean manipulatePlayerSlots) {
+    public PreviousableGui(MenuType<?> type, ServerPlayer player, boolean manipulatePlayerSlots) {
         super(type, player, manipulatePlayerSlots);
         this.previousUi = GuiHelpers.getCurrentGui(player);
     }

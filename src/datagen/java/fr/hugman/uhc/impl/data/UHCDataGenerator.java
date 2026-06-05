@@ -5,8 +5,8 @@ import fr.hugman.uhc.api.datagen.provider.*;
 import fr.hugman.uhc.api.registry.UHCRegistryKeys;
 import net.fabricmc.fabric.api.datagen.v1.DataGeneratorEntrypoint;
 import net.fabricmc.fabric.api.datagen.v1.FabricDataGenerator;
-import net.minecraft.registry.RegistryBuilder;
-import net.minecraft.registry.RegistryKeys;
+import net.minecraft.core.RegistrySetBuilder;
+import net.minecraft.core.registries.Registries;
 import org.jetbrains.annotations.Nullable;
 import xyz.nucleoid.plasmid.api.game.config.GameConfigs;
 
@@ -27,15 +27,15 @@ public class UHCDataGenerator implements DataGeneratorEntrypoint {
     }
 
     @Override
-    public void buildRegistry(RegistryBuilder registryBuilder) {
+    public void buildRegistry(RegistrySetBuilder registryBuilder) {
         // - UHC
-        registryBuilder.addRegistry(GameConfigs.REGISTRY_KEY, UHCGameProvider::register);
-        registryBuilder.addRegistry(UHCRegistryKeys.UHC_CONFIG, UHCConfigProvider::register);
-        registryBuilder.addRegistry(UHCRegistryKeys.UHC_MODULE, UHCModuleProvider::register);
+        registryBuilder.add(GameConfigs.REGISTRY_KEY, UHCGameProvider::register);
+        registryBuilder.add(UHCRegistryKeys.UHC_CONFIG, UHCConfigProvider::register);
+        registryBuilder.add(UHCRegistryKeys.UHC_MODULE, UHCModuleProvider::register);
 
         // - World Generation
-        registryBuilder.addRegistry(RegistryKeys.CONFIGURED_FEATURE, UHCConfiguredFeatureProvider::register);
-        registryBuilder.addRegistry(RegistryKeys.PLACED_FEATURE, UHCPlacedFeatureProvider::register);
+        registryBuilder.add(Registries.CONFIGURED_FEATURE, UHCConfiguredFeatureProvider::register);
+        registryBuilder.add(Registries.PLACED_FEATURE, UHCPlacedFeatureProvider::register);
     }
 
     @Override

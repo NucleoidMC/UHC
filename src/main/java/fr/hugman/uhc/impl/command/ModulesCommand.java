@@ -9,43 +9,43 @@ import fr.hugman.uhc.api.command.argument.UHCModuleArgument;
 import fr.hugman.uhc.api.module.UHCModule;
 import fr.hugman.uhc.api.module.UHCModuleEvents;
 import fr.hugman.uhc.impl.game.ModuleManager;
-import net.minecraft.registry.entry.RegistryEntry;
-import net.minecraft.server.command.CommandManager;
-import net.minecraft.server.command.ServerCommandSource;
-import net.minecraft.text.Text;
 import xyz.nucleoid.plasmid.api.game.GameSpace;
 import xyz.nucleoid.plasmid.api.game.GameSpaceManager;
 import xyz.nucleoid.stimuli.EventInvokers;
 import xyz.nucleoid.stimuli.Stimuli;
 
 import java.util.Objects;
+import net.minecraft.commands.CommandSourceStack;
+import net.minecraft.commands.Commands;
+import net.minecraft.core.Holder;
+import net.minecraft.network.chat.Component;
 
 public class ModulesCommand {
-    private static final SimpleCommandExceptionType NO_MANAGER_ACTIVATED = new SimpleCommandExceptionType(Text.translatable("command.modules.no_manager"));
-    private static final SimpleCommandExceptionType NO_MODULES_ACTIVATED = new SimpleCommandExceptionType(Text.translatable("command.modules.no_modules_activated"));
-    private static final SimpleCommandExceptionType ALREADY_ENABLED = new SimpleCommandExceptionType(Text.translatable("command.modules.already_enabled"));
-    private static final SimpleCommandExceptionType ALREADY_DISABLED = new SimpleCommandExceptionType(Text.translatable("command.modules.already_disabled"));
+    private static final SimpleCommandExceptionType NO_MANAGER_ACTIVATED = new SimpleCommandExceptionType(Component.translatable("command.modules.no_manager"));
+    private static final SimpleCommandExceptionType NO_MODULES_ACTIVATED = new SimpleCommandExceptionType(Component.translatable("command.modules.no_modules_activated"));
+    private static final SimpleCommandExceptionType ALREADY_ENABLED = new SimpleCommandExceptionType(Component.translatable("command.modules.already_enabled"));
+    private static final SimpleCommandExceptionType ALREADY_DISABLED = new SimpleCommandExceptionType(Component.translatable("command.modules.already_disabled"));
 
     private static final String MODULE_ARG = "module";
 
-    public static void register(CommandDispatcher<ServerCommandSource> dispatcher) {
+    public static void register(CommandDispatcher<CommandSourceStack> dispatcher) {
         dispatcher.register(
-                CommandManager.literal("modules")
+                Commands.literal("modules")
                         .requires(ModulesCommand::supportsModules)
                         .executes(ModulesCommand::displayModules)
-                        .then(CommandManager.literal("enable")
-                                .requires(source -> source.hasPermissionLevel(2))
+                        .then(Commands.literal("enable")
+                                .requires(source -> source.hasPermission(2))
                                 .then(UHCModuleArgument.argumentFromDisabled("module")
                                         .executes(context -> enableModule(context, UHCModuleArgument.get(context, MODULE_ARG)))))
-                        .then(CommandManager.literal("disable")
-                                .requires(source -> source.hasPermissionLevel(2))
+                        .then(Commands.literal("disable")
+                                .requires(source -> source.hasPermission(2))
                                 .then(UHCModuleArgument.argumentFromEnabled("module")
                                         .executes(context -> disableModule(context, UHCModuleArgument.get(context, MODULE_ARG)))))
         );
     }
 
-    public static boolean supportsModules(ServerCommandSource source) {
-        GameSpace gameSpace = GameSpaceManager.get().byWorld(source.getWorld());
+    public static boolean supportsModules(CommandSourceStack source) {
+        GameSpace gameSpace = GameSpaceManager.get().byWorld(source.getLevel());
         if (gameSpace == null) {
             return false;
         }
@@ -55,8 +55,8 @@ public class ModulesCommand {
         return true;
     }
 
-    private static int displayModules(CommandContext<ServerCommandSource> context) throws CommandSyntaxException {
-        ServerCommandSource source = context.getSource();
+    private static int displayModules(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
+        CommandSourceStack source = context.getSource();
         var manager = Objects.requireNonNull(GameSpaceManager.get().byPlayer(source.getPlayer())).getAttachment(ModuleManager.ATTACHMENT);
         if (manager == null) {
             throw NO_MANAGER_ACTIVATED.create();
@@ -70,9 +70,9 @@ public class ModulesCommand {
         }
     }
 
-    private static int enableModule(CommandContext<ServerCommandSource> context, RegistryEntry<UHCModule> module) throws CommandSyntaxException {
-        ServerCommandSource source = context.getSource();
-        var space = Objects.requireNonNull(GameSpaceManager.get().byWorld(source.getWorld()));
+    private static int enableModule(CommandContext<CommandSourceStack> context, Holder<UHCModule> module) throws CommandSyntaxException {
+        CommandSourceStack source = context.getSource();
+        var space = Objects.requireNonNull(GameSpaceManager.get().byWorld(source.getLevel()));
         var manager = space.getAttachment(ModuleManager.ATTACHMENT);
         if (manager == null) {
             throw NO_MANAGER_ACTIVATED.create();
@@ -83,16 +83,16 @@ public class ModulesCommand {
                 (invokers.get(UHCModuleEvents.ENABLE)).onEnable(module);
             }
 
-            source.sendFeedback(() -> Text.translatable("command.modules.enable.success", module.value().name()), true);
+            source.sendSuccess(() -> Component.translatable("command.modules.enable.success", module.value().name()), true);
             return Command.SINGLE_SUCCESS;
         } else {
             throw ALREADY_ENABLED.create();
         }
     }
 
-    private static int disableModule(CommandContext<ServerCommandSource> context, RegistryEntry<UHCModule> module) throws CommandSyntaxException {
-        ServerCommandSource source = context.getSource();
-        var manager = Objects.requireNonNull(GameSpaceManager.get().byWorld(source.getWorld())).getAttachment(ModuleManager.ATTACHMENT);
+    private static int disableModule(CommandContext<CommandSourceStack> context, Holder<UHCModule> module) throws CommandSyntaxException {
+        CommandSourceStack source = context.getSource();
+        var manager = Objects.requireNonNull(GameSpaceManager.get().byWorld(source.getLevel())).getAttachment(ModuleManager.ATTACHMENT);
         if (manager == null) {
             throw NO_MANAGER_ACTIVATED.create();
         }
@@ -102,7 +102,7 @@ public class ModulesCommand {
                 (invokers.get(UHCModuleEvents.DISABLE)).onDisable(module);
             }
 
-            source.sendFeedback(() -> Text.translatable("command.modules.disable.success", module.value().name()), true);
+            source.sendSuccess(() -> Component.translatable("command.modules.disable.success", module.value().name()), true);
             return Command.SINGLE_SUCCESS;
         } else {
             throw ALREADY_DISABLED.create();

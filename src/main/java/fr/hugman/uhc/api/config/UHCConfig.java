@@ -4,35 +4,34 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import fr.hugman.uhc.api.module.UHCModule;
 import fr.hugman.uhc.api.registry.UHCRegistryKeys;
-import net.minecraft.registry.entry.RegistryElementCodec;
-import net.minecraft.registry.entry.RegistryEntry;
-import net.minecraft.registry.entry.RegistryEntryList;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import net.minecraft.core.Holder;
+import net.minecraft.core.HolderSet;
+import net.minecraft.resources.RegistryFileCodec;
 
 public final class UHCConfig {
     public static final Codec<UHCConfig> CODEC = RecordCodecBuilder.create(instance -> instance.group(
             UHCMapConfig.CODEC.fieldOf("map").forGetter(UHCConfig::mapConfig),
             UHCTimersConfig.CODEC.optionalFieldOf("timers", UHCTimersConfig.DEFAULT).forGetter(UHCConfig::timersConfig),
-            UHCModule.ENTRY_LIST_CODEC.optionalFieldOf("modules", RegistryEntryList.of()).forGetter(UHCConfig::modules)
+            UHCModule.ENTRY_LIST_CODEC.optionalFieldOf("modules", HolderSet.direct()).forGetter(UHCConfig::modules)
     ).apply(instance, UHCConfig::new));
 
-    public static final Codec<RegistryEntry<UHCConfig>> ENTRY_CODEC = RegistryElementCodec.of(UHCRegistryKeys.UHC_CONFIG, CODEC);
+    public static final Codec<Holder<UHCConfig>> ENTRY_CODEC = RegistryFileCodec.create(UHCRegistryKeys.UHC_CONFIG, CODEC);
 
     private UHCMapConfig mapConfig;
     private UHCTimersConfig timersConfig;
-    private RegistryEntryList<UHCModule> modules;
+    private HolderSet<UHCModule> modules;
 
-    public UHCConfig(UHCMapConfig mapConfig, UHCTimersConfig timersConfig, RegistryEntryList<UHCModule> modules) {
+    public UHCConfig(UHCMapConfig mapConfig, UHCTimersConfig timersConfig, HolderSet<UHCModule> modules) {
         this.mapConfig = mapConfig;
         this.timersConfig = timersConfig;
         this.modules = modules;
     }
 
     public UHCConfig(UHCMapConfig mapConfig) {
-        this(mapConfig, UHCTimersConfig.DEFAULT, RegistryEntryList.of());
+        this(mapConfig, UHCTimersConfig.DEFAULT, HolderSet.direct());
     }
 
     public UHCMapConfig mapConfig() {
@@ -43,12 +42,12 @@ public final class UHCConfig {
         return timersConfig;
     }
 
-    public RegistryEntryList<UHCModule> modules() {
+    public HolderSet<UHCModule> modules() {
         return modules;
     }
 
-    public void setModules(List<RegistryEntry<UHCModule>> modules) {
-        this.modules = RegistryEntryList.of(modules);
+    public void setModules(List<Holder<UHCModule>> modules) {
+        this.modules = HolderSet.direct(modules);
     }
 
     @Override
@@ -79,7 +78,7 @@ public final class UHCConfig {
         return new UHCConfig(
                 this.mapConfig.clone(),
                 this.timersConfig.clone(),
-                RegistryEntryList.of(new ArrayList<>(this.modules.stream().toList()))
+                HolderSet.direct(new ArrayList<>(this.modules.stream().toList()))
         );
     }
 }
