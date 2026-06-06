@@ -16,10 +16,10 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Set up JDK 21
+      - name: Set up JDK 25
         uses: actions/setup-java@v1
         with:
-          java-version: '21'
+          java-version: '25'
 
       - name: Grant execute permission for gradlew
         run: chmod +x ./gradlew
@@ -46,7 +46,7 @@ jobs:
           github-token: ${{ secrets.GITHUB_TOKEN }}
 
           changelog: ${{ github.event.release.body }}
-          java: 21
+          java: 25
 
           modrinth-featured: false
 
