@@ -11,9 +11,10 @@ import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.core.Holder;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.ItemStackTemplate;
 import net.minecraft.world.item.Items;
 import xyz.nucleoid.plasmid.api.game.common.config.PlayerLimiterConfig;
 import xyz.nucleoid.plasmid.api.game.common.config.WaitingLobbyConfig;
@@ -27,7 +28,7 @@ public class CreateUHCGui extends PreviousableGui {
     private final UHCConfig config;
 
     public CreateUHCGui(ServerPlayer player, UHCConfig config) {
-        super(BuiltInRegistries.MENU.getValue(ResourceLocation.parse("generic_9x" + HEIGHT)), player, false);
+        super(BuiltInRegistries.MENU.getValue(Identifier.parse("generic_9x" + HEIGHT)), player, false);
         this.config = config;
     }
 
@@ -69,12 +70,15 @@ public class CreateUHCGui extends PreviousableGui {
     private GuiElementBuilder createTeamSizeElement(UHCGameTeamSize teamSize) {
         return teamSize.createElement()
                 .hideDefaultTooltip()
-                .setCallback((index, type, action, gui) -> player.getServer().execute(() -> {
+                .setCallback((index, type, action, gui) -> player.level().getServer().execute(() -> {
                     UHCConfigGuiElements.playClickSound(player);
                     var gamePortal = new NewGamePortalBackend(Holder.direct(new GameConfig<>(
                             UHCGameTypes.STANDARD,
                             Component.translatable("game.generic.mode", Component.translatable("game.custom_uhc"), Component.translatable("mode." + teamSize.getName())),
-                            null, null, new ItemStack(Items.APPLE), CustomValuesConfig.empty(),
+                            null,
+                            null,
+                            new ItemStackTemplate(Items.APPLE),
+                            CustomValuesConfig.empty(),
                             new UHCGameConfig(
                                     new WaitingLobbyConfig(new PlayerLimiterConfig(), teamSize.getMinPlayers(), teamSize.getThresholdPlayers(), WaitingLobbyConfig.Countdown.DEFAULT),
                                     teamSize.getTeamsize(),
@@ -89,12 +93,15 @@ public class CreateUHCGui extends PreviousableGui {
         return new GuiElementBuilder(Items.NAUTILUS_SHELL)
                 .setName(Component.literal("DEBUG TEST"))
                 .hideDefaultTooltip()
-                .setCallback((index, type, action, gui) -> player.getServer().execute(() -> {
+                .setCallback((index, type, action, gui) -> player.level().getServer().execute(() -> {
                     UHCConfigGuiElements.playClickSound(player);
                     var gamePortal = new NewGamePortalBackend(Holder.direct(new GameConfig<>(
                             UHCGameTypes.STANDARD,
                             Component.translatable("game.generic.mode", Component.translatable("game.custom_uhc"), Component.literal("DEBUG TEST")),
-                            null, null, new ItemStack(Items.APPLE), CustomValuesConfig.empty(),
+                            null,
+                            null,
+                            new ItemStackTemplate(Items.APPLE),
+                            CustomValuesConfig.empty(),
                             new UHCGameConfig(
                                     new WaitingLobbyConfig(new PlayerLimiterConfig(), 1, 1, WaitingLobbyConfig.Countdown.DEFAULT), 1, Holder.direct(config)
                             )

@@ -6,9 +6,9 @@ import fr.hugman.uhc.api.registry.UHCRegistryKeys;
 import java.util.Arrays;
 import java.util.function.Function;
 import java.util.stream.Collectors;
-import net.minecraft.Util;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceKey;
+import net.minecraft.util.Util;
 import net.minecraft.world.level.ItemLike;
 
 public class UHCModules {
@@ -49,7 +49,7 @@ public class UHCModules {
             Function<UHCModule.Builder, UHCModule.Builder> builderFunction,
             String... longDescriptionStrings
     ) {
-        var translationKey = Util.makeDescriptionId("module", key.location());
+        var translationKey = Util.makeDescriptionId("module", key.identifier());
         var builder = UHCModule.builder()
                 .nameFrom(key)
                 .descriptionFrom(key);

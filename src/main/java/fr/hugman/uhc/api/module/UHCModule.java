@@ -5,6 +5,8 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import eu.pb4.sgui.api.elements.GuiElementBuilder;
 import fr.hugman.uhc.api.modifier.Modifier;
 import fr.hugman.uhc.api.registry.UHCRegistryKeys;
+import net.minecraft.util.Util;
+import net.minecraft.world.item.ItemStackTemplate;
 import xyz.nucleoid.codecs.MoreCodecs;
 import xyz.nucleoid.plasmid.api.util.PlasmidCodecs;
 
@@ -13,7 +15,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import net.minecraft.ChatFormatting;
-import net.minecraft.Util;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderSet;
 import net.minecraft.core.RegistryCodecs;
@@ -30,7 +31,7 @@ public record UHCModule(
         Component name,
         Optional<Component> description,
         Optional<List<Component>> longDescription,
-        ItemStack icon,
+        ItemStackTemplate icon,
         TextColor color,
         List<Modifier> modifiers
 ) {
@@ -38,7 +39,7 @@ public record UHCModule(
             PlasmidCodecs.TEXT.fieldOf("name").forGetter(UHCModule::name),
             PlasmidCodecs.TEXT.optionalFieldOf("description").forGetter(UHCModule::description),
             MoreCodecs.listOrUnit(PlasmidCodecs.TEXT).optionalFieldOf("long_description").forGetter(UHCModule::longDescription),
-            MoreCodecs.ITEM_STACK.optionalFieldOf("icon", new ItemStack(Items.BARRIER)).forGetter(UHCModule::icon),
+            ItemStackTemplate.CODEC.optionalFieldOf("icon", new ItemStackTemplate(Items.BARRIER)).forGetter(UHCModule::icon),
             TextColor.CODEC.optionalFieldOf("color", TextColor.fromRgb(3791743)).forGetter(UHCModule::color),
             Modifier.TYPE_CODEC.listOf().fieldOf("modifiers").forGetter(UHCModule::modifiers)
     ).apply(instance, UHCModule::new));
@@ -76,7 +77,7 @@ public record UHCModule(
         private Optional<Component> name;
         private Optional<Component> description = Optional.empty();
         private Optional<List<Component>> longDescription = Optional.empty();
-        private ItemStack icon = new ItemStack(Items.BARRIER);
+        private ItemStackTemplate icon = new ItemStackTemplate(Items.BARRIER);
         private TextColor color = TextColor.fromRgb(3791743);
         private List<Modifier> modifiers = List.of();
 
@@ -91,7 +92,7 @@ public record UHCModule(
          * Sets a standard name of the module using its registry key.
          */
         public Builder nameFrom(ResourceKey<?> key) {
-            return name(Component.translatable(Util.makeDescriptionId("module", key.location())));
+            return name(Component.translatable(Util.makeDescriptionId("module", key.identifier())));
         }
 
         public Builder description(Component description) {
@@ -103,7 +104,7 @@ public record UHCModule(
          * Sets a standard description of the module using its registry key.
          */
         public Builder descriptionFrom(ResourceKey<?> key) {
-            return description(Component.translatable(Util.makeDescriptionId("module", key.location()) + ".description"));
+            return description(Component.translatable(Util.makeDescriptionId("module", key.identifier()) + ".description"));
         }
 
         public Builder longDescription(List<Component> longDescription) {
@@ -115,13 +116,13 @@ public record UHCModule(
             return longDescription(List.of(longDescription));
         }
 
-        public Builder icon(ItemStack icon) {
+        public Builder icon(ItemStackTemplate icon) {
             this.icon = icon;
             return this;
         }
 
         public Builder icon(ItemLike icon) {
-            this.icon = new ItemStack(icon);
+            this.icon = new ItemStackTemplate(icon.asItem());
             return this;
         }
 
@@ -141,7 +142,7 @@ public record UHCModule(
         }
 
         public Builder applyDisplay(ResourceKey<?> key) {
-            var translationKey = Util.makeDescriptionId("module", key.location());
+            var translationKey = Util.makeDescriptionId("module", key.identifier());
             if (name.isEmpty()) {
                 name(Component.translatable(translationKey));
             }
@@ -152,7 +153,7 @@ public record UHCModule(
         }
 
         public Builder applyDisplay(ResourceKey<?> key, String... longDescriptionStrings) {
-            var translationKey = Util.makeDescriptionId("module", key.location());
+            var translationKey = Util.makeDescriptionId("module", key.identifier());
             applyDisplay(key);
             if (longDescription.isEmpty() || longDescription.get().isEmpty()) {
                 longDescription(longDescription.orElse(Arrays.stream(longDescriptionStrings)

@@ -39,7 +39,7 @@ import net.minecraft.world.level.levelgen.structure.Structure;
 import net.minecraft.world.level.levelgen.structure.StructureSet;
 import org.jetbrains.annotations.Nullable;
 import xyz.nucleoid.fantasy.util.ChunkGeneratorSettingsProvider;
-import xyz.nucleoid.plasmid.api.game.world.generator.GameChunkGenerator;
+import xyz.nucleoid.plasmid.api.game.level.generator.GameChunkGenerator;
 
 import java.util.List;
 import java.util.concurrent.CompletableFuture;

@@ -2,7 +2,7 @@ package fr.hugman.uhc.api.datagen.provider;
 
 import fr.hugman.uhc.api.world.gen.feature.UHCConfiguredFeatures;
 import fr.hugman.uhc.api.world.gen.feature.UHCPlacedFeatures;
-import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
+import net.fabricmc.fabric.api.datagen.v1.FabricPackOutput;
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricDynamicRegistryProvider;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderLookup;
@@ -23,7 +23,7 @@ import java.util.concurrent.CompletableFuture;
 
 // WARNING: NEVER PUT BIOME MODIFIERS, THEY ARE NOT SUPPORTED IN UHC
 public class UHCPlacedFeatureProvider extends FabricDynamicRegistryProvider {
-    public UHCPlacedFeatureProvider(FabricDataOutput output, CompletableFuture<HolderLookup.Provider> registriesFuture) {
+    public UHCPlacedFeatureProvider(FabricPackOutput output, CompletableFuture<HolderLookup.Provider> registriesFuture) {
         super(output, registriesFuture);
     }
 

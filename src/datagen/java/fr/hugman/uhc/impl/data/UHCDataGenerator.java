@@ -8,7 +8,7 @@ import net.fabricmc.fabric.api.datagen.v1.FabricDataGenerator;
 import net.minecraft.core.RegistrySetBuilder;
 import net.minecraft.core.registries.Registries;
 import org.jetbrains.annotations.Nullable;
-import xyz.nucleoid.plasmid.api.game.config.GameConfigs;
+import xyz.nucleoid.plasmid.api.registry.PlasmidRegistryKeys;
 
 public class UHCDataGenerator implements DataGeneratorEntrypoint {
     @Override
@@ -29,7 +29,7 @@ public class UHCDataGenerator implements DataGeneratorEntrypoint {
     @Override
     public void buildRegistry(RegistrySetBuilder registryBuilder) {
         // - UHC
-        registryBuilder.add(GameConfigs.REGISTRY_KEY, UHCGameProvider::register);
+        registryBuilder.add(PlasmidRegistryKeys.GAME_CONFIG, UHCGameProvider::register);
         registryBuilder.add(UHCRegistryKeys.UHC_CONFIG, UHCConfigProvider::register);
         registryBuilder.add(UHCRegistryKeys.UHC_MODULE, UHCModuleProvider::register);
 

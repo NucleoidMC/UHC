@@ -16,6 +16,7 @@ import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.item.Items;
+import xyz.nucleoid.plasmid.api.util.PlayerUtil;
 
 //TODO: custom icons
 public class UHCConfigGuiElements {
@@ -33,14 +34,14 @@ public class UHCConfigGuiElements {
         return new GuiElementBuilder(Items.PLAYER_HEAD)
                 .setItemName(Component.translatable("spectatorMenu.previous_page"))
                 .hideDefaultTooltip()
-                .setSkullOwner("eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMzEwODI5OGZmMmIyNjk1MWQ2ODNlNWFkZTQ2YTQyZTkwYzJmN2M3ZGQ0MWJhYTkwOGJjNTg1MmY4YzMyZTU4MyJ9fX0");
+                .setProfile("eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMzEwODI5OGZmMmIyNjk1MWQ2ODNlNWFkZTQ2YTQyZTkwYzJmN2M3ZGQ0MWJhYTkwOGJjNTg1MmY4YzMyZTU4MyJ9fX0");
     }
 
     public static GuiElementBuilder nextPage(ServerPlayer player) {
         return new GuiElementBuilder(Items.PLAYER_HEAD)
                 .setName(Component.translatable("spectatorMenu.next_page"))
                 .hideDefaultTooltip()
-                .setSkullOwner("eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYzg2MTg1YjFkNTE5YWRlNTg1ZjE4NGMzNGYzZjNlMjBiYjY0MWRlYjg3OWU4MTM3OGU0ZWFmMjA5Mjg3In19fQ");
+                .setProfile("eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYzg2MTg1YjFkNTE5YWRlNTg1ZjE4NGMzNGYzZjNlMjBiYjY0MWRlYjg3OWU4MTM3OGU0ZWFmMjA5Mjg3In19fQ");
     }
 
     public static GuiElementBuilder map(ServerPlayer player, UHCConfig config, boolean editable) {
@@ -58,7 +59,7 @@ public class UHCConfigGuiElements {
         }
         element.addLoreLine(Component.nullToEmpty(""));
         //TODO: Add translations
-        element.addLoreLine(Component.nullToEmpty("Dimension: " + config.mapConfig().dimension().location()));
+        element.addLoreLine(Component.nullToEmpty("Dimension: " + config.mapConfig().dimension().identifier()));
         element.addLoreLine(Component.nullToEmpty("Start size: from " + config.mapConfig().startSize().min() + " to " + config.mapConfig().startSize().max() + " blocks"));
         element.addLoreLine(Component.nullToEmpty("End size: from " + config.mapConfig().endSize().min() + " to " + config.mapConfig().endSize().max() + " blocks"));
         element.addLoreLine(Component.nullToEmpty("Shrinking speed: " + config.mapConfig().shrinkingSpeed() + " blocks/second"));
@@ -71,7 +72,7 @@ public class UHCConfigGuiElements {
         var element = new GuiElementBuilder()
                 .setItem(Items.CLOCK)
                 .hideDefaultTooltip()
-                .noDefaults()
+                .hideTooltip()
                 .setName(Component.translatable("text.uhc.timers"));
 
         if (editable) {
@@ -96,7 +97,7 @@ public class UHCConfigGuiElements {
         return new GuiElementBuilder()
                 .setItem(Items.KNOWLEDGE_BOOK)
                 .hideDefaultTooltip()
-                .noDefaults()
+                .hideDefaultTooltip()
                 .setName(Component.translatable("text.uhc.modules"));
     }
 
@@ -112,7 +113,7 @@ public class UHCConfigGuiElements {
             element.setCallback((index, type, action, gui) -> {
                 playClickSound(player);
                 var selectedModules = new ArrayList<>(config.modules().stream().toList());
-                var others = player.getServer().registryAccess().lookupOrThrow(UHCRegistryKeys.UHC_MODULE)
+                var others = player.level().registryAccess().lookupOrThrow(UHCRegistryKeys.UHC_MODULE)
                         .listElements()
                         .map(entry -> (Holder<UHCModule>) entry)
                         .filter(entry -> !selectedModules.contains(entry))
@@ -127,14 +128,10 @@ public class UHCConfigGuiElements {
         return new GuiElementBuilder(Items.PLAYER_HEAD)
                 .setName(Component.translatable("ui.uhc.launch"))
                 .hideDefaultTooltip()
-                .setSkullOwner("eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYzg2MTg1YjFkNTE5YWRlNTg1ZjE4NGMzNGYzZjNlMjBiYjY0MWRlYjg3OWU4MTM3OGU0ZWFmMjA5Mjg3In19fQ");
-    }
-
-    private static void playSound(ServerPlayer player, SoundEvent sound) {
-        player.playNotifySound(sound, SoundSource.MASTER, 1, 1);
+                .setProfile("eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYzg2MTg1YjFkNTE5YWRlNTg1ZjE4NGMzNGYzZjNlMjBiYjY0MWRlYjg3OWU4MTM3OGU0ZWFmMjA5Mjg3In19fQ");
     }
 
     public static void playClickSound(ServerPlayer player) {
-        playSound(player, SoundEvents.UI_BUTTON_CLICK.value());
+        PlayerUtil.playSoundToPlayer(player, SoundEvents.UI_BUTTON_CLICK.value(), SoundSource.UI, 1.0F, 1.0F);
     }
 }

@@ -7,7 +7,7 @@ import fr.hugman.uhc.api.config.UHCTimersConfig;
 import fr.hugman.uhc.api.registry.UHCModuleTags;
 import fr.hugman.uhc.api.registry.UHCRegistryKeys;
 import fr.hugman.uhc.api.util.DoubleRange;
-import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
+import net.fabricmc.fabric.api.datagen.v1.FabricPackOutput;
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricDynamicRegistryProvider;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.worldgen.BootstrapContext;
@@ -15,7 +15,7 @@ import net.minecraft.world.level.dimension.LevelStem;
 import java.util.concurrent.CompletableFuture;
 
 public class UHCConfigProvider extends FabricDynamicRegistryProvider {
-    public UHCConfigProvider(FabricDataOutput output, CompletableFuture<HolderLookup.Provider> registriesFuture) {
+    public UHCConfigProvider(FabricPackOutput output, CompletableFuture<HolderLookup.Provider> registriesFuture) {
         super(output, registriesFuture);
     }
 

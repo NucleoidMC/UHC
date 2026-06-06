@@ -28,7 +28,7 @@ import xyz.nucleoid.stimuli.event.player.PlayerDeathEvent;
 
 public record UHCWaiting(
         GameSpace gameSpace,
-        ServerLevel world,
+        ServerLevel level,
         UHCGameConfig config,
         TeamManager teamManager
 ) {
@@ -38,12 +38,12 @@ public record UHCWaiting(
         var map = UHCMap.of(config, registries);
         var moduleManager = new ModuleManager(config.uhcConfig().value().modules());
 
-        return context.openWithWorld(map.createRuntimeWorldConfig(), (activity, world) -> {
+        return context.openWithLevel(map.createRuntimeWorldConfig(), (activity, level) -> {
             GameWaitingLobby.addTo(activity, config.players());
             TeamManager teamManager = TeamManager.addTo(activity);
 
             var gameSpace = activity.getGameSpace();
-            UHCWaiting waiting = new UHCWaiting(gameSpace, world, config, teamManager);
+            UHCWaiting waiting = new UHCWaiting(gameSpace, level, config, teamManager);
 
             gameSpace.setAttachment(ModuleManager.ATTACHMENT, moduleManager);
 
@@ -59,7 +59,7 @@ public record UHCWaiting(
 
     private JoinAcceptorResult acceptPlayer(JoinAcceptor joinAcceptor) {
         return joinAcceptor
-                .teleport(this.world, UHCSpawner.getSurfaceBlock(world, 0, 0))
+                .teleport(this.level, UHCSpawner.getSurfaceBlock(level, 0, 0))
                 .thenRunForEach(player -> player.setGameMode(GameType.ADVENTURE));
     }
 
@@ -68,7 +68,7 @@ public record UHCWaiting(
     }
 
     private GameResult requestStart() {
-        UHCActive.start(this.gameSpace, this.world, this.config);
+        UHCActive.start(this.gameSpace, this.level, this.config);
         return GameResult.ok();
     }
 }

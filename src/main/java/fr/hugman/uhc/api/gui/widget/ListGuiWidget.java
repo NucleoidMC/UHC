@@ -3,6 +3,7 @@ package fr.hugman.uhc.api.gui.widget;
 import eu.pb4.sgui.api.SlotHolder;
 import eu.pb4.sgui.api.elements.GuiElement;
 import eu.pb4.sgui.api.elements.GuiElementBuilder;
+import eu.pb4.sgui.api.elements.SimpleGuiElement;
 import fr.hugman.uhc.api.gui.UHCConfigGuiElements;
 import org.jetbrains.annotations.Nullable;
 
@@ -55,7 +56,7 @@ public class ListGuiWidget<Object> extends GuiWidget {
             int slot = row * 9 + col;
             int elementIndex = i + page * maxModulesPerPage;
             if (elementIndex >= size) {
-                gui.setSlot(slot, GuiElement.EMPTY);
+                gui.setSlot(slot, SimpleGuiElement.EMPTY);
             } else {
                 var value = list.get(elementIndex);
                 var uiElement = this.elementBuilderProvider.apply(value);
@@ -86,7 +87,7 @@ public class ListGuiWidget<Object> extends GuiWidget {
                 refreshDisplay();
             }));
         } else {
-            gui.setSlot(middleRow, GuiElement.EMPTY);
+            gui.setSlot(middleRow, SimpleGuiElement.EMPTY);
         }
         if (hasNextPage) {
             gui.setSlot(middleRow + 8, UHCConfigGuiElements.nextPage(player).setCallback((index, type, action, gui) -> {
@@ -95,7 +96,7 @@ public class ListGuiWidget<Object> extends GuiWidget {
                 refreshDisplay();
             }));
         } else {
-            gui.setSlot(middleRow + 8, GuiElement.EMPTY);
+            gui.setSlot(middleRow + 8, SimpleGuiElement.EMPTY);
         }
     }
 }

@@ -3,7 +3,7 @@ package fr.hugman.uhc.api.modifier;
 import com.mojang.serialization.MapCodec;
 import fr.hugman.uhc.impl.UHC;
 import net.minecraft.core.Registry;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import fr.hugman.uhc.api.registry.UHCRegistries;
 
 public record ModifierType<T extends Modifier>(MapCodec<T> codec) {
@@ -19,7 +19,7 @@ public record ModifierType<T extends Modifier>(MapCodec<T> codec) {
         return register(UHC.id(name), codec);
     }
 
-    public static <T extends Modifier> ModifierType<T> register(ResourceLocation identifier, MapCodec<T> codec) {
+    public static <T extends Modifier> ModifierType<T> register(Identifier identifier, MapCodec<T> codec) {
         return Registry.register(UHCRegistries.MODIFIER_TYPE, identifier, new ModifierType<>(codec));
     }
 }

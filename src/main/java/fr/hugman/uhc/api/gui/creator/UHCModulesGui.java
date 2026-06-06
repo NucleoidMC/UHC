@@ -3,7 +3,7 @@ package fr.hugman.uhc.api.gui.creator;
 import fr.hugman.uhc.api.gui.PreviousableGui;
 import fr.hugman.uhc.api.gui.widget.ListGuiWidget;
 import fr.hugman.uhc.api.module.UHCModule;
-import fr.hugman.uhc.api.util.Messenger;
+import net.minecraft.resources.Identifier;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
@@ -12,7 +12,6 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.core.Holder;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 
 public class UHCModulesGui extends PreviousableGui {
@@ -27,7 +26,7 @@ public class UHCModulesGui extends PreviousableGui {
     private @Nullable ListGuiWidget<Holder<UHCModule>> otherModulesWidget;
 
     private UHCModulesGui(ServerPlayer player, int height, boolean editable, List<Holder<UHCModule>> selectedModules, List<Holder<UHCModule>> otherModules, @Nullable Consumer<List<Holder<UHCModule>>> closeCallback) {
-        super(BuiltInRegistries.MENU.getValue(ResourceLocation.parse("generic_9x" + height)), player, editable);
+        super(BuiltInRegistries.MENU.getValue(Identifier.parse("generic_9x" + height)), player, editable);
         this.height = height;
         this.editable = editable;
         this.closeCallback = closeCallback;
@@ -50,11 +49,11 @@ public class UHCModulesGui extends PreviousableGui {
     }
 
     @Override
-    public void onClose() {
+    public void afterRemoval() {
         if (closeCallback != null) {
             closeCallback.accept(selectedModules);
         }
-        super.onClose();
+        super.afterRemoval();
     }
 
     private void setup() {

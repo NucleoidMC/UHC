@@ -8,7 +8,7 @@ import net.fabricmc.fabric.api.event.registry.FabricRegistryBuilder;
 import net.minecraft.core.MappedRegistry;
 
 public class UHCRegistries {
-    public static final MappedRegistry<ModifierType<?>> MODIFIER_TYPE = FabricRegistryBuilder.createSimple(UHCRegistryKeys.MODIFIER_TYPE).buildAndRegister();
+    public static final MappedRegistry<ModifierType<?>> MODIFIER_TYPE = FabricRegistryBuilder.create(UHCRegistryKeys.MODIFIER_TYPE).buildAndRegister();
 
     public static void register() {
         DynamicRegistries.register(UHCRegistryKeys.UHC_MODULE, UHCModule.CODEC);

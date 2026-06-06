@@ -1,6 +1,6 @@
 package fr.hugman.uhc.impl.game.ui.element;
 
-import eu.pb4.sgui.api.elements.GuiElementInterface;
+import eu.pb4.sgui.api.elements.GuiElement;
 import fr.hugman.uhc.api.gui.UHCConfigGuiElements;
 import fr.hugman.uhc.impl.game.ModuleManager;
 import xyz.nucleoid.plasmid.api.game.GameSpaceManager;
@@ -19,7 +19,7 @@ public class ModulesUiElement implements WaitingLobbyUiElement {
     }
 
     @Override
-    public GuiElementInterface createMainElement() {
+    public GuiElement createMainElement() {
         return UHCConfigGuiElements.modules(player)
                 .setCallback((index, type, action, gui) -> {
                     if (!WaitingLobbyUiElement.isClick(type, gui)) {

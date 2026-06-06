@@ -34,18 +34,22 @@ public class ModulesCommand {
                         .requires(ModulesCommand::supportsModules)
                         .executes(ModulesCommand::displayModules)
                         .then(Commands.literal("enable")
-                                .requires(source -> source.hasPermission(2))
+                                .requires(Commands.hasPermission(Commands.LEVEL_GAMEMASTERS))
                                 .then(UHCModuleArgument.argumentFromDisabled("module")
                                         .executes(context -> enableModule(context, UHCModuleArgument.get(context, MODULE_ARG)))))
                         .then(Commands.literal("disable")
-                                .requires(source -> source.hasPermission(2))
+                                .requires(Commands.hasPermission(Commands.LEVEL_GAMEMASTERS))
                                 .then(UHCModuleArgument.argumentFromEnabled("module")
                                         .executes(context -> disableModule(context, UHCModuleArgument.get(context, MODULE_ARG)))))
         );
     }
 
     public static boolean supportsModules(CommandSourceStack source) {
-        GameSpace gameSpace = GameSpaceManager.get().byWorld(source.getLevel());
+        var level = source.getLevel();
+        if(level == null) {
+            return false;
+        }
+        GameSpace gameSpace = GameSpaceManager.get().byLevel(level);
         if (gameSpace == null) {
             return false;
         }
@@ -72,7 +76,7 @@ public class ModulesCommand {
 
     private static int enableModule(CommandContext<CommandSourceStack> context, Holder<UHCModule> module) throws CommandSyntaxException {
         CommandSourceStack source = context.getSource();
-        var space = Objects.requireNonNull(GameSpaceManager.get().byWorld(source.getLevel()));
+        var space = Objects.requireNonNull(GameSpaceManager.get().byLevel(source.getLevel()));
         var manager = space.getAttachment(ModuleManager.ATTACHMENT);
         if (manager == null) {
             throw NO_MANAGER_ACTIVATED.create();
@@ -92,7 +96,7 @@ public class ModulesCommand {
 
     private static int disableModule(CommandContext<CommandSourceStack> context, Holder<UHCModule> module) throws CommandSyntaxException {
         CommandSourceStack source = context.getSource();
-        var manager = Objects.requireNonNull(GameSpaceManager.get().byWorld(source.getLevel())).getAttachment(ModuleManager.ATTACHMENT);
+        var manager = Objects.requireNonNull(GameSpaceManager.get().byLevel(source.getLevel())).getAttachment(ModuleManager.ATTACHMENT);
         if (manager == null) {
             throw NO_MANAGER_ACTIVATED.create();
         }

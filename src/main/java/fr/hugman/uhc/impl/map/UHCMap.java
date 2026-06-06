@@ -3,10 +3,10 @@ package fr.hugman.uhc.impl.map;
 import fr.hugman.uhc.api.config.UHCGameConfig;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.world.level.GameRules;
 import net.minecraft.world.level.chunk.ChunkGenerator;
+import net.minecraft.world.level.gamerules.GameRules;
 import net.minecraft.world.level.levelgen.WorldOptions;
-import xyz.nucleoid.fantasy.RuntimeWorldConfig;
+import xyz.nucleoid.fantasy.RuntimeLevelConfig;
 
 public class UHCMap {
     private final UHCGameConfig config;
@@ -26,15 +26,15 @@ public class UHCMap {
         return new UHCMap(config, ModuledChunkGenerator.of(config, seed, registries), registries, seed);
     }
 
-    public RuntimeWorldConfig createRuntimeWorldConfig() {
+    public RuntimeLevelConfig createRuntimeWorldConfig() {
         var dimension = registries.lookupOrThrow(Registries.LEVEL_STEM).getOrThrow(config.uhcConfig().value().mapConfig().dimension()).value();
 
-        return new RuntimeWorldConfig()
+        return new RuntimeLevelConfig()
                 .setSeed(this.seed)
                 .setGenerator(this.chunkGenerator)
-                .setGameRule(GameRules.RULE_NATURAL_REGENERATION, false)
-                .setGameRule(GameRules.RULE_DOMOBSPAWNING, true)
-                .setGameRule(GameRules.RULE_DAYLIGHT, true)
+                .setGameRule(GameRules.NATURAL_HEALTH_REGENERATION, false)
+                .setGameRule(GameRules.SPAWN_MOBS, true)
+                .setGameRule(GameRules.ADVANCE_TIME, true)
                 .setDimensionType(dimension.type());
     }
 }

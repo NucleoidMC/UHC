@@ -3,15 +3,15 @@ package fr.hugman.uhc.api.datagen.provider;
 import fr.hugman.uhc.api.module.UHCModule;
 import fr.hugman.uhc.api.registry.UHCModuleTags;
 import fr.hugman.uhc.api.registry.UHCRegistryKeys;
-import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
-import net.fabricmc.fabric.api.datagen.v1.provider.FabricTagProvider;
+import net.fabricmc.fabric.api.datagen.v1.FabricPackOutput;
+import net.fabricmc.fabric.api.datagen.v1.provider.FabricTagsProvider;
 import net.minecraft.core.HolderLookup;
 import java.util.concurrent.CompletableFuture;
 
 import static fr.hugman.uhc.api.module.UHCModules.*;
 
-public class UHCModuleTagProvider extends FabricTagProvider<UHCModule> {
-    public UHCModuleTagProvider(FabricDataOutput output, CompletableFuture<HolderLookup.Provider> completableFuture) {
+public class UHCModuleTagProvider extends FabricTagsProvider<UHCModule> {
+    public UHCModuleTagProvider(FabricPackOutput output, CompletableFuture<HolderLookup.Provider> completableFuture) {
         super(output, UHCRegistryKeys.UHC_MODULE, completableFuture);
     }
 

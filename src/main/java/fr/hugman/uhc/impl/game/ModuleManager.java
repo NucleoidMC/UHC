@@ -1,7 +1,6 @@
 package fr.hugman.uhc.impl.game;
 
-import eu.pb4.sgui.api.GuiHelpers;
-import eu.pb4.sgui.api.gui.GuiInterface;
+import eu.pb4.sgui.api.SguiUtils;
 import fr.hugman.uhc.impl.UHC;
 import fr.hugman.uhc.api.gui.creator.UHCModulesGui;
 import fr.hugman.uhc.api.modifier.*;
@@ -37,6 +36,7 @@ import net.minecraft.world.level.Explosion;
 import net.minecraft.world.level.block.state.BlockState;
 
 public final class ModuleManager {
+    //TODO move this
     public static final GameAttachment<ModuleManager> ATTACHMENT = GameAttachment.create(UHC.id("module_manager"));
 
     private final List<Holder<UHCModule>> modules;
@@ -98,8 +98,8 @@ public final class ModuleManager {
      * @param player The player to build the GUI for
      * @return The GUI
      */
-    public GuiInterface buildGui(ServerPlayer player) {
-        boolean isInGui = GuiHelpers.getCurrentGui(player) != null;
+    public UHCModulesGui buildGui(ServerPlayer player) {
+        boolean isInGui = SguiUtils.getCurrentGui(player) != null;
         UHCModulesGui gui = new UHCModulesGui(player, Mth.clamp(1, Mth.ceil((float) modules.size() / 9) + (isInGui ? 1 : 0), 6), modules);
         gui.setTitle(Component.translatable("ui.uhc.modules.title"));
         return gui;
@@ -147,7 +147,7 @@ public final class ModuleManager {
                 for (int i = 0; i < inv.getContainerSize(); i++) {
                     ItemStack stack = inv.getItem(i);
                     if (piece.predicate().test(stack)) {
-                        inv.setItem(i, piece.stack().copy());
+                        inv.setItem(i, piece.stack().create());
                     }
                 }
             }

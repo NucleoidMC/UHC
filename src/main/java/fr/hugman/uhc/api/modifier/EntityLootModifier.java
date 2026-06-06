@@ -43,7 +43,7 @@ public record EntityLootModifier(
     }
 
     public boolean test(LivingEntity livingEntity) {
-        return livingEntity.getType().is(this.entities);
+        return livingEntity.is(this.entities);
     }
 
     public List<ItemStack> getLoots(ServerLevel world, LivingEntity livingEntity) {

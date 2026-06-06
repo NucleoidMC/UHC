@@ -247,7 +247,7 @@ public class UHCActive {
             this.setPvp(true);
             msg.danger(Messenger.SYMBOL_SKULL, "text.uhc.pvp_enabled");
 
-            world.getWorldBorder().lerpSizeBetween(this.timers.getStartMapSize(), this.timers.getEndMapSize(), this.timers.getShrinkingTime() * 50L);
+            world.getWorldBorder().lerpSizeBetween(this.timers.getStartMapSize(), this.timers.getEndMapSize(), this.timers.getShrinkingTime() * 50L, world.getGameTime());
             this.gameSpace.getPlayers().forEach(player -> player.connection.send(new ClientboundSetBorderLerpSizePacket(world.getWorldBorder())));
             msg.danger("text.uhc.shrinking_start");
 
@@ -258,7 +258,7 @@ public class UHCActive {
         else if (worldTime == this.deathMatchTick) {
             this.bar.setFull(Component.literal("🗡").append(Component.translatable("text.uhc.deathmatchTime")).append("🗡"));
             world.getWorldBorder().setDamagePerBlock(2.5);
-            world.getWorldBorder().setDamageSafeZone(0.125);
+            world.getWorldBorder().setSafeZone(0.125);
             msg.info(Messenger.SYMBOL_SWORD, "text.uhc.last_one_wins");
             this.checkForWinner();
         }

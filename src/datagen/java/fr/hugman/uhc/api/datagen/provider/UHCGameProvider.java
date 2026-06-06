@@ -4,23 +4,23 @@ import fr.hugman.uhc.api.config.UHCConfigs;
 import fr.hugman.uhc.api.config.UHCGameConfigs;
 import fr.hugman.uhc.api.game.UHCGameTeamSize;
 import fr.hugman.uhc.api.registry.UHCRegistryKeys;
-import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
+import net.fabricmc.fabric.api.datagen.v1.FabricPackOutput;
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricDynamicRegistryProvider;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.worldgen.BootstrapContext;
 import xyz.nucleoid.plasmid.api.game.config.GameConfig;
-import xyz.nucleoid.plasmid.api.game.config.GameConfigs;
+import xyz.nucleoid.plasmid.api.registry.PlasmidRegistryKeys;
 
 import java.util.concurrent.CompletableFuture;
 
 public class UHCGameProvider extends FabricDynamicRegistryProvider {
-    public UHCGameProvider(FabricDataOutput output, CompletableFuture<HolderLookup.Provider> registriesFuture) {
+    public UHCGameProvider(FabricPackOutput output, CompletableFuture<HolderLookup.Provider> registriesFuture) {
         super(output, registriesFuture);
     }
 
     @Override
     protected void configure(HolderLookup.Provider registries, Entries entries) {
-        entries.addAll(registries.lookupOrThrow(GameConfigs.REGISTRY_KEY));
+        entries.addAll(registries.lookupOrThrow(PlasmidRegistryKeys.GAME_CONFIG));
     }
 
     @Override
