@@ -26,7 +26,7 @@ public class UHCMap {
         return new UHCMap(config, ModuledChunkGenerator.of(config, seed, registries), registries, seed);
     }
 
-    public RuntimeLevelConfig createRuntimeWorldConfig() {
+    public RuntimeLevelConfig createRuntimeLevelConfig() {
         var dimension = registries.lookupOrThrow(Registries.LEVEL_STEM).getOrThrow(config.uhcConfig().value().mapConfig().dimension()).value();
 
         return new RuntimeLevelConfig()

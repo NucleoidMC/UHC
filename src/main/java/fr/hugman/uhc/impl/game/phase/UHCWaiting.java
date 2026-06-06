@@ -38,7 +38,7 @@ public record UHCWaiting(
         var map = UHCMap.of(config, registries);
         var moduleManager = new ModuleManager(config.uhcConfig().value().modules());
 
-        return context.openWithLevel(map.createRuntimeWorldConfig(), (activity, level) -> {
+        return context.openWithLevel(map.createRuntimeLevelConfig(), (activity, level) -> {
             GameWaitingLobby.addTo(activity, config.players());
             TeamManager teamManager = TeamManager.addTo(activity);
 

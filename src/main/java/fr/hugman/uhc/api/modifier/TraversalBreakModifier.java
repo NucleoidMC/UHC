@@ -31,11 +31,11 @@ public record TraversalBreakModifier(
         return ModifierType.TRAVERSAL_BREAK;
     }
 
-    public void breakBlock(ServerLevel world, @Nullable LivingEntity entity, BlockPos origin) {
-        BlockState state = world.getBlockState(origin);
+    public void breakBlock(ServerLevel level, @Nullable LivingEntity entity, BlockPos origin) {
+        BlockState state = level.getBlockState(origin);
         var originLong = origin.asLong();
 
-        if (this.predicate.test(state, world.getRandom())) {
+        if (this.predicate.test(state, level.getRandom())) {
             BlockTraversal traversal = BlockTraversal.create()
                     .order(BlockTraversal.Order.BREADTH_FIRST)
                     .connectivity(BlockTraversal.Connectivity.TWENTY_SIX);
@@ -48,7 +48,7 @@ public record TraversalBreakModifier(
                 if (origin.asLong() == nextPosLong || posLongSet.contains(nextPosLong)) {
                     return BlockTraversal.Result.CONTINUE;
                 }
-                if (this.predicate.test(world.getBlockState(nextPos), world.getRandom())) {
+                if (this.predicate.test(level.getBlockState(nextPos), level.getRandom())) {
                     posLongSet.add(nextPos.asLong());
                     return BlockTraversal.Result.CONTINUE;
                 }
@@ -74,8 +74,8 @@ public record TraversalBreakModifier(
                         if (posLongSet.contains(nextPosLong) || leavesLongSet.contains(nextPosLong)) {
                             return BlockTraversal.Result.CONTINUE;
                         }
-                        BlockState fromState = world.getBlockState(fromPos);
-                        BlockState nextState = world.getBlockState(nextPos);
+                        BlockState fromState = level.getBlockState(fromPos);
+                        BlockState nextState = level.getBlockState(nextPos);
                         if (nextState.hasProperty(LeavesBlock.DISTANCE) && nextState.is(BlockTags.LEAVES)) {
                             var currentDistance = fromState.hasProperty(LeavesBlock.DISTANCE) ? fromState.getValue(LeavesBlock.DISTANCE) : 0;
                             if (nextState.getValue(LeavesBlock.DISTANCE) > currentDistance) {
@@ -89,7 +89,7 @@ public record TraversalBreakModifier(
                 }
                 posLongSet.remove(originLong);
             }
-            posLongSet.forEach(value -> world.destroyBlock(BlockPos.of(value), true, entity));
+            posLongSet.forEach(value -> level.destroyBlock(BlockPos.of(value), true, entity));
         }
     }
 }

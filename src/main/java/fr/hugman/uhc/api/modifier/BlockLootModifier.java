@@ -46,26 +46,26 @@ public record BlockLootModifier(
         return this.predicate.test(state, random);
     }
 
-    public void spawnExperience(ServerLevel world, BlockPos pos) {
+    public void spawnExperience(ServerLevel level, BlockPos pos) {
         int xp = this.experience;
         while (xp > 0) {
             int i = ExperienceOrb.getExperienceValue(xp);
             xp -= i;
-            world.addFreshEntity(new ExperienceOrb(world, (double) pos.getX() + 0.5D, (double) pos.getY() + 0.5D, (double) pos.getZ() + 0.5D, i));
+            level.addFreshEntity(new ExperienceOrb(level, (double) pos.getX() + 0.5D, (double) pos.getY() + 0.5D, (double) pos.getZ() + 0.5D, i));
         }
     }
 
-    public List<ItemStack> getLoots(ServerLevel world, BlockPos pos, @Nullable Entity entity, ItemStack stack) {
+    public List<ItemStack> getLoots(ServerLevel level, BlockPos pos, @Nullable Entity entity, ItemStack stack) {
         if (this.lootTable.isEmpty()) {
             return Collections.emptyList();
         }
 
-        LootTable lootTable = world.getServer().reloadableRegistries().getLootTable(this.lootTable.get());
-        LootParams lootContext = new LootParams.Builder(world)
+        LootTable lootTable = level.getServer().reloadableRegistries().getLootTable(this.lootTable.get());
+        LootParams lootContext = new LootParams.Builder(level)
                 .withParameter(LootContextParams.ORIGIN, Vec3.atCenterOf(pos))
                 .withParameter(LootContextParams.TOOL, stack)
-                .withParameter(LootContextParams.BLOCK_STATE, world.getBlockState(pos))
-                .withOptionalParameter(LootContextParams.BLOCK_ENTITY, world.getBlockEntity(pos))
+                .withParameter(LootContextParams.BLOCK_STATE, level.getBlockState(pos))
+                .withOptionalParameter(LootContextParams.BLOCK_ENTITY, level.getBlockEntity(pos))
                 .withOptionalParameter(LootContextParams.THIS_ENTITY, entity)
                 .create(LootContextParamSets.BLOCK);
         return lootTable.getRandomItems(lootContext);

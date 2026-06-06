@@ -154,9 +154,9 @@ public final class ModuleManager {
         });
     }
 
-    private EventResult onBlockBroken(ServerPlayer playerEntity, ServerLevel world, BlockPos pos) {
+    private EventResult onBlockBroken(ServerPlayer playerEntity, ServerLevel level, BlockPos pos) {
         for (TraversalBreakModifier piece : this.modifiers(ModifierType.TRAVERSAL_BREAK)) {
-            piece.breakBlock(world, playerEntity, pos);
+            piece.breakBlock(level, playerEntity, pos);
         }
         return EventResult.ALLOW;
     }
@@ -184,13 +184,13 @@ public final class ModuleManager {
         return DroppedItemsResult.pass(stacks);
     }
 
-    private DroppedItemsResult onBlockDrop(@Nullable Entity entity, ServerLevel world, BlockPos pos, BlockState state, List<ItemStack> itemStacks) {
+    private DroppedItemsResult onBlockDrop(@Nullable Entity entity, ServerLevel level, BlockPos pos, BlockState state, List<ItemStack> itemStacks) {
         boolean keepOld = true;
         List<ItemStack> stacks = new ArrayList<>();
         for (BlockLootModifier piece : this.modifiers(ModifierType.BLOCK_LOOT)) {
-            if (piece.test(state, world.getRandom())) {
-                piece.spawnExperience(world, pos);
-                stacks.addAll(piece.getLoots(world, pos, entity, entity instanceof LivingEntity ? ((LivingEntity) entity).getUseItem() : ItemStack.EMPTY));
+            if (piece.test(state, level.getRandom())) {
+                piece.spawnExperience(level, pos);
+                stacks.addAll(piece.getLoots(level, pos, entity, entity instanceof LivingEntity ? ((LivingEntity) entity).getUseItem() : ItemStack.EMPTY));
                 if (piece.shouldReplace()) keepOld = false;
             }
         }

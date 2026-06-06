@@ -77,26 +77,26 @@ public class ModuledChunkGenerator extends GameChunkGenerator implements ChunkGe
     }
 
     @Override
-    public void applyBiomeDecoration(WorldGenLevel world, ChunkAccess chunk, StructureManager structureAccessor) {
+    public void applyBiomeDecoration(WorldGenLevel level, ChunkAccess chunk, StructureManager structureAccessor) {
         var chunkPos = chunk.getPos();
         if (SharedConstants.debugVoidTerrain(chunkPos)) {
             return;
         }
-        var blockPos = SectionPos.of(chunk.getPos(), world.getMinSectionY()).origin();
+        var blockPos = SectionPos.of(chunk.getPos(), level.getMinSectionY()).origin();
 
         WorldgenRandom chunkRandom = new WorldgenRandom(new XoroshiroRandomSource(this.seed));
-        long popSeed = chunkRandom.setDecorationSeed(world.getSeed(), blockPos.getX(), blockPos.getZ());
+        long popSeed = chunkRandom.setDecorationSeed(level.getSeed(), blockPos.getX(), blockPos.getZ());
 
         int i = 0;
-        var placedFeatureRegistry = world.registryAccess().lookupOrThrow(Registries.PLACED_FEATURE);
+        var placedFeatureRegistry = level.registryAccess().lookupOrThrow(Registries.PLACED_FEATURE);
         for (var placedFeature : this.placedFeatures) {
             var name = placedFeatureRegistry.getResourceKey(placedFeature).map(Object::toString);
             chunkRandom.setFeatureSeed(popSeed, i++, 0);
-            world.setCurrentlyGenerating(() -> name.orElse("Custom UHC placed feature"));
-            placedFeature.placeWithBiomeCheck(world, this, chunkRandom, blockPos);
+            level.setCurrentlyGenerating(() -> name.orElse("Custom UHC placed feature"));
+            placedFeature.placeWithBiomeCheck(level, this, chunkRandom, blockPos);
         }
-        world.setCurrentlyGenerating(null);
-        this.subGenerator.applyBiomeDecoration(world, chunk, structureAccessor);
+        level.setCurrentlyGenerating(null);
+        this.subGenerator.applyBiomeDecoration(level, chunk, structureAccessor);
     }
 
     /*=================*/
@@ -124,8 +124,8 @@ public class ModuledChunkGenerator extends GameChunkGenerator implements ChunkGe
     }
 
     @Override
-    public void applyCarvers(WorldGenRegion chunkRegion, long seed, RandomState noiseConfig, BiomeManager world, StructureManager structureAccessor, ChunkAccess chunk) {
-        this.subGenerator.applyCarvers(chunkRegion, seed, noiseConfig, world, structureAccessor, chunk);
+    public void applyCarvers(WorldGenRegion region, long seed, RandomState randomState, BiomeManager biomeManager, StructureManager structureManager, ChunkAccess chunk) {
+        this.subGenerator.applyCarvers(region, seed, randomState, biomeManager, structureManager, chunk);
     }
 
     @Override
@@ -135,28 +135,28 @@ public class ModuledChunkGenerator extends GameChunkGenerator implements ChunkGe
 
     @Nullable
     @Override
-    public Pair<BlockPos, Holder<Structure>> findNearestMapStructure(ServerLevel world, HolderSet<Structure> structures, BlockPos center, int radius, boolean skipReferencedStructures) {
-        return this.subGenerator.findNearestMapStructure(world, structures, center, radius, skipReferencedStructures);
+    public Pair<BlockPos, Holder<Structure>> findNearestMapStructure(ServerLevel level, HolderSet<Structure> structures, BlockPos center, int radius, boolean skipReferencedStructures) {
+        return this.subGenerator.findNearestMapStructure(level, structures, center, radius, skipReferencedStructures);
     }
 
     @Override
-    public ChunkGeneratorStructureState createState(HolderLookup<StructureSet> structureSetRegistry, RandomState noiseConfig, long seed) {
-        return this.subGenerator.createState(structureSetRegistry, noiseConfig, seed);
+    public ChunkGeneratorStructureState createState(HolderLookup<StructureSet> structureSets, RandomState randomState, long seed) {
+        return this.subGenerator.createState(structureSets, randomState, seed);
     }
 
     @Override
-    public int getBaseHeight(int x, int z, Heightmap.Types heightmap, LevelHeightAccessor world, RandomState noiseConfig) {
-        return this.subGenerator.getBaseHeight(x, z, heightmap, world, noiseConfig);
+    public int getBaseHeight(int x, int z, Heightmap.Types type, LevelHeightAccessor heightAccessor, RandomState randomState) {
+        return this.subGenerator.getBaseHeight(x, z, type, heightAccessor, randomState);
     }
 
     @Override
-    public int getFirstOccupiedHeight(int x, int z, Heightmap.Types heightmap, LevelHeightAccessor world, RandomState noiseConfig) {
-        return this.subGenerator.getFirstOccupiedHeight(x, z, heightmap, world, noiseConfig);
+    public int getFirstOccupiedHeight(int x, int z, Heightmap.Types type, LevelHeightAccessor heightAccessor, RandomState randomState) {
+        return this.subGenerator.getFirstOccupiedHeight(x, z, type, heightAccessor, randomState);
     }
 
     @Override
-    public int getFirstFreeHeight(int x, int z, Heightmap.Types heightmap, LevelHeightAccessor world, RandomState noiseConfig) {
-        return this.subGenerator.getFirstFreeHeight(x, z, heightmap, world, noiseConfig);
+    public int getFirstFreeHeight(int x, int z, Heightmap.Types type, LevelHeightAccessor heightAccessor, RandomState randomState) {
+        return this.subGenerator.getFirstFreeHeight(x, z, type, heightAccessor, randomState);
     }
 
     @Override
@@ -175,28 +175,28 @@ public class ModuledChunkGenerator extends GameChunkGenerator implements ChunkGe
     }
 
     @Override
-    public void addDebugScreenInfo(List<String> text, RandomState noiseConfig, BlockPos pos) {
-        this.subGenerator.addDebugScreenInfo(text, noiseConfig, pos);
+    public void addDebugScreenInfo(List<String> text, RandomState randomState, BlockPos pos) {
+        this.subGenerator.addDebugScreenInfo(text, randomState, pos);
     }
 
     @Override
-    public WeightedList<MobSpawnSettings.SpawnerData> getMobsAt(Holder<Biome> biome, StructureManager accessor, MobCategory group, BlockPos pos) {
-        return this.subGenerator.getMobsAt(biome, accessor, group, pos);
+    public WeightedList<MobSpawnSettings.SpawnerData> getMobsAt(Holder<Biome> biome, StructureManager structureManager, MobCategory mobCategory, BlockPos pos) {
+        return this.subGenerator.getMobsAt(biome, structureManager, mobCategory, pos);
     }
 
     @Override
-    public NoiseColumn getBaseColumn(int x, int z, LevelHeightAccessor world, RandomState noiseConfig) {
-        return this.subGenerator.getBaseColumn(x, z, world, noiseConfig);
+    public NoiseColumn getBaseColumn(int x, int z, LevelHeightAccessor heightAccessor, RandomState randomState) {
+        return this.subGenerator.getBaseColumn(x, z, heightAccessor, randomState);
     }
 
     @Override
-    public int getSpawnHeight(LevelHeightAccessor world) {
-        return this.subGenerator.getSpawnHeight(world);
+    public int getSpawnHeight(LevelHeightAccessor level) {
+        return this.subGenerator.getSpawnHeight(level);
     }
 
     @Override
-    public BiomeGenerationSettings getBiomeGenerationSettings(Holder<Biome> biomeEntry) {
-        return this.subGenerator.getBiomeGenerationSettings(biomeEntry);
+    public BiomeGenerationSettings getBiomeGenerationSettings(Holder<Biome> biome) {
+        return this.subGenerator.getBiomeGenerationSettings(biome);
     }
 
     private long getSeed() {

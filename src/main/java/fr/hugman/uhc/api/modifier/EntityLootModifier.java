@@ -46,13 +46,13 @@ public record EntityLootModifier(
         return livingEntity.is(this.entities);
     }
 
-    public List<ItemStack> getLoots(ServerLevel world, LivingEntity livingEntity) {
+    public List<ItemStack> getLoots(ServerLevel level, LivingEntity livingEntity) {
         if (this.lootTable.isEmpty()) {
             return Collections.emptyList();
         }
 
-        LootTable lootTable = world.getServer().reloadableRegistries().getLootTable(this.lootTable.get());
-        LootParams lootContext = new LootParams.Builder(world)
+        LootTable lootTable = level.getServer().reloadableRegistries().getLootTable(this.lootTable.get());
+        LootParams lootContext = new LootParams.Builder(level)
                 .withParameter(LootContextParams.THIS_ENTITY, livingEntity)
                 .withParameter(LootContextParams.ORIGIN, livingEntity.position())
                 .withParameter(LootContextParams.DAMAGE_SOURCE, livingEntity.damageSources().generic())

@@ -19,15 +19,15 @@ import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.phys.Vec3;
 
 public class UHCSpawner {
-    private final ServerLevel world;
+    private final ServerLevel level;
     private final Map<GameTeam, BlockBounds> cages = new HashMap<>();
 
-    public UHCSpawner(ServerLevel world) {
-        this.world = world;
+    public UHCSpawner(ServerLevel level) {
+        this.level = level;
     }
 
-    public static Vec3 getSurfaceBlock(ServerLevel world, int x, int z) {
-        LevelChunk chunk = world.getChunkAt(new BlockPos(x, 0, z));
+    public static Vec3 getSurfaceBlock(ServerLevel level, int x, int z) {
+        LevelChunk chunk = level.getChunkAt(new BlockPos(x, 0, z));
         return new Vec3(x, chunk.getHeight(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, x, z) + 1, z);
     }
 
@@ -37,7 +37,7 @@ public class UHCSpawner {
 
     public void spawnPlayerAt(ServerPlayer player, BlockPos pos) {
         ChunkPos chunkPos = new ChunkPos(pos.getX() >> 4, pos.getZ() >> 4);
-        this.world.getChunkSource().addTicket(new Ticket(TicketType.PLAYER_SIMULATION, 1), chunkPos);
+        this.level.getChunkSource().addTicket(new Ticket(TicketType.PLAYER_SIMULATION, 1), chunkPos);
         player.snapTo(pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, 0.0F, 0.0F);
     }
 
@@ -50,32 +50,31 @@ public class UHCSpawner {
 
     public void summonCage(GameTeam team, int x, int z) {
         BlockPos pos = new BlockPos(x, 200, z);
-        if (this.world.canSeeSky(pos)) {
+        if (this.level.canSeeSky(pos)) {
             pos = new BlockPos(x, 200, z);
         }
         this.addCageAt(team, pos, Blocks.BARRIER.defaultBlockState(), 3, 4);
     }
 
     public void addCageAt(GameTeam team, BlockPos origin, BlockState sides, int width, int height) {
-        ServerLevel world = this.world;
         BlockState floor = ColoredBlocks.glass(team.config().blockDyeColor()).defaultBlockState();
 
         BlockBounds fullCage = BlockBounds.of(origin.below().north(width).east(width), origin.above(height).south(width).west(width));
         BlockBounds cageFloor = BlockBounds.of(origin.below().north(width - 1).east(width - 1), origin.below().south(width - 1).west(width - 1));
         BlockBounds cageAir = BlockBounds.of(origin.north(width - 1).east(width - 1), origin.above(height - 1).south(width - 1).west(width - 1));
 
-        fullCage.forEach(pos -> world.setBlockAndUpdate(pos, sides));
-        cageFloor.forEach(pos -> world.setBlockAndUpdate(pos, floor));
-        cageAir.forEach(pos -> world.setBlockAndUpdate(pos, Blocks.AIR.defaultBlockState()));
+        fullCage.forEach(pos -> this.level.setBlockAndUpdate(pos, sides));
+        cageFloor.forEach(pos -> this.level.setBlockAndUpdate(pos, floor));
+        cageAir.forEach(pos -> this.level.setBlockAndUpdate(pos, Blocks.AIR.defaultBlockState()));
 
         this.cages.put(team, fullCage);
     }
 
     public void clearCages() {
-        this.cages.values().forEach(bounds -> bounds.forEach(pos -> this.world.setBlockAndUpdate(pos, Blocks.AIR.defaultBlockState())));
+        this.cages.values().forEach(bounds -> bounds.forEach(pos -> this.level.setBlockAndUpdate(pos, Blocks.AIR.defaultBlockState())));
     }
 
     public BlockPos getSurfaceBlock(int x, int z) {
-        return BlockPos.containing(getSurfaceBlock(world, x, z));
+        return BlockPos.containing(getSurfaceBlock(this.level, x, z));
     }
 }
