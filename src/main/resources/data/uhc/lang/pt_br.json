@@ -1,10 +1,9 @@
 {
-    "command.uhc.modules.no_modules_activated": "Este jogo não tem nenhum dos módulos ativado!",
-    "gameType.uhc.uhc": "UHC",
-    "game.uhc.vanilla.duos": "UHC: Vanilla (Duplas)",
-    "game.uhc.vanilla.solo": "UHC: Vanilla (Solo)",
-    "game.uhc.vanilla.squads": "UHC: Vanilla (Esquadrões)",
-    "game.uhc.vanilla.trios": "UHC: Vanilla (Trios)",
+    "mode.solo": "Solo",
+    "mode.duos": "Duplas",
+    "mode.trios": "Trios",
+    "mode.squads": "Esquadrões",
+
     "text.uhc.and": "e",
     "text.uhc.deathmatch": "Mata-mata",
     "text.uhc.dropped_players": "Os jogadores foram abandonados no mapa.",
@@ -38,5 +37,8 @@
     "text.uhc.vulnerable.countdown_text": "Você será vulnerável a danos em %s.",
     "text.uhc.world": "Mapa: %s",
     "text.uhc.world_will_shrink": "Você será teleportado em %s. O mapa vai então começar a encolher e PvP vai ficar habilitado.",
+
+    "command.modules.no_modules_activated": "Este jogo não tem nenhum dos módulos ativado!",
+    
     "ui.uhc.modules.title": "Módulos ativos"
 }

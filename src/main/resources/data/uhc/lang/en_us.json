@@ -105,7 +105,7 @@
   "module.uhc.faster_resources.description.animals_and_zombies_drop_leather": "Most animals and zombies drop leather",
   "module.uhc.faster_resources.description.animals_and_zombies_drop_books": "Most animals and zombies drop books",
   "module.uhc.faster_resources.description.sheep_drop_strings": "Sheep drop strings",
-  "module.uhc.faster_resources.description.sheep_drop_bow": "Sheep drop a bow",
+  "module.uhc.faster_resources.description.sheep_drop_bows": "Sheep drop bows",
   "module.uhc.faster_resources.description.sugar_cane_drop_paper": "Sugar cane drop paper",
   "module.uhc.faster_resources.description.sugar_cane_drop_enchanting_tables_and_books": "Sugar cane drop enchanting tables and books",
   "module.uhc.faster_resources.description.chickens_drop_arrows": "Chickens drop arrows",
@@ -114,7 +114,7 @@
   "module.uhc.faster_resources.description.skeletons_drop_power_bow": "Skeletons drop Power-enchanted bows",
 
   "module.uhc.potion_drops": "Potion Drops",
-  "module.uhc.potion_drops.description": "Some entities drop potions",
+  "module.uhc.potion_drops.description": "Some things drop potions",
   "module.uhc.potion_drops.description.zombies_drop_strength_potions": "Zombies drops potions of Strength",
   "module.uhc.potion_drops.description.spiders_drop_poison_potions": "Spiders drops potions of Poison",
   "module.uhc.potion_drops.description.sugar_cane_drops_swiftness_potions": "Sugar cane drops potions of Swiftness",
