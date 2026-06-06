@@ -9,16 +9,16 @@ import fr.hugman.uhc.api.command.argument.UHCModuleArgument;
 import fr.hugman.uhc.api.module.UHCModule;
 import fr.hugman.uhc.api.module.UHCModuleEvents;
 import fr.hugman.uhc.impl.game.ModuleManager;
+import net.minecraft.commands.CommandSourceStack;
+import net.minecraft.commands.Commands;
+import net.minecraft.core.Holder;
+import net.minecraft.network.chat.Component;
 import xyz.nucleoid.plasmid.api.game.GameSpace;
 import xyz.nucleoid.plasmid.api.game.GameSpaceManager;
 import xyz.nucleoid.stimuli.EventInvokers;
 import xyz.nucleoid.stimuli.Stimuli;
 
 import java.util.Objects;
-import net.minecraft.commands.CommandSourceStack;
-import net.minecraft.commands.Commands;
-import net.minecraft.core.Holder;
-import net.minecraft.network.chat.Component;
 
 public class ModulesCommand {
     private static final SimpleCommandExceptionType NO_MANAGER_ACTIVATED = new SimpleCommandExceptionType(Component.translatable("command.modules.no_manager"));
@@ -46,7 +46,7 @@ public class ModulesCommand {
 
     public static boolean supportsModules(CommandSourceStack source) {
         var level = source.getLevel();
-        if(level == null) {
+        if (level == null) {
             return false;
         }
         GameSpace gameSpace = GameSpaceManager.get().byLevel(level);

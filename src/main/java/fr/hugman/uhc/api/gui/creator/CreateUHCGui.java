@@ -61,7 +61,7 @@ public class CreateUHCGui extends PreviousableGui {
         setSlot(9 + 3, createTeamSizeElement(UHCGameTeamSize.DUOS));
         setSlot(9 + 5, createTeamSizeElement(UHCGameTeamSize.TRIOS));
         setSlot(9 + 7, createTeamSizeElement(UHCGameTeamSize.SQUADS));
-        if(FabricLoader.getInstance().isDevelopmentEnvironment()) {
+        if (FabricLoader.getInstance().isDevelopmentEnvironment()) {
             setSlot(9 * 2 + 8, createTestingElement());
 
         }

@@ -1,6 +1,5 @@
 package fr.hugman.uhc.impl.game.phase;
 
-import fr.hugman.uhc.impl.UHC;
 import fr.hugman.uhc.api.config.UHCGameConfig;
 import fr.hugman.uhc.api.modifier.Modifier;
 import fr.hugman.uhc.api.modifier.ModifierType;
@@ -10,7 +9,24 @@ import fr.hugman.uhc.api.module.UHCModule;
 import fr.hugman.uhc.api.module.UHCModuleEvents;
 import fr.hugman.uhc.api.util.Messenger;
 import fr.hugman.uhc.api.util.TickUtil;
+import fr.hugman.uhc.impl.UHC;
 import fr.hugman.uhc.impl.game.*;
+import net.minecraft.ChatFormatting;
+import net.minecraft.core.Holder;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.ComponentUtils;
+import net.minecraft.network.protocol.game.ClientboundInitializeBorderPacket;
+import net.minecraft.network.protocol.game.ClientboundSetBorderLerpSizePacket;
+import net.minecraft.network.protocol.game.ClientboundUpdateAttributesPacket;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.util.Mth;
+import net.minecraft.world.BossEvent;
+import net.minecraft.world.Containers;
+import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.GameType;
 import xyz.nucleoid.plasmid.api.game.GameActivity;
 import xyz.nucleoid.plasmid.api.game.GameCloseReason;
 import xyz.nucleoid.plasmid.api.game.GameSpace;
@@ -28,22 +44,6 @@ import xyz.nucleoid.stimuli.event.player.PlayerDamageEvent;
 import xyz.nucleoid.stimuli.event.player.PlayerDeathEvent;
 
 import java.util.Optional;
-import net.minecraft.ChatFormatting;
-import net.minecraft.core.Holder;
-import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.ComponentUtils;
-import net.minecraft.network.protocol.game.ClientboundInitializeBorderPacket;
-import net.minecraft.network.protocol.game.ClientboundSetBorderLerpSizePacket;
-import net.minecraft.network.protocol.game.ClientboundUpdateAttributesPacket;
-import net.minecraft.server.level.ServerLevel;
-import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.sounds.SoundEvents;
-import net.minecraft.util.Mth;
-import net.minecraft.world.BossEvent;
-import net.minecraft.world.Containers;
-import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.level.GameType;
 
 public class UHCActive {
     private final GameSpace gameSpace;
@@ -433,7 +433,7 @@ public class UHCActive {
             }
         }
         this.spawnLogic.spawnPlayerAtCenter(player);
-        if(source.getEntity() instanceof ServerPlayer attacker && this.playerManager.get(attacker) instanceof UHCParticipant participant) {
+        if (source.getEntity() instanceof ServerPlayer attacker && this.playerManager.get(attacker) instanceof UHCParticipant participant) {
             participant.addKill();
         }
         return EventResult.DENY;

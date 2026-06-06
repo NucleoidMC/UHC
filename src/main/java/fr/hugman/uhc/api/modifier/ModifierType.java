@@ -1,10 +1,10 @@
 package fr.hugman.uhc.api.modifier;
 
 import com.mojang.serialization.MapCodec;
+import fr.hugman.uhc.api.registry.UHCRegistries;
 import fr.hugman.uhc.impl.UHC;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.Identifier;
-import fr.hugman.uhc.api.registry.UHCRegistries;
 
 public record ModifierType<T extends Modifier>(MapCodec<T> codec) {
     public static final ModifierType<BlockLootModifier> BLOCK_LOOT = register("block_loot", BlockLootModifier.CODEC);

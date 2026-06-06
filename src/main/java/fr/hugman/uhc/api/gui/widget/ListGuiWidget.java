@@ -1,17 +1,16 @@
 package fr.hugman.uhc.api.gui.widget;
 
 import eu.pb4.sgui.api.SlotHolder;
-import eu.pb4.sgui.api.elements.GuiElement;
 import eu.pb4.sgui.api.elements.GuiElementBuilder;
 import eu.pb4.sgui.api.elements.SimpleGuiElement;
 import fr.hugman.uhc.api.gui.UHCConfigGuiElements;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.util.Mth;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Function;
-import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.util.Mth;
 
 public class ListGuiWidget<Object> extends GuiWidget {
     private final List<Object> list;

@@ -4,12 +4,13 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import fr.hugman.uhc.api.module.UHCModule;
 import fr.hugman.uhc.api.registry.UHCRegistryKeys;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderSet;
 import net.minecraft.resources.RegistryFileCodec;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 
 public final class UHCConfig {
     public static final Codec<UHCConfig> CODEC = RecordCodecBuilder.create(instance -> instance.group(

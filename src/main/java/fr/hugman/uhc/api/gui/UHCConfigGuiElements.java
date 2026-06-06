@@ -5,18 +5,18 @@ import fr.hugman.uhc.api.config.UHCConfig;
 import fr.hugman.uhc.api.gui.creator.UHCModulesGui;
 import fr.hugman.uhc.api.module.UHCModule;
 import fr.hugman.uhc.api.registry.UHCRegistryKeys;
-import java.util.ArrayList;
-import java.util.stream.Collectors;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.Holder;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.item.Items;
 import xyz.nucleoid.plasmid.api.util.PlayerUtil;
+
+import java.util.ArrayList;
+import java.util.stream.Collectors;
 
 //TODO: custom icons
 public class UHCConfigGuiElements {

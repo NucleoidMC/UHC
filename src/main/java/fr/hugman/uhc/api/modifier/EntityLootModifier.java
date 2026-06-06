@@ -3,9 +3,6 @@ package fr.hugman.uhc.api.modifier;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
 import net.minecraft.core.HolderSet;
 import net.minecraft.core.RegistryCodecs;
 import net.minecraft.core.registries.Registries;
@@ -18,6 +15,10 @@ import net.minecraft.world.level.storage.loot.LootParams;
 import net.minecraft.world.level.storage.loot.LootTable;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
+
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
 
 public record EntityLootModifier(
         boolean replace,

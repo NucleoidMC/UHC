@@ -1,8 +1,8 @@
 package fr.hugman.uhc.api.game;
 
 import com.mojang.serialization.MapCodec;
-import fr.hugman.uhc.impl.UHC;
 import fr.hugman.uhc.api.config.UHCGameConfig;
+import fr.hugman.uhc.impl.UHC;
 import fr.hugman.uhc.impl.game.phase.UHCWaiting;
 import xyz.nucleoid.plasmid.api.game.GameType;
 import xyz.nucleoid.plasmid.api.game.GameTypes;

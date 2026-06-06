@@ -3,16 +3,16 @@ package fr.hugman.uhc.api.gui.creator;
 import fr.hugman.uhc.api.gui.PreviousableGui;
 import fr.hugman.uhc.api.gui.widget.ListGuiWidget;
 import fr.hugman.uhc.api.module.UHCModule;
-import net.minecraft.resources.Identifier;
-import org.jetbrains.annotations.Nullable;
-
-import java.util.List;
-import java.util.function.Consumer;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.Holder;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerPlayer;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.List;
+import java.util.function.Consumer;
 
 public class UHCModulesGui extends PreviousableGui {
     private final int height;
@@ -63,7 +63,8 @@ public class UHCModulesGui extends PreviousableGui {
         selectedModulesWidget = new ListGuiWidget<>(this, player, selectedModules,
                 (moduleEntry) -> {
                     var builder = moduleEntry.value().getElement();
-                    if(editable) builder.addLoreLine(Component.translatable("ui.uhc.click_to_remove").withStyle(ChatFormatting.GRAY));
+                    if (editable)
+                        builder.addLoreLine(Component.translatable("ui.uhc.click_to_remove").withStyle(ChatFormatting.GRAY));
                     moduleEntry.value().addDescriptionToElement(builder);
                     return builder;
                 },

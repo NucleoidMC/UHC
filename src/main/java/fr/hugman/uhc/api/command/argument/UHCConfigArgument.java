@@ -6,7 +6,6 @@ import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.brigadier.exceptions.DynamicCommandExceptionType;
 import fr.hugman.uhc.api.config.UHCConfig;
 import fr.hugman.uhc.api.registry.UHCRegistryKeys;
-import java.util.Locale;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.commands.SharedSuggestionProvider;
@@ -16,6 +15,8 @@ import net.minecraft.core.Registry;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
+
+import java.util.Locale;
 
 public final class UHCConfigArgument {
     private static final DynamicCommandExceptionType CONFIG_NOT_FOUND = new DynamicCommandExceptionType((id) -> Component.translatableEscape("text.uhc.config.not_found", id));

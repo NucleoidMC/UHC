@@ -5,15 +5,6 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import eu.pb4.sgui.api.elements.GuiElementBuilder;
 import fr.hugman.uhc.api.modifier.Modifier;
 import fr.hugman.uhc.api.registry.UHCRegistryKeys;
-import net.minecraft.util.Util;
-import net.minecraft.world.item.ItemStackTemplate;
-import xyz.nucleoid.codecs.MoreCodecs;
-import xyz.nucleoid.plasmid.api.util.PlasmidCodecs;
-
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderSet;
@@ -23,9 +14,17 @@ import net.minecraft.network.chat.Style;
 import net.minecraft.network.chat.TextColor;
 import net.minecraft.resources.RegistryFileCodec;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.world.item.ItemStack;
+import net.minecraft.util.Util;
+import net.minecraft.world.item.ItemStackTemplate;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.ItemLike;
+import xyz.nucleoid.codecs.MoreCodecs;
+import xyz.nucleoid.plasmid.api.util.PlasmidCodecs;
+
+import java.util.Arrays;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 public record UHCModule(
         Component name,
@@ -81,7 +80,8 @@ public record UHCModule(
         private TextColor color = TextColor.fromRgb(3791743);
         private List<Modifier> modifiers = List.of();
 
-        private Builder() {}
+        private Builder() {
+        }
 
         public Builder name(Component name) {
             this.name = Optional.of(name);

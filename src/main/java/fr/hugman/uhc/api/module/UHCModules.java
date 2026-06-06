@@ -1,15 +1,16 @@
 package fr.hugman.uhc.api.module;
 
 import fr.hugman.uhc.api.modifier.Modifier;
-import fr.hugman.uhc.impl.UHC;
 import fr.hugman.uhc.api.registry.UHCRegistryKeys;
-import java.util.Arrays;
-import java.util.function.Function;
-import java.util.stream.Collectors;
+import fr.hugman.uhc.impl.UHC;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.util.Util;
 import net.minecraft.world.level.ItemLike;
+
+import java.util.Arrays;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 public class UHCModules {
     // UHCRun

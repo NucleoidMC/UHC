@@ -12,6 +12,7 @@ import net.fabricmc.fabric.api.datagen.v1.provider.FabricDynamicRegistryProvider
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.worldgen.BootstrapContext;
 import net.minecraft.world.level.dimension.LevelStem;
+
 import java.util.concurrent.CompletableFuture;
 
 public class UHCConfigProvider extends FabricDynamicRegistryProvider {

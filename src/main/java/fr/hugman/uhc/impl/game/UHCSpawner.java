@@ -1,11 +1,5 @@
 package fr.hugman.uhc.impl.game;
 
-import xyz.nucleoid.map_templates.BlockBounds;
-import xyz.nucleoid.plasmid.api.game.common.team.GameTeam;
-import xyz.nucleoid.plasmid.api.util.ColoredBlocks;
-
-import java.util.HashMap;
-import java.util.Map;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
@@ -17,6 +11,12 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.phys.Vec3;
+import xyz.nucleoid.map_templates.BlockBounds;
+import xyz.nucleoid.plasmid.api.game.common.team.GameTeam;
+import xyz.nucleoid.plasmid.api.util.ColoredBlocks;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class UHCSpawner {
     private final ServerLevel level;

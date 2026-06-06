@@ -1,8 +1,8 @@
 package fr.hugman.uhc.api.registry;
 
+import fr.hugman.uhc.api.module.UHCModule;
 import fr.hugman.uhc.impl.UHC;
 import net.minecraft.tags.TagKey;
-import fr.hugman.uhc.api.module.UHCModule;
 
 public class UHCModuleTags {
     public static final TagKey<UHCModule> UHCRUN = of("uhcrun");

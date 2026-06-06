@@ -1,9 +1,13 @@
 package fr.hugman.uhc.impl.game;
 
-import fr.hugman.uhc.impl.UHC;
 import fr.hugman.uhc.api.config.UHCGameConfig;
+import fr.hugman.uhc.impl.UHC;
 import it.unimi.dsi.fastutil.objects.Object2ObjectMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
+import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.item.DyeColor;
+import net.minecraft.world.scores.Team;
 import org.apache.commons.lang3.RandomStringUtils;
 import xyz.nucleoid.plasmid.api.game.GameActivity;
 import xyz.nucleoid.plasmid.api.game.GameSpace;
@@ -17,10 +21,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
-import net.minecraft.network.chat.Component;
-import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.item.DyeColor;
-import net.minecraft.world.scores.Team;
 
 public class UHCPlayerManager {
     private final GameActivity activity;
@@ -33,8 +33,7 @@ public class UHCPlayerManager {
             Object2ObjectMap<PlayerRef, UHCParticipant> participants,
             TeamManager teamManager,
             List<GameTeam> aliveTeams
-    )
-    {
+    ) {
         this.activity = activity;
         this.participants = participants;
         this.teamManager = teamManager;
@@ -108,8 +107,7 @@ public class UHCPlayerManager {
                 var player = this.activity.getGameSpace().getPlayers().getEntity(ref.id());
                 if (player != null) {
                     consumer.accept(player);
-                }
-                else {
+                } else {
                     UHC.LOGGER.warn("UHC data for player {} could not be found", ref.id());
                 }
             }
@@ -136,7 +134,7 @@ public class UHCPlayerManager {
     public void refreshAliveTeams() {
         aliveTeams.removeIf(team -> teamManager.playersIn(team.key()).stream().allMatch(playerEntity -> {
             var participant = get(playerEntity);
-            if(participant == null) {
+            if (participant == null) {
                 UHC.LOGGER.warn("UHC data for player {} could not be found (considering them eliminated)", playerEntity.getName().getString());
                 return true;
             }

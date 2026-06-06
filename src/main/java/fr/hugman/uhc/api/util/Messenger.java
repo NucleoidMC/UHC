@@ -1,5 +1,6 @@
 package fr.hugman.uhc.api.util;
 
+import fr.hugman.uhc.api.module.UHCModule;
 import fr.hugman.uhc.impl.game.ModuleManager;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.Holder;
@@ -12,7 +13,6 @@ import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.damagesource.DamageSource;
-import fr.hugman.uhc.api.module.UHCModule;
 import xyz.nucleoid.plasmid.api.game.GameSpacePlayers;
 
 /**

@@ -1,8 +1,8 @@
 package fr.hugman.uhc.impl.data;
 
-import fr.hugman.uhc.impl.UHC;
 import fr.hugman.uhc.api.datagen.provider.*;
 import fr.hugman.uhc.api.registry.UHCRegistryKeys;
+import fr.hugman.uhc.impl.UHC;
 import net.fabricmc.fabric.api.datagen.v1.DataGeneratorEntrypoint;
 import net.fabricmc.fabric.api.datagen.v1.FabricDataGenerator;
 import net.minecraft.core.RegistrySetBuilder;

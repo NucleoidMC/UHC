@@ -7,20 +7,20 @@ import com.mojang.brigadier.exceptions.DynamicCommandExceptionType;
 import fr.hugman.uhc.api.module.UHCModule;
 import fr.hugman.uhc.api.registry.UHCRegistryKeys;
 import fr.hugman.uhc.impl.game.ModuleManager;
+import net.minecraft.commands.CommandSourceStack;
+import net.minecraft.commands.Commands;
+import net.minecraft.commands.SharedSuggestionProvider;
 import net.minecraft.commands.arguments.IdentifierArgument;
+import net.minecraft.core.Holder;
+import net.minecraft.core.Registry;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceKey;
 import xyz.nucleoid.plasmid.api.game.GameSpaceManager;
 
 import java.util.ArrayList;
 import java.util.Locale;
 import java.util.Objects;
-import net.minecraft.commands.CommandSourceStack;
-import net.minecraft.commands.Commands;
-import net.minecraft.commands.SharedSuggestionProvider;
-import net.minecraft.core.Holder;
-import net.minecraft.core.Registry;
-import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceKey;
 
 public final class UHCModuleArgument {
     private static final DynamicCommandExceptionType MODULE_NOT_FOUND = new DynamicCommandExceptionType((id) -> Component.translatableEscape("text.uhc.module.not_found", id));

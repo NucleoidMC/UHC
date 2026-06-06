@@ -3,13 +3,13 @@ package fr.hugman.uhc.impl.game.ui.element;
 import eu.pb4.sgui.api.elements.GuiElement;
 import fr.hugman.uhc.api.gui.UHCConfigGuiElements;
 import fr.hugman.uhc.impl.game.ModuleManager;
+import net.minecraft.ChatFormatting;
+import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerPlayer;
 import xyz.nucleoid.plasmid.api.game.GameSpaceManager;
 import xyz.nucleoid.plasmid.api.game.common.ui.WaitingLobbyUiElement;
 
 import java.util.Objects;
-import net.minecraft.ChatFormatting;
-import net.minecraft.network.chat.Component;
-import net.minecraft.server.level.ServerPlayer;
 
 public class ModulesUiElement implements WaitingLobbyUiElement {
     private final ServerPlayer player;
