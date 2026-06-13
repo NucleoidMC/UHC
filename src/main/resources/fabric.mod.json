@@ -20,6 +20,7 @@
       "fr.hugman.uhc.impl.UHC"
     ]
   },
+  "accessWidener": "uhc.accesswidener",
   "depends": {
     "java": ">=25",
     "minecraft": ">=26.1-",

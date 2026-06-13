@@ -3,10 +3,13 @@ package fr.hugman.uhc.impl.map;
 import com.mojang.datafixers.util.Pair;
 import fr.hugman.uhc.api.config.UHCGameConfig;
 import fr.hugman.uhc.api.modifier.ModifierType;
+import fr.hugman.uhc.api.tags.UHCBiomeTags;
+import fr.hugman.uhc.api.world.level.levelgen.UHCNoiseSettings;
 import fr.hugman.uhc.impl.game.ModuleManager;
 import net.minecraft.SharedConstants;
 import net.minecraft.core.*;
 import net.minecraft.core.registries.Registries;
+import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.WorldGenRegion;
 import net.minecraft.util.random.WeightedList;
@@ -26,6 +29,7 @@ import net.minecraft.world.level.levelgen.structure.Structure;
 import net.minecraft.world.level.levelgen.structure.StructureSet;
 import org.jetbrains.annotations.Nullable;
 import xyz.nucleoid.fantasy.util.ChunkGeneratorSettingsProvider;
+import xyz.nucleoid.plasmid.api.game.GameOpenException;
 import xyz.nucleoid.plasmid.api.game.level.generator.GameChunkGenerator;
 
 import java.util.List;
@@ -50,9 +54,22 @@ public class ModuledChunkGenerator extends GameChunkGenerator implements ChunkGe
         var dimension = registries.lookupOrThrow(Registries.LEVEL_STEM).getOrThrow(config.uhcConfig().value().mapConfig().dimension()).value();
         BiomeSource biomeSource = dimension.generator().getBiomeSource();
         ChunkGenerator subGenerator = dimension.generator();
-        NoiseGeneratorSettings settings = null;
-        if (subGenerator instanceof NoiseBasedChunkGenerator generator) {
-            settings = generator.generatorSettings().value();
+        if (!(subGenerator instanceof NoiseBasedChunkGenerator generator)) {
+            //TODO: translate
+            throw new GameOpenException(Component.literal("Invalid chunk generator: " + subGenerator.getClass().getName()));
+        }
+        var isOceanless = true;
+        if (isOceanless && generator.getBiomeSource() instanceof MultiNoiseBiomeSource multiNoiseBiomeSource) {
+            var oceans = registries.lookupOrThrow(Registries.BIOME).getOrThrow(UHCBiomeTags.OCEANLESS_BLACKLIST);
+            var entries = multiNoiseBiomeSource.parameters()
+                    .values()
+                    .stream()
+                    .filter(pair -> !oceans.contains(pair.getSecond()))
+                    .toList();
+
+            var newBiomeSource = MultiNoiseBiomeSource.createFromList(new Climate.ParameterList<>(entries));
+
+            subGenerator = new NoiseBasedChunkGenerator(newBiomeSource, registries.lookupOrThrow(Registries.NOISE_SETTINGS).getOrThrow(UHCNoiseSettings.OCEANLESS_OVERWORLD));
         }
 
         List<PlacedFeature> placedFeatures = ModuleManager.streamModifiers(config.uhcConfig().value().modules().stream(), ModifierType.PLACED_FEATURES)
@@ -60,7 +77,7 @@ public class ModuledChunkGenerator extends GameChunkGenerator implements ChunkGe
                 .map(Holder::value)
                 .collect(Collectors.toList());
 
-        return new ModuledChunkGenerator(biomeSource, placedFeatures, seed, subGenerator, settings);
+        return new ModuledChunkGenerator(biomeSource, placedFeatures, seed, subGenerator, generator.generatorSettings().value());
     }
 
     @Override

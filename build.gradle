@@ -45,6 +45,10 @@ fabricApi {
     }
 }
 
+loom {
+    accessWidenerPath = file("src/main/resources/uhc.accesswidener")
+}
+
 tasks.withType(JavaCompile).configureEach {
     it.options.encoding = "UTF-8"
     it.options.release = 25

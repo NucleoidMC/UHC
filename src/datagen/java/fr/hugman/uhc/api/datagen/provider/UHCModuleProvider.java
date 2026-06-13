@@ -6,7 +6,7 @@ import fr.hugman.uhc.api.module.UHCModule;
 import fr.hugman.uhc.api.module.UHCModules;
 import fr.hugman.uhc.api.registry.UHCEntityTags;
 import fr.hugman.uhc.api.registry.UHCRegistryKeys;
-import fr.hugman.uhc.api.world.gen.feature.UHCPlacedFeatures;
+import fr.hugman.uhc.api.world.level.levelgen.feature.UHCPlacedFeatures;
 import fr.hugman.uhc.impl.UHC;
 import net.fabricmc.fabric.api.datagen.v1.FabricPackOutput;
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricDynamicRegistryProvider;

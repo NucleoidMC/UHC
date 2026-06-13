@@ -1,7 +1,7 @@
 package fr.hugman.uhc.api.datagen.provider;
 
-import fr.hugman.uhc.api.world.gen.feature.UHCConfiguredFeatures;
-import fr.hugman.uhc.api.world.gen.feature.UHCPlacedFeatures;
+import fr.hugman.uhc.api.world.level.levelgen.feature.UHCConfiguredFeatures;
+import fr.hugman.uhc.api.world.level.levelgen.feature.UHCPlacedFeatures;
 import net.fabricmc.fabric.api.datagen.v1.FabricPackOutput;
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricDynamicRegistryProvider;
 import net.minecraft.core.Holder;

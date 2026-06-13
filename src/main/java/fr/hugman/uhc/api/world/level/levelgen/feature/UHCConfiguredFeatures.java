@@ -1,4 +1,4 @@
-package fr.hugman.uhc.api.world.gen.feature;
+package fr.hugman.uhc.api.world.level.levelgen.feature;
 
 import fr.hugman.uhc.impl.UHC;
 import net.minecraft.core.registries.Registries;

@@ -24,6 +24,10 @@ public class UHCDataGenerator implements DataGeneratorEntrypoint {
         // - World Generation
         pack.addProvider(UHCConfiguredFeatureProvider::new);
         pack.addProvider(UHCPlacedFeatureProvider::new);
+        pack.addProvider(UHCNoiseSettingsProvider::new);
+
+        // Tags
+        pack.addProvider(UHCBiomeTagProvider::new);
     }
 
     @Override
@@ -36,6 +40,7 @@ public class UHCDataGenerator implements DataGeneratorEntrypoint {
         // - World Generation
         registryBuilder.add(Registries.CONFIGURED_FEATURE, UHCConfiguredFeatureProvider::register);
         registryBuilder.add(Registries.PLACED_FEATURE, UHCPlacedFeatureProvider::register);
+        registryBuilder.add(Registries.NOISE_SETTINGS, UHCNoiseSettingsProvider::register);
     }
 
     @Override
