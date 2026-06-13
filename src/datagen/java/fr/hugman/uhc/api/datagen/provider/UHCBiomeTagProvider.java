@@ -7,6 +7,7 @@ import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.tags.BiomeTags;
 import net.minecraft.world.level.biome.Biome;
+import net.minecraft.world.level.biome.Biomes;
 
 import java.util.concurrent.CompletableFuture;
 
@@ -21,6 +22,7 @@ public class UHCBiomeTagProvider extends FabricTagsProvider<Biome> {
                 .addOptionalTag(BiomeTags.IS_OCEAN)
                 .addOptionalTag(BiomeTags.IS_RIVER)
                 .addOptionalTag(BiomeTags.IS_BEACH)
+                .add(Biomes.STONY_SHORE)
         ;
     }
 }
