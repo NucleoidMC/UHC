@@ -1,7 +1,7 @@
 package fr.hugman.uhc.api.datagen.provider;
 
 import fr.hugman.uhc.api.world.level.levelgen.UHCNoiseSettings;
-import fr.hugman.uhc.impl.data.OceanlessOverworldNoiseSettings;
+import fr.hugman.uhc.impl.data.LowerSeaOverworldNoiseSettings;
 import net.fabricmc.fabric.api.datagen.v1.FabricPackOutput;
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricDynamicRegistryProvider;
 import net.minecraft.core.HolderLookup;
@@ -27,6 +27,8 @@ public class UHCNoiseSettingsProvider extends FabricDynamicRegistryProvider {
     }
 
     public static void register(BootstrapContext<NoiseGeneratorSettings> registerable) {
-        registerable.register(UHCNoiseSettings.OCEANLESS_OVERWORLD, OceanlessOverworldNoiseSettings.get(registerable, false, false));
+        registerable.register(UHCNoiseSettings.OVERWORLD_LOWER_SEAS, LowerSeaOverworldNoiseSettings.get(registerable, false, false));
+        registerable.register(UHCNoiseSettings.OVERWORLD_LOWER_SEAS_AMPLIFIED, LowerSeaOverworldNoiseSettings.get(registerable, true, false));
+        registerable.register(UHCNoiseSettings.OVERWORLD_LOWER_SEAS_LARGE, LowerSeaOverworldNoiseSettings.get(registerable, false, true));
     }
 }

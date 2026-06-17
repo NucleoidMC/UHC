@@ -1,6 +1,5 @@
 package fr.hugman.uhc.impl.data;
 
-import fr.hugman.uhc.api.world.level.levelgen.UHCDensityFunctions;
 import net.minecraft.core.HolderGetter;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.data.worldgen.BootstrapContext;
@@ -13,7 +12,7 @@ import net.minecraft.world.level.levelgen.synth.NormalNoise;
 
 import java.util.stream.Stream;
 
-public class OceanlessOverworldNoiseSettings {
+public class LowerSeaOverworldNoiseSettings {
     public static NoiseGeneratorSettings get(BootstrapContext<?> context, boolean isAmplified, boolean largeBiomes) {
         return new NoiseGeneratorSettings(
                 NoiseSettings.OVERWORLD_NOISE_SETTINGS,
@@ -51,7 +50,7 @@ public class OceanlessOverworldNoiseSettings {
         DensityFunction vegetation = DensityFunctions.shiftedNoise2d(shiftX, shiftZ, 0.25F, noises.getOrThrow(largeBiomes ? Noises.VEGETATION_LARGE : Noises.VEGETATION));
         DensityFunction offset = NoiseRouterData.getFunction(functions, largeBiomes ? NoiseRouterData.OFFSET_LARGE : (amplified ? NoiseRouterData.OFFSET_AMPLIFIED : NoiseRouterData.OFFSET));
         DensityFunction factor = NoiseRouterData.getFunction(functions, largeBiomes ? NoiseRouterData.FACTOR_LARGE : (amplified ? NoiseRouterData.FACTOR_AMPLIFIED : NoiseRouterData.FACTOR));
-        DensityFunction depth = NoiseRouterData.getFunction(functions, largeBiomes ? UHCDensityFunctions.HIGHER_DEPTH_LARGE : (amplified ? UHCDensityFunctions.HIGHER_DEPTH_AMPLIFIED : UHCDensityFunctions.HIGHER_DEPTH));
+        DensityFunction depth = NoiseRouterData.getFunction(functions, largeBiomes ? NoiseRouterData.DEPTH_LARGE : (amplified ? NoiseRouterData.DEPTH_AMPLIFIED : NoiseRouterData.DEPTH));
         DensityFunction preliminarySurfaceLevel = NoiseRouterData.preliminarySurfaceLevel(offset, factor, amplified);
         DensityFunction slopedCheese = NoiseRouterData.getFunction(functions, largeBiomes ? NoiseRouterData.SLOPED_CHEESE_LARGE : (amplified ? NoiseRouterData.SLOPED_CHEESE_AMPLIFIED : NoiseRouterData.SLOPED_CHEESE));
         DensityFunction surfaceWithEntrances = DensityFunctions.min(slopedCheese, DensityFunctions.mul(DensityFunctions.constant(5.0F), NoiseRouterData.getFunction(functions, NoiseRouterData.ENTRANCES)));

@@ -1,16 +1,13 @@
 {
   "game.generic.mode": "%s - %s",
-
   "game.uhc": "UHC",
   "game.uhcrun": "UHCRun",
   "game.doublerunner": "DoubleRunner",
   "game.custom_uhc": "Custom UHC",
-
   "mode.solo": "Solo",
   "mode.duos": "Duos",
   "mode.trios": "Trios",
   "mode.squads": "Squads",
-
   "text.uhc.and": "and",
   "text.uhc.deathmatch": "Deathmatch",
   "text.uhc.dropped_players": "Players have been dropped on the map.",
@@ -44,24 +41,20 @@
   "text.uhc.vulnerable.countdown_text": "You will be vulnerable to damage in %s.",
   "text.uhc.world": "World: %s",
   "text.uhc.world_will_shrink": "You will get teleported in %s. The world will then start shrinking and PvP will get enabled.",
-
   "text.uhc.modules": "Modules",
   "text.uhc.modules.no_modules_activated": "This game has no active modules!",
   "text.uhc.module.enabled": "The %s module has been enabled!",
   "text.uhc.module.disabled": "The %s module has been disabled!",
   "text.uhc.module.not_found": "Module with id \"%s\" not found",
   "text.uhc.config.not_found": "UHC configuration with id \"%s\" not found",
-
   "text.uhc.timers": "Timers",
   "text.uhc.map": "Map",
-
   "command.modules.no_manager": "The module manager is not available! (please contact the developer)",
   "command.modules.no_modules_activated": "There are not active modules!",
   "command.modules.already_enabled": "The %s module is already enabled!",
   "command.modules.already_disabled": "The %s module is already disabled!",
   "command.modules.enable.success": "The %s module has been enabled",
   "command.modules.disable.success": "The %s module has been disabled",
-
   "module.uhc.dasher": "Dasher",
   "module.uhc.dasher_plus": "Dasher+",
   "module.uhc.dasher.description": "Permanent haste and speed",
@@ -70,28 +63,22 @@
   "module.uhc.better_tools_plus": "Better Tools+",
   "module.uhc.better_tools.description": "Wooden tools are replaced with stone tools",
   "module.uhc.better_tools_plus.description": "Wooden tools are replaced with iron tools and diamond tools are enchanted with Efficiency III",
-
   "module.uhc.blasted_ores": "Blasted Ores",
   "module.uhc.blasted_ores_plus": "Blasted Ores+",
   "module.uhc.blasted_ores.description": "All ores get automatically smelt, doubled and bring more experience",
-
   "module.uhc.ore_boost": "Ore Boost",
   "module.uhc.ore_boost_plus": "Ore Boost+",
   "module.uhc.ore_boost.description": "Lapis, gold and diamond ores are more frequent",
-
   "module.uhc.timberman": "Timberman",
   "module.uhc.timberman.description": "Trees get cut instantly and drop oak planks",
-
   "module.uhc.guaranteed_apples": "Guaranteed Apples",
   "module.uhc.guaranteed_apples.description": "All leaves only drop apples",
   "module.uhc.guaranteed_golden_apples": "Guaranteed Golden Apples",
   "module.uhc.guaranteed_golden_apples.description": "All leaves only drop golden apples",
-
   "module.uhc.animal_cooked_food": "Animal Cooked Food",
   "module.uhc.animal_cooked_food.description": "Many animals drop cooked food in larger quantities",
   "module.uhc.mob_cooked_food": "Mob Cooked Food",
   "module.uhc.mob_cooked_food.description": "Many mobs drop cooked food in larger quantities",
-
   "module.uhc.faster_resources": "Need for Resources",
   "module.uhc.faster_resources_plus": "Need for Resources+",
   "module.uhc.faster_resources.description": "Tweaks lots of drops to ease gathering essential resources",
@@ -112,7 +99,6 @@
   "module.uhc.faster_resources.description.creepers_drop_tnt": "Creepers drop TNT",
   "module.uhc.faster_resources.description.squids_drop_fishing_rods": "Squids drop fishing rods",
   "module.uhc.faster_resources.description.skeletons_drop_power_bow": "Skeletons drop Power-enchanted bows",
-
   "module.uhc.potion_drops": "Potion Drops",
   "module.uhc.potion_drops.description": "Some things drop potions",
   "module.uhc.potion_drops.description.zombies_drop_strength_potions": "Zombies drops potions of Strength",
@@ -120,7 +106,6 @@
   "module.uhc.potion_drops.description.sugar_cane_drops_swiftness_potions": "Sugar cane drops potions of Swiftness",
   "module.uhc.potion_drops.description.rabbits_drop_leaping_potions": "Rabbits drops potions of Leaping",
   "module.uhc.potion_drops.description.bats_drop_night_vision_potions": "Bats drops potions of Night Vision",
-
   "ui.uhc.modules.title": "Active Modules",
   "ui.uhc.create_uhc.title": "Create UHC",
   "ui.uhc.click_to_add": "Click to Add",

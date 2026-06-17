@@ -6,7 +6,9 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.level.levelgen.NoiseGeneratorSettings;
 
 public class UHCNoiseSettings {
-    public static final ResourceKey<NoiseGeneratorSettings> OCEANLESS_OVERWORLD = of("oceanless_overworld");
+    public static final ResourceKey<NoiseGeneratorSettings> OVERWORLD_LOWER_SEAS = of("overworld/lower_seas");
+    public static final ResourceKey<NoiseGeneratorSettings> OVERWORLD_LOWER_SEAS_AMPLIFIED = of("overworld/lower_seas_amplified");
+    public static final ResourceKey<NoiseGeneratorSettings> OVERWORLD_LOWER_SEAS_LARGE = of("overworld/lower_seas_large");
 
     private static ResourceKey<NoiseGeneratorSettings> of(String path) {
         return ResourceKey.create(Registries.NOISE_SETTINGS, UHC.id(path));

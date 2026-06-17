@@ -5,7 +5,7 @@
   },
   "icon": "minecraft:enchanted_golden_apple",
   "entries": {
-    "1:2":{
+    "1:2": {
       "type": "plasmid:game",
       "icon": "minecraft:red_candle",
       "game": "uhc:doublerunner/solo",
@@ -13,7 +13,7 @@
         "translate": "mode.solo"
       }
     },
-    "3:2":{
+    "3:2": {
       "type": "plasmid:game",
       "icon": "minecraft:lime_candle",
       "game": "uhc:doublerunner/duos",
@@ -21,7 +21,7 @@
         "translate": "mode.duos"
       }
     },
-    "5:2":{
+    "5:2": {
       "type": "plasmid:game",
       "icon": "minecraft:pink_candle",
       "game": "uhc:doublerunner/trios",
@@ -29,7 +29,7 @@
         "translate": "mode.trios"
       }
     },
-    "7:2":{
+    "7:2": {
       "type": "plasmid:game",
       "icon": "minecraft:blue_candle",
       "game": "uhc:doublerunner/squads",
@@ -37,5 +37,5 @@
         "translate": "mode.squads"
       }
     }
-}
+  }
 }

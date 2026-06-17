@@ -1,16 +1,13 @@
 {
   "game.generic.mode": "%s - %s",
-
   "game.uhc": "UHC",
   "game.uhcrun": "UHCRun",
   "game.doublerunner": "DoubleRunner",
   "game.custom_uhc": "UHC personalisé",
-
   "mode.solo": "Solo",
   "mode.duos": "Duos",
   "mode.trios": "Trios",
   "mode.squads": "Sections",
-
   "text.uhc.and": "et",
   "text.uhc.deathmatch": "Match à mort",
   "text.uhc.dropped_players": "Les joueurs ont été lâchés sur la carte.",
@@ -44,24 +41,20 @@
   "text.uhc.vulnerable.countdown_text": "Vous serez vulnérable aux dégâts dans %s.",
   "text.uhc.world": "Monde : %s",
   "text.uhc.world_will_shrink": "Vous serez téléporté dans %s. Puis, le monde commencera à rétrécir et le PvP sera activé.",
-
   "text.uhc.modules": "Modules",
   "text.uhc.modules.no_modules_activated": "Cette partie n'as pas de modules d'activés !",
   "text.uhc.module.enabled": "Le module %s a été activé !",
   "text.uhc.module.disabled": "Le module %s a été désactivé !",
   "text.uhc.module.not_found": "Le module d'ID \"%s\" n'a pas été trouvé",
   "text.uhc.config.not_found": "La configuration UHC avec l'ID \"%s\" n'a pas été trouvée",
-
   "text.uhc.timers": "Compteurs",
   "text.uhc.map": "Carte",
-
   "command.modules.no_manager": "Le manager de modules n'est pas accessible ! (veuillez contacter le développeur)",
   "command.modules.no_modules_activated": "Il n'y a aucun module actif !",
   "command.modules.already_enabled": "Le module %s est déjà actif !",
   "command.modules.already_disabled": "Le module %s est déjà désactivé !",
   "command.modules.enable.success": "Le module %s a été activé",
   "command.modules.disable.success": "Le module %s a été désactivé",
-
   "module.uhc.dasher": "Sans tarder",
   "module.uhc.dasher_plus": "Sans tarder+",
   "module.uhc.dasher.description": "Célérité et vitesse permanentes",
@@ -70,28 +63,22 @@
   "module.uhc.better_tools_plus": "Meilleurs outils+",
   "module.uhc.better_tools.description": "Les outils en bois sont remplacés par des outils en pierre",
   "module.uhc.better_tools_plus.description": "Les outils en bois sont remplacés par des outils en fer et les outils en diamant sont enchantés avec Efficacité III",
-
   "module.uhc.blasted_ores": "Pioche de fonderie",
   "module.uhc.blasted_ores_plus": "Pioche de fonderie+",
   "module.uhc.blasted_ores.description": "Tous les minerais sont automatiquement fondus, doublés et donnent plus d'expérience",
-
   "module.uhc.ore_boost": "Minerais riches",
   "module.uhc.ore_boost_plus": "Minerais riches+",
   "module.uhc.ore_boost.description": "Le lapis, l'or et le diamant sont plus fréquents",
-
   "module.uhc.timberman": "Tronçonnage",
   "module.uhc.timberman.description": "Les arbres se font couper instantanément et donnent des planches de chêne",
-
   "module.uhc.guaranteed_apples": "Pommes garanties",
   "module.uhc.guaranteed_apples.description": "Toutes les feuilles donnent uniquement des pommes",
   "module.uhc.guaranteed_golden_apples": "Pommes dorées garanties",
   "module.uhc.guaranteed_golden_apples.description": "Toutes les feuilles donnent uniquement des pommes dorées",
-
   "module.uhc.animal_cooked_food": "Grillade animalière",
   "module.uhc.animal_cooked_food.description": "Plusieurs animaux donnent de la nourriture cuite en plus grande quantité",
   "module.uhc.mob_cooked_food": "Grillade monstrueuse",
   "module.uhc.mob_cooked_food.description": "Plusieurs monstres donnent de la nourriture cuite et en plus grande quantité",
-
   "module.uhc.faster_resources": "Meilleures resources",
   "module.uhc.faster_resources_plus": "Meilleures resources+",
   "module.uhc.faster_resources.description": "Change beaucoup de butins pour faciliter la récolte de ressources",
@@ -112,7 +99,6 @@
   "module.uhc.faster_resources.description.creepers_drop_tnt": "Les Creepers donnent de la TNT",
   "module.uhc.faster_resources.description.squids_drop_fishing_rods": "Les poulpes donnent des cannes à pêche",
   "module.uhc.faster_resources.description.skeletons_drop_power_bow": "Les squelettes donnent des arcs enchantés avec Puissance",
-
   "module.uhc.potion_drops": "Alchimie locale",
   "module.uhc.potion_drops.description": "Certaines choses donnent des potions",
   "module.uhc.potion_drops.description.zombies_drop_strength_potions": "Les zombies donnent des potions de force",
@@ -120,7 +106,6 @@
   "module.uhc.potion_drops.description.sugar_cane_drops_swiftness_potions": "La canne à sucre donne des potions de rapidité",
   "module.uhc.potion_drops.description.rabbits_drop_leaping_potions": "Les lapins donnent des potions de saut",
   "module.uhc.potion_drops.description.bats_drop_night_vision_potions": "Les chauves-souris donnent des potions de vision nocturne",
-
   "ui.uhc.modules.title": "Modules actifs",
   "ui.uhc.create_uhc.title": "Créer un UHC",
   "ui.uhc.click_to_add": "Cliquez pour ajouter",

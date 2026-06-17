@@ -35,7 +35,7 @@ public record UHCWaiting(
     public static GameOpenProcedure open(GameOpenContext<UHCGameConfig> context) {
         var config = context.config();
         var registries = context.server().registryAccess();
-        var map = UHCMap.of(config, registries);
+        var map = UHCMap.of(config.uhcConfig().value(), registries);
         var moduleManager = new ModuleManager(config.uhcConfig().value().modules());
 
         return context.openWithLevel(map.createRuntimeLevelConfig(), (activity, level) -> {

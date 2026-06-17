@@ -59,7 +59,9 @@ public class UHCConfigGuiElements {
         }
         element.addLoreLine(Component.nullToEmpty(""));
         //TODO: Add translations
-        element.addLoreLine(Component.nullToEmpty("Dimension: " + config.mapConfig().dimension().identifier()));
+        config.mapConfig().dimensionType().unwrapKey().ifPresent(dimensionTypeResourceKey -> {
+            element.addLoreLine(Component.nullToEmpty("Dimension: " + dimensionTypeResourceKey));
+        });
         element.addLoreLine(Component.nullToEmpty("Start size: from " + config.mapConfig().startSize().min() + " to " + config.mapConfig().startSize().max() + " blocks"));
         element.addLoreLine(Component.nullToEmpty("End size: from " + config.mapConfig().endSize().min() + " to " + config.mapConfig().endSize().max() + " blocks"));
         element.addLoreLine(Component.nullToEmpty("Shrinking speed: " + config.mapConfig().shrinkingSpeed() + " blocks/second"));

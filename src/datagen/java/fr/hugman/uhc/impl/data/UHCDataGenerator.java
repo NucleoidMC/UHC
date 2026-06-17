@@ -25,7 +25,6 @@ public class UHCDataGenerator implements DataGeneratorEntrypoint {
         pack.addProvider(UHCConfiguredFeatureProvider::new);
         pack.addProvider(UHCPlacedFeatureProvider::new);
         pack.addProvider(UHCNoiseSettingsProvider::new);
-        pack.addProvider(UHCDensityFunctionProvider::new);
 
         // Tags
         pack.addProvider(UHCBiomeTagProvider::new);
@@ -42,7 +41,6 @@ public class UHCDataGenerator implements DataGeneratorEntrypoint {
         registryBuilder.add(Registries.CONFIGURED_FEATURE, UHCConfiguredFeatureProvider::register);
         registryBuilder.add(Registries.PLACED_FEATURE, UHCPlacedFeatureProvider::register);
         registryBuilder.add(Registries.NOISE_SETTINGS, UHCNoiseSettingsProvider::register);
-        registryBuilder.add(Registries.DENSITY_FUNCTION, UHCDensityFunctionProvider::register);
     }
 
     @Override
