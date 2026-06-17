@@ -24,7 +24,7 @@ public class LowerSeaOverworldNoiseSettings {
                         largeBiomes,
                         isAmplified
                 ),
-                SurfaceRuleData.overworld(),
+                SurfaceRuleData.overworld(context.lookup(Registries.BIOME)),
                 (new OverworldBiomeBuilder()).spawnTarget(),
                 35,
                 false,

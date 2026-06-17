@@ -6,10 +6,10 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
 
 public enum UHCGameTeamSize {
-    SOLO("solo", Items.RED_CANDLE, 1, 2, 8),
-    DUOS("duos", Items.LIME_CANDLE, 2, 4, 16),
-    TRIOS("trios", Items.PINK_CANDLE, 3, 6, 24),
-    SQUADS("squads", Items.BLUE_CANDLE, 4, 8, 32);
+    SOLO("solo", Items.DYED_CANDLE.red(), 1, 2, 8),
+    DUOS("duos", Items.DYED_CANDLE.lime(), 2, 4, 16),
+    TRIOS("trios", Items.DYED_CANDLE.pink(), 3, 6, 24),
+    SQUADS("squads", Items.DYED_CANDLE.blue(), 4, 8, 32);
 
     private final String name;
     private final Item item;
