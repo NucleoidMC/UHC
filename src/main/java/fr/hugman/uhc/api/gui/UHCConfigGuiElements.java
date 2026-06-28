@@ -34,14 +34,14 @@ public class UHCConfigGuiElements {
         return new GuiElementBuilder(Items.PLAYER_HEAD)
                 .setItemName(Component.translatable("spectatorMenu.previous_page"))
                 .hideDefaultTooltip()
-                .setProfile("eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMzEwODI5OGZmMmIyNjk1MWQ2ODNlNWFkZTQ2YTQyZTkwYzJmN2M3ZGQ0MWJhYTkwOGJjNTg1MmY4YzMyZTU4MyJ9fX0");
+                .setProfileSkinTexture("eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMzEwODI5OGZmMmIyNjk1MWQ2ODNlNWFkZTQ2YTQyZTkwYzJmN2M3ZGQ0MWJhYTkwOGJjNTg1MmY4YzMyZTU4MyJ9fX0");
     }
 
     public static GuiElementBuilder nextPage(ServerPlayer player) {
         return new GuiElementBuilder(Items.PLAYER_HEAD)
                 .setName(Component.translatable("spectatorMenu.next_page"))
                 .hideDefaultTooltip()
-                .setProfile("eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYzg2MTg1YjFkNTE5YWRlNTg1ZjE4NGMzNGYzZjNlMjBiYjY0MWRlYjg3OWU4MTM3OGU0ZWFmMjA5Mjg3In19fQ");
+                .setProfileSkinTexture("eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYzg2MTg1YjFkNTE5YWRlNTg1ZjE4NGMzNGYzZjNlMjBiYjY0MWRlYjg3OWU4MTM3OGU0ZWFmMjA5Mjg3In19fQ");
     }
 
     public static GuiElementBuilder map(ServerPlayer player, UHCConfig config, boolean editable) {
@@ -60,7 +60,7 @@ public class UHCConfigGuiElements {
         element.addLoreLine(Component.nullToEmpty(""));
         //TODO: Add translations
         config.mapConfig().dimensionType().unwrapKey().ifPresent(dimensionTypeResourceKey -> {
-            element.addLoreLine(Component.nullToEmpty("Dimension: " + dimensionTypeResourceKey));
+            element.addLoreLine(Component.nullToEmpty("Dimension: " + dimensionTypeResourceKey.identifier()));
         });
         element.addLoreLine(Component.nullToEmpty("Start size: from " + config.mapConfig().startSize().min() + " to " + config.mapConfig().startSize().max() + " blocks"));
         element.addLoreLine(Component.nullToEmpty("End size: from " + config.mapConfig().endSize().min() + " to " + config.mapConfig().endSize().max() + " blocks"));
@@ -74,7 +74,6 @@ public class UHCConfigGuiElements {
         var element = new GuiElementBuilder()
                 .setItem(Items.CLOCK)
                 .hideDefaultTooltip()
-                .hideTooltip()
                 .setName(Component.translatable("text.uhc.timers"));
 
         if (editable) {
@@ -98,7 +97,6 @@ public class UHCConfigGuiElements {
     public static GuiElementBuilder modules(ServerPlayer player) {
         return new GuiElementBuilder()
                 .setItem(Items.KNOWLEDGE_BOOK)
-                .hideDefaultTooltip()
                 .hideDefaultTooltip()
                 .setName(Component.translatable("text.uhc.modules"));
     }
@@ -130,7 +128,7 @@ public class UHCConfigGuiElements {
         return new GuiElementBuilder(Items.PLAYER_HEAD)
                 .setName(Component.translatable("ui.uhc.launch"))
                 .hideDefaultTooltip()
-                .setProfile("eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYzg2MTg1YjFkNTE5YWRlNTg1ZjE4NGMzNGYzZjNlMjBiYjY0MWRlYjg3OWU4MTM3OGU0ZWFmMjA5Mjg3In19fQ");
+                .setProfileSkinTexture("eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYzg2MTg1YjFkNTE5YWRlNTg1ZjE4NGMzNGYzZjNlMjBiYjY0MWRlYjg3OWU4MTM3OGU0ZWFmMjA5Mjg3In19fQ");
     }
 
     public static void playClickSound(ServerPlayer player) {

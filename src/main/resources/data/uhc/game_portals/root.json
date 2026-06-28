@@ -5,17 +5,20 @@
   },
   "icon": "minecraft:golden_apple",
   "entries": {
-    "2:2": {
+    "1:2": {
       "type": "plasmid:portal",
       "portal": "uhc:uhc"
     },
-    "4:2": {
+    "3:2": {
       "type": "plasmid:portal",
       "portal": "uhc:uhcrun"
     },
-    "6:2": {
+    "5:2": {
       "type": "plasmid:portal",
       "portal": "uhc:doublerunner"
+    },
+    "7:2": {
+      "type": "uhc:uhc_creator"
     }
   }
 }

@@ -4,6 +4,7 @@ import com.google.common.reflect.Reflection;
 import fr.hugman.uhc.api.game.UHCGameTypes;
 import fr.hugman.uhc.api.modifier.ModifierType;
 import fr.hugman.uhc.api.module.UHCModule;
+import fr.hugman.uhc.api.portal.menu.UHCMenuEntryConfigs;
 import fr.hugman.uhc.api.registry.UHCRegistries;
 import fr.hugman.uhc.impl.command.ModulesCommand;
 import fr.hugman.uhc.impl.command.UHCCommand;
@@ -31,6 +32,7 @@ public class UHC implements ModInitializer {
         });
 
         Reflection.initialize(UHCGameTypes.class);
+        Reflection.initialize(UHCMenuEntryConfigs.class);
     }
 
     public static Identifier id(String path) {
