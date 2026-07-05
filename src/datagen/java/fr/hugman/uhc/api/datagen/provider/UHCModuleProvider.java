@@ -8,6 +8,8 @@ import fr.hugman.uhc.api.registry.UHCEntityTags;
 import fr.hugman.uhc.api.registry.UHCRegistryKeys;
 import fr.hugman.uhc.api.world.level.levelgen.feature.UHCPlacedFeatures;
 import fr.hugman.uhc.impl.UHC;
+import fr.hugman.ultimate_lucky_block.api.block.ULBBlocks;
+import fr.hugman.ultimate_lucky_block.api.world.gen.feature.ULBPlacedFeatures;
 import net.fabricmc.fabric.api.datagen.v1.FabricPackOutput;
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricDynamicRegistryProvider;
 import net.minecraft.core.HolderGetter;
@@ -219,6 +221,13 @@ public class UHCModuleProvider extends FabricDynamicRegistryProvider {
                 "sugar_cane_drops_swiftness_potions",
                 "rabbits_drop_leaping_potions",
                 "bats_drop_night_vision_potions"));
+
+        register(registerable, UHCModules.LUCKY_BLOCKS, ULBBlocks.LUCKY_BLOCK,
+                new PlacedFeaturesModifier(HolderSet.direct(
+                        placedFeatures.getOrThrow(ULBPlacedFeatures.SURFACE_LUCKY_BLOCKS),
+                        placedFeatures.getOrThrow(ULBPlacedFeatures.MINERAL_LUCKY_BLOCKS)
+                ))
+        );
     }
 
     public static void register(

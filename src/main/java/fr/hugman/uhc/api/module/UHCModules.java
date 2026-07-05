@@ -33,6 +33,9 @@ public class UHCModules {
     public static final ResourceKey<UHCModule> FASTER_RESOURCES_PLUS = of("faster_resources_plus");
     public static final ResourceKey<UHCModule> BETTER_TOOLS_PLUS = of("better_tools_plus");
 
+    // [COMPAT] Ultimate Lucky Block
+    public static final ResourceKey<UHCModule> LUCKY_BLOCKS = of("lucky_blocks");
+
     public static ResourceKey<UHCModule> of(String path) {
         return ResourceKey.create(UHCRegistryKeys.UHC_MODULE, UHC.id(path));
     }

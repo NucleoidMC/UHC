@@ -1,6 +1,7 @@
 package fr.hugman.uhc.api.datagen.provider;
 
 import fr.hugman.uhc.api.module.UHCModule;
+import fr.hugman.uhc.api.module.UHCModules;
 import fr.hugman.uhc.api.registry.UHCModuleTags;
 import fr.hugman.uhc.api.registry.UHCRegistryKeys;
 import net.fabricmc.fabric.api.datagen.v1.FabricPackOutput;
@@ -40,5 +41,12 @@ public class UHCModuleTagProvider extends FabricTagsProvider<UHCModule> {
                 .add(MOB_COOKED_FOOD)
                 .add(FASTER_RESOURCES_PLUS)
                 .add(POTION_DROPS);
+
+        builder(UHCModuleTags.UHCRUN)
+                .forceAddTag(UHCModuleTags.UHCRUN)
+                .add(UHCModules.LUCKY_BLOCKS);
+        builder(UHCModuleTags.LUCKY_DOUBLERUNNER)
+                .forceAddTag(UHCModuleTags.LUCKY_DOUBLERUNNER)
+                .add(UHCModules.LUCKY_BLOCKS);
     }
 }

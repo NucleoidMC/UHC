@@ -8,6 +8,10 @@ public class UHCModuleTags {
     public static final TagKey<UHCModule> UHCRUN = of("uhcrun");
     public static final TagKey<UHCModule> DOUBLERUNNER = of("doublerunner");
 
+    // [COMPAT] Ultimate Lucky Block
+    public static final TagKey<UHCModule> LUCKY_UHCRUN = of("lucky_uhcrun");
+    public static final TagKey<UHCModule> LUCKY_DOUBLERUNNER = of("lucky_doublerunner");
+
     private static TagKey<UHCModule> of(String path) {
         return TagKey.create(UHCRegistryKeys.UHC_MODULE, UHC.id(path));
     }
