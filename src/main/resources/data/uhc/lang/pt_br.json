@@ -37,5 +37,15 @@
   "text.uhc.world": "Mapa: %s",
   "text.uhc.world_will_shrink": "Você será teleportado em %s. O mapa vai então começar a encolher e PvP vai ficar habilitado.",
   "command.modules.no_modules_activated": "Este jogo não tem nenhum dos módulos ativado!",
-  "ui.uhc.modules.title": "Módulos ativos"
+  "ui.uhc.modules.title": "Módulos ativos",
+  "module.uhc.dasher": "Maratonistas",
+  "module.uhc.dasher.description": "Pressa e velocidade permanente",
+  "module.uhc.blasted_ores": "Inflação mineral",
+  "module.uhc.blasted_ores.description": "Todos os minérios são fundidos automaticamente, duplicados e trazem mais experiência",
+  "module.uhc.timberman": "Lenhador marceneiro",
+  "module.uhc.timberman.description": "Árvores serão cortadas instantaneamente e virarão de carvalho",
+  "module.uhc.animal_cooked_food": "Gastronomia animal",
+  "module.uhc.animal_cooked_food.description": "Muitos animais deixarão comida cozinhada em maior quantidade",
+  "module.uhc.mob_cooked_food": "Gastronomia monstra",
+  "module.uhc.mob_cooked_food.description": "Muitos mobs deixarão comida cozinhada em maior quantidade"
 }

@@ -13,6 +13,15 @@ public class UHCEntityTags {
     public static final TagKey<EntityType<?>> DROPS_RABBIT_FOOD = of("animal_food/rabbit");
     public static final TagKey<EntityType<?>> DROPS_FISH_FOOD = of("animal_food/fish");
 
+    public static final TagKey<EntityType<?>> DROPS_MOB_BEEF_FOOD = of("mob_food/beef");
+    public static final TagKey<EntityType<?>> DROPS_MOB_FISH_FOOD = of("mob_food/fish");
+
+    public static final TagKey<EntityType<?>> DROPS_LEATHER = of("leather");
+    public static final TagKey<EntityType<?>> DROPS_STRING = of("string");
+
+    public static final TagKey<EntityType<?>> SPIDERS = of("spiders");
+    public static final TagKey<EntityType<?>> SQUIDS = of("squids");
+
     private static TagKey<EntityType<?>> of(String path) {
         return TagKey.create(Registries.ENTITY_TYPE, UHC.id(path));
     }

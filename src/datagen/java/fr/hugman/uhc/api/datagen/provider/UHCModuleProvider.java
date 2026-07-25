@@ -10,13 +10,20 @@ import fr.hugman.uhc.api.world.level.levelgen.feature.UHCPlacedFeatures;
 import fr.hugman.uhc.impl.UHC;
 import net.fabricmc.fabric.api.datagen.v1.FabricPackOutput;
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricDynamicRegistryProvider;
+import net.minecraft.core.HolderGetter;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.HolderSet;
 import net.minecraft.core.component.DataComponentPatch;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.data.worldgen.BootstrapContext;
+import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
+import net.minecraft.tags.BlockTags;
+import net.minecraft.tags.EntityTypeTags;
+import net.minecraft.tags.TagKey;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.EntityTypeIds;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.item.Item;
@@ -25,11 +32,22 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.item.enchantment.ItemEnchantments;
 import net.minecraft.world.level.ItemLike;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.levelgen.structure.templatesystem.BlockMatchTest;
+import net.minecraft.world.level.levelgen.structure.templatesystem.TagMatchTest;
 
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Function;
 
 public class UHCModuleProvider extends FabricDynamicRegistryProvider {
+    // Ore tags vanilla ships but does not expose through BlockTags.
+    private static final TagKey<Block> COAL_ORES = vanillaBlockTag("coal_ores");
+    private static final TagKey<Block> LAPIS_ORES = vanillaBlockTag("lapis_ores");
+    private static final TagKey<Block> REDSTONE_ORES = vanillaBlockTag("redstone_ores");
+    private static final TagKey<Block> EMERALD_ORES = vanillaBlockTag("emerald_ores");
+    private static final TagKey<Block> DIAMOND_ORES = vanillaBlockTag("diamond_ores");
+
     public UHCModuleProvider(FabricPackOutput output, CompletableFuture<HolderLookup.Provider> registriesFuture) {
         super(output, registriesFuture);
     }
@@ -56,11 +74,14 @@ public class UHCModuleProvider extends FabricDynamicRegistryProvider {
 
         register(registerable, UHCModules.ANIMAL_COOKED_FOOD, Items.COOKED_BEEF,
                 new EntityLootModifier(entities.getOrThrow(UHCEntityTags.DROPS_CHICKEN_FOOD), UHCLootTables.COOKED_CHICKEN),
-                new EntityLootModifier(entities.getOrThrow(UHCEntityTags.DROPS_BEEF_FOOD), UHCLootTables.COOKED_BEEF_1),
+                new EntityLootModifier(entities.getOrThrow(UHCEntityTags.DROPS_BEEF_FOOD), UHCLootTables.COOKED_BEEF_NORMAL),
                 new EntityLootModifier(entities.getOrThrow(UHCEntityTags.DROPS_PORKCHOP_FOOD), UHCLootTables.COOKED_PORKCHOP),
                 new EntityLootModifier(entities.getOrThrow(UHCEntityTags.DROPS_MUTTON_FOOD), UHCLootTables.COOKED_MUTTON),
                 new EntityLootModifier(entities.getOrThrow(UHCEntityTags.DROPS_RABBIT_FOOD), UHCLootTables.COOKED_RABBIT),
                 new EntityLootModifier(entities.getOrThrow(UHCEntityTags.DROPS_FISH_FOOD), UHCLootTables.COOKED_FISH));
+        register(registerable, UHCModules.MOB_COOKED_FOOD, Items.COOKED_BEEF,
+                new EntityLootModifier(entities.getOrThrow(UHCEntityTags.DROPS_MOB_BEEF_FOOD), UHCLootTables.COOKED_BEEF_NORMAL),
+                new EntityLootModifier(entities.getOrThrow(UHCEntityTags.DROPS_MOB_FISH_FOOD), UHCLootTables.COOKED_FISH));
         register(registerable, UHCModules.BETTER_TOOLS, Items.STONE_PICKAXE,
                 ReplaceStackModifier.of(items, Items.STONE_SWORD, Items.WOODEN_SWORD),
                 ReplaceStackModifier.of(items, Items.STONE_PICKAXE, Items.WOODEN_PICKAXE),
@@ -97,7 +118,107 @@ public class UHCModuleProvider extends FabricDynamicRegistryProvider {
                                 placedFeatures.getOrThrow(UHCPlacedFeatures.BOOSTED_DIAMOND_2)
                         )))
                 .descriptionFrom(UHCModules.ORE_BOOST));
-        //TODO: other modules
+        register(registerable, UHCModules.BLASTED_ORES, Items.IRON_INGOT,
+                new BlockLootModifier(new TagMatchTest(COAL_ORES), UHCLootTables.TORCHES_NORMAL, 4),
+                new BlockLootModifier(new TagMatchTest(BlockTags.IRON_ORES), UHCLootTables.IRON_INGOTS_TWO, 1),
+                new BlockLootModifier(new TagMatchTest(BlockTags.COPPER_ORES), UHCLootTables.COOKED_BEEF_SOME),
+                new BlockLootModifier(new TagMatchTest(BlockTags.GOLD_ORES), UHCLootTables.GOLD_INGOTS_TWO, 2),
+                new BlockLootModifier(new TagMatchTest(LAPIS_ORES), UHCLootTables.LAPIS_AND_PAPER, 6),
+                new BlockLootModifier(new TagMatchTest(REDSTONE_ORES), 8),
+                new BlockLootModifier(new TagMatchTest(EMERALD_ORES), 12),
+                new BlockLootModifier(new TagMatchTest(DIAMOND_ORES), UHCLootTables.DIAMONDS_TWO, 5));
+        register(registerable, UHCModules.BLASTED_ORES_PLUS, b -> b.icon(Items.GOLD_INGOT).modifiers(
+                        new BlockLootModifier(new TagMatchTest(COAL_ORES), UHCLootTables.TORCHES_LOT, 6),
+                        new BlockLootModifier(new TagMatchTest(BlockTags.IRON_ORES), UHCLootTables.IRON_INGOTS_FOUR, 2),
+                        new BlockLootModifier(new TagMatchTest(BlockTags.COPPER_ORES), UHCLootTables.COOKED_BEEF_NORMAL),
+                        new BlockLootModifier(new TagMatchTest(BlockTags.GOLD_ORES), UHCLootTables.GOLD_INGOTS_FOUR, 4),
+                        new BlockLootModifier(new TagMatchTest(LAPIS_ORES), UHCLootTables.LAPIS_AND_PAPER, 8),
+                        new BlockLootModifier(new TagMatchTest(REDSTONE_ORES), 12),
+                        new BlockLootModifier(new TagMatchTest(EMERALD_ORES), 20),
+                        new BlockLootModifier(new TagMatchTest(DIAMOND_ORES), UHCLootTables.DIAMONDS_FOUR, 8))
+                .descriptionFrom(UHCModules.BLASTED_ORES));
+        register(registerable, UHCModules.GUARANTEED_APPLES, Items.APPLE,
+                new BlockLootModifier(new TagMatchTest(BlockTags.LEAVES), UHCLootTables.APPLE));
+        register(registerable, UHCModules.GUARANTEED_GOLDEN_APPLES, Items.GOLDEN_APPLE,
+                new BlockLootModifier(new TagMatchTest(BlockTags.LEAVES), UHCLootTables.GOLDEN_APPLE));
+        register(registerable, UHCModules.TIMBERMAN, Items.GOLDEN_AXE,
+                new TraversalBreakModifier(new TagMatchTest(BlockTags.LOGS), true),
+                new BlockLootModifier(new TagMatchTest(BlockTags.LOGS), UHCLootTables.OAK_PLANKS_NORMAL));
+        register(registerable, UHCModules.FASTER_RESOURCES, b -> b.icon(Items.CACTUS).modifiers(
+                new BlockLootModifier(new TagMatchTest(BlockTags.BASE_STONE_OVERWORLD), UHCLootTables.COBBLESTONE),
+                new BlockLootModifier(new TagMatchTest(BlockTags.SAND), UHCLootTables.GLASS),
+                new BlockLootModifier(new BlockMatchTest(Blocks.GRAVEL), UHCLootTables.ARROWS_NORMAL),
+                new BlockLootModifier(new BlockMatchTest(Blocks.CACTUS), UHCLootTables.OAK_PLANKS_SOME),
+                new BlockLootModifier(new BlockMatchTest(Blocks.KELP), UHCLootTables.OAK_PLANKS_SOME),
+                new BlockLootModifier(new BlockMatchTest(Blocks.KELP_PLANT), UHCLootTables.OAK_PLANKS_SOME),
+                new BlockLootModifier(new BlockMatchTest(Blocks.BAMBOO), UHCLootTables.OAK_PLANKS_SOME),
+                new BlockLootModifier(new BlockMatchTest(Blocks.DEAD_BUSH), UHCLootTables.BREAD_NORMAL),
+                new BlockLootModifier(new BlockMatchTest(Blocks.RED_MUSHROOM), UHCLootTables.MUSHROOM_STEWS),
+                new BlockLootModifier(new BlockMatchTest(Blocks.BROWN_MUSHROOM), UHCLootTables.MUSHROOM_STEWS),
+                new EntityLootModifier(false, entities.getOrThrow(UHCEntityTags.DROPS_LEATHER), UHCLootTables.LEATHER_NORMAL),
+                new EntityLootModifier(false, entities.getOrThrow(UHCEntityTags.DROPS_STRING), UHCLootTables.STRINGS),
+                new BlockLootModifier(new BlockMatchTest(Blocks.GRAVEL), UHCLootTables.FLINT_AND_STEEL),
+                new BlockLootModifier(new BlockMatchTest(Blocks.SUGAR_CANE), UHCLootTables.PAPER),
+                new EntityLootModifier(false, entity(entities, EntityTypeIds.CHICKEN), UHCLootTables.ARROWS_NORMAL),
+                new EntityLootModifier(entity(entities, EntityTypeIds.CREEPER), UHCLootTables.TNTS_NORMAL)
+        ).longDescriptionFrom(UHCModules.FASTER_RESOURCES,
+                "stones_drop_cobblestone",
+                "cactus_kelp_drop_planks",
+                "gravel_drops_arrows_and_flint_and_steel",
+                "sand_drops_glass_bottles",
+                "sugar_cane_drop_paper",
+                "dead_bushes_drop_bread",
+                "mushrooms_drop_stews",
+                "animals_and_zombies_drop_leather",
+                "sheep_drop_strings",
+                "chickens_drop_arrows",
+                "creepers_drop_tnt"));
+        register(registerable, UHCModules.FASTER_RESOURCES_PLUS, b -> b.icon(Items.CACTUS).modifiers(
+                        new BlockLootModifier(new TagMatchTest(BlockTags.BASE_STONE_OVERWORLD), UHCLootTables.COBBLESTONE),
+                        new BlockLootModifier(new TagMatchTest(BlockTags.SAND), UHCLootTables.GLASS_BOTTLES),
+                        new BlockLootModifier(new BlockMatchTest(Blocks.GRAVEL), UHCLootTables.ARROWS_LOT),
+                        new BlockLootModifier(new BlockMatchTest(Blocks.CACTUS), UHCLootTables.OAK_PLANKS_SOME),
+                        new BlockLootModifier(new BlockMatchTest(Blocks.KELP), UHCLootTables.OAK_PLANKS_SOME),
+                        new BlockLootModifier(new BlockMatchTest(Blocks.KELP_PLANT), UHCLootTables.OAK_PLANKS_SOME),
+                        new BlockLootModifier(new BlockMatchTest(Blocks.BAMBOO), UHCLootTables.OAK_PLANKS_SOME),
+                        new BlockLootModifier(new BlockMatchTest(Blocks.DEAD_BUSH), UHCLootTables.BREAD_NORMAL),
+                        new BlockLootModifier(new BlockMatchTest(Blocks.RED_MUSHROOM), UHCLootTables.MUSHROOM_STEWS),
+                        new BlockLootModifier(new BlockMatchTest(Blocks.BROWN_MUSHROOM), UHCLootTables.MUSHROOM_STEWS),
+                        new EntityLootModifier(false, entities.getOrThrow(UHCEntityTags.DROPS_LEATHER), UHCLootTables.BOOK),
+                        new EntityLootModifier(false, entities.getOrThrow(UHCEntityTags.SQUIDS), UHCLootTables.FISHING_ROD),
+                        new EntityLootModifier(false, entities.getOrThrow(UHCEntityTags.DROPS_STRING), UHCLootTables.BOW),
+                        new BlockLootModifier(new BlockMatchTest(Blocks.GRAVEL), UHCLootTables.FLINT_AND_STEEL),
+                        new EntityLootModifier(false, entity(entities, EntityTypeIds.CHICKEN), UHCLootTables.ARROWS_BUNCH),
+                        new EntityLootModifier(entities.getOrThrow(EntityTypeTags.SKELETONS), UHCLootTables.POWER_BOW),
+                        new BlockLootModifier(new BlockMatchTest(Blocks.SUGAR_CANE), UHCLootTables.TABLE_OR_BOOKS),
+                        new EntityLootModifier(entity(entities, EntityTypeIds.CREEPER), UHCLootTables.TNTS_NORMAL))
+                .descriptionFrom(UHCModules.FASTER_RESOURCES)
+                .longDescriptionFrom(UHCModules.FASTER_RESOURCES,
+                        "stones_drop_cobblestone",
+                        "cactus_kelp_drop_planks",
+                        "gravel_drops_arrows_and_flint_and_steel",
+                        "sand_drops_glass",
+                        "sugar_cane_drop_enchanting_tables_and_books",
+                        "dead_bushes_drop_bread",
+                        "mushrooms_drop_stews",
+                        "animals_and_zombies_drop_books",
+                        "sheep_drop_bows",
+                        "chickens_drop_arrows",
+                        "creepers_drop_tnt",
+                        "squids_drop_fishing_rods",
+                        "skeletons_drop_power_bow"));
+        register(registerable, UHCModules.POTION_DROPS, b -> b.icon(Items.POTION).modifiers(
+                new EntityLootModifier(false, entities.getOrThrow(EntityTypeTags.ZOMBIES), UHCLootTables.STRENGTH_POTIONS),
+                new EntityLootModifier(false, entity(entities, EntityTypeIds.RABBIT), UHCLootTables.LEAPING_POTIONS),
+                new EntityLootModifier(false, entity(entities, EntityTypeIds.BAT), UHCLootTables.NIGHT_VISION_POTIONS),
+                new EntityLootModifier(false, entities.getOrThrow(UHCEntityTags.SPIDERS), UHCLootTables.POISON_POTIONS),
+                new BlockLootModifier(false, new BlockMatchTest(Blocks.SUGAR_CANE), UHCLootTables.SWIFTNESS_POTIONS)
+        ).longDescriptionFrom(UHCModules.POTION_DROPS,
+                "zombies_drop_strength_potions",
+                "spiders_drop_poison_potions",
+                "sugar_cane_drops_swiftness_potions",
+                "rabbits_drop_leaping_potions",
+                "bats_drop_night_vision_potions"));
     }
 
     public static void register(
@@ -120,5 +241,13 @@ public class UHCModuleProvider extends FabricDynamicRegistryProvider {
 
     private static ItemStackTemplate enchantedItem(Item item, ItemEnchantments itemEnchantments) {
         return new ItemStackTemplate(item, DataComponentPatch.builder().set(DataComponents.ENCHANTMENTS, itemEnchantments).build());
+    }
+
+    private static HolderSet<EntityType<?>> entity(HolderGetter<EntityType<?>> entities, ResourceKey<EntityType<?>> key) {
+        return HolderSet.direct(entities.getOrThrow(key));
+    }
+
+    private static TagKey<Block> vanillaBlockTag(String path) {
+        return TagKey.create(Registries.BLOCK, Identifier.withDefaultNamespace(path));
     }
 }

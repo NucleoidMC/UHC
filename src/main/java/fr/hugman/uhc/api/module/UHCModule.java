@@ -116,6 +116,19 @@ public record UHCModule(
             return longDescription(List.of(longDescription));
         }
 
+        /**
+         * Sets a standard long description of the module, using the registry key of the module the lines belong to.
+         * That key is not necessarily this module's own: variants usually reuse the lines of the module they derive
+         * from.
+         */
+        public Builder longDescriptionFrom(ResourceKey<?> key, String... paths) {
+            var translationKey = Util.makeDescriptionId("module", key.identifier());
+            return longDescription(Arrays.stream(paths)
+                    .map(path -> Component.translatable(translationKey + ".description." + path))
+                    .map(Component.class::cast)
+                    .toList());
+        }
+
         public Builder icon(ItemStackTemplate icon) {
             this.icon = icon;
             return this;

@@ -37,6 +37,39 @@ public record BlockLootModifier(
             Codec.intRange(0, Integer.MAX_VALUE).optionalFieldOf("experience", 0).forGetter(BlockLootModifier::experience)
     ).apply(instance, BlockLootModifier::new));
 
+    public BlockLootModifier(
+            RuleTest predicate,
+            ResourceKey<LootTable> lootTable
+    ) {
+        this(true, predicate, Optional.of(lootTable), 0);
+    }
+
+    public BlockLootModifier(
+            RuleTest predicate,
+            ResourceKey<LootTable> lootTable,
+            int experience
+    ) {
+        this(true, predicate, Optional.of(lootTable), experience);
+    }
+
+    /**
+     * Creates a modifier that only grants experience, leaving the vanilla drops untouched.
+     */
+    public BlockLootModifier(
+            RuleTest predicate,
+            int experience
+    ) {
+        this(true, predicate, Optional.empty(), experience);
+    }
+
+    public BlockLootModifier(
+            boolean replace,
+            RuleTest predicate,
+            ResourceKey<LootTable> lootTable
+    ) {
+        this(replace, predicate, Optional.of(lootTable), 0);
+    }
+
     @Override
     public ModifierType<?> getType() {
         return ModifierType.BLOCK_LOOT;

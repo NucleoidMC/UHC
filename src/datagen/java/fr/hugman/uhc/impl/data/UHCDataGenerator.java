@@ -28,6 +28,14 @@ public class UHCDataGenerator implements DataGeneratorEntrypoint {
 
         // Tags
         pack.addProvider(UHCBiomeTagProvider::new);
+        pack.addProvider(UHCEntityTypeTagProvider::new);
+
+        // Loot tables
+        pack.addProvider(UHCBlockLootTableProvider::new);
+        pack.addProvider(UHCEntityLootTableProvider::new);
+
+        // Languages
+        pack.addProvider(UHCEnglishLangProvider::new);
     }
 
     @Override

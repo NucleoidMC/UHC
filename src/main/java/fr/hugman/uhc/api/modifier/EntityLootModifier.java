@@ -38,6 +38,14 @@ public record EntityLootModifier(
         this(true, entities, Optional.of(lootTable));
     }
 
+    public EntityLootModifier(
+            boolean replace,
+            HolderSet<EntityType<?>> entities,
+            ResourceKey<LootTable> lootTable
+    ) {
+        this(replace, entities, Optional.of(lootTable));
+    }
+
     @Override
     public ModifierType<?> getType() {
         return ModifierType.ENTITY_LOOT;

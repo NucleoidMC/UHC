@@ -20,11 +20,17 @@ public record TraversalBreakModifier(
         int amount,
         boolean includeLeaves
 ) implements Modifier {
+    public static final int DEFAULT_AMOUNT = 128;
+
     public static final MapCodec<TraversalBreakModifier> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
             RuleTest.CODEC.fieldOf("target").forGetter(module -> module.predicate),
-            Codec.intRange(0, Integer.MAX_VALUE).optionalFieldOf("amount", 128).forGetter(module -> module.amount),
+            Codec.intRange(0, Integer.MAX_VALUE).optionalFieldOf("amount", DEFAULT_AMOUNT).forGetter(module -> module.amount),
             Codec.BOOL.optionalFieldOf("include_leaves", false).forGetter(module -> module.includeLeaves)
     ).apply(instance, TraversalBreakModifier::new));
+
+    public TraversalBreakModifier(RuleTest predicate, boolean includeLeaves) {
+        this(predicate, DEFAULT_AMOUNT, includeLeaves);
+    }
 
     @Override
     public ModifierType<?> getType() {
