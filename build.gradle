@@ -17,6 +17,7 @@ if(env.COMMIT_HASH != null) {
 
 repositories {
     maven { url = "https://maven.nucleoid.xyz/" }
+    maven { url = "https://maven.nucleoid.xyz/snapshots" }
     maven { url = "https://maven.gegy.dev/" }
 }
 
@@ -27,6 +28,8 @@ dependencies {
     implementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_api_version}"
 
     implementation "xyz.nucleoid:plasmid:${project.plasmid_version}"
+
+    implementation "fr.hugman:ultimate_lucky_block:${project.ultimate_lucky_block_version}"
 
     runtimeOnly "eu.pb4:factorytools:0.11.0+26.2"
 }

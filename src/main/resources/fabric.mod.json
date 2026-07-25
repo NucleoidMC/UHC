@@ -28,6 +28,9 @@
     "fabricloader": ">=0.16",
     "fabric-api": "*"
   },
+  "suggests": {
+    "ultimate_lucky_block": "*"
+  },
   "custom": {
     "mc-publish": {
       "curseforge": 899404,

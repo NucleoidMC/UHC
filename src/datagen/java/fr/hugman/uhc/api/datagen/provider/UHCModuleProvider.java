@@ -1,5 +1,6 @@
 package fr.hugman.uhc.api.datagen.provider;
 
+import fr.hugman.uhc.api.datagen.compat.ULBUHCCompat;
 import fr.hugman.uhc.api.loot.UHCLootTables;
 import fr.hugman.uhc.api.modifier.*;
 import fr.hugman.uhc.api.module.UHCModule;
@@ -8,13 +9,13 @@ import fr.hugman.uhc.api.registry.UHCEntityTags;
 import fr.hugman.uhc.api.registry.UHCRegistryKeys;
 import fr.hugman.uhc.api.world.level.levelgen.feature.UHCPlacedFeatures;
 import fr.hugman.uhc.impl.UHC;
+import fr.hugman.ultimate_lucky_block.api.block.ULBBlocks;
+import fr.hugman.ultimate_lucky_block.api.world.gen.feature.ULBPlacedFeatures;
 import net.fabricmc.fabric.api.datagen.v1.FabricPackOutput;
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricDynamicRegistryProvider;
 import net.minecraft.core.HolderGetter;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.HolderSet;
-import net.minecraft.core.component.DataComponentPatch;
-import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.data.worldgen.BootstrapContext;
 import net.minecraft.resources.Identifier;
@@ -26,8 +27,6 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.EntityTypeIds;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemStackTemplate;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.item.enchantment.ItemEnchantments;
@@ -54,7 +53,7 @@ public class UHCModuleProvider extends FabricDynamicRegistryProvider {
 
     @Override
     protected void configure(HolderLookup.Provider registries, Entries entries) {
-        entries.addAll(registries.lookupOrThrow(UHCRegistryKeys.UHC_MODULE));
+        ULBUHCCompat.addAll(entries, registries.lookupOrThrow(UHCRegistryKeys.UHC_MODULE));
     }
 
     @Override
@@ -106,16 +105,16 @@ public class UHCModuleProvider extends FabricDynamicRegistryProvider {
                 new PlayerAttributeModifier(Attributes.BLOCK_BREAK_SPEED, new AttributeModifier(UHC.id("dasher_plus/block_break_speed"), 0.4, AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL)),
                 new PlayerAttributeModifier(Attributes.SAFE_FALL_DISTANCE, new AttributeModifier(UHC.id("dasher_plus/safe_fall_distance"), 1024, AttributeModifier.Operation.ADD_VALUE)));
         register(registerable, UHCModules.ORE_BOOST, Items.DIAMOND_ORE,
-                new PlacedFeaturesModifier(HolderSet.direct(
-                        placedFeatures.getOrThrow(UHCPlacedFeatures.BOOSTED_LAPIS_1),
-                        placedFeatures.getOrThrow(UHCPlacedFeatures.BOOSTED_GOLD_1),
-                        placedFeatures.getOrThrow(UHCPlacedFeatures.BOOSTED_DIAMOND_1)
+                new PlacedFeaturesModifier(HolderSet.direct(placedFeatures::getOrThrow,
+                        UHCPlacedFeatures.BOOSTED_LAPIS_1,
+                        UHCPlacedFeatures.BOOSTED_GOLD_1,
+                        UHCPlacedFeatures.BOOSTED_DIAMOND_1
                 )));
         register(registerable, UHCModules.ORE_BOOST_PLUS, b -> b.icon(Items.DIAMOND_ORE).modifiers(
-                        new PlacedFeaturesModifier(HolderSet.direct(
-                                placedFeatures.getOrThrow(UHCPlacedFeatures.BOOSTED_LAPIS_2),
-                                placedFeatures.getOrThrow(UHCPlacedFeatures.BOOSTED_GOLD_2),
-                                placedFeatures.getOrThrow(UHCPlacedFeatures.BOOSTED_DIAMOND_2)
+                        new PlacedFeaturesModifier(HolderSet.direct(placedFeatures::getOrThrow,
+                                UHCPlacedFeatures.BOOSTED_LAPIS_2,
+                                UHCPlacedFeatures.BOOSTED_GOLD_2,
+                                UHCPlacedFeatures.BOOSTED_DIAMOND_2
                         )))
                 .descriptionFrom(UHCModules.ORE_BOOST));
         register(registerable, UHCModules.BLASTED_ORES, Items.IRON_INGOT,
@@ -219,6 +218,14 @@ public class UHCModuleProvider extends FabricDynamicRegistryProvider {
                 "sugar_cane_drops_swiftness_potions",
                 "rabbits_drop_leaping_potions",
                 "bats_drop_night_vision_potions"));
+
+        // [COMPAT] Ultimate Lucky Block
+        register(registerable, UHCModules.LUCKY_BLOCKS, ULBBlocks.LUCKY_BLOCK,
+                new PlacedFeaturesModifier(HolderSet.direct(placedFeatures::getOrThrow,
+                        ULBPlacedFeatures.SURFACE_LUCKY_BLOCKS,
+                        ULBPlacedFeatures.MINERAL_LUCKY_BLOCKS
+                ))
+        );
     }
 
     public static void register(
@@ -237,10 +244,6 @@ public class UHCModuleProvider extends FabricDynamicRegistryProvider {
             String... longDescriptionStrings
     ) {
         registerable.register(key, UHCModules.create(key, builderFunction, longDescriptionStrings));
-    }
-
-    private static ItemStackTemplate enchantedItem(Item item, ItemEnchantments itemEnchantments) {
-        return new ItemStackTemplate(item, DataComponentPatch.builder().set(DataComponents.ENCHANTMENTS, itemEnchantments).build());
     }
 
     private static HolderSet<EntityType<?>> entity(HolderGetter<EntityType<?>> entities, ResourceKey<EntityType<?>> key) {

@@ -12,10 +12,6 @@ import net.minecraft.util.Util;
 import java.nio.file.Path;
 import java.util.concurrent.CompletableFuture;
 
-/**
- * Generates the English translations. They live in the data pack rather than the resource pack, as UHC is a
- * server-side mod that translates its messages before sending them to players.
- */
 public class UHCEnglishLangProvider extends FabricLanguageProvider {
     public UHCEnglishLangProvider(FabricPackOutput output, CompletableFuture<HolderLookup.Provider> registryLookup) {
         super(output, "en_us", registryLookup);
@@ -143,6 +139,12 @@ public class UHCEnglishLangProvider extends FabricLanguageProvider {
         builder.add("ui.uhc.click_to_edit", "Click to Edit");
         builder.add("ui.uhc.launch", "Launch");
         builder.add("ui.uhc.select_team_size.title", "Select a team size");
+
+        // [COMPAT] Ultimate Lucky Block
+        builder.add("game.lucky_uhc", "Lucky UHC");
+        builder.add("game.lucky_uhcrun", "Lucky UHCRun");
+        builder.add("game.lucky_doublerunner", "Lucky DoubleRunner");
+        module(builder, UHCModules.LUCKY_BLOCKS, "Lucky Blocks", "Lucky blocks spawn around the world");
     }
 
     /**
