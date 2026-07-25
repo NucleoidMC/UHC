@@ -42,11 +42,14 @@ public class UHCModuleTagProvider extends FabricTagsProvider<UHCModule> {
                 .add(FASTER_RESOURCES_PLUS)
                 .add(POTION_DROPS);
 
+        // [COMPAT] Ultimate Lucky Block
+        // Tags cannot carry resource conditions, so the ULB-dependent module is added as optional:
+        // the tag stays loadable when ULB is absent, and the configs using it are conditioned away anyway.
         builder(UHCModuleTags.LUCKY_UHCRUN)
                 .forceAddTag(UHCModuleTags.UHCRUN)
-                .add(UHCModules.LUCKY_BLOCKS);
+                .addOptional(UHCModules.LUCKY_BLOCKS);
         builder(UHCModuleTags.LUCKY_DOUBLERUNNER)
                 .forceAddTag(UHCModuleTags.DOUBLERUNNER)
-                .add(UHCModules.LUCKY_BLOCKS);
+                .addOptional(UHCModules.LUCKY_BLOCKS);
     }
 }

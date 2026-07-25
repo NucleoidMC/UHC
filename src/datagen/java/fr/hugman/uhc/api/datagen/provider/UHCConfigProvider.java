@@ -4,6 +4,7 @@ import fr.hugman.uhc.api.config.UHCConfig;
 import fr.hugman.uhc.api.config.UHCConfigs;
 import fr.hugman.uhc.api.config.UHCMapConfig;
 import fr.hugman.uhc.api.config.UHCTimersConfig;
+import fr.hugman.uhc.api.datagen.compat.ULBUHCCompat;
 import fr.hugman.uhc.api.module.UHCModules;
 import fr.hugman.uhc.api.registry.UHCModuleTags;
 import fr.hugman.uhc.api.registry.UHCRegistryKeys;
@@ -30,7 +31,7 @@ public class UHCConfigProvider extends FabricDynamicRegistryProvider {
 
     @Override
     protected void configure(HolderLookup.Provider registries, Entries entries) {
-        entries.addAll(registries.lookupOrThrow(UHCRegistryKeys.UHC_CONFIG));
+        ULBUHCCompat.addAll(entries, registries.lookupOrThrow(UHCRegistryKeys.UHC_CONFIG));
     }
 
     @Override

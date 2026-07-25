@@ -2,6 +2,7 @@ package fr.hugman.uhc.api.datagen.provider;
 
 import fr.hugman.uhc.api.config.UHCConfigs;
 import fr.hugman.uhc.api.config.UHCGameConfigs;
+import fr.hugman.uhc.api.datagen.compat.ULBUHCCompat;
 import fr.hugman.uhc.api.game.UHCGameTeamSize;
 import fr.hugman.uhc.api.registry.UHCRegistryKeys;
 import net.fabricmc.fabric.api.datagen.v1.FabricPackOutput;
@@ -20,7 +21,7 @@ public class UHCGameProvider extends FabricDynamicRegistryProvider {
 
     @Override
     protected void configure(HolderLookup.Provider registries, Entries entries) {
-        entries.addAll(registries.lookupOrThrow(PlasmidRegistryKeys.GAME_CONFIG));
+        ULBUHCCompat.addAll(entries, registries.lookupOrThrow(PlasmidRegistryKeys.GAME_CONFIG));
     }
 
     @Override

@@ -1,5 +1,6 @@
 package fr.hugman.uhc.api.datagen.provider;
 
+import fr.hugman.uhc.api.datagen.compat.ULBUHCCompat;
 import fr.hugman.uhc.api.loot.UHCLootTables;
 import fr.hugman.uhc.api.modifier.*;
 import fr.hugman.uhc.api.module.UHCModule;
@@ -52,7 +53,7 @@ public class UHCModuleProvider extends FabricDynamicRegistryProvider {
 
     @Override
     protected void configure(HolderLookup.Provider registries, Entries entries) {
-        entries.addAll(registries.lookupOrThrow(UHCRegistryKeys.UHC_MODULE));
+        ULBUHCCompat.addAll(entries, registries.lookupOrThrow(UHCRegistryKeys.UHC_MODULE));
     }
 
     @Override
