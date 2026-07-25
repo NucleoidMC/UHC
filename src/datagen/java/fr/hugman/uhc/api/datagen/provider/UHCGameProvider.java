@@ -45,6 +45,7 @@ public class UHCGameProvider extends FabricDynamicRegistryProvider {
             registerable.register(UHCGameConfigs.of("uhcrun/" + teamSize.getName()), UHCGameConfigs.create(uhcRun, teamSize));
             registerable.register(UHCGameConfigs.of("doublerunner/" + teamSize.getName()), UHCGameConfigs.create(doublerunner, teamSize));
 
+            // [COMPAT] Ultimate Lucky Block
             registerable.register(UHCGameConfigs.of("lucky_uhc/" + teamSize.getName()), UHCGameConfigs.create(luckyUhc, teamSize));
             registerable.register(UHCGameConfigs.of("lucky_uhcrun/" + teamSize.getName()), UHCGameConfigs.create(luckyUhcRun, teamSize));
             registerable.register(UHCGameConfigs.of("lucky_doublerunner/" + teamSize.getName()), UHCGameConfigs.create(luckyDoublerunner, teamSize));

@@ -219,6 +219,7 @@ public class UHCModuleProvider extends FabricDynamicRegistryProvider {
                 "rabbits_drop_leaping_potions",
                 "bats_drop_night_vision_potions"));
 
+        // [COMPAT] Ultimate Lucky Block
         register(registerable, UHCModules.LUCKY_BLOCKS, ULBBlocks.LUCKY_BLOCK,
                 new PlacedFeaturesModifier(HolderSet.direct(placedFeatures::getOrThrow,
                         ULBPlacedFeatures.SURFACE_LUCKY_BLOCKS,
