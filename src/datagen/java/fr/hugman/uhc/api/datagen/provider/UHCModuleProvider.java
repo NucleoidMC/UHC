@@ -110,6 +110,7 @@ public class UHCModuleProvider extends FabricDynamicRegistryProvider {
         final var entities = registerable.lookup(Registries.ENTITY_TYPE);
         final var enchantments = registerable.lookup(Registries.ENCHANTMENT);
         final var placedFeatures = registerable.lookup(Registries.PLACED_FEATURE);
+        final var modules = registerable.lookup(UHCRegistryKeys.UHC_MODULE);
 
         var effi3Builder = new ItemEnchantments.Mutable(ItemEnchantments.EMPTY);
         effi3Builder.set(enchantments.getOrThrow(Enchantments.EFFICIENCY), 3);
@@ -145,6 +146,7 @@ public class UHCModuleProvider extends FabricDynamicRegistryProvider {
                         ReplaceStackModifier.ofEnchant(items, Items.DIAMOND_AXE, effi3),
                         ReplaceStackModifier.ofEnchant(items, Items.DIAMOND_SHOVEL, effi3),
                         ReplaceStackModifier.ofEnchant(items, Items.DIAMOND_HOE, effi3))
+                .incompatibleWith(modules.getOrThrow(UHCModules.BETTER_TOOLS))
                 .longDescriptionFrom(UHCModules.BETTER_TOOLS_PLUS,
                         line("wooden_tools_become_iron", transformation(item("wooden_pickaxe"), item("iron_pickaxe"))),
                         line("diamond_tools_get_efficiency", transformation(item("diamond_pickaxe"), item("enchanted_book")))));
@@ -152,11 +154,12 @@ public class UHCModuleProvider extends FabricDynamicRegistryProvider {
                 grant(effect("haste"), effect("speed")),
                 new PlayerAttributeModifier(Attributes.MOVEMENT_SPEED, new AttributeModifier(UHC.id("dasher/movement_speed"), 0.2, AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL)),
                 new PlayerAttributeModifier(Attributes.BLOCK_BREAK_SPEED, new AttributeModifier(UHC.id("dasher/block_break_speed"), 0.1, AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL)));
-        register(registerable, UHCModules.DASHER_PLUS, Items.DIAMOND_BOOTS,
-                grant(effect("haste"), effect("speed"), item("feather")),
-                new PlayerAttributeModifier(Attributes.MOVEMENT_SPEED, new AttributeModifier(UHC.id("dasher_plus/movement_speed"), 0.5, AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL)),
-                new PlayerAttributeModifier(Attributes.BLOCK_BREAK_SPEED, new AttributeModifier(UHC.id("dasher_plus/block_break_speed"), 0.4, AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL)),
-                new PlayerAttributeModifier(Attributes.SAFE_FALL_DISTANCE, new AttributeModifier(UHC.id("dasher_plus/safe_fall_distance"), 1024, AttributeModifier.Operation.ADD_VALUE)));
+        register(registerable, UHCModules.DASHER_PLUS, b -> b.icon(Items.DIAMOND_BOOTS).modifiers(
+                        new PlayerAttributeModifier(Attributes.MOVEMENT_SPEED, new AttributeModifier(UHC.id("dasher_plus/movement_speed"), 0.5, AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL)),
+                        new PlayerAttributeModifier(Attributes.BLOCK_BREAK_SPEED, new AttributeModifier(UHC.id("dasher_plus/block_break_speed"), 0.4, AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL)),
+                        new PlayerAttributeModifier(Attributes.SAFE_FALL_DISTANCE, new AttributeModifier(UHC.id("dasher_plus/safe_fall_distance"), 1024, AttributeModifier.Operation.ADD_VALUE)))
+                .descriptionFrom(UHCModules.DASHER_PLUS, grant(effect("haste"), effect("speed"), item("feather")))
+                .incompatibleWith(modules.getOrThrow(UHCModules.DASHER)));
         register(registerable, UHCModules.ORE_BOOST, Items.DIAMOND_ORE,
                 grant(block("lapis_ore"), block("gold_ore"), block("diamond_ore")),
                 new PlacedFeaturesModifier(HolderSet.direct(placedFeatures::getOrThrow,
@@ -170,7 +173,8 @@ public class UHCModuleProvider extends FabricDynamicRegistryProvider {
                                 UHCPlacedFeatures.BOOSTED_GOLD_2,
                                 UHCPlacedFeatures.BOOSTED_DIAMOND_2
                         )))
-                .descriptionFrom(UHCModules.ORE_BOOST, grant(block("lapis_ore"), block("gold_ore"), block("diamond_ore"))));
+                .descriptionFrom(UHCModules.ORE_BOOST, grant(block("lapis_ore"), block("gold_ore"), block("diamond_ore")))
+                .incompatibleWith(modules.getOrThrow(UHCModules.ORE_BOOST)));
         register(registerable, UHCModules.BLASTED_ORES, Items.IRON_INGOT,
                 transformation(block("gold_ore"), all(item("gold_ingot"), item("experience_bottle"))),
                 new BlockLootModifier(new TagMatchTest(COAL_ORES), UHCLootTables.TORCHES_NORMAL, 4),
@@ -190,13 +194,15 @@ public class UHCModuleProvider extends FabricDynamicRegistryProvider {
                         new BlockLootModifier(new TagMatchTest(REDSTONE_ORES), 12),
                         new BlockLootModifier(new TagMatchTest(EMERALD_ORES), 20),
                         new BlockLootModifier(new TagMatchTest(DIAMOND_ORES), UHCLootTables.DIAMONDS_FOUR, 8))
-                .descriptionFrom(UHCModules.BLASTED_ORES, transformation(block("gold_ore"), all(item("gold_ingot"), item("experience_bottle")))));
+                .descriptionFrom(UHCModules.BLASTED_ORES, transformation(block("gold_ore"), all(item("gold_ingot"), item("experience_bottle"))))
+                .incompatibleWith(modules.getOrThrow(UHCModules.BLASTED_ORES)));
         register(registerable, UHCModules.GUARANTEED_APPLES, Items.APPLE,
                 transformation(block("oak_leaves"), item("apple")),
                 new BlockLootModifier(new TagMatchTest(BlockTags.LEAVES), UHCLootTables.APPLE));
-        register(registerable, UHCModules.GUARANTEED_GOLDEN_APPLES, Items.GOLDEN_APPLE,
-                transformation(block("oak_leaves"), item("golden_apple")),
-                new BlockLootModifier(new TagMatchTest(BlockTags.LEAVES), UHCLootTables.GOLDEN_APPLE));
+        register(registerable, UHCModules.GUARANTEED_GOLDEN_APPLES, b -> b.icon(Items.GOLDEN_APPLE).modifiers(
+                        new BlockLootModifier(new TagMatchTest(BlockTags.LEAVES), UHCLootTables.GOLDEN_APPLE))
+                .descriptionFrom(UHCModules.GUARANTEED_GOLDEN_APPLES, transformation(block("oak_leaves"), item("golden_apple")))
+                .incompatibleWith(modules.getOrThrow(UHCModules.GUARANTEED_APPLES)));
         register(registerable, UHCModules.TIMBERMAN, Items.GOLDEN_AXE,
                 transformation(block("oak_log"), block("oak_planks")),
                 new TraversalBreakModifier(new TagMatchTest(BlockTags.LOGS), true),
@@ -250,6 +256,7 @@ public class UHCModuleProvider extends FabricDynamicRegistryProvider {
                         new BlockLootModifier(new BlockMatchTest(Blocks.SUGAR_CANE), UHCLootTables.TABLE_OR_BOOKS),
                         new EntityLootModifier(entity(entities, EntityTypeIds.CREEPER), UHCLootTables.TNTS_NORMAL))
                 .descriptionFrom(UHCModules.FASTER_RESOURCES)
+                .incompatibleWith(modules.getOrThrow(UHCModules.FASTER_RESOURCES))
                 .longDescriptionFrom(UHCModules.FASTER_RESOURCES,
                         STONES_DROP_COBBLESTONE,
                         CACTUS_KELP_DROP_PLANKS,

@@ -7,6 +7,7 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.core.Holder;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.Style;
 import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerPlayer;
 import org.jetbrains.annotations.Nullable;
@@ -82,7 +83,17 @@ public class UHCModulesGui extends PreviousableGui {
             otherModulesWidget = new ListGuiWidget<>(this, player, otherModules,
                     (moduleEntry) -> {
                         var builder = moduleEntry.value().getElement();
-                        builder.addLoreLine(Component.translatable("ui.uhc.click_to_add").withStyle(ChatFormatting.GRAY));
+                        var blocker = UHCModule.findIncompatibility(moduleEntry, selectedModules);
+                        if (blocker.isPresent()) {
+                            var blockerModule = blocker.get().value();
+                            builder.setName(moduleEntry.value().name().copy()
+                                    .withStyle(ChatFormatting.DARK_GRAY, ChatFormatting.STRIKETHROUGH));
+                            builder.addLoreLine(Component.translatable("ui.uhc.incompatible_with",
+                                    blockerModule.name().copy().setStyle(Style.EMPTY.withColor(blockerModule.color()))
+                            ).withStyle(ChatFormatting.RED));
+                        } else {
+                            builder.addLoreLine(Component.translatable("ui.uhc.click_to_add").withStyle(ChatFormatting.GRAY));
+                        }
                         moduleEntry.value().addDescriptionToElement(builder);
                         return builder;
                     },
@@ -91,7 +102,8 @@ public class UHCModulesGui extends PreviousableGui {
                         selectedModules.add(moduleEntry);
                         otherModules.remove(moduleEntry);
                         selectedModulesWidget.refreshDisplay();
-                    });
+                    },
+                    (moduleEntry) -> UHCModule.findIncompatibility(moduleEntry, selectedModules).isEmpty());
             otherModulesWidget.refreshDisplay();
         }
     }

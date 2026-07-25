@@ -113,6 +113,7 @@
   "ui.uhc.click_to_add": "Cliquez pour ajouter",
   "ui.uhc.click_to_remove": "Cliquez pour retirer",
   "ui.uhc.click_to_edit": "Cliquez pour modifier",
+  "ui.uhc.incompatible_with": "Incompatible avec %s",
   "ui.uhc.launch": "Lancer",
   "ui.uhc.select_team_size.title": "Sélectionner une taille d'équipe",
   "text.uhc.kills": "Meurtres"

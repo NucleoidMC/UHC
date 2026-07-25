@@ -139,6 +139,7 @@ public class UHCEnglishLangProvider extends FabricLanguageProvider {
         builder.add("ui.uhc.click_to_add", "Click to Add");
         builder.add("ui.uhc.click_to_remove", "Click to Remove");
         builder.add("ui.uhc.click_to_edit", "Click to Edit");
+        builder.add("ui.uhc.incompatible_with", "Incompatible with %s");
         builder.add("ui.uhc.launch", "Launch");
         builder.add("ui.uhc.select_team_size.title", "Select a team size");
 

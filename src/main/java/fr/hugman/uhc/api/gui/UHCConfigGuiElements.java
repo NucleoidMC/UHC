@@ -134,4 +134,11 @@ public class UHCConfigGuiElements {
     public static void playClickSound(ServerPlayer player) {
         PlayerUtil.playSoundToPlayer(player, SoundEvents.UI_BUTTON_CLICK.value(), SoundSource.UI, 1.0F, 1.0F);
     }
+
+    /**
+     * The click sound, dropped low enough to read as a refusal.
+     */
+    public static void playDeniedSound(ServerPlayer player) {
+        PlayerUtil.playSoundToPlayer(player, SoundEvents.UI_BUTTON_CLICK.value(), SoundSource.UI, 1.0F, 0.5F);
+    }
 }

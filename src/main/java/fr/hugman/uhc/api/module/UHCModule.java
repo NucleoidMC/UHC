@@ -24,6 +24,7 @@ import xyz.nucleoid.codecs.MoreCodecs;
 import xyz.nucleoid.plasmid.api.util.PlasmidCodecs;
 
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -34,6 +35,7 @@ public record UHCModule(
         Optional<List<Component>> longDescription,
         ItemStackTemplate icon,
         TextColor color,
+        HolderSet<UHCModule> incompatibleWith,
         List<Modifier> modifiers
 ) {
     public static final Codec<UHCModule> CODEC = RecordCodecBuilder.create(instance -> instance.group(
@@ -42,6 +44,8 @@ public record UHCModule(
             MoreCodecs.listOrUnit(PlasmidCodecs.TEXT).optionalFieldOf("long_description").forGetter(UHCModule::longDescription),
             ItemStackTemplate.CODEC.optionalFieldOf("icon", new ItemStackTemplate(Items.BARRIER)).forGetter(UHCModule::icon),
             TextColor.CODEC.optionalFieldOf("color", TextColor.fromRgb(3791743)).forGetter(UHCModule::color),
+            // References only, since allowing inline modules here would make this codec depend on itself.
+            RegistryCodecs.homogeneousList(UHCRegistryKeys.UHC_MODULE).optionalFieldOf("incompatible_with", HolderSet.direct()).forGetter(UHCModule::incompatibleWith),
             Modifier.TYPE_CODEC.listOf().fieldOf("modifiers").forGetter(UHCModule::modifiers)
     ).apply(instance, UHCModule::new));
 
@@ -50,6 +54,24 @@ public record UHCModule(
 
     public static Builder builder() {
         return new Builder();
+    }
+
+    /**
+     * Whether two modules step on each other and cannot be enabled together, such as a module and its {@code +}
+     * variant.
+     * <p>
+     * A pair only needs to be declared from one side: declaring it from both would make the two module files reference
+     * each other, which the registry loader has no reason to enjoy.
+     */
+    public static boolean areIncompatible(Holder<UHCModule> first, Holder<UHCModule> second) {
+        return first.value().incompatibleWith().contains(second) || second.value().incompatibleWith().contains(first);
+    }
+
+    /**
+     * The first of {@code modules} this one cannot be enabled alongside, if any.
+     */
+    public static Optional<Holder<UHCModule>> findIncompatibility(Holder<UHCModule> module, Collection<Holder<UHCModule>> modules) {
+        return modules.stream().filter(other -> areIncompatible(module, other)).findFirst();
     }
 
     /**
@@ -94,6 +116,7 @@ public record UHCModule(
         private Optional<List<Component>> longDescription = Optional.empty();
         private ItemStackTemplate icon = new ItemStackTemplate(Items.BARRIER);
         private TextColor color = TextColor.fromRgb(3791743);
+        private HolderSet<UHCModule> incompatibleWith = HolderSet.direct();
         private List<Modifier> modifiers = List.of();
 
         private Builder() {
@@ -190,6 +213,15 @@ public record UHCModule(
             return this;
         }
 
+        /**
+         * Marks modules this one cannot be enabled alongside. Only one side of each pair needs to declare it.
+         */
+        @SafeVarargs
+        public final Builder incompatibleWith(Holder<UHCModule>... modules) {
+            this.incompatibleWith = HolderSet.direct(modules);
+            return this;
+        }
+
         public Builder modifiers(List<Modifier> modifiers) {
             this.modifiers = modifiers;
             return this;
@@ -224,7 +256,7 @@ public record UHCModule(
         }
 
         public UHCModule build() {
-            return new UHCModule(name.orElseThrow(), description, longDescription, icon, color, modifiers);
+            return new UHCModule(name.orElseThrow(), description, longDescription, icon, color, incompatibleWith, modifiers);
         }
     }
 }

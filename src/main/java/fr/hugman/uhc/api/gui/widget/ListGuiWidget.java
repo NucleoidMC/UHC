@@ -11,6 +11,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Function;
+import java.util.function.Predicate;
 
 public class ListGuiWidget<Object> extends GuiWidget {
     private final List<Object> list;
@@ -18,6 +19,7 @@ public class ListGuiWidget<Object> extends GuiWidget {
     private final int startingRow;
     private final int height;
     private final @Nullable Consumer<Object> clickConsumer;
+    private final Predicate<Object> clickable;
     private int page = 0;
 
     public ListGuiWidget(
@@ -29,12 +31,30 @@ public class ListGuiWidget<Object> extends GuiWidget {
             int height,
             @Nullable Consumer<Object> clickConsumer
     ) {
+        this(gui, player, list, elementBuilderProvider, startingRow, height, clickConsumer, value -> true);
+    }
+
+    /**
+     * @param clickable entries it rejects stay in place but turn down clicks, so that the list does not reshuffle
+     *                  itself as entries become unavailable
+     */
+    public ListGuiWidget(
+            SlotHolder gui,
+            ServerPlayer player,
+            List<Object> list,
+            Function<Object, GuiElementBuilder> elementBuilderProvider,
+            int startingRow,
+            int height,
+            @Nullable Consumer<Object> clickConsumer,
+            Predicate<Object> clickable
+    ) {
         super(player, gui);
         this.list = list;
         this.elementBuilderProvider = elementBuilderProvider;
         this.startingRow = startingRow;
         this.height = height;
         this.clickConsumer = clickConsumer;
+        this.clickable = clickable;
     }
 
     public List<Object> getList() {
@@ -61,6 +81,10 @@ public class ListGuiWidget<Object> extends GuiWidget {
                 var uiElement = this.elementBuilderProvider.apply(value);
                 if (clickConsumer != null) {
                     uiElement.setCallback((index, clickType, action, guiInterface) -> {
+                        if (!clickable.test(value)) {
+                            UHCConfigGuiElements.playDeniedSound(player);
+                            return;
+                        }
                         UHCConfigGuiElements.playClickSound(player);
                         clickConsumer.accept(value);
                         refreshDisplay();
