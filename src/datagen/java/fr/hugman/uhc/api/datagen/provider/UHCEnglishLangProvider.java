@@ -108,6 +108,8 @@ public class UHCEnglishLangProvider extends FabricLanguageProvider {
         module(builder, UHCModules.POTION_DROPS, "Potion Drops", "Some things drop potions");
 
         // Module long descriptions
+        moduleDescription(builder, UHCModules.BETTER_TOOLS_PLUS, "wooden_tools_become_iron", "Wooden tools are replaced with iron tools");
+        moduleDescription(builder, UHCModules.BETTER_TOOLS_PLUS, "diamond_tools_get_efficiency", "Diamond tools are enchanted with Efficiency III");
         moduleDescription(builder, UHCModules.FASTER_RESOURCES, "stones_drop_cobblestone", "All stones types drop cobblestone");
         moduleDescription(builder, UHCModules.FASTER_RESOURCES, "gravel_drops_arrows_and_flint_and_steel", "Gravel drop arrows and flint and steel");
         moduleDescription(builder, UHCModules.FASTER_RESOURCES, "sand_drops_glass", "Sand drops glass");

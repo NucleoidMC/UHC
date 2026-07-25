@@ -2,6 +2,7 @@ package fr.hugman.uhc.api.module;
 
 import fr.hugman.uhc.api.modifier.Modifier;
 import fr.hugman.uhc.api.registry.UHCRegistryKeys;
+import fr.hugman.uhc.api.util.Sprites;
 import fr.hugman.uhc.impl.UHC;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceKey;
@@ -46,6 +47,18 @@ public class UHCModules {
             Modifier... modifiers
     ) {
         return create(key, b -> b.icon(icon).modifiers(modifiers));
+    }
+
+    /**
+     * Creates a module whose single description line opens on sprites illustrating what it changes.
+     */
+    public static UHCModule create(
+            ResourceKey<UHCModule> key,
+            ItemLike icon,
+            Sprites.Transformation sprites,
+            Modifier... modifiers
+    ) {
+        return create(key, b -> b.icon(icon).modifiers(modifiers).descriptionFrom(key, sprites));
     }
 
     public static UHCModule create(

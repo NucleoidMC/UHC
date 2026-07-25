@@ -63,6 +63,8 @@
   "module.uhc.better_tools_plus": "Meilleurs outils+",
   "module.uhc.better_tools.description": "Les outils en bois sont remplacés par des outils en pierre",
   "module.uhc.better_tools_plus.description": "Les outils en bois sont remplacés par des outils en fer et les outils en diamant sont enchantés avec Efficacité III",
+  "module.uhc.better_tools_plus.description.wooden_tools_become_iron": "Les outils en bois sont remplacés par des outils en fer",
+  "module.uhc.better_tools_plus.description.diamond_tools_get_efficiency": "Les outils en diamant sont enchantés avec Efficacité III",
   "module.uhc.blasted_ores": "Pioche de fonderie",
   "module.uhc.blasted_ores_plus": "Pioche de fonderie+",
   "module.uhc.blasted_ores.description": "Tous les minerais sont automatiquement fondus, doublés et donnent plus d'expérience",

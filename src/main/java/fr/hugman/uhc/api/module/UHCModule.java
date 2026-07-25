@@ -5,6 +5,7 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import eu.pb4.sgui.api.elements.GuiElementBuilder;
 import fr.hugman.uhc.api.modifier.Modifier;
 import fr.hugman.uhc.api.registry.UHCRegistryKeys;
+import fr.hugman.uhc.api.util.Sprites;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderSet;
@@ -12,6 +13,7 @@ import net.minecraft.core.RegistryCodecs;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
 import net.minecraft.network.chat.TextColor;
+import net.minecraft.network.chat.contents.ObjectContents;
 import net.minecraft.resources.RegistryFileCodec;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.util.Util;
@@ -51,6 +53,13 @@ public record UHCModule(
     }
 
     /**
+     * A long description line: the translation path of the sentence, and the sprites illustrating the change it
+     * describes.
+     */
+    public record DescriptionLine(String path, Sprites.Transformation sprites) {
+    }
+
+    /**
      * Creates a {@link GuiElementBuilder} for this module, displaying its icon, name, and description.
      */
     public GuiElementBuilder getElement() {
@@ -64,12 +73,19 @@ public record UHCModule(
         if (longDescription.isPresent()) {
             element.addLoreLine(Component.literal(""));
             for (Component line : longDescription.get()) {
-                element.addLoreLine(Component.literal("- ").append(line));
+                element.addLoreLine(bullet(line));
             }
         } else if (description.isPresent()) {
             element.addLoreLine(Component.literal(""));
-            element.addLoreLine(Component.literal("- ").append(description.get()));
+            element.addLoreLine(bullet(description.get()));
         }
+    }
+
+    /**
+     * Lines opening on sprites use them as their bullet, since they already stand out; plain lines get a dash.
+     */
+    private static Component bullet(Component line) {
+        return line.getContents() instanceof ObjectContents ? line : Component.literal("- ").append(line);
     }
 
     public static class Builder {
@@ -107,6 +123,13 @@ public record UHCModule(
             return description(Component.translatable(Util.makeDescriptionId("module", key.identifier()) + ".description"));
         }
 
+        /**
+         * Sets a standard description of the module, opening on sprites illustrating what it changes.
+         */
+        public Builder descriptionFrom(ResourceKey<?> key, Sprites.Transformation sprites) {
+            return description(illustrate(sprites.render(), Component.translatable(Util.makeDescriptionId("module", key.identifier()) + ".description")));
+        }
+
         public Builder longDescription(List<Component> longDescription) {
             this.longDescription = Optional.of(longDescription);
             return this;
@@ -127,6 +150,29 @@ public record UHCModule(
                     .map(path -> Component.translatable(translationKey + ".description." + path))
                     .map(Component.class::cast)
                     .toList());
+        }
+
+        /**
+         * Same as {@link #longDescriptionFrom(ResourceKey, String...)}, each line opening on sprites illustrating the
+         * change it describes.
+         * <p>
+         * Every line is padded to the widest one, so that the arrows and the sentences stay in straight columns however
+         * many sprites a given line needs.
+         */
+        public Builder longDescriptionFrom(ResourceKey<?> key, DescriptionLine... lines) {
+            var translationKey = Util.makeDescriptionId("module", key.identifier());
+            var fromWidth = Arrays.stream(lines).mapToInt(line -> line.sprites().from().size()).max().orElse(0);
+            var toWidth = Arrays.stream(lines).mapToInt(line -> line.sprites().to().size()).max().orElse(0);
+            return longDescription(Arrays.stream(lines)
+                    .map(line -> illustrate(line.sprites().render(fromWidth, toWidth), Component.translatable(translationKey + ".description." + line.path())))
+                    .toList());
+        }
+
+        /**
+         * Sprites are 8 pixels wide where a space is 4, so a single one would sit too close to the sentence.
+         */
+        private static Component illustrate(Component sprites, Component text) {
+            return sprites.copy().append("  ").append(text);
         }
 
         public Builder icon(ItemStackTemplate icon) {
