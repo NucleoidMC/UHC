@@ -42,11 +42,11 @@ public class UHCModuleTagProvider extends FabricTagsProvider<UHCModule> {
                 .add(FASTER_RESOURCES_PLUS)
                 .add(POTION_DROPS);
 
-        builder(UHCModuleTags.UHCRUN)
+        builder(UHCModuleTags.LUCKY_UHCRUN)
                 .forceAddTag(UHCModuleTags.UHCRUN)
                 .add(UHCModules.LUCKY_BLOCKS);
         builder(UHCModuleTags.LUCKY_DOUBLERUNNER)
-                .forceAddTag(UHCModuleTags.LUCKY_DOUBLERUNNER)
+                .forceAddTag(UHCModuleTags.DOUBLERUNNER)
                 .add(UHCModules.LUCKY_BLOCKS);
     }
 }

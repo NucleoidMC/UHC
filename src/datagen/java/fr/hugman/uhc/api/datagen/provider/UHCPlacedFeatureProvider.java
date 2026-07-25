@@ -2,12 +2,14 @@ package fr.hugman.uhc.api.datagen.provider;
 
 import fr.hugman.uhc.api.world.level.levelgen.feature.UHCConfiguredFeatures;
 import fr.hugman.uhc.api.world.level.levelgen.feature.UHCPlacedFeatures;
+import fr.hugman.ultimate_lucky_block.api.world.gen.feature.ULBPlacedFeatures;
 import net.fabricmc.fabric.api.datagen.v1.FabricPackOutput;
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricDynamicRegistryProvider;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.data.worldgen.BootstrapContext;
+import net.minecraft.data.worldgen.features.VegetationFeatures;
 import net.minecraft.data.worldgen.placement.PlacementUtils;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.level.levelgen.VerticalAnchor;
@@ -51,6 +53,10 @@ public class UHCPlacedFeatureProvider extends FabricDynamicRegistryProvider {
         of(registerable, UHCPlacedFeatures.BOOSTED_LAPIS_2, lapis, modifiersWithCount(14, fullRangePlacement));
         of(registerable, UHCPlacedFeatures.BOOSTED_GOLD_2, gold, modifiersWithCount(14, fullRangePlacement));
         of(registerable, UHCPlacedFeatures.BOOSTED_DIAMOND_2, diamond, modifiersWithCount(12, fullRangePlacement));
+
+        // TEMPORARY FIX FOR DATAGEN (fake values)
+        registerable.register(ULBPlacedFeatures.SURFACE_LUCKY_BLOCKS, PlacementUtils.inlinePlaced(configured.getOrThrow(VegetationFeatures.GRASS)).value());
+        registerable.register(ULBPlacedFeatures.MINERAL_LUCKY_BLOCKS, PlacementUtils.inlinePlaced(configured.getOrThrow(VegetationFeatures.GRASS)).value());
     }
 
     public static void of(
