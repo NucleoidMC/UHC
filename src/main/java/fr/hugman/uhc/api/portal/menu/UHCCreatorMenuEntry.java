@@ -1,8 +1,6 @@
 package fr.hugman.uhc.api.portal.menu;
 
-import fr.hugman.uhc.api.config.UHCConfigs;
-import fr.hugman.uhc.api.gui.creator.CreateUHCGui;
-import fr.hugman.uhc.api.registry.UHCRegistryKeys;
+import fr.hugman.uhc.api.gui.creator.SelectPresetGui;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.ItemStack;
@@ -19,7 +17,7 @@ public class UHCCreatorMenuEntry implements MenuEntry {
 
     @Override
     public List<Component> description() {
-        return List.of();
+        return List.of(Component.translatable("game.custom_uhc.description"));
     }
 
     @Override
@@ -29,8 +27,6 @@ public class UHCCreatorMenuEntry implements MenuEntry {
 
     @Override
     public void click(ServerPlayer player, boolean alt) {
-        var config = player.level().registryAccess().lookupOrThrow(UHCRegistryKeys.UHC_CONFIG).getOrThrow(UHCConfigs.STANDARD_UHC);
-        var ui = new CreateUHCGui(player, config.value().clone());
-        ui.open();
+        new SelectPresetGui(player).open();
     }
 }

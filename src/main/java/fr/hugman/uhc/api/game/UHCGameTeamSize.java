@@ -1,6 +1,5 @@
 package fr.hugman.uhc.api.game;
 
-import eu.pb4.sgui.api.elements.GuiElementBuilder;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
@@ -29,6 +28,19 @@ public enum UHCGameTeamSize {
         return name;
     }
 
+    public Item getItem() {
+        return item;
+    }
+
+    public Component getDisplayName() {
+        return Component.translatable("mode." + name);
+    }
+
+    public UHCGameTeamSize next(boolean forward) {
+        var values = values();
+        return values[Math.floorMod(this.ordinal() + (forward ? 1 : -1), values.length)];
+    }
+
     public int getTeamsize() {
         return teamsize;
     }
@@ -39,9 +51,5 @@ public enum UHCGameTeamSize {
 
     public int getThresholdPlayers() {
         return thresholdPlayers;
-    }
-
-    public GuiElementBuilder createElement() {
-        return new GuiElementBuilder(this.item).setName(Component.translatable("mode." + name));
     }
 }

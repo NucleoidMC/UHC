@@ -44,6 +44,22 @@ public record UHCMapConfig(
         return new UHCMapConfig(dimensionType, chunkGenerator, Optional.of(excludedBiomes), startSize, DEFAULT_END_SIZE, shrinkingSpeed, DEFAULT_SPAWN_OFFSET);
     }
 
+    public UHCMapConfig withStartSize(DoubleRange startSize) {
+        return new UHCMapConfig(dimensionType, chunkGenerator, excludedBiomes, startSize, endSize, shrinkingSpeed, spawnOffset);
+    }
+
+    public UHCMapConfig withEndSize(DoubleRange endSize) {
+        return new UHCMapConfig(dimensionType, chunkGenerator, excludedBiomes, startSize, endSize, shrinkingSpeed, spawnOffset);
+    }
+
+    public UHCMapConfig withShrinkingSpeed(double shrinkingSpeed) {
+        return new UHCMapConfig(dimensionType, chunkGenerator, excludedBiomes, startSize, endSize, shrinkingSpeed, spawnOffset);
+    }
+
+    public UHCMapConfig withSpawnOffset(int spawnOffset) {
+        return new UHCMapConfig(dimensionType, chunkGenerator, excludedBiomes, startSize, endSize, shrinkingSpeed, spawnOffset);
+    }
+
     @Override
     public UHCMapConfig clone() {
         return new UHCMapConfig(dimensionType, chunkGenerator, excludedBiomes, startSize, endSize, shrinkingSpeed, spawnOffset);

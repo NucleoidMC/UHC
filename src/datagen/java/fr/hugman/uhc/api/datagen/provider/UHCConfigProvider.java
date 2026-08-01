@@ -16,7 +16,10 @@ import net.fabricmc.fabric.api.datagen.v1.provider.FabricDynamicRegistryProvider
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.HolderSet;
 import net.minecraft.core.registries.Registries;
+import fr.hugman.ultimate_lucky_block.api.block.ULBBlocks;
 import net.minecraft.data.worldgen.BootstrapContext;
+import net.minecraft.network.chat.Component;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.level.biome.MultiNoiseBiomeSource;
 import net.minecraft.world.level.biome.MultiNoiseBiomeSourceParameterLists;
 import net.minecraft.world.level.dimension.BuiltinDimensionTypes;
@@ -58,21 +61,23 @@ public class UHCConfigProvider extends FabricDynamicRegistryProvider {
                 biomes.getOrThrow(UHCBiomeTags.OCEANLESS_BLACKLIST),
                 new DoubleRange(400, 10000),
                 0.5D
-        )));
+        )).display(Component.translatable("game.uhc"), Items.GOLDEN_APPLE));
         registerable.register(UHCConfigs.STANDARD_UHCRUN, new UHCConfig(UHCMapConfig.of(
                 dimensionsTypes.getOrThrow(BuiltinDimensionTypes.OVERWORLD),
                 overworldChunkGenerator,
                 biomes.getOrThrow(UHCBiomeTags.OCEANLESS_BLACKLIST),
                 new DoubleRange(200, 8000),
                 0.6D
-        ), UHCTimersConfig.DEFAULT.withWarmup(1200), modules.getOrThrow(UHCModuleTags.UHCRUN)));
+        ), UHCTimersConfig.DEFAULT.withWarmup(1200), modules.getOrThrow(UHCModuleTags.UHCRUN))
+                .display(Component.translatable("game.uhcrun"), Items.IRON_PICKAXE));
         registerable.register(UHCConfigs.STANDARD_DOUBLERUNNER, new UHCConfig(UHCMapConfig.of(
                 dimensionsTypes.getOrThrow(BuiltinDimensionTypes.OVERWORLD),
                 overworldChunkGenerator,
                 biomes.getOrThrow(UHCBiomeTags.OCEANLESS_BLACKLIST),
                 new DoubleRange(200, 8000),
                 0.75D
-        ), UHCTimersConfig.DEFAULT.withWarmup(600), modules.getOrThrow(UHCModuleTags.DOUBLERUNNER)));
+        ), UHCTimersConfig.DEFAULT.withWarmup(600), modules.getOrThrow(UHCModuleTags.DOUBLERUNNER))
+                .display(Component.translatable("game.doublerunner"), Items.DIAMOND_PICKAXE));
 
         registerable.register(UHCConfigs.LUCKY_UHC, new UHCConfig(UHCMapConfig.of(
                 dimensionsTypes.getOrThrow(BuiltinDimensionTypes.OVERWORLD),
@@ -80,20 +85,23 @@ public class UHCConfigProvider extends FabricDynamicRegistryProvider {
                 biomes.getOrThrow(UHCBiomeTags.OCEANLESS_BLACKLIST),
                 new DoubleRange(400, 10000),
                 0.5D
-        ), UHCTimersConfig.DEFAULT, HolderSet.direct(modules.getOrThrow(UHCModules.LUCKY_BLOCKS))));
+        ), UHCTimersConfig.DEFAULT, HolderSet.direct(modules.getOrThrow(UHCModules.LUCKY_BLOCKS)))
+                .display(Component.translatable("game.lucky_uhc"), ULBBlocks.LUCKY_BLOCK));
         registerable.register(UHCConfigs.LUCKY_UHCRUN, new UHCConfig(UHCMapConfig.of(
                 dimensionsTypes.getOrThrow(BuiltinDimensionTypes.OVERWORLD),
                 overworldChunkGenerator,
                 biomes.getOrThrow(UHCBiomeTags.OCEANLESS_BLACKLIST),
                 new DoubleRange(200, 8000),
                 0.6D
-        ), UHCTimersConfig.DEFAULT.withWarmup(1200), modules.getOrThrow(UHCModuleTags.LUCKY_UHCRUN)));
+        ), UHCTimersConfig.DEFAULT.withWarmup(1200), modules.getOrThrow(UHCModuleTags.LUCKY_UHCRUN))
+                .display(Component.translatable("game.lucky_uhcrun"), ULBBlocks.LUCKY_BLOCK));
         registerable.register(UHCConfigs.LUCKY_DOUBLERUNNER, new UHCConfig(UHCMapConfig.of(
                 dimensionsTypes.getOrThrow(BuiltinDimensionTypes.OVERWORLD),
                 overworldChunkGenerator,
                 biomes.getOrThrow(UHCBiomeTags.OCEANLESS_BLACKLIST),
                 new DoubleRange(200, 8000),
                 0.75D
-        ), UHCTimersConfig.DEFAULT.withWarmup(600), modules.getOrThrow(UHCModuleTags.LUCKY_DOUBLERUNNER)));
+        ), UHCTimersConfig.DEFAULT.withWarmup(600), modules.getOrThrow(UHCModuleTags.LUCKY_DOUBLERUNNER))
+                .display(Component.translatable("game.lucky_doublerunner"), ULBBlocks.LUCKY_BLOCK));
     }
 }

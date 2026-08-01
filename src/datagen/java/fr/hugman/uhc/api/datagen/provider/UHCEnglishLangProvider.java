@@ -139,9 +139,65 @@ public class UHCEnglishLangProvider extends FabricLanguageProvider {
         builder.add("ui.uhc.click_to_add", "Click to Add");
         builder.add("ui.uhc.click_to_remove", "Click to Remove");
         builder.add("ui.uhc.click_to_edit", "Click to Edit");
+        builder.add("ui.uhc.click_to_select", "Click to Select");
+        builder.add("ui.uhc.click_to_cycle", "%s / %s to change");
         builder.add("ui.uhc.incompatible_with", "Incompatible with %s");
+        builder.add("ui.uhc.select_preset.title", "Pick a preset");
+        builder.add("ui.uhc.confirm_launch.title", "Open this game?");
+        builder.add("ui.uhc.summary", "Summary");
+        builder.add("ui.uhc.confirm", "Open the game");
+        builder.add("ui.uhc.confirm.description", "Opens the lobby for players to join.");
+        builder.add("ui.uhc.preset", "Preset");
+        builder.add("ui.uhc.preset.modules", "%s modules");
+        builder.add("ui.uhc.team_size", "Team Size");
+        builder.add("ui.uhc.team_size.description", "How many players share a team.");
+        builder.add("ui.uhc.min_players", "Needs at least %s players");
+        builder.add("ui.uhc.min_players.short", "Minimum players");
+        builder.add("ui.uhc.option", "  %s");
+        builder.add("ui.uhc.option.selected", "▶ %s");
+        builder.add("text.uhc.modules.description", "Rule changes applied to the game.");
+        builder.add("ui.uhc.more", "More Presets");
+        builder.add("ui.uhc.more.description", "Everything else data packs provide.");
+        builder.add("ui.uhc.discard.title", "Discard your changes?");
+        builder.add("ui.uhc.discard", "Discard");
+        builder.add("ui.uhc.discard.description", "Leaves without keeping anything you changed.");
+        builder.add("ui.uhc.keep_editing", "Keep Editing");
+        builder.add("ui.uhc.keep_editing.description", "Goes back to the creator.");
+
+        // Settings
+        builder.add("ui.uhc.setting.summary", "%s: %s");
+        builder.add("ui.uhc.setting.value", "Currently: %s");
+        builder.add("ui.uhc.setting.range", "Between %s and %s");
+        builder.add("ui.uhc.setting.adjust", "%s / %s: ±%s");
+        builder.add("ui.uhc.setting.adjust_big", "Hold %s: ±%s");
+        builder.add("ui.uhc.unit.blocks", "%s blocks");
+        builder.add("ui.uhc.unit.blocks_per_second", "%s blocks per second");
+
+        builder.add("text.uhc.map.description", "The world and how its border closes in.");
+        builder.add("text.uhc.timers.description", "How long each phase of the game lasts.");
+        builder.add("game.custom_uhc.description", "Build your own UHC from any preset, then tweak everything.");
+
+        builder.add("ui.uhc.setting.start_size_min", "Smallest Starting Border");
+        builder.add("ui.uhc.setting.start_size_min.description", "Lower end of the random starting border.");
+        builder.add("ui.uhc.setting.start_size_max", "Largest Starting Border");
+        builder.add("ui.uhc.setting.start_size_max.description", "Upper end. Bigger means longer games.");
+        builder.add("ui.uhc.setting.end_size_min", "Smallest Final Border");
+        builder.add("ui.uhc.setting.end_size_min.description", "Lower end of the random final border.");
+        builder.add("ui.uhc.setting.end_size_max", "Largest Final Border");
+        builder.add("ui.uhc.setting.end_size_max.description", "Upper end. Smaller means a tighter fight.");
+        builder.add("ui.uhc.setting.shrinking_speed", "Shrinking Speed");
+        builder.add("ui.uhc.setting.shrinking_speed.description", "How fast the border closes in.");
+        builder.add("ui.uhc.setting.spawn_offset", "Spawn Offset");
+        builder.add("ui.uhc.setting.spawn_offset.description", "How far inside the border teams drop.");
+        builder.add("ui.uhc.setting.cages", "Time in Cages");
+        builder.add("ui.uhc.setting.cages.description", "Wait in the cages before each drop.");
+        builder.add("ui.uhc.setting.invulnerability", "Invulnerability");
+        builder.add("ui.uhc.setting.invulnerability.description", "No damage is taken after each drop.");
+        builder.add("ui.uhc.setting.warmup", "Gathering Time");
+        builder.add("ui.uhc.setting.warmup.description", "Time to mine and gear up before the finale.");
+        builder.add("ui.uhc.setting.deathmatch", "Deathmatch Delay");
+        builder.add("ui.uhc.setting.deathmatch.description", "Delay before the border starts hurting.");
         builder.add("ui.uhc.launch", "Launch");
-        builder.add("ui.uhc.select_team_size.title", "Select a team size");
 
         // [COMPAT] Ultimate Lucky Block
         builder.add("game.lucky_uhc", "Lucky UHC");

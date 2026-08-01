@@ -25,8 +25,7 @@ public class UHCCommand {
     }
 
     private static int displayCreator(CommandContext<CommandSourceStack> context, Holder<UHCConfig> entry) {
-        var clone = entry.value().clone();
-        new CreateUHCGui(context.getSource().getPlayer(), clone).open();
+        new CreateUHCGui(context.getSource().getPlayer(), entry, entry.value().clone()).open();
         return Command.SINGLE_SUCCESS;
     }
 }
